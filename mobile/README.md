@@ -1,19 +1,19 @@
 # Martin Sols Mobile
 
-Application Capacitor hybride pour le CRM Martin Sols.
+Application Capacitor hybride pour le HUB Martin Sols.
 
 Le login, la barre du haut, le menu lateral, les commandes navigateur et les
 parametres propres a l'app sont integres dans l'app mobile. Les pages et
-modules du CRM restent charges en WebView via une session web temporaire creee
+modules du HUB restent charges en WebView via une session web temporaire creee
 par l'API mobile Laravel.
 
-URL CRM par defaut :
+URL HUB par defaut :
 
 ```text
 https://crm.jp2.fr
 ```
 
-Le code metier reste dans le CRM Laravel. Les mises a jour des modules web sont
+Le code metier reste dans le HUB Laravel. Les mises a jour des modules web sont
 visibles dans l'app sans reconstruire l'APK, tant que le cadre mobile ne change
 pas.
 
@@ -22,7 +22,7 @@ pas.
 - Animation d'entree Martin Sols embarquee dans l'APK.
 - Navigateur integre avec retour, avance, actualisation et conservation des
   liens dans l'app.
-- Parametres app : URL du serveur CRM, localisation, dernier module et
+- Parametres app : URL du serveur HUB, localisation, dernier module et
   commandes navigateur.
 - Localisation native Capacitor avec permissions Android fine/coarse.
 - Etat reseau et informations version/appareil visibles dans les parametres.

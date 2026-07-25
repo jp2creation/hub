@@ -62,17 +62,17 @@ class CrmAdministrationApiTest extends TestCase
                 'firstName' => 'Jean-Philippe',
                 'lastName' => 'Martin',
                 'email' => 'jp.martin@example.test',
-                'bio' => 'Direction CRM',
+                'bio' => 'Direction HUB',
                 'photoDataUrl' => $this->crmPngDataUrl(),
             ])
             ->assertOk()
             ->assertJsonPath('ok', true)
             ->assertJsonPath('profile.displayName', 'Jean-Philippe Martin')
             ->assertJsonPath('profile.email', 'jp.martin@example.test')
-            ->assertJsonPath('profile.bio', 'Direction CRM')
+            ->assertJsonPath('profile.bio', 'Direction HUB')
             ->json('profile');
 
-        $this->assertStringStartsWith('/storage/assets/uploads/profiles/', $profile['photoUrl']);
+        $this->assertStringStartsWith('/uploads/assets/uploads/profiles/', $profile['photoUrl']);
         $this->assertStringEndsWith('.webp', $profile['photoUrl']);
 
         $this->assertDatabaseHas('crm_users', [
@@ -81,7 +81,7 @@ class CrmAdministrationApiTest extends TestCase
             'first_name' => 'Jean-Philippe',
             'last_name' => 'Martin',
             'email' => 'jp.martin@example.test',
-            'bio' => 'Direction CRM',
+            'bio' => 'Direction HUB',
             'photo_url' => $profile['photoUrl'],
         ]);
         $this->assertDatabaseHas('users', [
@@ -290,7 +290,7 @@ class CrmAdministrationApiTest extends TestCase
         ]);
         $this->assertDatabaseHas('crm_menu_groups', [
             'menu_key' => 'apps',
-            'title' => 'Applications CRM',
+            'title' => 'Applications HUB',
             'active' => true,
         ]);
         $this->assertDatabaseHas('crm_menu_items', [

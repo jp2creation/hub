@@ -3,10 +3,10 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | CRM Frontend Source Entries
+    | HUB Frontend Source Entries
     |--------------------------------------------------------------------------
     |
-    | The CRM shell is built from resources/frontend and module assets imported
+    | The HUB shell is built from resources/frontend and module assets imported
     | by Vite. Generated public assets are published during deployment.
     |
     */

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Martin Sols CRM API
+  title: Martin Sols HUB API
   version: 1.1.0
   description: Documentation OpenAPI des endpoints CRM exposes par Laravel.
 servers:
@@ -186,7 +186,7 @@ paths:
   /api/reservations/users:
     get:
       tags: [Reservations]
-      summary: Lister les utilisateurs CRM visibles par site pour les reservations.
+      summary: Lister les utilisateurs HUB visibles par site pour les reservations.
       parameters:
         - $ref: '#/components/parameters/SiteId'
         - in: query
@@ -317,7 +317,7 @@ paths:
   /api/equipment-rentals/users:
     get:
       tags: [Location materiel]
-      summary: Lister les utilisateurs CRM visibles par site pour les locations.
+      summary: Lister les utilisateurs HUB visibles par site pour les locations.
       parameters:
         - $ref: '#/components/parameters/SiteId'
         - in: query
@@ -627,7 +627,7 @@ paths:
   /api/pages:
     get:
       tags: [Pages]
-      summary: Lire les pages CRM administrables.
+      summary: Lire les pages HUB administrables.
       parameters:
         - in: query
           name: action
@@ -648,7 +648,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
     post:
       tags: [Pages]
-      summary: Creer, modifier ou supprimer une page CRM.
+      summary: Creer, modifier ou supprimer une page HUB.
       parameters:
         - in: query
           name: action
@@ -800,7 +800,7 @@ paths:
   /api/mobile/token:
     post:
       tags: [Mobile]
-      summary: Creer un access token mobile CRM court et un refresh token rotatif.
+      summary: Creer un access token mobile HUB court et un refresh token rotatif.
       requestBody:
         $ref: '#/components/requestBodies/CrmJsonPayload'
       responses:
@@ -927,7 +927,7 @@ components:
     BadRequest:
       description: Donnees invalides.
     Unauthorized:
-      description: Utilisateur CRM requis.
+      description: Utilisateur HUB requis.
     Forbidden:
       description: Droits insuffisants.
     NotFound:

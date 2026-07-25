@@ -131,7 +131,7 @@ class PageService
             ]);
             $page->save();
 
-            $this->log($actor, $id > 0 ? 'modification page CRM' : 'creation page CRM', $title);
+            $this->log($actor, $id > 0 ? 'modification page HUB' : 'creation page HUB', $title);
 
             return ['ok' => true, 'page' => $this->pageRow($page->refresh())];
         });
@@ -157,7 +157,7 @@ class PageService
             $title = $page->title;
             $page->delete();
 
-            $this->log($actor, 'suppression page CRM', $title);
+            $this->log($actor, 'suppression page HUB', $title);
 
             return ['ok' => true, 'id' => $id];
         });

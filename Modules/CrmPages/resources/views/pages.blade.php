@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     @include('partials.pwa-head')
-    <title>Pages CRM - Martin Sols</title>
+    <title>Pages HUB - Martin Sols</title>
 
     <script>
       (function () {
@@ -375,20 +375,20 @@
     <div class="crm-pages-shell" data-pages-shell>
       <div class="crm-pages-backdrop" data-sidebar-close></div>
 
-      <aside class="crm-pages-sidebar" aria-label="Menu CRM">
+      <aside class="crm-pages-sidebar" aria-label="Menu HUB">
         <a class="crm-pages-brand" href="{{ route('crm.home') }}">
           <img src="{{ asset('martin-sols-logo.png') }}" alt="Martin Sols" onerror="this.style.display='none'">
         </a>
 
-        <nav class="crm-pages-nav" aria-label="Navigation CRM">
-          <div class="crm-pages-nav-title">Applications CRM</div>
+        <nav class="crm-pages-nav" aria-label="Navigation HUB">
+          <div class="crm-pages-nav-title">Applications HUB</div>
           <a class="crm-pages-nav-link" href="/reservations"><span class="crm-pages-nav-icon">RV</span><span>R&eacute;servations v&eacute;hicules</span></a>
           <a class="crm-pages-nav-link" href="/locations-materiel"><span class="crm-pages-nav-icon">LM</span><span>Location mat&eacute;riel</span></a>
           <a class="crm-pages-nav-link" href="/controle-caisse"><span class="crm-pages-nav-icon">CC</span><span>Contr&ocirc;le caisse</span></a>
           <a class="crm-pages-nav-link" href="/tapis-romus"><span class="crm-pages-nav-icon">TR</span><span>Tapis ROMUS</span></a>
 
           <div class="crm-pages-nav-title">Interne</div>
-          <a class="crm-pages-nav-link is-active" href="/pages-crm"><span class="crm-pages-nav-icon">PC</span><span>Pages CRM</span></a>
+          <a class="crm-pages-nav-link is-active" href="/pages-crm"><span class="crm-pages-nav-icon">PC</span><span>Pages HUB</span></a>
           <a class="crm-pages-nav-link" href="/conges"><span class="crm-pages-nav-icon">CG</span><span>Cong&eacute;s</span></a>
           <a class="crm-pages-nav-link" href="/administration"><span class="crm-pages-nav-icon">AD</span><span>Administration</span></a>
         </nav>
@@ -406,7 +406,7 @@
           </button>
 
           <div class="crm-pages-header-title">
-            <strong>Pages CRM</strong>
+            <strong>Pages HUB</strong>
             <span>{{ $name }}</span>
           </div>
 
@@ -421,7 +421,7 @@
         </header>
 
         <main class="crm-pages-content">
-          <div id="crm-pages-root">Chargement des pages CRM...</div>
+          <div id="crm-pages-root">Chargement des pages HUB...</div>
         </main>
       </section>
     </div>

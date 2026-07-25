@@ -17,7 +17,7 @@ class ArchiveCrmDataCommand extends Command
         {--dry-run : Compter sans archiver}
         {--model= : Archiver uniquement un modele configure, FQCN ou cle courte}';
 
-    protected $description = 'Archive les anciennes donnees des modules metier du CRM.';
+    protected $description = 'Archive les anciennes donnees des modules metier du HUB.';
 
     public function handle(CrmArchiveService $archives): int
     {

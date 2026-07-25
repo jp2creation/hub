@@ -35,13 +35,13 @@ class CrmPageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Administration CRM';
+    protected static string|UnitEnum|null $navigationGroup = 'Administration HUB';
 
-    protected static ?string $navigationLabel = 'Pages CRM';
+    protected static ?string $navigationLabel = 'Pages HUB';
 
-    protected static ?string $modelLabel = 'page CRM';
+    protected static ?string $modelLabel = 'page HUB';
 
-    protected static ?string $pluralModelLabel = 'pages CRM';
+    protected static ?string $pluralModelLabel = 'pages HUB';
 
     protected static ?int $navigationSort = 25;
 
@@ -94,7 +94,7 @@ class CrmPageResource extends Resource
             ->components([
                 TextEntry::make('title')->label('Titre'),
                 TextEntry::make('slug')->label('Slug'),
-                TextEntry::make('route_path')->label('URL CRM'),
+                TextEntry::make('route_path')->label('URL HUB'),
                 TextEntry::make('excerpt')->label('Resume')->columnSpanFull(),
                 TextEntry::make('content')->label('Contenu')->markdown()->columnSpanFull(),
                 TextEntry::make('icon_key')->label('Icone'),

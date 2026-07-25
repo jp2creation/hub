@@ -127,7 +127,7 @@
         <div class="admin-top">
           <div class="admin-title">
             <h1>Administration</h1>
-            <p>Configuration du CRM Martin Sols</p>
+            <p>Configuration du HUB Martin Sols</p>
           </div>
         </div>
         <div class="admin-alert">${esc(state.error)}</div>
@@ -313,7 +313,7 @@
     return `
       <section class="admin-card">
         <header class="admin-card-header">
-          <div><h2 class="admin-card-title">Pages CRM</h2><p class="admin-card-subtitle">Pages visibles dans le menu et contenus internes.</p></div>
+          <div><h2 class="admin-card-title">Pages HUB</h2><p class="admin-card-subtitle">Pages visibles dans le menu et contenus internes.</p></div>
           <button class="admin-button admin-button-primary" type="button" data-new-page>Créer une page</button>
         </header>
         <div class="admin-card-body">

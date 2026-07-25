@@ -35,7 +35,7 @@ class CrmMenuItemResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBars3;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Administration CRM';
+    protected static string|UnitEnum|null $navigationGroup = 'Administration HUB';
 
     protected static ?string $navigationLabel = 'Liens de menu';
 
@@ -65,7 +65,7 @@ class CrmMenuItemResource extends Resource
             'mail' => 'Email',
             'message' => 'Message',
             'note' => 'Note',
-            'briefcase' => 'CRM',
+            'briefcase' => 'HUB',
             'dashboard' => 'Dashboard',
             'category' => 'Categorie',
         ];

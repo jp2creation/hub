@@ -156,7 +156,7 @@ class AdministrationService
             ->first();
 
         if (! $actor) {
-            $this->fail('Utilisateur CRM introuvable', 404);
+            $this->fail('Utilisateur HUB introuvable', 404);
         }
 
         return $actor;
@@ -489,7 +489,7 @@ class AdministrationService
                 'sort_order' => (int) ($data['sortOrder'] ?? $data['sort_order'] ?? 100),
             ])->save();
 
-            $this->log($actor, $id > 0 ? 'modification page CRM' : 'creation page CRM', $title);
+            $this->log($actor, $id > 0 ? 'modification page HUB' : 'creation page HUB', $title);
 
             return ['ok' => true, 'page' => $this->pageRow($page->refresh())];
         });
@@ -512,7 +512,7 @@ class AdministrationService
 
             $title = $page->title;
             $page->delete();
-            $this->log($actor, 'suppression page CRM', $title);
+            $this->log($actor, 'suppression page HUB', $title);
 
             return ['ok' => true, 'id' => $id];
         });
@@ -959,8 +959,8 @@ class AdministrationService
             ['platform.manage_users', 'Gerer les utilisateurs', 'Administration', 170],
             ['platform.manage_roles', 'Gerer les roles', 'Administration', 180],
             ['platform.manage_modules', 'Gerer les modules', 'Administration', 190],
-            ['pages.view', 'Voir les pages CRM', 'Pages CRM', 200],
-            ['pages.manage', 'Gerer les pages CRM', 'Pages CRM', 210],
+            ['pages.view', 'Voir les pages HUB', 'Pages HUB', 200],
+            ['pages.manage', 'Gerer les pages HUB', 'Pages HUB', 210],
         ];
     }
 
@@ -1001,14 +1001,14 @@ class AdministrationService
     private function moduleSeed(): array
     {
         return [
-            ['Tableau de bord', 'dashboard', 'Synthese et acces rapides du CRM', '/', 0, true],
+            ['Tableau de bord', 'dashboard', 'Synthese et acces rapides du HUB', '/', 0, true],
             ['Réservations véhicules', 'reservations', 'Planning et réservations des véhicules', '/reservations', 10, true],
             ['Location matériel', 'locations-materiel', 'Planning et locations du matériel interne', '/locations-materiel', 15, true],
             ['Équipe', 'equipes', 'Annuaire des membres par site', '/equipes', 16, true],
             ['Congés', 'conges', 'Planning et gestion des congés', '/conges', 17, true],
             ['Rapport de visite', 'tournees-representants', 'Planning, visites clients et rapports de visite', '/rapport-visite', 18, true],
             ['Pilotage commercial', 'pilotage-commercial', 'Objectifs, chiffre d affaires, factures et commissions commerciales', '/pilotage-commercial', 19, true],
-            ['Pages CRM', 'pages-crm', 'Pages internes modifiables depuis le CRM', '/pages-crm', 18, true],
+            ['Pages HUB', 'pages-crm', 'Pages internes modifiables depuis le HUB', '/pages-crm', 18, true],
             ['Administration', 'administration', 'Gestion des sites, modules, utilisateurs et rôles', '/administration', 20, true],
             ['Contrôle caisse', 'controle-caisse', 'Contrôle journalier de caisse, reports, écarts et justificatifs', '/controle-caisse', 25, true],
             ['Demande d\'acompte', 'demandes-acompte', 'Demandes d\'acompte et validation par la comptabilité', '/demandes-acompte', 26, true],
@@ -1016,7 +1016,7 @@ class AdministrationService
             ['Addvance', 'addvance', 'Accès externe Addvance Solutions', 'https://martinsols.addvancesolutions.fr', 28, true],
             ['Promo', 'documents-promo', 'Documents commerciaux et promotions.', '/documents/promo', 241, true],
             ['Fiches techniques', 'documents-fiches-techniques', 'Fiches techniques produits et materiel.', '/documents/fiches-techniques', 242, true],
-            ['Procédures', 'documents-procedures', 'Procédures internes du CRM.', '/documents/procedures', 243, true],
+            ['Procédures', 'documents-procedures', 'Procédures internes du HUB.', '/documents/procedures', 243, true],
             ['Planning', 'planning', 'Planning interne par site', '/planning', 30, false],
             ['Documents internes', 'documents', 'Procédures et documents partagés', '/documents', 40, false],
             ['Demandes internes', 'demandes', 'Demandes et validations internes', '/demandes', 50, false],
@@ -1028,7 +1028,7 @@ class AdministrationService
     {
         return [
             ['home', 'Accueil', 0, true],
-            ['apps', 'Applications CRM', 10, true],
+            ['apps', 'Applications HUB', 10, true],
             ['accounting', 'Comptabilité', 18, true],
             ['documents', 'Documents', 19, true],
             ['internal', 'Administration', 20, true],
@@ -1202,7 +1202,7 @@ class AdministrationService
             'lastName' => $lastName,
             'email' => trim((string) $user->email) ?: (trim((string) ($user->account?->email ?? '')) ?: 'contact@jp2creation.fr'),
             'phone' => trim((string) $user->phone),
-            'bio' => trim((string) $user->bio) ?: ($user->role === 'admin' ? 'Administrateur CRM Martin Sols' : ''),
+            'bio' => trim((string) $user->bio) ?: ($user->role === 'admin' ? 'Administrateur HUB Martin Sols' : ''),
             'photoUrl' => $this->images->normalizePublicUrl($user->photo_url) ?: self::DEFAULT_PROFILE_PHOTO,
             'role' => $user->role,
             'canEditIdentity' => $user->role === 'admin' || $this->hasPermission($user, 'platform.manage_users'),

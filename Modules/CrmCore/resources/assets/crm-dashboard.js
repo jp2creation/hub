@@ -191,7 +191,7 @@
       <div class="dash-top">
         <div class="dash-title">
           <h1>Tableau de bord</h1>
-          <p>Vue d'ensemble du CRM Martin Sols.</p>
+          <p>Vue d'ensemble du HUB Martin Sols.</p>
         </div>
       </div>
       <section class="dash-empty">${esc(message)}</section>

@@ -52,7 +52,7 @@ const shellLoaderKey = 'crm:shell';
 window.CrmLoader?.begin?.(shellLoaderKey, {
   delay: 0,
   timeout: 0,
-  timeoutMessage: 'Le CRM met trop de temps a charger.',
+  timeoutMessage: 'Le HUB met trop de temps a charger.',
 });
 
 try {
@@ -61,7 +61,7 @@ try {
   window.dispatchEvent(new CustomEvent('crm:module-ready', { detail: { key: shellLoaderKey } }));
   preloadRemainingCrmModuleOverlays();
 } catch (error) {
-  window.CrmLoader?.fail?.(shellLoaderKey, error instanceof Error ? error : new Error('Chargement du CRM impossible.'));
+  window.CrmLoader?.fail?.(shellLoaderKey, error instanceof Error ? error : new Error('Chargement du HUB impossible.'));
   throw error;
 } finally {
   window.CrmLoader?.end?.(shellLoaderKey);

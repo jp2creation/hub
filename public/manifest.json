@@ -1,7 +1,7 @@
 {
-  "name": "Martin Sols CRM",
+  "name": "Martin Sols HUB",
   "short_name": "Martin Sols",
-  "description": "CRM Martin Sols installable sur mobile, tablette et ordinateur.",
+  "description": "HUB Martin Sols installable sur mobile, tablette et ordinateur.",
   "id": "/?source=pwa",
   "start_url": "/?source=pwa",
   "scope": "/",

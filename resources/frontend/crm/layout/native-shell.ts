@@ -14,7 +14,7 @@ type CrmProfile = {
 };
 
 const nativeShellSelector = '[data-crm-native-shell]';
-const profileStorageKey = 'martin-sols-crm-profile';
+const profileStorageKey = 'martin-sols-hub-profile';
 let installed = false;
 let profileLoaded = false;
 let currentProfile: CrmProfile | undefined = readStoredProfile();
@@ -305,7 +305,7 @@ function hostHtml(route: CrmHostRoute | null): string {
     return [
       '<section class="crm-native-empty">',
       '<h1>Page non disponible</h1>',
-      '<p>Cette page n’est pas encore reliée à la nouvelle coque CRM.</p>',
+      '<p>Cette page n’est pas encore reliée à la nouvelle coque HUB.</p>',
       '<a class="crm-native-button" href="/">Tableau de bord</a>',
       '</section>',
     ].join('');
@@ -434,7 +434,7 @@ function headerHtml(profile?: CrmProfile): string {
     mobileAppSettingsMenuItemHtml(),
     '<button class="crm-native-user-menu-item crm-native-user-menu-danger" type="button" data-crm-native-logout role="menuitem">',
     `<span class="crm-native-user-menu-icon">${iconForKey('logout')}</span>`,
-    '<span><strong>Se déconnecter</strong><small>Quitter le CRM</small></span>',
+    '<span><strong>Se déconnecter</strong><small>Quitter le HUB</small></span>',
     '</button>',
     '</div>',
     '</div>',
@@ -447,7 +447,7 @@ function headerHtml(profile?: CrmProfile): string {
 function shellHtml(route: CrmHostRoute | null): string {
   return [
     '<div class="crm-native-shell" data-crm-native-shell>',
-    '<aside class="layout-sidebar crm-native-sidebar" aria-label="Menu CRM">',
+    '<aside class="layout-sidebar crm-native-sidebar" aria-label="Menu HUB">',
     '<a class="crm-native-brand" href="/">',
     `<img src="${esc(logoUrl())}" alt="Martin Sols">`,
     '</a>',

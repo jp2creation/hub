@@ -1,6 +1,6 @@
 # Changelog
 
-Toutes les modifications notables du CRM Martin Sols sont documentees ici.
+Toutes les modifications notables du HUB Martin Sols sont documentees ici.
 
 Le format suit une logique proche de "Keep a Changelog" et les releases doivent
 etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
@@ -56,8 +56,8 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 - Les reservations vehicules et locations materiel refusent maintenant les dates passees.
 - Le menu CRM se limite aux modules reels : applications metier, administration/interne et pages internes seulement si elles existent.
 - La documentation de deploiement rappelle la generation du cache vues et le controle du scheduler.
-- Le rewrite Apache ne force plus les anciens chemins `/auth`, `/dashboard`, `/forms`, `/tables`, `/charts`, `/pages` et `/features` vers le CRM.
-- Le menu place maintenant `Conges` dans `Applications CRM`, juste sous `Equipe`.
+- Le rewrite Apache ne force plus les anciens chemins `/auth`, `/dashboard`, `/forms`, `/tables`, `/charts`, `/pages` et `/features` vers le HUB.
+- Le menu place maintenant `Conges` dans `Applications HUB`, juste sous `Equipe`.
 - Le README et la documentation technique listent les modules recents, les routes, les tables et la procedure de publication des assets modules.
 
 ### Removed

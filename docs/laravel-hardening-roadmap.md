@@ -4,7 +4,7 @@
 
 Le projet est un Laravel 12 avec Filament 5. L'administration Filament utilise le modele `users`, Spatie Permission et le guard `web`.
 
-Le CRM metier public passe par le routeur Laravel. Les anciens endpoints proceduraux `public/api/*.php` et les alias `/api/*.php` ont ete retires.
+Le HUB metier public passe par le routeur Laravel. Les anciens endpoints proceduraux `public/api/*.php` et les alias `/api/*.php` ont ete retires.
 
 ## Corrections immediates deja appliquees
 
@@ -20,7 +20,7 @@ Le CRM metier public passe par le routeur Laravel. Les anciens endpoints procedu
 
 ## Migration prioritaire
 
-1. Rattacher les utilisateurs CRM aux comptes Laravel.
+1. Rattacher les utilisateurs HUB aux comptes Laravel.
 
    La colonne `crm_users.user_id nullable unique` est en place. Les comptes peuvent etre crees et rattaches depuis Filament, fiche `Utilisateurs CRM`, action `Compte Laravel`.
 

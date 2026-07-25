@@ -305,17 +305,17 @@
   }
 
   ensureAppStyle();
-  beginOperation(startupKey, 0, 'Le CRM met trop de temps a charger.');
+  beginOperation(startupKey, 0, 'Le HUB met trop de temps a charger.');
   observeLoadingMutations();
 
   window.addEventListener('pageshow', () => {
-    beginOperation(startupKey, 0, 'Le CRM met trop de temps a charger.');
+    beginOperation(startupKey, 0, 'Le HUB met trop de temps a charger.');
     monitorTransition(startedAt, maxStartupWait);
     hideWhenReady();
   });
 
   window.addEventListener('load', () => {
-    beginOperation(startupKey, 0, 'Le CRM met trop de temps a charger.');
+    beginOperation(startupKey, 0, 'Le HUB met trop de temps a charger.');
     monitorTransition(startedAt, maxStartupWait);
     hideWhenReady();
   });

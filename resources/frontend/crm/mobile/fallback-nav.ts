@@ -160,7 +160,7 @@ function drawerHtml(): string {
   return [
     `<div id="${drawerId}" class="crm-mobile-fallback-drawer" hidden>`,
     '<button class="crm-mobile-fallback-backdrop" type="button" data-crm-mobile-fallback-close aria-label="Fermer"></button>',
-    '<aside class="crm-mobile-fallback-panel" aria-label="Menu CRM">',
+    '<aside class="crm-mobile-fallback-panel" aria-label="Menu HUB">',
     '<div class="crm-mobile-fallback-panel-header">',
     `<img src="${esc(logoUrl())}" alt="Martin Sols">`,
     `<button class="crm-mobile-fallback-close" type="button" data-crm-mobile-fallback-close aria-label="Fermer">${closeIcon()}</button>`,
@@ -213,7 +213,7 @@ function ensureFallback(): void {
     'afterbegin',
     [
       `<header id="${fallbackId}" class="crm-mobile-fallback-header">`,
-      `<button class="crm-mobile-fallback-menu-button" type="button" data-crm-mobile-fallback-open aria-label="Menu CRM">${menuIcon()}</button>`,
+      `<button class="crm-mobile-fallback-menu-button" type="button" data-crm-mobile-fallback-open aria-label="Menu HUB">${menuIcon()}</button>`,
       '<a class="crm-mobile-fallback-brand" href="/">',
       `<img src="${esc(logoUrl())}" alt="Martin Sols">`,
       '</a>',

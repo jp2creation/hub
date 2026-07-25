@@ -35,7 +35,7 @@ async function parseJson<T>(response: Response): Promise<T> {
     const message =
       payload && typeof payload === 'object' && 'error' in payload
         ? String(payload.error)
-        : `Requete CRM refusee (${response.status})`;
+        : `Requete HUB refusee (${response.status})`;
 
     throw new Error(message);
   }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Maintenance - Martin Sols CRM</title>
+    <title>Maintenance - Martin Sols HUB</title>
     <style>
         :root {
             color-scheme: light;

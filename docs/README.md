@@ -1,6 +1,6 @@
 # Documentation technique CRM
 
-Ce dossier regroupe la documentation technique du CRM Martin Sols : architecture,
+Ce dossier regroupe la documentation technique du HUB Martin Sols : architecture,
 schema de donnees, flux principaux, exploitation et deploiement.
 
 ## Architecture applicative
@@ -24,17 +24,17 @@ flowchart LR
 ## Modules principaux
 
 - Authentification web Laravel, avec comptes `users` et droits Spatie.
-- Portail CRM React/Blade servi par les vues Laravel.
+- Portail HUB React/Blade servi par les vues Laravel.
 - Reservations vehicules avec controle de conflits.
 - Locations de materiel avec categories, planning, demi-journee ou journee.
-- Conges bases sur les utilisateurs CRM existants lies au site.
+- Conges bases sur les utilisateurs HUB existants lies au site.
 - Rapport de visite pour tournees commerciales, visites clients, comptes rendus et suivi des actions.
 - Controle caisse avec encaissements, sorties, comptage especes, ecarts, justificatifs et PDF.
 - Demandes d'acompte avec creation terrain et validation comptable.
 - Remises de cheques avec photos, aide OCR, controles signature/destinataire et export PDF.
 - Documents par site : Promo, Fiches techniques et Procedures.
 - Tapis ROMUS integre pour saisir les mesures et generer les PDF.
-- Pages CRM administrables.
+- Pages HUB administrables.
 - Administration Filament pour les donnees de reference et permissions.
 - PWA installable via `manifest.json` et Service Worker.
 - API mobile via Sanctum.
@@ -64,7 +64,7 @@ make deploy-check
 
 ```mermaid
 erDiagram
-    users ||--o| crm_users : "compte CRM"
+    users ||--o| crm_users : "compte HUB"
     crm_users }o--o{ crm_sites : "acces sites"
     crm_users }o--o{ crm_modules : "modules"
     crm_users }o--o{ crm_permissions : "permissions"
@@ -106,7 +106,7 @@ erDiagram
 
 ## Tables metier
 
-- `crm_sites` : sites disponibles dans le CRM.
+- `crm_sites` : sites disponibles dans le HUB.
 - `crm_users` : profil CRM relie au compte Laravel `users`.
 - `crm_modules`, `crm_permissions` : activation des modules et droits fins.
 - `crm_user_sites`, `crm_user_modules`, `crm_user_permissions` : pivots de droits CRM.
@@ -139,7 +139,7 @@ sequenceDiagram
     L->>S: authentifie le compte users
     S-->>U: session web
     U->>C: GET /
-    C-->>U: portail CRM selon droits/site
+    C-->>U: portail HUB selon droits/site
 ```
 
 ### Reservation vehicule
@@ -303,7 +303,7 @@ php artisan test
 
 Quand le nombre de migrations deviendra trop couteux pour les environnements de test, generer un schema dump avec `php artisan schema:dump` depuis une base propre et versionner le fichier genere.
 
-Les migrations CRM sont versionnees dans `Modules/*/database/migrations`; seules les migrations globales Laravel et les migrations de packages restent dans `database/migrations`.
+Les migrations metier sont versionnees dans `Modules/*/database/migrations`; seules les migrations globales Laravel et les migrations de packages restent dans `database/migrations`.
 
 ## Releases
 

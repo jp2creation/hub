@@ -141,7 +141,7 @@ class CrmPageApiTest extends TestCase
         $module = CrmModule::query()->updateOrCreate(
             ['slug' => 'pages-crm'],
             [
-                'name' => 'Pages CRM',
+                'name' => 'Pages HUB',
                 'description' => 'Pages internes',
                 'route_path' => '/pages-crm',
                 'active' => true,
@@ -151,12 +151,12 @@ class CrmPageApiTest extends TestCase
 
         $view = CrmPermission::query()->updateOrCreate(
             ['name' => 'pages.view'],
-            ['label' => 'Voir les pages CRM', 'group_label' => 'Pages CRM', 'sort_order' => 190],
+            ['label' => 'Voir les pages HUB', 'group_label' => 'Pages HUB', 'sort_order' => 190],
         );
 
         $manage = CrmPermission::query()->updateOrCreate(
             ['name' => 'pages.manage'],
-            ['label' => 'Gerer les pages CRM', 'group_label' => 'Pages CRM', 'sort_order' => 200],
+            ['label' => 'Gerer les pages HUB', 'group_label' => 'Pages HUB', 'sort_order' => 200],
         );
 
         $crmUser->modules()->syncWithoutDetaching([$module->id]);

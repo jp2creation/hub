@@ -51,12 +51,12 @@ class CrmAccountSettingsTest extends TestCase
                 'firstName' => 'Jean-Philippe',
                 'lastName' => 'Martin',
                 'email' => 'peinture.pau@martinsols.com',
-                'bio' => 'Administrateur CRM Martin Sols',
+                'bio' => 'Administrateur HUB Martin Sols',
             ])
             ->assertOk()
             ->assertJsonPath('ok', true)
             ->assertJsonPath('profile.displayName', 'Jean-Philippe Martin')
-            ->assertJsonPath('profile.bio', 'Administrateur CRM Martin Sols');
+            ->assertJsonPath('profile.bio', 'Administrateur HUB Martin Sols');
 
         $this->assertDatabaseHas('crm_users', [
             'first_name' => 'Jean-Philippe',
@@ -171,7 +171,7 @@ class CrmAccountSettingsTest extends TestCase
             'first_name' => 'Jean-Philippe',
             'last_name' => 'JP2 Creation',
             'email' => 'peinture.pau@martinsols.com',
-            'bio' => 'Administrateur CRM Martin Sols',
+            'bio' => 'Administrateur HUB Martin Sols',
             'photo_url' => '/assets/logo/logomark.png',
             'role' => 'admin',
             'active' => true,

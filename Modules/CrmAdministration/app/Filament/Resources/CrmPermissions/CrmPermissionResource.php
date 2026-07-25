@@ -29,13 +29,13 @@ class CrmPermissionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Administration CRM';
+    protected static string|UnitEnum|null $navigationGroup = 'Administration HUB';
 
-    protected static ?string $navigationLabel = 'Permissions CRM';
+    protected static ?string $navigationLabel = 'Permissions HUB';
 
-    protected static ?string $modelLabel = 'permission CRM';
+    protected static ?string $modelLabel = 'permission HUB';
 
-    protected static ?string $pluralModelLabel = 'permissions CRM';
+    protected static ?string $pluralModelLabel = 'permissions HUB';
 
     protected static ?int $navigationSort = 50;
 

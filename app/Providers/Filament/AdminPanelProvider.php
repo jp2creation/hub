@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::STYLES_AFTER,
                 fn (): HtmlString => new HtmlString('<link href="'.asset('css/filament/crm-filament.css').'?v=2026072201" rel="stylesheet" data-navigate-track />')
             )
-            ->brandName('Martin Sols CRM')
+            ->brandName('Martin Sols HUB')
             ->brandLogo(asset('martin-sols-logo.png'))
             ->brandLogoHeight('2.75rem')
             ->favicon(asset('favicon.png'))

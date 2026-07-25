@@ -68,7 +68,7 @@ $fixture = DB::transaction(function () use ($password): array {
         ['controle-caisse', 'Controle caisse', '/controle-caisse', 25],
         ['demandes-acompte', 'Demandes acompte', '/demandes-acompte', 26],
         ['remise-cheques', 'Remise cheques', '/remise-cheques', 27],
-        ['pages-crm', 'Pages CRM', '/pages-crm', 28],
+        ['pages-crm', 'Pages HUB', '/pages-crm', 28],
         ['documents-promo', 'Documents promo', '/documents/promo', 29],
         ['pilotage-commercial', 'Pilotage commercial', '/pilotage-commercial', 30],
     ];
@@ -106,7 +106,7 @@ $fixture = DB::transaction(function () use ($password): array {
         ['controle_caisse.view', 'Controle caisse', 240],
         ['deposit_requests.view', 'Demandes acompte', 250],
         ['check_remittances.view', 'Remise cheques', 260],
-        ['pages.view', 'Pages CRM', 270],
+        ['pages.view', 'Pages HUB', 270],
         ['documents.view', 'Documents', 280],
     ];
 

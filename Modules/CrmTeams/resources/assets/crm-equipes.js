@@ -200,7 +200,7 @@
       <div class="teams-page">
         <header class="teams-header">
           <div class="teams-title">
-            <span>Applications CRM</span>
+            <span>Applications HUB</span>
             <h1>Équipe</h1>
             <p>${esc(site?.name || "Site actif")}</p>
           </div>

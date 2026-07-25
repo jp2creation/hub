@@ -1,6 +1,6 @@
 {
     "$schema": "https://www.schemastore.org/package.json",
-    "name": "crm",
+    "name": "hub",
     "private": true,
     "type": "module",
     "scripts": {

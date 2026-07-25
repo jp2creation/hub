@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'martin-sols-crm-v202607221330';
+const CACHE_VERSION = 'martin-sols-hub-v202607250900';
 const STATIC_CACHE = `${CACHE_VERSION}:static`;
 const OFFLINE_URL = '/offline.html';
 
@@ -38,7 +38,10 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(keys
-        .filter((key) => key.startsWith('martin-sols-crm-') && key !== STATIC_CACHE)
+        .filter((key) => (
+          key.startsWith('martin-sols-hub-')
+          || key.startsWith('martin-sols-crm-')
+        ) && key !== STATIC_CACHE)
         .map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
       .then(() => notifyClients('CRM_SW_ACTIVATED'))
@@ -87,7 +90,7 @@ self.addEventListener('push', (event) => {
   const payload = parsePushPayload(event);
 
   event.waitUntil(
-    self.registration.showNotification(payload.title || 'Martin Sols CRM', {
+    self.registration.showNotification(payload.title || 'Martin Sols HUB', {
       body: payload.body || '',
       icon: payload.icon || '/assets/pwa/icon-192.png',
       badge: payload.badge || '/assets/pwa/maskable-192.png',

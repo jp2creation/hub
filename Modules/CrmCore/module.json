@@ -1,7 +1,7 @@
 {
     "name": "CrmCore",
     "alias": "crmcore",
-    "description": "Services partages du CRM Martin Sols.",
+    "description": "Services partages du HUB Martin Sols.",
     "keywords": [],
     "priority": 10,
     "providers": [

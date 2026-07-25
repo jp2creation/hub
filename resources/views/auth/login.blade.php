@@ -13,7 +13,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ \App\Support\CrmAsset::url('modules/crm-core/brand-morph-loader.css') }}">
-    <title>Connexion - Martin Sols CRM</title>
+    <title>Connexion - Martin Sols HUB</title>
     <style>
       :root {
         color-scheme: light;
@@ -989,7 +989,7 @@
             help: '',
             onClick: iosUrl ? null : (event) => {
               event.preventDefault();
-              help.textContent = 'Safari > Partager > Ajouter à l’écran d’accueil. Le CRM s’ouvrira ensuite en plein écran.';
+              help.textContent = 'Safari > Partager > Ajouter à l’écran d’accueil. Le HUB s’ouvrira ensuite en plein écran.';
             },
           });
 

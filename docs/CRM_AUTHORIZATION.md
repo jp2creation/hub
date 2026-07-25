@@ -1,6 +1,6 @@
 # Autorisations CRM
 
-Le CRM utilise deux niveaux de droits. Ils ne doivent pas etre fusionnes sans decision explicite, car ils ne protegent pas le meme perimetre.
+Le HUB utilise deux niveaux de droits. Ils ne doivent pas etre fusionnes sans decision explicite, car ils ne protegent pas le meme perimetre.
 
 ## Sources d'autorite
 
@@ -45,7 +45,7 @@ Les actions metier restent controlees ensuite par :
 ## Regles pour les nouveaux modules
 
 - Les controleurs restent minces : lecture de la requete, resolution de l'acteur, appel du service, reponse JSON.
-- Les controles de permission CRM vont dans un service metier ou dans une Policy.
+- Les controles de permission metier vont dans un service metier ou dans une Policy.
 - Les ressources Filament utilisent `AuthorizesResourceWithPolicy`.
 - Les routes shell utilisent `crm.module:<slug>,<permission...>`.
 - Les routes API mobile utilisent `auth:sanctum` et `crm.mobile_scope`.

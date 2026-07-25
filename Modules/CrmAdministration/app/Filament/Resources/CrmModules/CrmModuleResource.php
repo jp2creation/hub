@@ -33,7 +33,7 @@ class CrmModuleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Administration CRM';
+    protected static string|UnitEnum|null $navigationGroup = 'Administration HUB';
 
     protected static ?string $navigationLabel = 'Modules';
 

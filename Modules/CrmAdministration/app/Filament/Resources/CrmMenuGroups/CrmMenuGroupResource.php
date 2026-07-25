@@ -32,7 +32,7 @@ class CrmMenuGroupResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQueueList;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Administration CRM';
+    protected static string|UnitEnum|null $navigationGroup = 'Administration HUB';
 
     protected static ?string $navigationLabel = 'Groupes de menu';
 

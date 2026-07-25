@@ -8,7 +8,7 @@ Le guide pas a pas de creation d'un module est disponible dans [MODULE_CREATION_
 
 - `module.json` avec `name`, `alias`, `priority` et `providers`.
 - `app/Providers/<Module>ServiceProvider.php` pour charger les routes et les listeners du module.
-- `routes/web.php` pour les pages CRM et les routes `/api/<module>` sans extension `.php`.
+- `routes/web.php` pour les pages HUB et les routes `/api/<module>` sans extension `.php`.
 - `database/migrations` pour les migrations versionnees du module.
 - `app/Services` pour la logique metier. Les controleurs doivent rester minces.
 - `app/Data` pour les DTO qui normalisent les payloads entrants.

@@ -41,13 +41,13 @@ class CrmUserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Administration CRM';
+    protected static string|UnitEnum|null $navigationGroup = 'Administration HUB';
 
-    protected static ?string $navigationLabel = 'Utilisateurs CRM';
+    protected static ?string $navigationLabel = 'Utilisateurs HUB';
 
-    protected static ?string $modelLabel = 'utilisateur CRM';
+    protected static ?string $modelLabel = 'utilisateur HUB';
 
-    protected static ?string $pluralModelLabel = 'utilisateurs CRM';
+    protected static ?string $pluralModelLabel = 'utilisateurs HUB';
 
     protected static ?int $navigationSort = 10;
 
@@ -68,7 +68,7 @@ class CrmUserResource extends Resource
                             ->label('Nom de famille')
                             ->maxLength(80),
                         TextInput::make('email')
-                            ->label('E-mail CRM')
+                            ->label('E-mail HUB')
                             ->email()
                             ->maxLength(190),
                         TextInput::make('phone')
@@ -92,7 +92,7 @@ class CrmUserResource extends Resource
                             ->default(true),
                     ])
                     ->columns(3),
-                Section::make('Acces CRM')
+                Section::make('Acces HUB')
                     ->schema([
                         CheckboxList::make('sites')
                             ->label('Sites autorises')
@@ -120,7 +120,7 @@ class CrmUserResource extends Resource
                 TextEntry::make('name')->label('Nom'),
                 TextEntry::make('first_name')->label('Prénom')->placeholder('Non renseigné'),
                 TextEntry::make('last_name')->label('Nom de famille')->placeholder('Non renseigné'),
-                TextEntry::make('email')->label('E-mail CRM')->placeholder('Non renseigné'),
+                TextEntry::make('email')->label('E-mail HUB')->placeholder('Non renseigné'),
                 TextEntry::make('phone')->label('Téléphone')->placeholder('Non renseigné'),
                 TextEntry::make('account.email')->label('Compte Laravel')->placeholder('Non rattache'),
                 TextEntry::make('role')->label('Profil')->badge(),
@@ -189,7 +189,7 @@ class CrmUserResource extends Resource
                     ->authorize('update')
                     ->visible(fn (CrmUser $record): bool => blank($record->user_id))
                     ->modalHeading('Creer un compte Laravel')
-                    ->modalDescription(fn (CrmUser $record): string => "Utilisateur CRM : {$record->name}")
+                    ->modalDescription(fn (CrmUser $record): string => "Utilisateur HUB : {$record->name}")
                     ->modalSubmitActionLabel('Creer et rattacher')
                     ->schema([
                         TextInput::make('name')

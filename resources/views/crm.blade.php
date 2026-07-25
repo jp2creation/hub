@@ -25,7 +25,7 @@
           'embed' => (bool) $crmMobileEmbed,
           'siteId' => request()->integer('mobile_site_id') ?: null,
       ],
-      'themeStorageKey' => 'martin-sols-crm-theme-v2',
+      'themeStorageKey' => 'martin-sols-hub-theme-v1',
   ];
 @endphp
 <!doctype html>
@@ -36,7 +36,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @include('partials.pwa-head')
-    <title>Martin Sols - CRM</title>
+    <title>Martin Sols - HUB</title>
     <script id="crm-shell-config" type="application/json">@json($crmShellConfig)</script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

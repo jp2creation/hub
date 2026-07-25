@@ -1,4 +1,4 @@
-# Installation du CRM Martin Sols
+# Installation du HUB Martin Sols
 
 Ce document decrit l'installation locale et les commandes utiles pour preparer une mise en production.
 
@@ -41,7 +41,7 @@ Copy-Item .env.example .env
 Configurer ensuite `.env` :
 
 ```env
-APP_NAME="Martin Sols CRM"
+APP_NAME="Martin Sols HUB"
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://127.0.0.1:8000

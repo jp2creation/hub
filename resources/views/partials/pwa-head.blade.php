@@ -1,5 +1,5 @@
 <meta name="theme-color" content="#95002e" />
-<meta name="application-name" content="Martin Sols CRM" />
+<meta name="application-name" content="Martin Sols HUB" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Martin Sols" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />

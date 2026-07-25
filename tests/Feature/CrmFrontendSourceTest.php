@@ -174,7 +174,7 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringNotContainsString('VideoView', $mainActivity);
         $this->assertStringContainsString('public class MainActivity extends Activity', $mainActivity);
         $this->assertStringContainsString('private static final String CRM_URL = "https://crm.jp2.fr/?mobile_app=1";', $mainActivity);
-        $this->assertStringContainsString('private static final String UPDATE_MANIFEST_URL = "https://raw.githubusercontent.com/jp2creation/crm/main/mobile/releases/martin-sols-update.json";', $mainActivity);
+        $this->assertStringContainsString('private static final String UPDATE_MANIFEST_URL = "https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json";', $mainActivity);
         $this->assertStringContainsString('private static final String APK_MIME_TYPE = "application/vnd.android.package-archive";', $mainActivity);
         $this->assertStringContainsString('private static final long SPLASH_DURATION_MS = 5500L;', $mainActivity);
         $this->assertStringContainsString('private static final long UPDATE_CHECK_DELAY_MS = 1500L;', $mainActivity);
@@ -343,7 +343,7 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertIsInt($androidUpdateManifest['android']['versionCode']);
         $this->assertGreaterThanOrEqual(38, $androidUpdateManifest['android']['versionCode']);
         $this->assertMatchesRegularExpression('/^1\\.\\d+$/', $androidUpdateManifest['android']['versionName']);
-        $this->assertStringStartsWith('https://github.com/jp2creation/crm/releases/download/martin-sols-android-v', $androidUpdateManifest['android']['apkUrl']);
+        $this->assertStringStartsWith('https://github.com/jp2creation/hub/releases/download/martin-sols-android-v', $androidUpdateManifest['android']['apkUrl']);
         $this->assertStringContainsString('/Martin_Sols_', $androidUpdateManifest['android']['apkUrl']);
         $this->assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $androidUpdateManifest['android']['sha256']);
         $this->assertSame('app-store-or-testflight', $androidUpdateManifest['ios']['distribution']);

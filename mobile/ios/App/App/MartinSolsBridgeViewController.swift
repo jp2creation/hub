@@ -4,7 +4,7 @@ import WebKit
 
 @objc(MartinSolsBridgeViewController)
 class MartinSolsBridgeViewController: CAPBridgeViewController, WKScriptMessageHandler {
-    private static let updateManifestUrl = URL(string: "https://raw.githubusercontent.com/jp2creation/crm/main/mobile/releases/martin-sols-update.json")!
+    private static let updateManifestUrl = URL(string: "https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json")!
     private static let nativeMessageHandlerName = "martinSolsNativeApp"
     private static let updateCheckDelay: TimeInterval = 7
 

@@ -54,7 +54,7 @@ class CrmReservationResource extends Resource
                     ->preload()
                     ->required(),
                 Select::make('user_id')
-                    ->label('Utilisateur CRM')
+                    ->label('Utilisateur HUB')
                     ->relationship('user', 'name')
                     ->searchable()
                     ->preload()

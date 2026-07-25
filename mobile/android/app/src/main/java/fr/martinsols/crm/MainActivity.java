@@ -74,7 +74,7 @@ import org.json.JSONObject;
 
 public class MainActivity extends Activity {
     private static final String CRM_URL = "https://crm.jp2.fr/?mobile_app=1";
-    private static final String UPDATE_MANIFEST_URL = "https://raw.githubusercontent.com/jp2creation/crm/main/mobile/releases/martin-sols-update.json";
+    private static final String UPDATE_MANIFEST_URL = "https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json";
     private static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
     private static final String MOBILE_AUTH_PREFS = "martin_sols_mobile_auth";
     private static final String MOBILE_AUTH_KEY_ALIAS = "martin_sols_mobile_session";
@@ -607,7 +607,7 @@ public class MainActivity extends Activity {
 
     private String saveMobileSessionPayload(String payload) {
         if (!isTrustedCrmPage()) {
-            return "{\"ok\":false,\"error\":\"Page CRM non autorisee.\"}";
+            return "{\"ok\":false,\"error\":\"Page HUB non autorisee.\"}";
         }
 
         if (!canProtectMobileSession()) {
@@ -793,7 +793,7 @@ public class MainActivity extends Activity {
 
         final AlertDialog dialog = new AlertDialog.Builder(this)
             .setTitle("Connexion Martin Sols")
-            .setMessage("Entre le code de l'app pour ouvrir le CRM.")
+            .setMessage("Entre le code de l'app pour ouvrir le HUB.")
             .setView(layout)
             .setPositiveButton("Valider", null)
             .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
@@ -920,7 +920,7 @@ public class MainActivity extends Activity {
 
     private void authenticateSavedMobileSession(String requestId) {
         if (!isTrustedCrmPage()) {
-            dispatchNativeAuthResult(requestId, false, null, "Page CRM non autorisee.");
+            dispatchNativeAuthResult(requestId, false, null, "Page HUB non autorisee.");
 
             return;
         }
@@ -1014,7 +1014,7 @@ public class MainActivity extends Activity {
 
         Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(
             "Connexion Martin Sols",
-            "Confirme ton identite pour ouvrir le CRM."
+            "Confirme ton identite pour ouvrir le HUB."
         );
 
         if (intent == null) {

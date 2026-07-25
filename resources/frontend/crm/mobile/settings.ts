@@ -286,7 +286,7 @@ function mountSettingsMarkup(): boolean {
               <span class="crm-mobile-app-settings-card-icon is-blue">${settingsIcon('fingerprint')}</span>
               <div>
                 <h3>Connexion rapide</h3>
-                <p>Retrouver le CRM sans retaper le mot de passe.</p>
+                <p>Retrouver le HUB sans retaper le mot de passe.</p>
               </div>
               <span class="crm-mobile-app-settings-pill" data-crm-mobile-auth-section-status>Non configurée</span>
             </div>
@@ -313,7 +313,7 @@ function mountSettingsMarkup(): boolean {
               <span class="crm-mobile-app-settings-card-icon is-green">${settingsIcon('location')}</span>
               <div>
                 <h3>Localisation terrain</h3>
-                <p>Tester la position utilisée par les futurs modules CRM.</p>
+                <p>Tester la position utilisée par les futurs modules HUB.</p>
               </div>
               <span class="crm-mobile-app-settings-pill" data-crm-mobile-location-status>Désactivée</span>
             </div>

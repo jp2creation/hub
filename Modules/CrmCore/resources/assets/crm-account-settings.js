@@ -972,7 +972,7 @@
       <div class="space-y-6" data-crm-native-devices>
         <div>
           <h2 class="heading-4 text-secondary-900 dark:text-white mb-1">Appareils connectés</h2>
-          <p class="text-sm text-secondary-500 dark:text-secondary-400">Sessions réellement enregistrées pour votre compte CRM</p>
+          <p class="text-sm text-secondary-500 dark:text-secondary-400">Sessions réellement enregistrées pour votre compte HUB</p>
         </div>
         ${status ? `<div class="rounded-xl border p-3 text-sm font-semibold ${error ? 'border-danger-200 bg-danger-50 text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-300' : 'border-success-200 bg-success-50 text-success-700 dark:border-success-800 dark:bg-success-900/20 dark:text-success-300'}">${escapeHtml(status)}</div>` : ''}
         <div class="space-y-3">

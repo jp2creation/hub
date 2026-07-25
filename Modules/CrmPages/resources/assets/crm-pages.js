@@ -72,7 +72,7 @@
         state.selectedPage = null;
       }
     } catch (error) {
-      state.error = error instanceof Error ? error.message : 'Impossible de charger les pages CRM';
+      state.error = error instanceof Error ? error.message : 'Impossible de charger les pages HUB';
     } finally {
       state.loading = false;
       render();
@@ -314,7 +314,7 @@
       html(page.title) +
       '</h2>' +
       '<p class="crm-page-reader-meta">' +
-      html(page.excerpt || 'Page interne CRM') +
+      html(page.excerpt || 'Page interne HUB') +
       '</p>' +
       '</div>' +
       (canManage()
@@ -344,7 +344,7 @@
       '<section class="crm-modal" data-modal-panel>' +
       '<header class="crm-modal-head">' +
       '<div><h2 class="crm-modal-title">' +
-      (editing ? 'Modifier la page' : 'Nouvelle page CRM') +
+      (editing ? 'Modifier la page' : 'Nouvelle page HUB') +
       '</h2>' +
       '<p class="crm-muted">Le contenu accepte les titres Markdown simples et les listes.</p></div>' +
       '<button type="button" class="crm-button crm-button-secondary" data-close>Fermer</button>' +
@@ -393,7 +393,7 @@
 
   function render() {
     if (state.loading) {
-      root.innerHTML = renderStyles() + '<div class="crm-card crm-empty">Chargement des pages CRM...</div>';
+      root.innerHTML = renderStyles() + '<div class="crm-card crm-empty">Chargement des pages HUB...</div>';
       return;
     }
 
@@ -407,8 +407,8 @@
       renderStyles() +
       '<section class="crm-pages-module">' +
       '<header class="crm-pages-hero">' +
-      '<div><h1 class="crm-pages-title">Pages CRM</h1>' +
-      '<p class="crm-pages-subtitle">Consultez et organisez les pages internes du CRM Martin Sols.</p></div>' +
+      '<div><h1 class="crm-pages-title">Pages HUB</h1>' +
+      '<p class="crm-pages-subtitle">Consultez et organisez les pages internes du HUB Martin Sols.</p></div>' +
       '<div class="crm-pages-actions">' +
       (canManage()
         ? '<button type="button" class="crm-button crm-button-primary" data-new-page>+ Nouvelle page</button>'
@@ -478,7 +478,7 @@
 
   async function deleteSelectedPage() {
     var page = state.selectedPage;
-    if (!page || !window.confirm('Supprimer cette page CRM ?')) {
+    if (!page || !window.confirm('Supprimer cette page HUB ?')) {
       return;
     }
 

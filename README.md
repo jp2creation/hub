@@ -1,6 +1,6 @@
-# Martin Sols CRM
+# Martin Sols HUB
 
-CRM interne pour centraliser les outils operationnels Martin Sols : portail web, tableau de bord multi-site, reservations, locations de materiel, conges, comptabilite, documents, rapports de visite, generation PDF et API mobile.
+HUB interne pour centraliser les outils operationnels Martin Sols : portail web, tableau de bord multi-site, reservations, locations de materiel, conges, comptabilite, documents, rapports de visite, generation PDF et API mobile.
 
 ## Objectif
 
@@ -8,18 +8,18 @@ Ce depot contient l'application Laravel qui remplace les anciens endpoints PHP d
 
 ## Fonctionnalites principales
 
-- Authentification web Laravel, portail CRM protege et PWA installable.
+- Authentification web Laravel, portail HUB protege et PWA installable.
 - Tableau de bord multi-site avec cartes, alertes, dernieres reservations, conges en cours et notifications.
 - Gestion des reservations vehicules avec planning, conflits et droits par utilisateur/site.
 - Gestion des locations de materiel avec cartes visuelles, categories, demi-journee ou journee, planning et disponibilites.
-- Planning des conges base sur les utilisateurs CRM existants lies au site.
+- Planning des conges base sur les utilisateurs HUB existants lies au site.
 - Module Rapport de visite pour tournees commerciales, visites clients, comptes rendus et actions de suivi.
 - Comptabilite : controle caisse, demandes d'acompte, remises de cheques et lien Addvance.
 - Remises de cheques avec photo, detection assistee, controle signature/destinataire, total et export PDF.
 - Controle caisse avec comptage especes, encaissements, ecarts, justificatifs et PDF incluant les numeros de facture.
 - Documents internes : Promo, Fiches techniques et Procedures avec bibliotheque par site.
-- Module Tapis ROMUS integre au CRM avec rendu harmonise et generation PDF.
-- Pages CRM administrables et accessibles via slugs.
+- Module Tapis ROMUS integre au HUB avec rendu harmonise et generation PDF.
+- Pages HUB administrables et accessibles via slugs.
 - Administration Filament pour utilisateurs, roles, modules, menus, sites, vehicules, materiel et contenus.
 - API Laravel sans extension `.php`, avec audit des tentatives legacy bloquees.
 - API mobile Laravel Sanctum pour l'application Capacitor du dossier `mobile/`.
@@ -27,7 +27,7 @@ Ce depot contient l'application Laravel qui remplace les anciens endpoints PHP d
 ## Stack technique
 
 - PHP 8.3+
-- Laravel 12
+- Laravel 13
 - Filament 5
 - Laravel Sanctum
 - Spatie Laravel Permission
@@ -38,7 +38,7 @@ Ce depot contient l'application Laravel qui remplace les anciens endpoints PHP d
 
 ## Acces applicatifs
 
-- Portail CRM : `/`
+- Portail HUB : `/`
 - Connexion : `/login`
 - Administration : `/admin`
 - Tableau de bord : `/dashboard/crm`
@@ -51,7 +51,7 @@ Ce depot contient l'application Laravel qui remplace les anciens endpoints PHP d
 - Remise de cheques : `/remise-cheques`
 - Documents : `/documents/promo`, `/documents/fiches-techniques`, `/documents/procedures`
 - Tapis ROMUS : `/tapis-romus`
-- Pages CRM : `/pages-crm`
+- Pages HUB : `/pages-crm`
 - API reservations : `/api/reservations`
 - API locations de materiel : `/api/equipment-rentals`
 - API conges : `/api/conges`
@@ -65,13 +65,13 @@ Les anciens chemins `.php`, par exemple `/api/conges.php`, sont bloques. Les int
 
 ## Structure du depot
 
-- `Modules/` : modules Laravel CRM decoupes par domaine metier.
+- `Modules/` : modules Laravel metiers decoupes par domaine metier.
 - `app/Models/` : modeles Eloquent partages.
 - `database/migrations/` : schema Laravel global et migrations de packages.
-- `Modules/*/database/migrations/` : migrations CRM versionnees par module.
+- `Modules/*/database/migrations/` : migrations metier versionnees par module.
 - `resources/views/` : vues CRM, login, erreurs et shell applicatif.
 - `public/assets/` et `public/modules/` : assets compiles servis en production.
-- `tests/Feature/` et `tests/Unit/` : tests des API CRM, services et securite.
+- `tests/Feature/` et `tests/Unit/` : tests des API metier, services et securite.
 - `mobile/` : application mobile Capacitor connectee a l'API Sanctum.
 - `docs/` : documentation technique, guide utilisateur, plaquette CRM et notes de deploiement.
 
@@ -123,7 +123,7 @@ composer pint
 npm run build
 ```
 
-Des tests cibles existent notamment pour les reservations, les locations de materiel, les conges, le controle caisse, les remises de cheques, les demandes d'acompte, les documents, les rapports de visite, les pages CRM, la PWA et l'authentification mobile.
+Des tests cibles existent notamment pour les reservations, les locations de materiel, les conges, le controle caisse, les remises de cheques, les demandes d'acompte, les documents, les rapports de visite, les pages HUB, la PWA et l'authentification mobile.
 
 Le depot fournit aussi un Makefile pour les taches courantes :
 

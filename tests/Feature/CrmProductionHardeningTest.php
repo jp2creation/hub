@@ -43,7 +43,7 @@ class CrmProductionHardeningTest extends TestCase
         $dump = gzdecode(Storage::disk('local')->get($files[0]));
 
         $this->assertIsString($dump);
-        $this->assertStringContainsString('Martin Sols CRM database backup', $dump);
+        $this->assertStringContainsString('Martin Sols HUB database backup', $dump);
         $this->assertStringContainsString('crm_sites', $dump);
     }
 

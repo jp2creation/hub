@@ -67,12 +67,12 @@ export const fallbackNavigation: CrmFallbackNavigation = {
       active: true,
       sortOrder: 28,
     },
-    { name: 'Pages CRM', slug: 'pages-crm', routePath: '/pages-crm', active: true, sortOrder: 18 },
+    { name: 'Pages HUB', slug: 'pages-crm', routePath: '/pages-crm', active: true, sortOrder: 18 },
     { name: 'Administration', slug: 'administration', routePath: '/administration', active: true, sortOrder: 20 },
   ],
   menuGroups: [
     { menuKey: 'home', title: 'Accueil', active: true, sortOrder: 0 },
-    { menuKey: 'apps', title: 'Applications CRM', active: true, sortOrder: 10 },
+    { menuKey: 'apps', title: 'Applications HUB', active: true, sortOrder: 10 },
     { menuKey: 'accounting', title: 'Comptabilité', active: true, sortOrder: 18 },
     { menuKey: 'documents', title: 'Documents', active: true, sortOrder: 19 },
     { menuKey: 'internal', title: 'Administration', active: true, sortOrder: 20 },
@@ -187,7 +187,7 @@ export const fallbackNavigation: CrmFallbackNavigation = {
     {
       itemKey: 'module:pages-crm',
       groupKey: 'internal',
-      label: 'Pages CRM',
+      label: 'Pages HUB',
       iconKey: 'article',
       active: true,
       sortOrder: 18,

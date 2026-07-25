@@ -37,7 +37,7 @@ const defaultConfig: CrmShellConfig = {
     embed: false,
     siteId: null,
   },
-  themeStorageKey: 'martin-sols-crm-theme-v2',
+  themeStorageKey: 'martin-sols-hub-theme-v1',
 };
 
 function normalizeConfig(config: CrmShellConfigInput): CrmShellConfig {

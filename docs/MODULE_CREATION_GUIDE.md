@@ -1,6 +1,6 @@
-# Guide de creation d'un module CRM
+# Guide de creation d'un module HUB
 
-Ce guide sert de checklist pour ajouter un nouveau module Laravel dans le CRM Martin Sols sans casser la structure existante.
+Ce guide sert de checklist pour ajouter un nouveau module Laravel dans le HUB Martin Sols sans casser la structure existante.
 
 ## 1. Choisir les noms
 
@@ -57,7 +57,7 @@ Exemple minimal :
 {
     "name": "CrmExample",
     "alias": "crmexample",
-    "description": "Module CRM Example",
+    "description": "Module HUB Example",
     "keywords": [],
     "priority": 80,
     "providers": [
@@ -96,7 +96,7 @@ class CrmExampleServiceProvider extends CrmModuleServiceProvider
 
 ## 5. Ajouter les routes
 
-Les pages CRM servent la vue `crm`. Les API doivent utiliser le chemin sans extension `.php`.
+Les pages HUB servent la vue `crm`. Les API doivent utiliser le chemin sans extension `.php`.
 
 ```php
 <?php
@@ -158,7 +158,7 @@ Un module doit etre declare dans les donnees CRM :
 Les droits suivent la separation documentee dans [CRM_AUTHORIZATION.md](CRM_AUTHORIZATION.md) :
 
 - Spatie Permission est reserve a la plateforme, Filament et Horizon.
-- `CrmAccessService` est l'autorite pour les modules metier, les sites et les permissions CRM.
+- `CrmAccessService` est l'autorite pour les modules metier, les sites et les permissions metier.
 - Les services ou les Policies portent les decisions finales. Les controleurs restent minces.
 
 Commande utile :
@@ -169,7 +169,7 @@ php artisan crm:feature module:example --disable
 php artisan crm:feature module:example --enable
 ```
 
-Les actions sensibles doivent etre protegees par le middleware `crm.module`, une Policy ou un controle explicite dans le service. Une permission Spatie ne doit pas remplacer une permission CRM pour une action metier contextuelle par site.
+Les actions sensibles doivent etre protegees par le middleware `crm.module`, une Policy ou un controle explicite dans le service. Une permission Spatie ne doit pas remplacer une permission metier pour une action metier contextuelle par site.
 
 ## 8. Assets du module
 

@@ -35,7 +35,7 @@ const captures = [
     title: 'Page de connexion',
     route: '/login',
     public: true,
-    caption: 'L’ecran de connexion reste volontairement simple : email, mot de passe, puis acces direct au CRM.',
+    caption: 'L’ecran de connexion reste volontairement simple : email, mot de passe, puis acces direct au HUB.',
   },
   {
     key: 'dashboard',
@@ -123,7 +123,7 @@ const captures = [
     key: 'tapis-romus',
     title: 'Tapis ROMUS',
     route: '/tapis-romus',
-    caption: 'Le module ROMUS permet de saisir les informations de tapis et de generer un bon PDF integre au CRM.',
+    caption: 'Le module ROMUS permet de saisir les informations de tapis et de generer un bon PDF integre au HUB.',
     waitForText: 'ROMUS',
   },
   {
@@ -140,7 +140,7 @@ const mobileCaptures = [
     key: 'mobile-dashboard',
     title: 'Version smartphone - tableau de bord',
     route: '/',
-    caption: 'Sur smartphone, le CRM conserve la barre du haut et utilise le menu hamburger pour garder l’ecran lisible.',
+    caption: 'Sur smartphone, le HUB conserve la barre du haut et utilise le menu hamburger pour garder l’ecran lisible.',
   },
   {
     key: 'mobile-location',
@@ -323,7 +323,7 @@ function renderHtml(captured, capturedMobile) {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Guide d'utilisation du CRM Martin Sols</title>
+  <title>Guide d'utilisation du HUB Martin Sols</title>
   <style>
     @page { size: A4; margin: 12mm 10mm; }
     * { box-sizing: border-box; }
@@ -578,8 +578,8 @@ function renderHtml(captured, capturedMobile) {
   <section class="cover">
     <div>
       <div class="cover-mark" aria-hidden="true"></div>
-      <p class="cover-kicker">Martin Sols CRM</p>
-      <h1>Guide d’utilisation complet du CRM</h1>
+      <p class="cover-kicker">Martin Sols HUB</p>
+      <h1>Guide d’utilisation complet du HUB</h1>
       <p class="cover-subtitle">
         Documentation utilisateur avec visuels pour apprendre les gestes essentiels :
         connexion, navigation, reservations, conges, rapports de visite commerciaux,
@@ -614,7 +614,7 @@ function renderHtml(captured, capturedMobile) {
     </nav>
 
     <div class="module-grid">
-      ${moduleCard('Applications CRM', 'Reservations vehicules, location materiel, rapport de visite, conges, documents et tapis ROMUS.')}
+      ${moduleCard('Applications HUB', 'Reservations vehicules, location materiel, rapport de visite, conges, documents et tapis ROMUS.')}
       ${moduleCard('Comptabilite', "Controle caisse, demandes d'acompte, remises de cheques et acces Addvance depuis le menu comptable.")}
       ${moduleCard('Administration', 'Menus, droits, sites, modules et utilisateurs selon les permissions attribuees.')}
     </div>
@@ -623,7 +623,7 @@ function renderHtml(captured, capturedMobile) {
   <section class="section" id="demarrage">
     <h2>1. Demarrage rapide</h2>
     <p>
-      Le CRM sert a centraliser les operations quotidiennes Martin Sols : savoir ce qui est reserve,
+      Le HUB sert a centraliser les operations quotidiennes Martin Sols : savoir ce qui est reserve,
       qui est absent, quelle caisse est controlee, quels cheques sont prets et quels documents sont a disposition.
     </p>
     <div class="intro-grid">
@@ -633,7 +633,7 @@ function renderHtml(captured, capturedMobile) {
     <h3>Points forts des modules</h3>
     <p>
       Chaque module a ete pense pour eviter les fichiers disperses, les informations perdues et les controles manuels trop longs.
-      Le CRM donne une lecture commune a toute l’equipe, tout en gardant les donnees separees par site.
+      Le HUB donne une lecture commune a toute l’equipe, tout en gardant les donnees separees par site.
     </p>
     <div class="module-grid">
       ${moduleCard('Tableau de bord', 'Une vue d’ensemble immediate sur les priorites du jour, les alertes et les raccourcis utiles.')}
@@ -645,17 +645,17 @@ function renderHtml(captured, capturedMobile) {
       ${moduleCard("Demandes d'acompte", 'Un suivi centralise des demandes, statuts, montants et justificatifs pour limiter les oublis.')}
       ${moduleCard('Remise de cheques', 'Une remise plus propre : photos, total automatique, controle signature/destinataire et PDF pour la banque.')}
       ${moduleCard('Documents', 'Une bibliotheque commune pour retrouver les promos, fiches techniques et procedures sans chercher dans plusieurs dossiers.')}
-      ${moduleCard('Tapis ROMUS', 'Un formulaire integre au CRM pour produire un bon PDF homogene et plus professionnel.')}
+      ${moduleCard('Tapis ROMUS', 'Un formulaire integre au HUB pour produire un bon PDF homogene et plus professionnel.')}
     </div>
     <table class="checklist">
       <thead>
         <tr><th>Besoin</th><th>Menu a utiliser</th><th>Resultat attendu</th></tr>
       </thead>
       <tbody>
-        <tr><td>Reserver un vehicule</td><td>Applications CRM &gt; Reservations vehicules</td><td>Une reservation visible dans le planning.</td></tr>
-        <tr><td>Reserver du materiel</td><td>Applications CRM &gt; Location materiel</td><td>Un creneau matin, apres-midi ou journee selon le materiel.</td></tr>
+        <tr><td>Reserver un vehicule</td><td>Applications HUB &gt; Reservations vehicules</td><td>Une reservation visible dans le planning.</td></tr>
+        <tr><td>Reserver du materiel</td><td>Applications HUB &gt; Location materiel</td><td>Un creneau matin, apres-midi ou journee selon le materiel.</td></tr>
         <tr><td>Poser ou consulter un conge</td><td>Administration ou Applications &gt; Conges</td><td>Une absence coloree par utilisateur sur le calendrier.</td></tr>
-        <tr><td>Preparer une tournee commerciale</td><td>Applications CRM &gt; Rapport de visite</td><td>Un planning de visites clients avec objectifs, comptes rendus et actions a suivre.</td></tr>
+        <tr><td>Preparer une tournee commerciale</td><td>Applications HUB &gt; Rapport de visite</td><td>Un planning de visites clients avec objectifs, comptes rendus et actions a suivre.</td></tr>
         <tr><td>Controler la caisse</td><td>Comptabilite &gt; Controle caisse</td><td>Une caisse du jour avec factures, entrees, sorties et ecarts.</td></tr>
         <tr><td>Suivre une demande d'acompte</td><td>Comptabilite &gt; Demandes d'acompte</td><td>Une demande suivie par statut, demandeur, document et montant.</td></tr>
         <tr><td>Preparer une remise de cheques</td><td>Comptabilite &gt; Remise de cheques</td><td>Une remise avec liste des cheques et total PDF.</td></tr>
@@ -669,18 +669,18 @@ function renderHtml(captured, capturedMobile) {
     ${figure(cap('login'))}
     <h3>Se connecter</h3>
     ${steps([
-      'Ouvre l’adresse du CRM dans le navigateur ou l’application installee.',
+      'Ouvre l’adresse du HUB dans le navigateur ou l’application installee.',
       'Saisis ton adresse email et ton mot de passe.',
       'Coche <strong>Rester connecte</strong> uniquement sur un appareil personnel ou professionnel securise.',
-      'Clique sur <strong>Se connecter</strong>. Le CRM ouvre ensuite la page d’accueil.'
+      'Clique sur <strong>Se connecter</strong>. Le HUB ouvre ensuite la page d’accueil.'
     ])}
-    ${callout('Bon reflexe', 'En cas de page blanche apres un rafraichissement, reviens sur l’adresse principale du CRM puis reconnecte-toi si necessaire.')}
+    ${callout('Bon reflexe', 'En cas de page blanche apres un rafraichissement, reviens sur l’adresse principale du HUB puis reconnecte-toi si necessaire.')}
 
     <h3>Le menu de gauche</h3>
     ${figure(cap('menu-documents'))}
     ${bullets([
       '<strong>Tableau de bord</strong> doit rester le premier lien pour revenir a l’accueil.',
-      '<strong>Applications CRM</strong> contient les modules operationnels : reservations, location materiel, rapport de visite, ROMUS.',
+      '<strong>Applications HUB</strong> contient les modules operationnels : reservations, location materiel, rapport de visite, ROMUS.',
       "<strong>Comptabilite</strong> regroupe Controle caisse, Demandes d'acompte, Remise de cheques et Addvance.",
       '<strong>Documents</strong> regroupe Promo, Fiches techniques et Procedures.',
       '<strong>Administration</strong> est reserve aux profils autorises.'
@@ -689,7 +689,7 @@ function renderHtml(captured, capturedMobile) {
     <h3>La barre du haut</h3>
     ${bullets([
       '<strong>Site</strong> : change le site actif, par exemple Palissy ou Pastel.',
-      '<strong>Cloche</strong> : affiche les notifications lorsque le CRM en propose.',
+      '<strong>Cloche</strong> : affiche les notifications lorsque le HUB en propose.',
       '<strong>Profil</strong> : donne acces aux parametres du compte et a la deconnexion.'
     ])}
   </section>
@@ -729,7 +729,7 @@ function renderHtml(captured, capturedMobile) {
       'La vue <span class="pill">Mois</span> sert a voir l’occupation globale.',
       'La vue <span class="pill">Jour</span> sert a reserver rapidement un creneau precis.',
       'Un clic sur une reservation existante ouvre les informations detaillees dans une fenetre compacte.',
-      'Si le vehicule est deja reserve, le CRM bloque les creneaux incompatibles.'
+      'Si le vehicule est deja reserve, le HUB bloque les creneaux incompatibles.'
     ])}
   </section>
 
@@ -762,7 +762,7 @@ function renderHtml(captured, capturedMobile) {
     <h2>6. Conges</h2>
     ${figure(cap('conges'))}
     <p>
-      Le module conges remplace le suivi Excel. Il utilise les utilisateurs existants du CRM et les rattachements
+      Le module conges remplace le suivi Excel. Il utilise les utilisateurs existants du HUB et les rattachements
       au site selectionne, sans creer des salaries specifiques dans le module.
     </p>
     <h3>Comprendre le calendrier</h3>
@@ -776,9 +776,9 @@ function renderHtml(captured, capturedMobile) {
     ${steps([
       'Choisis le bon site dans la barre du haut.',
       'Clique sur la date concernee ou sur le bouton d’ajout si ton profil l’autorise.',
-      'Selectionne l’utilisateur CRM existant.',
+      'Selectionne l’utilisateur HUB existant.',
       'Renseigne le type de conge, la date de debut, la date de fin et la demi-journee si necessaire.',
-      'Valide. Le CRM signale les conflits si une absence incompatible existe deja.'
+      'Valide. Le HUB signale les conflits si une absence incompatible existe deja.'
     ])}
   </section>
 
@@ -799,7 +799,7 @@ function renderHtml(captured, capturedMobile) {
     ])}
     <h3>Creer un rapport de visite</h3>
     ${steps([
-      'Ouvre <strong>Applications CRM &gt; Rapport de visite</strong>.',
+      'Ouvre <strong>Applications HUB &gt; Rapport de visite</strong>.',
       'Verifie le site actif en haut de page.',
       'Clique sur <strong>Nouveau rapport</strong>.',
       'Choisis la date, le representant, le statut et precise lâ€™objectif de la tournee.',
@@ -937,11 +937,11 @@ function renderHtml(captured, capturedMobile) {
     <h2>12. Tapis ROMUS</h2>
     ${figure(cap('tapis-romus'))}
     <p>
-      Le module Tapis ROMUS integre l’outil de generation du bon de commande dans le CRM.
+      Le module Tapis ROMUS integre l’outil de generation du bon de commande dans le HUB.
       L’objectif est d’obtenir un PDF propre et exploitable sans quitter l’environnement Martin Sols.
     </p>
     ${steps([
-      'Ouvre <strong>Applications CRM &gt; Tapis ROMUS</strong>.',
+      'Ouvre <strong>Applications HUB &gt; Tapis ROMUS</strong>.',
       'Renseigne les informations client, chantier et tapis.',
       'Complete soigneusement les mesures.',
       'Verifie le recapitulatif avant generation.',
@@ -959,7 +959,7 @@ function renderHtml(captured, capturedMobile) {
     ${bullets([
       'Ouvre le profil depuis l’avatar en haut a droite ou depuis <strong>/pages/account-settings</strong>.',
       'Modifie uniquement les informations exactes et professionnelles.',
-      'Apres modification de l’email ou du mot de passe, reconnecte-toi si le CRM le demande.',
+      'Apres modification de l’email ou du mot de passe, reconnecte-toi si le HUB le demande.',
       'Signale tout probleme de droit ou de site a un administrateur.'
     ])}
   </section>
@@ -971,7 +971,7 @@ function renderHtml(captured, capturedMobile) {
       ${figure(mobile('mobile-location'), 'mobile')}
     </div>
     <p>
-      Le CRM est responsive : les memes modules sont disponibles sur ordinateur, tablette et smartphone.
+      Le HUB est responsive : les memes modules sont disponibles sur ordinateur, tablette et smartphone.
       Sur petit ecran, le menu passe par le bouton hamburger pour laisser la place au contenu.
     </p>
     ${bullets([
@@ -986,7 +986,7 @@ function renderHtml(captured, capturedMobile) {
     <h2>Bonnes pratiques et depannage</h2>
     <div class="faq-grid">
       ${moduleCard('Je ne vois pas un module', 'Verifie le site actif puis demande a un administrateur de controler tes droits par site et module.')}
-      ${moduleCard('Une page semble blanche', 'Recharge depuis l’adresse principale du CRM. Si le souci persiste, deconnecte-toi puis reconnecte-toi.')}
+      ${moduleCard('Une page semble blanche', 'Recharge depuis l’adresse principale du HUB. Si le souci persiste, deconnecte-toi puis reconnecte-toi.')}
       ${moduleCard("Une demande d'acompte manque", "Verifie le site actif, le filtre de statut et les droits du module Demandes d'acompte.")}
       ${moduleCard('Une reservation ne passe pas', 'Controle la date, le creneau et les conflits existants dans le planning.')}
       ${moduleCard('L’OCR cheque se trompe', 'Corrige le nom et le montant manuellement. La photo sert d’aide, pas de validation automatique definitive.')}
@@ -1002,7 +1002,7 @@ function renderHtml(captured, capturedMobile) {
       'Signaler rapidement les erreurs de droit, menu ou affichage.'
     ])}
     <p class="footer-note">
-      Guide CRM Martin Sols. Les captures refletent l’interface accessible au compte utilise pendant la generation.<br>
+      Guide HUB Martin Sols. Les captures refletent l’interface accessible au compte utilise pendant la generation.<br>
       Création visuelle et conception CRM : www.jp2creation.fr
     </p>
   </section>

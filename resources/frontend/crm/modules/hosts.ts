@@ -87,7 +87,7 @@ export const hostRoutes: CrmHostRoute[] = [
   {
     className: 'crm-pages-module-host',
     id: 'crm-pages-root',
-    label: 'Pages CRM',
+    label: 'Pages HUB',
     paths: ['/pages-crm'],
     prefix: '/pages-crm/',
   },
@@ -154,7 +154,7 @@ async function clearCrmRuntimeCaches(): Promise<void> {
   if (typeof caches !== 'undefined') {
     const keys = await caches.keys();
 
-    await Promise.all(keys.filter((key) => key.startsWith('martin-sols-crm-')).map((key) => caches.delete(key)));
+    await Promise.all(keys.filter((key) => key.startsWith('martin-sols-hub-')).map((key) => caches.delete(key)));
   }
 
   if (navigator.serviceWorker) {

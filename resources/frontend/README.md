@@ -1,8 +1,8 @@
-# CRM Frontend
+# HUB Frontend
 
-This directory is the versioned source for the CRM browser application.
+This directory is the versioned source for the HUB browser application.
 
-`resources/frontend/crm` is the active Laravel/Vite shell. It owns CRM boot code,
+`resources/frontend/crm` is the active Laravel/Vite shell. It owns HUB boot code,
 shared API helpers, mobile/PWA bridges, fallback navigation, shared styles, and
 module registration.
 
@@ -15,5 +15,5 @@ compatibility bridges belong in the versioned TypeScript sources.
 logos and PWA icons. They are published to `public/assets` by
 `php artisan crm:publish-static-assets --force --clean`.
 
-New CRM frontend work should start in `resources/frontend/crm` or in module
+New HUB frontend work should start in `resources/frontend/crm` or in module
 `resources/assets` files, not by editing generated files in `public`.
