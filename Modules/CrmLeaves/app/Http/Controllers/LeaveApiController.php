@@ -41,6 +41,8 @@ class LeaveApiController extends Controller
                 'export_options' => $this->json($leaves->exportOptions($actor, $body)),
                 'export_pdf' => $this->pdf($leaves->exportPdf($actor, $body)),
                 'save_leave' => $this->json($leaves->saveLeave($actor, $body)),
+                'approve_leave' => $this->json($leaves->approveLeave($actor, $body)),
+                'refuse_leave' => $this->json($leaves->refuseLeave($actor, $body)),
                 'delete_leave' => $this->json($leaves->deleteLeave($actor, $body)),
                 default => $this->json(['ok' => false, 'error' => 'Action inconnue'], 404),
             };

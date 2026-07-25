@@ -73,6 +73,9 @@ class LeaveService
             'ok' => true,
             'user' => [
                 'id' => $actor->id,
+                'employeeId' => $employees
+                    ->first(fn (CrmLeaveEmployee $employee): bool => (int) $employee->crm_user_id === (int) $actor->id)
+                    ?->id,
                 'name' => $actor->name,
                 'role' => $actor->role,
                 'permissions' => $this->access->permissionNames($actor),
@@ -218,7 +221,7 @@ class LeaveService
             }
 
             $period = $this->choice((string) ($data['period'] ?? 'full'), CrmLeavePeriod::values(), CrmLeavePeriod::Full->value);
-            $status = $this->choice((string) ($data['status'] ?? 'approved'), CrmLeaveStatus::values(), CrmLeaveStatus::Approved->value);
+            $requestedStatus = $this->choice((string) ($data['status'] ?? 'approved'), CrmLeaveStatus::values(), CrmLeaveStatus::Approved->value);
 
             if ($period !== CrmLeavePeriod::Full->value && $startDate !== $endDate) {
                 $this->fail('Une demi-journee doit commencer et finir le meme jour', 400, 'invalid_half_day_period');
@@ -240,7 +243,8 @@ class LeaveService
             }
 
             $selectedSiteId = $this->requireEmployeeSiteAccess($actor, $employee, $siteId);
-            $this->requireSitePermission($actor, $selectedSiteId, 'conges.manage');
+            $canManageSelectedSite = $this->canOnSite($actor, $selectedSiteId, 'conges.manage');
+            $isOwnEmployee = $this->isEmployeeLinkedToActor($employee, $actor);
 
             $entry = $id > 0
                 ? CrmLeaveEntry::query()->lockForUpdate()->find($id)
@@ -254,6 +258,9 @@ class LeaveService
                 $this->fail('Un conge valide ne peut etre modifie que par un administrateur', 403, 'approved_leave_locked');
             }
 
+            $canManageCurrentSite = $canManageSelectedSite;
+            $isOwnCurrentEntry = false;
+
             if ($entry->exists) {
                 $currentEmployee = CrmLeaveEmployee::query()
                     ->lockForUpdate()
@@ -264,8 +271,27 @@ class LeaveService
                 }
 
                 $currentSiteId = $this->requireEmployeeSiteAccess($actor, $currentEmployee, $siteId);
-                $this->requireSitePermission($actor, $currentSiteId, 'conges.manage');
+                $canManageCurrentSite = $this->canOnSite($actor, $currentSiteId, 'conges.manage');
+                $isOwnCurrentEntry = $this->isEmployeeLinkedToActor($currentEmployee, $actor);
             }
+
+            if (! $canManageSelectedSite && ! $isOwnEmployee) {
+                $this->fail('Droit insuffisant : conges.manage', 403);
+            }
+
+            if ($entry->exists && ! $canManageCurrentSite) {
+                if (! $isOwnCurrentEntry || $entry->status !== CrmLeaveStatus::Pending->value) {
+                    $this->fail('Seules vos demandes en attente peuvent etre modifiees', 403, 'pending_leave_required');
+                }
+
+                if ((int) $entry->employee_id !== $employeeId) {
+                    $this->fail('Utilisateur HUB non modifiable sur une demande personnelle', 403, 'employee_change_forbidden');
+                }
+            }
+
+            $status = ($canManageSelectedSite && $canManageCurrentSite)
+                ? $requestedStatus
+                : ($entry->exists ? (string) $entry->status : CrmLeaveStatus::Pending->value);
 
             if ($status !== CrmLeaveStatus::Refused->value && $this->conflicts->leaveOverlaps($employeeId, $startDate, $endDate, $period, $id > 0 ? $id : null)) {
                 $this->fail('Un conge existe deja sur cette periode', 409, 'leave_overlap');
@@ -318,6 +344,16 @@ class LeaveService
         });
     }
 
+    public function approveLeave(CrmUser $actor, array $data): array
+    {
+        return $this->reviewLeave($actor, $data, CrmLeaveStatus::Approved);
+    }
+
+    public function refuseLeave(CrmUser $actor, array $data): array
+    {
+        return $this->reviewLeave($actor, $data, CrmLeaveStatus::Refused);
+    }
+
     public function deleteLeave(CrmUser $actor, array $data): array
     {
         $this->requireModule($actor);
@@ -346,7 +382,13 @@ class LeaveService
             }
 
             $selectedSiteId = $this->requireEmployeeSiteAccess($actor, $employee, $siteId);
-            $this->requireSitePermission($actor, $selectedSiteId, 'conges.manage');
+            $canManage = $this->canOnSite($actor, $selectedSiteId, 'conges.manage');
+            $isOwnPendingRequest = $this->isEmployeeLinkedToActor($employee, $actor)
+                && $entry->status === CrmLeaveStatus::Pending->value;
+
+            if (! $canManage && ! $isOwnPendingRequest) {
+                $this->fail('Droit insuffisant : conges.manage', 403);
+            }
 
             $snapshot = $entry->only([
                 'id',
@@ -365,6 +407,81 @@ class LeaveService
             $this->activity->log($actor, 'suppression conge', "Conge #{$id} - {$employee->name}");
 
             return ['ok' => true, 'deleted' => true];
+        });
+    }
+
+    private function reviewLeave(CrmUser $actor, array $data, CrmLeaveStatus $status): array
+    {
+        $this->requireModule($actor);
+
+        return DB::transaction(function () use ($actor, $data, $status): array {
+            $id = (int) ($data['id'] ?? 0);
+            $siteId = $this->optionalPositiveInt($data['siteId'] ?? $data['site_id'] ?? null);
+
+            if ($id <= 0) {
+                $this->fail('Conge requis', 400);
+            }
+
+            $entry = CrmLeaveEntry::query()->lockForUpdate()->find($id);
+
+            if (! $entry) {
+                $this->fail('Conge introuvable', 404);
+            }
+
+            $employee = CrmLeaveEmployee::query()->lockForUpdate()->find((int) $entry->employee_id);
+            if (! $employee) {
+                $this->fail('Utilisateur HUB introuvable', 404);
+            }
+
+            $selectedSiteId = $this->requireEmployeeSiteAccess($actor, $employee, $siteId);
+            $this->requireSitePermission($actor, $selectedSiteId, 'conges.manage');
+
+            if ($status !== CrmLeaveStatus::Refused && $this->conflicts->leaveOverlaps(
+                (int) $entry->employee_id,
+                $this->dateAttributeToString($entry->start_date),
+                $this->dateAttributeToString($entry->end_date),
+                (string) $entry->period,
+                (int) $entry->id,
+            )) {
+                $this->fail('Un conge existe deja sur cette periode', 409, 'leave_overlap');
+            }
+
+            if (
+                $status === CrmLeaveStatus::Approved
+                && (bool) config('crm.leaves.enforce_balances', false)
+                && ! $this->balances->canRequest(
+                    (int) $entry->employee_id,
+                    (string) $entry->type,
+                    CarbonImmutable::parse((string) $entry->start_date)->year,
+                    (float) $entry->duration_days,
+                    (int) $entry->id,
+                )
+            ) {
+                $this->fail('Solde insuffisant pour ce conge', 422, 'insufficient_balance');
+            }
+
+            $oldAttributes = $entry->only([
+                'employee_id',
+                'start_date',
+                'end_date',
+                'type',
+                'period',
+                'duration_days',
+                'status',
+            ]);
+
+            $entry->fill([
+                'status' => $status->value,
+                'notes' => array_key_exists('notes', $data) ? trim((string) $data['notes']) : $entry->notes,
+                'updated_by' => $actor->id,
+            ]);
+            $entry->save();
+            $this->balances->recordSavedEntry($entry, $actor, $oldAttributes);
+
+            $action = $status === CrmLeaveStatus::Approved ? 'validation conge' : 'refus conge';
+            $this->activity->log($actor, $action, "Conge #{$entry->id} - {$employee->name}");
+
+            return ['ok' => true, 'leave' => $this->entryRow($entry->refresh()->load('employee'))];
         });
     }
 
@@ -551,6 +668,11 @@ class LeaveService
     private function canOnSite(CrmUser $actor, int $siteId, string $permission): bool
     {
         return $this->access->canOnSite($actor, $siteId, 'conges', $permission);
+    }
+
+    private function isEmployeeLinkedToActor(CrmLeaveEmployee $employee, CrmUser $actor): bool
+    {
+        return (int) $employee->crm_user_id === (int) $actor->id;
     }
 
     /**
@@ -788,6 +910,8 @@ class LeaveService
             'status' => $entry->status ?: 'approved',
             'notes' => $entry->notes ?? '',
             'source' => $entry->source ?? 'crm',
+            'createdBy' => $entry->created_by ? (int) $entry->created_by : null,
+            'updatedBy' => $entry->updated_by ? (int) $entry->updated_by : null,
         ];
     }
 

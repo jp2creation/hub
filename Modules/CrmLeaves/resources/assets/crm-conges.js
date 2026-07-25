@@ -113,6 +113,35 @@
     return employees().find((employee) => Number(employee.id) === Number(state.filters.employeeId)) || null;
   }
 
+  function currentEmployee() {
+    const employeeId = Number(state.data?.user?.employeeId || 0);
+    if (!employeeId) return null;
+    return employees().find((employee) => Number(employee.id) === employeeId) || null;
+  }
+
+  function canManage() {
+    return Boolean(state.data?.user?.canManage);
+  }
+
+  function isOwnLeave(leave) {
+    const employee = currentEmployee();
+    return Boolean(employee && Number(leave?.employeeId) === Number(employee.id));
+  }
+
+  function canEditLeave(leave) {
+    if (canManage()) {
+      return leave?.status !== 'approved' || state.data?.user?.role === 'admin';
+    }
+    return isOwnLeave(leave) && leave?.status === 'pending';
+  }
+
+  function canDeleteLeave(leave) {
+    if (canManage()) {
+      return leave?.status !== 'approved' || state.data?.user?.role === 'admin';
+    }
+    return isOwnLeave(leave) && leave?.status === 'pending';
+  }
+
   function activeSiteId() {
     const fromApi = Number(window.CRM_ACTIVE_SITE?.getSiteId?.() || 0);
     if (Number.isFinite(fromApi) && fromApi > 0) return fromApi;
@@ -299,15 +328,22 @@
   }
 
   function openModal(leave) {
+    const ownEmployee = currentEmployee();
+    const fallbackEmployee = canManage() ? selectedEmployee() || employees()[0] : ownEmployee || employees()[0];
+    const existingLeave = Boolean(leave?.id);
+
     state.modal = {
       id: leave?.id || '',
-      employeeId: leave?.employeeId || selectedEmployee()?.id || employees()[0]?.id || '',
+      employeeId: leave?.employeeId || fallbackEmployee?.id || '',
       startDate: leave?.startDate || formatDate(new Date()),
       endDate: leave?.endDate || leave?.startDate || formatDate(new Date()),
       type: leave?.type || 'conge',
       period: leave?.period || 'full',
-      status: leave?.status || 'approved',
+      status: leave?.status || (canManage() ? 'approved' : 'pending'),
       notes: leave?.notes || '',
+      readonly: existingLeave && !canEditLeave(leave),
+      canDelete: existingLeave && canDeleteLeave(leave),
+      canReview: existingLeave && canManage() && ['pending', 'planned'].includes(leave?.status),
     };
     render();
   }
@@ -424,9 +460,12 @@
         <div>
           <p class="leaves-kicker">Equipe</p>
           <h1 class="leaves-title">Congés</h1>
-          <p class="leaves-subtitle">Planning des absences du site ${esc(activeSiteName())}</p>
+          <p class="leaves-subtitle">Demandes, absences, arrêts et validations du site ${esc(activeSiteName())}</p>
         </div>
         <div class="leaves-header-actions">
+          <button type="button" class="leaves-button leaves-button-primary" data-add-request>
+            <span>+ Demande</span>
+          </button>
           <button type="button" class="leaves-button leaves-button-export" data-export-pdf>
             <span aria-hidden="true">PDF</span>
             <span>Exporter</span>
@@ -441,6 +480,8 @@
       users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
       calendar: '<path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/>',
       check: '<path d="M20 6 9 17l-5-5"/>',
+      clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+      alert: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
       today: '<path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 15h.01"/><path d="M12 15h.01"/><path d="M16 15h.01"/>',
     };
 
@@ -496,6 +537,77 @@
 
   function isWeekend(date) {
     return date.getDay() === 0 || date.getDay() === 6;
+  }
+
+  function weekdayLetter(date) {
+    return ['D', 'L', 'M', 'M', 'J', 'V', 'S'][date.getDay()] || '';
+  }
+
+  function isoWeekNumber(date) {
+    const current = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNumber = current.getUTCDay() || 7;
+    current.setUTCDate(current.getUTCDate() + 4 - dayNumber);
+    const yearStart = new Date(Date.UTC(current.getUTCFullYear(), 0, 1));
+
+    return Math.ceil(((current - yearStart) / 86400000 + 1) / 7);
+  }
+
+  function wallMonthTitle(date) {
+    const months = [
+      'JANVIER',
+      'FEVRIER',
+      'MARS',
+      'AVRIL',
+      'MAI',
+      'JUIN',
+      'JUILLET',
+      'AOUT',
+      'SEPTEMBRE',
+      'OCTOBRE',
+      'NOVEMBRE',
+      'DECEMBRE',
+    ];
+
+    return `${months[date.getMonth()] || 'MOIS'} ${date.getFullYear()}`;
+  }
+
+  function wallEmployeeLabel(name) {
+    const firstName = String(name || '')
+      .trim()
+      .split(/\s+/)[0];
+
+    return (firstName || '').toLocaleUpperCase('fr-FR');
+  }
+
+  function isZoneA(date) {
+    const value = formatDate(date);
+    const ranges = [
+      ['2026-02-07', '2026-02-23'],
+      ['2026-04-04', '2026-04-20'],
+      ['2026-05-14', '2026-05-17'],
+      ['2026-07-04', '2026-08-31'],
+      ['2026-12-19', '2027-01-04'],
+    ];
+
+    return ranges.some(([from, to]) => value >= from && value <= to);
+  }
+
+  function wallWeekendClass(date) {
+    if (date.getDay() === 6) return 'is-saturday';
+    if (date.getDay() === 0) return 'is-sunday';
+    return '';
+  }
+
+  function wallLeaveColor(leave) {
+    return (
+      {
+        conge: '#ffff00',
+        rtt: '#7dd3fc',
+        absence: '#fb7185',
+        formation: '#c4b5fd',
+        maladie: '#cbd5e1',
+      }[leave?.type] || normalizeColor(typeMeta(leave?.type).color, '#ffff00')
+    );
   }
 
   function leaveTypeCode(type) {
@@ -629,6 +741,127 @@
     `;
   }
 
+  function wallMonths() {
+    const months = [];
+    for (let offset = -3; offset <= 1; offset += 1) {
+      months.push(new Date(state.month.getFullYear(), state.month.getMonth() + offset, 1));
+    }
+
+    return months;
+  }
+
+  function wallMonthDays(month) {
+    const days = [];
+    const current = new Date(month.getFullYear(), month.getMonth(), 1);
+    const last = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+
+    while (current <= last) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+
+    return days;
+  }
+
+  function wallLeavesForDate(employee, date, leaves) {
+    const value = formatDate(date);
+
+    return leaves
+      .filter((leave) => leave.status !== 'refused')
+      .filter((leave) => Number(leave.employeeId) === Number(employee.id))
+      .filter((leave) => leave.startDate <= value && leave.endDate >= value)
+      .sort((a, b) => a.startDate.localeCompare(b.startDate) || a.endDate.localeCompare(b.endDate));
+  }
+
+  function renderWallMonth(month, leaves) {
+    const days = wallMonthDays(month);
+    const rows = exportEmployees(leaves);
+
+    return `
+      <section class="leave-wall-month">
+        <table class="leave-wall-table" style="--day-count:${days.length}">
+          <colgroup>
+            <col class="leave-wall-col-user">
+            ${days.map(() => '<col class="leave-wall-col-day">').join('')}
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="leave-wall-month-title" colspan="${days.length + 1}">${esc(wallMonthTitle(month))}</th>
+            </tr>
+            <tr>
+              <th class="leave-wall-label">zone A</th>
+              ${days.map((day) => `<th class="leave-wall-zone ${isZoneA(day) ? 'is-zone-a' : ''}"></th>`).join('')}
+            </tr>
+            <tr>
+              <th class="leave-wall-label">semaine</th>
+              ${days.map((day, index) => `<th class="leave-wall-week">${day.getDay() === 1 || index === 0 ? esc(isoWeekNumber(day)) : ''}</th>`).join('')}
+            </tr>
+            <tr>
+              <th class="leave-wall-label"></th>
+              ${days.map((day) => `<th class="leave-wall-weekday ${wallWeekendClass(day)}">${esc(weekdayLetter(day))}</th>`).join('')}
+            </tr>
+            <tr>
+              <th class="leave-wall-label"></th>
+              ${days.map((day) => `<th class="leave-wall-day-number ${wallWeekendClass(day)}">${day.getDate()}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${
+              rows.length
+                ? rows
+                    .map(
+                      (employee) => `
+                        <tr>
+                          <th class="leave-wall-user">${esc(wallEmployeeLabel(employee.name))}</th>
+                          ${days
+                            .map((day) => {
+                              const leavesForDay = wallLeavesForDate(employee, day, leaves);
+                              const primary = leavesForDay[0];
+                              const period = primary?.period || 'full';
+                              const actionAttr = primary?.id ? `data-edit-leave="${esc(primary.id)}"` : '';
+                              const title = primary
+                                ? `${employee.name} - ${typeMeta(primary.type).label} - ${dateLabel(formatDate(day))} - ${statusLabel(primary.status)}`
+                                : `${employee.name} - ${dateLabel(formatDate(day))}`;
+
+                              return `
+                                <td class="leave-wall-cell ${wallWeekendClass(day)} ${primary ? 'has-leave' : ''}" ${actionAttr} title="${esc(title)}">
+                                  ${
+                                    primary
+                                      ? `<span class="leave-wall-fill is-${esc(period)} ${primary.status === 'pending' ? 'is-pending' : ''}" style="--wall-color:${esc(wallLeaveColor(primary))}"></span>`
+                                      : ''
+                                  }
+                                  ${leavesForDay.length > 1 ? '<span class="leave-wall-more">+</span>' : ''}
+                                </td>
+                              `;
+                            })
+                            .join('')}
+                        </tr>
+                      `,
+                    )
+                    .join('')
+                : `
+                  <tr>
+                    <th class="leave-wall-user">AUCUN</th>
+                    ${days.map((day) => `<td class="leave-wall-cell ${wallWeekendClass(day)}"></td>`).join('')}
+                  </tr>
+                `
+            }
+          </tbody>
+        </table>
+      </section>
+    `;
+  }
+
+  function renderWallPlanning(leaves) {
+    return `
+      <div class="leave-wall-sheet">
+        ${wallMonths()
+          .map((month) => renderWallMonth(month, leaves))
+          .join('')}
+      </div>
+    `;
+  }
+
   function exportDocumentHtml() {
     const leaves = monthReportLeaves();
     const title = `Congés - ${activeSiteName()} - ${monthLabel(state.month)}`;
@@ -739,6 +972,22 @@
     return data;
   }
 
+  async function refreshData() {
+    state.data = await request('bootstrap');
+    syncEmployeeFilter();
+  }
+
+  async function reviewLeave(id, approved) {
+    try {
+      await request(approved ? 'approve_leave' : 'refuse_leave', { id: Number(id) });
+      state.modal = null;
+      await refreshData();
+      render();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Action impossible');
+    }
+  }
+
   async function load() {
     if (!canRender()) return;
 
@@ -794,6 +1043,86 @@
       #crm-leaves-module .leave-summary-card small { display:block; color:var(--color-secondary-500,#64748b); font-size:.73rem; font-weight:900; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       #crm-leaves-module .leave-summary-card strong { display:block; margin:.18rem 0; color:var(--color-secondary-900,#0f172a); font-size:1.2rem; font-weight:950; line-height:1.08; letter-spacing:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
       #crm-leaves-module .leave-summary-card em { display:block; color:var(--color-secondary-400,#94a3b8); font-size:.72rem; font-style:normal; font-weight:750; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      #crm-leaves-module .leave-workflow-card { overflow:hidden; }
+      #crm-leaves-module .leave-request-list { display:grid; gap:.65rem; padding:1rem; }
+      #crm-leaves-module .leave-request-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.6rem; align-items:center; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.8rem; background:#fff; padding:.55rem; }
+      #crm-leaves-module .leave-request-row:hover { border-color:color-mix(in srgb,var(--request-color,#95002e) 45%,#e2e8f0); background:color-mix(in srgb,var(--request-color,#95002e) 4%,white); }
+      #crm-leaves-module .leave-request-main { display:grid; min-width:0; grid-template-columns:.9rem minmax(0,1fr) auto; align-items:center; gap:.55rem; border:0; background:transparent; color:inherit; padding:.15rem; text-align:left; }
+      #crm-leaves-module .leave-request-dot { width:.72rem; height:.72rem; border-radius:999px; background:var(--request-color,#95002e); box-shadow:0 0 0 .22rem color-mix(in srgb,var(--request-color,#95002e) 14%,white); }
+      #crm-leaves-module .leave-request-text { display:block; min-width:0; }
+      #crm-leaves-module .leave-request-text strong { display:block; overflow:hidden; color:var(--color-secondary-900,#0f172a); font-size:.86rem; font-weight:900; text-overflow:ellipsis; white-space:nowrap; }
+      #crm-leaves-module .leave-request-text small { display:block; margin-top:.12rem; overflow:hidden; color:var(--color-secondary-500,#64748b); font-size:.73rem; font-weight:750; text-overflow:ellipsis; white-space:nowrap; }
+      #crm-leaves-module .leave-status-pill { display:inline-flex; min-height:1.65rem; align-items:center; justify-content:center; border-radius:999px; background:var(--color-surface-100,#f1f5f9); color:var(--color-secondary-600,#475569); padding:.25rem .55rem; font-size:.7rem; font-weight:900; white-space:nowrap; }
+      #crm-leaves-module .leave-status-pill.is-approved { background:#dcfce7; color:#166534; }
+      #crm-leaves-module .leave-status-pill.is-pending { background:#fff7ed; color:#c2410c; }
+      #crm-leaves-module .leave-status-pill.is-planned { background:#eff6ff; color:#1d4ed8; }
+      #crm-leaves-module .leave-status-pill.is-refused { background:#fee2e2; color:#991b1b; }
+      #crm-leaves-module .leave-request-actions { display:flex; align-items:center; justify-content:flex-end; gap:.35rem; }
+      #crm-leaves-module .leave-icon-action { display:grid; place-items:center; width:2.1rem; height:2.1rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.7rem; background:#fff; color:var(--color-secondary-600,#475569); font-size:1rem; font-weight:950; line-height:1; }
+      #crm-leaves-module .leave-icon-action.is-approve { border-color:#bbf7d0; background:#f0fdf4; color:#15803d; }
+      #crm-leaves-module .leave-icon-action.is-refuse { border-color:#fecaca; background:#fef2f2; color:#be123c; }
+      #crm-leaves-module .leave-request-hint { color:var(--color-secondary-400,#94a3b8); font-size:.7rem; font-weight:850; white-space:nowrap; }
+      #crm-leaves-module .leave-report-card { overflow:hidden; }
+      #crm-leaves-module .leave-report-scroll { overflow:auto; padding:1rem; }
+      #crm-leaves-module .pdf-sheet { min-width:56rem; overflow:hidden; border:1px solid #dfe7e1; border-radius:.65rem; background:#fff; }
+      #crm-leaves-module .pdf-month-band { margin-left:12rem; background:#16695c; color:#fff; padding:.35rem .5rem; font-size:.78rem; font-weight:950; text-align:center; text-transform:capitalize; }
+      #crm-leaves-module .pdf-planning-table { width:100%; table-layout:fixed; border-collapse:collapse; }
+      #crm-leaves-module .pdf-col-employee { width:9.5rem; }
+      #crm-leaves-module .pdf-col-total { width:3.2rem; }
+      #crm-leaves-module .pdf-planning-table th,
+      #crm-leaves-module .pdf-planning-table td { border:1px solid #e6ebe7; padding:0; text-align:center; vertical-align:middle; }
+      #crm-leaves-module .pdf-employee-head,
+      #crm-leaves-module .pdf-total-head { background:#fff8ed; color:#254236; font-size:.62rem; font-weight:950; text-transform:uppercase; }
+      #crm-leaves-module .pdf-weekday-head { height:1.35rem; background:#f8fafc; color:#64748b; font-size:.58rem; font-weight:900; text-transform:lowercase; }
+      #crm-leaves-module .pdf-day-head { height:1.5rem; background:#fff; color:#172033; font-size:.7rem; font-weight:900; }
+      #crm-leaves-module .pdf-weekday-head.is-weekend,
+      #crm-leaves-module .pdf-day-head.is-weekend,
+      #crm-leaves-module .pdf-date-cell.is-weekend { background:#f6f7f8; color:#94a3b8; }
+      #crm-leaves-module .pdf-employee-cell { height:2rem; background:#fff8ed; color:#254236; padding:.25rem .45rem!important; font-size:.72rem; font-weight:850; text-align:left!important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      #crm-leaves-module .pdf-total-cell { background:#f0f6f3; color:#254236; font-size:.78rem; font-weight:950; }
+      #crm-leaves-module .pdf-date-cell { height:2rem; background:#fff; padding:.12rem!important; }
+      #crm-leaves-module .pdf-date-cell.has-leave { background:#fffdf8; }
+      #crm-leaves-module .pdf-absence-chip { display:flex; min-height:1.05rem; align-items:center; justify-content:center; gap:.08rem; border:1px solid var(--absence-color); border-radius:.25rem; background:color-mix(in srgb,var(--absence-color) 34%,white); color:#172033; font-size:.55rem; font-weight:950; line-height:1; }
+      #crm-leaves-module .pdf-absence-chip + .pdf-absence-chip { margin-top:.08rem; }
+      #crm-leaves-module .pdf-absence-chip small { font-size:.48rem; font-weight:950; opacity:.85; }
+      #crm-leaves-module .pdf-absence-chip.is-pending { border-style:dashed; background:#fff; }
+      #crm-leaves-module .pdf-more { display:block; color:#64748b; font-size:.52rem; font-weight:900; line-height:1; }
+      #crm-leaves-module .pdf-legend { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem .7rem; border-top:1px solid var(--color-surface-200,#e2e8f0); padding:.8rem 1rem; color:#334155; font-size:.74rem; font-weight:800; }
+      #crm-leaves-module .pdf-legend strong { margin-right:.1rem; color:#172033; font-size:.72rem; text-transform:uppercase; }
+      #crm-leaves-module .pdf-legend span { display:inline-flex; align-items:center; gap:.32rem; }
+      #crm-leaves-module .pdf-legend i { width:.6rem; height:.6rem; flex:0 0 auto; border-radius:.2rem; border:1px solid rgba(15,23,42,.08); }
+      #crm-leaves-module .pdf-pending-mark { width:.75rem; height:.55rem; border:1px dashed #64748b; border-radius:.16rem; background:#fff; }
+      #crm-leaves-module .leave-wall-card { background:#fff; }
+      #crm-leaves-module .leave-wall-scroll { background:#fff; padding:.95rem; }
+      #crm-leaves-module .leave-wall-sheet { display:grid; min-width:68rem; gap:.35rem; border:1px solid #111827; background:#fff; padding:.35rem; box-shadow:0 16px 38px rgba(15,23,42,.08); }
+      #crm-leaves-module .leave-wall-month { overflow:hidden; background:#fff; }
+      #crm-leaves-module .leave-wall-table { width:100%; table-layout:fixed; border-collapse:collapse; color:#111827; font-family:Arial, Helvetica, sans-serif; }
+      #crm-leaves-module .leave-wall-col-user { width:6.8rem; }
+      #crm-leaves-module .leave-wall-col-day { width:calc((100% - 6.8rem) / var(--day-count)); }
+      #crm-leaves-module .leave-wall-table th,
+      #crm-leaves-module .leave-wall-table td { border:1px solid #111827; padding:0; text-align:center; vertical-align:middle; }
+      #crm-leaves-module .leave-wall-month-title { height:1rem; background:#fff; color:#111827; font-size:.58rem; font-weight:950; line-height:1; text-transform:uppercase; }
+      #crm-leaves-module .leave-wall-label { height:.82rem; background:#fff; color:#111827; font-size:.48rem; font-weight:950; line-height:1; text-transform:lowercase; }
+      #crm-leaves-module .leave-wall-zone,
+      #crm-leaves-module .leave-wall-week,
+      #crm-leaves-module .leave-wall-weekday,
+      #crm-leaves-module .leave-wall-day-number { height:.82rem; background:#fff; color:#111827; font-size:.48rem; font-weight:800; line-height:1; }
+      #crm-leaves-module .leave-wall-zone.is-zone-a { background:#ff0000; }
+      #crm-leaves-module .leave-wall-weekday.is-saturday,
+      #crm-leaves-module .leave-wall-day-number.is-saturday,
+      #crm-leaves-module .leave-wall-cell.is-saturday { background:#e7e6fb; }
+      #crm-leaves-module .leave-wall-weekday.is-sunday,
+      #crm-leaves-module .leave-wall-day-number.is-sunday,
+      #crm-leaves-module .leave-wall-cell.is-sunday { background:#82b7f6; }
+      #crm-leaves-module .leave-wall-user { height:.86rem; background:#fff; color:#111827; padding:0 .25rem!important; font-size:.48rem; font-weight:950; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-transform:uppercase; }
+      #crm-leaves-module .leave-wall-cell { position:relative; height:.86rem; background:#fff; }
+      #crm-leaves-module .leave-wall-cell.has-leave { cursor:pointer; }
+      #crm-leaves-module .leave-wall-cell.has-leave:hover { outline:2px solid rgb(var(--theme-primary)); outline-offset:-2px; }
+      #crm-leaves-module .leave-wall-fill { position:absolute; inset:0; background:var(--wall-color,#ffff00); }
+      #crm-leaves-module .leave-wall-fill.is-morning { bottom:50%; }
+      #crm-leaves-module .leave-wall-fill.is-afternoon { top:50%; }
+      #crm-leaves-module .leave-wall-fill.is-pending { background:repeating-linear-gradient(45deg,var(--wall-color,#ffff00) 0 4px,#fff 4px 7px); }
+      #crm-leaves-module .leave-wall-more { position:absolute; inset:.05rem .05rem auto auto; z-index:1; display:grid; place-items:center; width:.48rem; height:.48rem; border-radius:999px; background:#111827; color:#fff; font-size:.35rem; font-weight:950; line-height:1; }
       #crm-leaves-module .leave-workspace { display:grid; gap:1.5rem; }
       #crm-leaves-module .leave-card { border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.75rem; background:#fff; overflow:hidden; }
       #crm-leaves-module .leave-card-pad { padding:1rem; }
@@ -867,8 +1196,11 @@
       #crm-leaves-module .leaves-export-member input { width:1rem; min-height:1rem; accent-color:rgb(var(--theme-primary)); }
       #crm-leaves-module .leaves-export-member strong { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--color-secondary-900,#0f172a); font-size:.82rem; font-weight:900; }
       #crm-leaves-module .leaves-export-member small { display:block; margin-top:.12rem; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--color-secondary-500,#64748b); font-size:.68rem; font-weight:750; }
+      #crm-leaves-module .leave-person-card { display:flex; min-height:2.8rem; align-items:center; gap:.65rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.75rem; background:var(--color-surface-50,#f8fafc); padding:.7rem .8rem; }
+      #crm-leaves-module .leave-person-card strong { min-width:0; flex:1 1 auto; overflow:hidden; color:var(--color-secondary-900,#0f172a); font-size:.88rem; font-weight:900; text-overflow:ellipsis; white-space:nowrap; }
       #crm-leaves-module label { color:#475569; font-size:.76rem; font-weight:800; }
       #crm-leaves-module input, #crm-leaves-module select, #crm-leaves-module textarea { min-height:2.4rem; width:100%; border:1px solid #cbd5e1; border-radius:.55rem; background:#fff; color:#0f172a; padding:.5rem .65rem; font-size:.85rem; }
+      #crm-leaves-module input:disabled, #crm-leaves-module select:disabled, #crm-leaves-module textarea:disabled { background:var(--color-surface-50,#f8fafc); color:var(--color-secondary-500,#64748b); }
       #crm-leaves-module textarea { min-height:5.2rem; resize:vertical; }
       #crm-leaves-module .leaves-actions { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; }
       #crm-leaves-module .leaves-button { display:inline-flex; min-height:2.35rem; align-items:center; justify-content:center; border:1px solid #e2e8f0; border-radius:.55rem; background:#fff; color:#334155; padding:.55rem .75rem; font-size:.84rem; font-weight:800; line-height:1; text-decoration:none; }
@@ -876,6 +1208,8 @@
       #crm-leaves-module .leaves-button:disabled { cursor:not-allowed; opacity:.55; }
       #crm-leaves-module .leaves-button-primary { border-color:rgb(var(--theme-primary)); background:rgb(var(--theme-primary)); color:#fff; }
       #crm-leaves-module .leaves-button-primary:hover { color:#fff; filter:brightness(.97); }
+      #crm-leaves-module .leaves-button-approve { border-color:#bbf7d0; background:#f0fdf4; color:#15803d; }
+      #crm-leaves-module .leaves-button-refuse { border-color:#fecaca; background:#fef2f2; color:#be123c; }
       #crm-leaves-module .leaves-notice { border:1px solid #fecaca; border-radius:.75rem; background:#fef2f2; color:#991b1b; padding:.75rem; font-size:.85rem; }
       .dark #crm-leaves-module .leave-summary-card,
       .dark #crm-leaves-module .leave-card,
@@ -1176,6 +1510,27 @@
         }
         #crm-leaves-module .leave-summary-card strong { font-size:1.05rem; }
         #crm-leaves-module .leave-summary-card em { white-space:normal; }
+        #crm-leaves-module .leave-request-row {
+          grid-template-columns:1fr;
+          gap:.45rem;
+        }
+        #crm-leaves-module .leave-request-actions {
+          justify-content:flex-start;
+          padding-left:1.6rem;
+        }
+        #crm-leaves-module .leave-request-main {
+          grid-template-columns:.85rem minmax(0,1fr);
+        }
+        #crm-leaves-module .leave-request-main .leave-status-pill {
+          grid-column:2;
+          justify-self:start;
+          margin-top:.15rem;
+        }
+        #crm-leaves-module .pdf-sheet { min-width:48rem; }
+        #crm-leaves-module .leave-wall-scroll { padding:.65rem; }
+        #crm-leaves-module .leave-wall-sheet { min-width:58rem; padding:.25rem; }
+        #crm-leaves-module .leave-wall-col-user { width:5.8rem; }
+        #crm-leaves-module .leave-wall-col-day { width:calc((100% - 5.8rem) / var(--day-count)); }
       }
     `;
     style.textContent =
@@ -1304,14 +1659,15 @@
 
   function renderSummary() {
     const usersCount = employees().length;
-    const plannedDays = monthLeaves()
-      .filter((leave) => ['planned', 'pending'].includes(leave.status))
+    const pendingDays = monthLeaves()
+      .filter((leave) => leave.status === 'pending')
       .reduce((sum, leave) => sum + daysCount(leave), 0);
     const usedDays = yearLeaves()
       .filter((leave) => leave.status === 'approved')
       .reduce((sum, leave) => sum + daysCount(leave), 0);
     const today = formatDate(new Date());
     const todayCount = leavesForDate(today).length;
+    const sicknessCount = monthLeaves().filter((leave) => leave.type === 'maladie').length;
 
     const cards = [
       {
@@ -1322,10 +1678,10 @@
         tone: '#2563eb',
       },
       {
-        label: 'Planifies',
-        value: `${formatDaysCount(plannedDays)} j`,
-        detail: monthLabel(state.month),
-        icon: 'calendar',
+        label: 'A valider',
+        value: `${formatDaysCount(pendingDays)} j`,
+        detail: pendingDays ? monthLabel(state.month) : 'Aucune demande',
+        icon: 'clock',
         tone: '#f59e0b',
       },
       {
@@ -1336,10 +1692,10 @@
         tone: 'rgb(var(--theme-primary,149 0 46))',
       },
       {
-        label: "Aujourd'hui",
+        label: 'Absences',
         value: todayCount,
-        detail: todayCount > 1 ? 'Absents ce jour' : 'Absent ce jour',
-        icon: 'today',
+        detail: sicknessCount ? `${sicknessCount} arrêt(s) ce mois` : 'Aujourd hui',
+        icon: 'alert',
         tone: '#0f766e',
       },
     ];
@@ -1364,6 +1720,115 @@
     `;
   }
 
+  function renderStatusPill(status) {
+    return `<span class="leave-status-pill is-${esc(status || 'approved')}">${esc(statusLabel(status))}</span>`;
+  }
+
+  function workflowLeaves() {
+    const leaves = state.data?.leaves || [];
+    const ownEmployee = currentEmployee();
+
+    if (canManage()) {
+      return leaves
+        .filter((leave) => ['pending', 'planned'].includes(leave.status))
+        .sort((a, b) => a.startDate.localeCompare(b.startDate) || a.employeeName.localeCompare(b.employeeName));
+    }
+
+    if (!ownEmployee) return [];
+
+    return leaves
+      .filter((leave) => Number(leave.employeeId) === Number(ownEmployee.id))
+      .sort((a, b) => b.startDate.localeCompare(a.startDate))
+      .slice(0, 6);
+  }
+
+  function renderWorkflowPanel() {
+    const list = workflowLeaves();
+    const title = canManage() ? 'Demandes à valider' : 'Mes demandes';
+    const subtitle = canManage()
+      ? 'Validation direction, refus ou modification avant affichage définitif.'
+      : 'Suivez les demandes déposées et leur statut de validation.';
+
+    return `
+      <section class="leave-card leave-workflow-card">
+        <div class="leave-card-head">
+          <div>
+            <h2 class="leave-card-title">${esc(title)}</h2>
+            <p class="leave-card-subtitle">${esc(subtitle)}</p>
+          </div>
+          <button type="button" class="leave-add-day" data-add-request>${canManage() ? '+ Ajouter' : '+ Poser'}</button>
+        </div>
+        <div class="leave-request-list">
+          ${
+            list.length
+              ? list
+                  .map((leave) => {
+                    const meta = typeMeta(leave.type);
+                    const color = normalizeColor(meta.color, '#38bdf8');
+                    const range =
+                      leave.startDate === leave.endDate
+                        ? dateLabel(leave.startDate)
+                        : `${dateLabel(leave.startDate)} au ${dateLabel(leave.endDate)}`;
+                    const editable = canEditLeave(leave);
+                    const canReview = canManage() && ['pending', 'planned'].includes(leave.status);
+
+                    return `
+                      <article class="leave-request-row" style="--request-color:${esc(color)}">
+                        <button type="button" class="leave-request-main" data-edit-leave="${leave.id}">
+                          <span class="leave-request-dot"></span>
+                          <span class="leave-request-text">
+                            <strong>${esc(leave.employeeName)}</strong>
+                            <small>${esc(meta.label)} - ${esc(periodLabel(leave.period))} - ${esc(range)}</small>
+                          </span>
+                          ${renderStatusPill(leave.status)}
+                        </button>
+                        <div class="leave-request-actions">
+                          ${
+                            canReview
+                              ? `
+                                <button type="button" class="leave-icon-action is-approve" data-approve="${leave.id}" aria-label="Valider">✓</button>
+                                <button type="button" class="leave-icon-action is-refuse" data-refuse="${leave.id}" aria-label="Refuser">×</button>
+                              `
+                              : editable
+                                ? '<span class="leave-request-hint">modifiable</span>'
+                                : '<span class="leave-request-hint">lecture</span>'
+                          }
+                        </div>
+                      </article>
+                    `;
+                  })
+                  .join('')
+              : `<div class="leave-day-empty">${canManage() ? 'Aucune demande en attente.' : 'Aucune demande enregistrée pour le moment.'}</div>`
+          }
+        </div>
+      </section>
+    `;
+  }
+
+  function renderTeamSheet() {
+    const leaves = filteredLeaves().filter((leave) => {
+      const first = formatDate(new Date(state.month.getFullYear(), state.month.getMonth() - 3, 1));
+      const last = formatDate(new Date(state.month.getFullYear(), state.month.getMonth() + 2, 0));
+
+      return leave.startDate <= last && leave.endDate >= first;
+    });
+
+    return `
+      <section class="leave-card leave-report-card leave-wall-card">
+        <div class="leave-card-head">
+          <div>
+            <h2 class="leave-card-title">Planning global</h2>
+            <p class="leave-card-subtitle">Vue condensée multi-mois, inspirée du tableau PDF.</p>
+          </div>
+        </div>
+        <div class="leave-report-scroll leave-wall-scroll">
+          ${renderWallPlanning(leaves)}
+        </div>
+        ${renderExportLegend(monthReportLeaves())}
+      </section>
+    `;
+  }
+
   function userDays(employeeId) {
     const first = `${state.month.getFullYear()}-01-01`;
     const last = `${state.month.getFullYear()}-12-31`;
@@ -1375,7 +1840,7 @@
 
   function renderSelectedDay() {
     const items = selectedDateLeaves();
-    const canManage = Boolean(state.data?.user?.canManage);
+    const canCreate = Boolean(canManage() || currentEmployee());
     return `
       <section class="leave-day-card">
         <div class="leave-card-head">
@@ -1383,7 +1848,7 @@
             <h2 class="leave-card-title">Absents le ${esc(dateLabel(state.selectedDate))}</h2>
             <p class="leave-card-subtitle">${items.length ? `${items.length} utilisateur(s) absent(s)` : 'Aucune absence sur cette date'}</p>
           </div>
-          ${canManage ? '<button type="button" class="leave-add-day" data-add-day>+ Ajouter</button>' : ''}
+          ${canCreate ? '<button type="button" class="leave-add-day" data-add-day>+ Demande</button>' : ''}
         </div>
         <div class="leave-day-list">
           ${
@@ -1395,6 +1860,7 @@
                       leave.startDate === leave.endDate
                         ? dateLabel(leave.startDate)
                         : `${dateLabel(leave.startDate)} au ${dateLabel(leave.endDate)}`;
+                    const editable = canEditLeave(leave);
                     return `
               <button type="button" class="leave-day-row" data-edit-leave="${leave.id}" style="--day-color:${esc(color)}">
                 <span class="leave-day-dot"></span>
@@ -1402,12 +1868,12 @@
                   <span class="leave-day-name">${esc(leave.employeeName)}</span>
                   <span class="leave-day-meta">${esc(typeMeta(leave.type).label)} - ${esc(periodLabel(leave.period))} - ${esc(range)}</span>
                 </span>
-                ${canManage ? '<span class="leave-day-edit">Modifier</span>' : '<span></span>'}
+                ${editable ? '<span class="leave-day-edit">Modifier</span>' : renderStatusPill(leave.status)}
               </button>
             `;
                   })
                   .join('')
-              : '<div class="leave-day-empty">Selectionne une autre date ou ajoute un conge sur ce jour.</div>'
+              : '<div class="leave-day-empty">Selectionne une autre date ou pose une demande sur ce jour.</div>'
           }
         </div>
       </section>
@@ -1451,25 +1917,76 @@
   function renderModal() {
     if (!state.modal) return '';
     const form = state.modal;
+    const manager = canManage();
+    const readonly = Boolean(form.readonly);
+    const disabled = readonly ? 'disabled' : '';
+    const employee = employees().find((item) => Number(item.id) === Number(form.employeeId));
+    const title = form.id ? (readonly ? 'Détail de la demande' : 'Modifier la demande') : 'Poser une demande';
+    const subtitle = form.id
+      ? `${employee?.name || 'Utilisateur'} - ${statusLabel(form.status)}`
+      : manager
+        ? 'Ajout direction ou création pour un membre.'
+        : 'La demande sera envoyée à la direction pour validation.';
+    const employeeField = manager
+      ? `
+          <div class="leaves-field leaves-field-full">
+            <label>Utilisateur</label>
+            <select name="employeeId" required ${disabled}>${employees()
+              .map(
+                (item) =>
+                  `<option value="${item.id}" ${Number(form.employeeId) === Number(item.id) ? 'selected' : ''}>${esc(item.name)}</option>`,
+              )
+              .join('')}</select>
+          </div>
+        `
+      : `
+          <input type="hidden" name="employeeId" value="${esc(form.employeeId || '')}">
+          <div class="leaves-field leaves-field-full">
+            <label>Utilisateur</label>
+            <div class="leave-person-card">
+              <span class="leave-user-dot" style="--user-color:${esc(normalizeColor(employee?.color, '#38bdf8'))}"></span>
+              <strong>${esc(employee?.name || 'Votre compte')}</strong>
+              ${renderStatusPill(form.status)}
+            </div>
+          </div>
+        `;
+    const statusField = manager
+      ? `<div class="leaves-field"><label>Statut</label><select name="status" ${disabled}><option value="approved" ${form.status === 'approved' ? 'selected' : ''}>Validé</option><option value="planned" ${form.status === 'planned' ? 'selected' : ''}>Planifié</option><option value="pending" ${form.status === 'pending' ? 'selected' : ''}>À valider</option><option value="refused" ${form.status === 'refused' ? 'selected' : ''}>Refusé</option></select></div>`
+      : `<input type="hidden" name="status" value="${esc(form.status || 'pending')}">`;
+    const reviewActions =
+      form.canReview && !readonly
+        ? `
+          <button type="button" class="leaves-button leaves-button-approve" data-modal-approve="${esc(form.id)}">Valider</button>
+          <button type="button" class="leaves-button leaves-button-refuse" data-modal-refuse="${esc(form.id)}">Refuser</button>
+        `
+        : '';
+    const saveAction = readonly
+      ? ''
+      : `<button type="submit" class="leaves-button leaves-button-primary">${form.id ? 'Enregistrer' : manager ? 'Ajouter' : 'Envoyer la demande'}</button>`;
+    const deleteAction = form.canDelete
+      ? `<button type="button" class="leaves-button" data-delete="${esc(form.id)}">Supprimer</button>`
+      : '';
+
     return `
       <div class="leaves-modal-backdrop" data-modal-backdrop>
         <div class="leaves-modal">
-          <div class="leaves-modal-head"><strong>${form.id ? 'Modifier le conge' : 'Ajouter un conge'}</strong><button type="button" class="leaves-button" data-close-modal>Fermer</button></div>
+          <div class="leaves-modal-head">
+            <div>
+              <strong>${esc(title)}</strong>
+              <p>${esc(subtitle)}</p>
+            </div>
+            <button type="button" class="leaves-button" data-close-modal>Fermer</button>
+          </div>
           <form class="leaves-form-grid" data-leave-form>
             <input type="hidden" name="id" value="${esc(form.id || '')}">
-            <div class="leaves-field leaves-field-full"><label>Utilisateur</label><select name="employeeId" required>${employees()
-              .map(
-                (employee) =>
-                  `<option value="${employee.id}" ${Number(form.employeeId) === Number(employee.id) ? 'selected' : ''}>${esc(employee.name)}</option>`,
-              )
-              .join('')}</select></div>
-            <div class="leaves-field"><label>Debut</label><input type="date" name="startDate" value="${esc(form.startDate)}" required></div>
-            <div class="leaves-field"><label>Fin</label><input type="date" name="endDate" value="${esc(form.endDate)}" required></div>
-            <div class="leaves-field"><label>Type</label><select name="type">${(state.data?.types || []).map((type) => `<option value="${esc(type.value)}" ${form.type === type.value ? 'selected' : ''}>${esc(type.label)}</option>`).join('')}</select></div>
-            <div class="leaves-field"><label>Journee</label><select name="period">${(state.data?.periods || []).map((period) => `<option value="${esc(period.value)}" ${form.period === period.value ? 'selected' : ''}>${esc(period.label)}</option>`).join('')}</select></div>
-            <div class="leaves-field"><label>Statut</label><select name="status"><option value="approved" ${form.status === 'approved' ? 'selected' : ''}>Valide</option><option value="planned" ${form.status === 'planned' ? 'selected' : ''}>Planifie</option><option value="pending" ${form.status === 'pending' ? 'selected' : ''}>A valider</option><option value="refused" ${form.status === 'refused' ? 'selected' : ''}>Refuse</option></select></div>
-            <div class="leaves-field leaves-field-full"><label>Notes</label><textarea name="notes">${esc(form.notes || '')}</textarea></div>
-            <div class="leaves-actions leaves-field-full"><button type="submit" class="leaves-button leaves-button-primary">Enregistrer</button>${form.id ? `<button type="button" class="leaves-button" data-delete="${form.id}">Supprimer</button>` : ''}</div>
+            ${employeeField}
+            <div class="leaves-field"><label>Début</label><input type="date" name="startDate" value="${esc(form.startDate)}" required ${disabled}></div>
+            <div class="leaves-field"><label>Fin</label><input type="date" name="endDate" value="${esc(form.endDate)}" required ${disabled}></div>
+            <div class="leaves-field"><label>Type</label><select name="type" ${disabled}>${(state.data?.types || []).map((type) => `<option value="${esc(type.value)}" ${form.type === type.value ? 'selected' : ''}>${esc(type.label)}</option>`).join('')}</select></div>
+            <div class="leaves-field"><label>Journée</label><select name="period" ${disabled}>${(state.data?.periods || []).map((period) => `<option value="${esc(period.value)}" ${form.period === period.value ? 'selected' : ''}>${esc(period.label)}</option>`).join('')}</select></div>
+            ${statusField}
+            <div class="leaves-field leaves-field-full"><label>Notes</label><textarea name="notes" ${disabled}>${esc(form.notes || '')}</textarea></div>
+            <div class="leaves-actions leaves-field-full">${reviewActions}${saveAction}${deleteAction}</div>
           </form>
         </div>
       </div>
@@ -1562,10 +2079,12 @@
       <div class="leaves-page">
         ${renderHeader()}
         ${renderSummary()}
+        ${renderWorkflowPanel()}
         <div class="leave-workspace">
           <div class="leave-main-column">
             ${renderCalendar()}
             ${renderSelectedDay()}
+            ${renderTeamSheet()}
           </div>
         </div>
         ${renderModal()}
@@ -1578,6 +2097,9 @@
 
   function bind() {
     root.querySelector('[data-export-pdf]')?.addEventListener('click', exportPdf);
+    root.querySelectorAll('[data-add-request]').forEach((button) =>
+      button.addEventListener('click', () => openModal(null)),
+    );
     root.querySelector('[data-prev]')?.addEventListener('click', () => {
       state.month = new Date(state.month.getFullYear(), state.month.getMonth() - 1, 1);
       state.selectedDate = formatDate(state.month);
@@ -1620,11 +2142,22 @@
     );
     root.querySelectorAll('[data-edit-leave]').forEach((button) =>
       button.addEventListener('click', () => {
-        if (!state.data?.user?.canManage) return;
         const leave = state.data.leaves.find((item) => Number(item.id) === Number(button.dataset.editLeave));
         if (leave) openModal(leave);
       }),
     );
+    root.querySelectorAll('[data-approve]').forEach((button) =>
+      button.addEventListener('click', () => reviewLeave(button.dataset.approve, true)),
+    );
+    root.querySelectorAll('[data-refuse]').forEach((button) =>
+      button.addEventListener('click', () => reviewLeave(button.dataset.refuse, false)),
+    );
+    root.querySelector('[data-modal-approve]')?.addEventListener('click', (event) => {
+      reviewLeave(event.currentTarget.dataset.modalApprove, true);
+    });
+    root.querySelector('[data-modal-refuse]')?.addEventListener('click', (event) => {
+      reviewLeave(event.currentTarget.dataset.modalRefuse, false);
+    });
     root.querySelector('[data-close-modal]')?.addEventListener('click', () => {
       state.modal = null;
       render();
@@ -1691,8 +2224,7 @@
       try {
         await request('save_leave', payload);
         state.modal = null;
-        state.data = await request('bootstrap');
-        syncEmployeeFilter();
+        await refreshData();
         render();
       } catch (error) {
         alert(error instanceof Error ? error.message : 'Enregistrement impossible');
@@ -1703,8 +2235,7 @@
       try {
         await request('delete_leave', { id: Number(event.currentTarget.dataset.delete) });
         state.modal = null;
-        state.data = await request('bootstrap');
-        syncEmployeeFilter();
+        await refreshData();
         render();
       } catch (error) {
         alert(error instanceof Error ? error.message : 'Suppression impossible');

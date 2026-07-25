@@ -159,13 +159,53 @@ class CrmLeaveApiTest extends TestCase
             ->assertJsonFragment(['name' => 'Membre Libourne']);
     }
 
-    public function test_manage_permission_is_required_to_create_leave(): void
+    public function test_user_without_manage_can_create_own_pending_leave_request(): void
     {
-        [$account, , , $employee] = $this->createCrmUser(canManage: false);
+        [$account, $crmUser, , $employee] = $this->createCrmUser(canManage: false);
 
         $this->actingAs($account)
             ->postJson('/api/conges?action=save_leave', [
                 'employeeId' => $employee->id,
+                'startDate' => '2026-08-01',
+                'endDate' => '2026-08-02',
+                'status' => 'approved',
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('leave.status', 'pending')
+            ->assertJsonPath('leave.createdBy', $crmUser->id);
+
+        $balance = CrmLeaveBalance::query()
+            ->where('employee_id', $employee->id)
+            ->where('type', 'conge')
+            ->where('year', 2026)
+            ->firstOrFail();
+
+        $this->assertSame(0.0, $balance->used_days);
+        $this->assertSame(2.0, $balance->pending_days);
+    }
+
+    public function test_manage_permission_is_required_to_create_leave_for_another_user(): void
+    {
+        [$account, , $site] = $this->createCrmUser(canManage: false);
+        $otherCrmUser = CrmUser::query()->create([
+            'name' => 'Autre membre',
+            'role' => 'user',
+            'active' => true,
+        ]);
+        $otherCrmUser->sites()->syncWithoutDetaching([$site->id => ['is_default' => false]]);
+        $otherEmployee = CrmLeaveEmployee::query()->create([
+            'crm_user_id' => $otherCrmUser->id,
+            'name' => 'Autre membre',
+            'slug' => 'autre-membre',
+            'color' => '#16a34a',
+            'active' => true,
+            'sort_order' => 20,
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=save_leave', [
+                'employeeId' => $otherEmployee->id,
                 'startDate' => '2026-08-01',
                 'endDate' => '2026-08-02',
             ])
@@ -245,6 +285,71 @@ class CrmLeaveApiTest extends TestCase
             'employee_id' => $employee->id,
             'from_status' => null,
             'to_status' => 'approved',
+            'changed_by' => $crmUser->id,
+        ]);
+    }
+
+    public function test_manager_can_approve_pending_leave_request(): void
+    {
+        [$account, $crmUser, , $employee] = $this->createCrmUser(canManage: true);
+        $leave = CrmLeaveEntry::query()->create([
+            'employee_id' => $employee->id,
+            'start_date' => '2026-08-10',
+            'end_date' => '2026-08-12',
+            'type' => 'conge',
+            'period' => 'full',
+            'duration_days' => 3,
+            'status' => 'pending',
+            'created_by' => $crmUser->id,
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=approve_leave', ['id' => $leave->id])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('leave.status', 'approved');
+
+        $balance = CrmLeaveBalance::query()
+            ->where('employee_id', $employee->id)
+            ->where('type', 'conge')
+            ->where('year', 2026)
+            ->firstOrFail();
+
+        $this->assertSame(3.0, $balance->used_days);
+        $this->assertSame(0.0, $balance->pending_days);
+
+        $this->assertDatabaseHas('crm_leave_status_histories', [
+            'entry_id' => $leave->id,
+            'from_status' => 'pending',
+            'to_status' => 'approved',
+            'changed_by' => $crmUser->id,
+        ]);
+    }
+
+    public function test_manager_can_refuse_pending_leave_request(): void
+    {
+        [$account, $crmUser, , $employee] = $this->createCrmUser(canManage: true);
+        $leave = CrmLeaveEntry::query()->create([
+            'employee_id' => $employee->id,
+            'start_date' => '2026-08-10',
+            'end_date' => '2026-08-10',
+            'type' => 'absence',
+            'period' => 'full',
+            'duration_days' => 1,
+            'status' => 'pending',
+            'created_by' => $crmUser->id,
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=refuse_leave', ['id' => $leave->id])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('leave.status', 'refused');
+
+        $this->assertDatabaseHas('crm_leave_status_histories', [
+            'entry_id' => $leave->id,
+            'from_status' => 'pending',
+            'to_status' => 'refused',
             'changed_by' => $crmUser->id,
         ]);
     }
