@@ -27,7 +27,7 @@ class CrmCashControlApiTest extends TestCase
         $this->getJson('/api/controle-caisse?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_manage_permission_is_required_to_create_cash_day(): void
@@ -314,7 +314,7 @@ class CrmCashControlApiTest extends TestCase
         $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
-            'name' => 'CRM Cash User '.$account->id,
+            'name' => 'HUB Cash User '.$account->id,
             'role' => in_array('controle_caisse.manage', $permissions, true) ? 'responsable' : 'user',
             'active' => true,
         ]);

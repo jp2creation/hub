@@ -30,7 +30,7 @@ class CrmDocumentsApiTest extends TestCase
         $this->getJson('/api/documents?action=bootstrap&category=promo')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_authorized_user_can_read_documents_bootstrap(): void
@@ -216,7 +216,7 @@ class CrmDocumentsApiTest extends TestCase
         $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
-            'name' => 'CRM Documents User '.$account->id,
+            'name' => 'HUB Documents User '.$account->id,
             'role' => in_array('documents.manage', $permissions, true) ? 'responsable' : 'user',
             'active' => true,
         ]);

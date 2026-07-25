@@ -1,4 +1,4 @@
-# Autorisations CRM
+# Autorisations HUB
 
 Le HUB utilise deux niveaux de droits. Ils ne doivent pas etre fusionnes sans decision explicite, car ils ne protegent pas le meme perimetre.
 
@@ -11,30 +11,30 @@ Spatie reste l'autorite pour les droits plateforme :
 - acces au panel Filament `/admin` ;
 - ressources Filament ;
 - Horizon ;
-- exception admin plateforme sur les pages shell CRM.
+- exception admin plateforme sur les pages shell HUB.
 
 La methode unique pour cette decision est `App\Models\User::canUsePlatformAdministration()`.
 
 Les roles plateforme reconnus sont `admin`, `Admin` et `Super Admin`.
 Les permissions plateforme reconnues sont `filament.access` et `filament.manage`.
 
-### Droits CRM
+### Droits HUB
 
 `Modules\CrmCore\Services\CrmAccessService` reste l'autorite pour les droits metier :
 
-- acces aux modules CRM ;
+- acces aux modules HUB ;
 - acces aux sites ;
 - permissions contextuelles par site, module et action ;
-- role CRM `blocked` ;
-- role CRM `admin`, qui donne un acces metier complet aux sites et modules actifs.
+- role HUB `blocked` ;
+- role HUB `admin`, qui donne un acces metier complet aux sites et modules actifs.
 
-Les tables CRM restent donc la source de verite pour les decisions metier. Un controleur API ne doit pas decider directement qu'un utilisateur peut creer, modifier ou supprimer une entite metier.
+Les tables HUB restent donc la source de verite pour les decisions metier. Un controleur API ne doit pas decider directement qu'un utilisateur peut creer, modifier ou supprimer une entite metier.
 
 ## Regle de routage
 
-Le middleware `crm.module` protege les pages shell CRM.
+Le middleware `crm.module` protege les pages shell HUB.
 
-Un utilisateur avec acces plateforme Spatie peut ouvrir ces pages pour administrer et diagnostiquer le CRM, meme sans profil `CrmUser`. Cette exception est volontaire, documentee et couverte par un test.
+Un utilisateur avec acces plateforme Spatie peut ouvrir ces pages pour administrer et diagnostiquer le HUB, meme sans profil `CrmUser`. Cette exception est volontaire, documentee et couverte par un test.
 
 Les actions metier restent controlees ensuite par :
 

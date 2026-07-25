@@ -75,7 +75,7 @@
 <body>
     <main>
         <div class="mark">MS</div>
-        <h1>CRM en maintenance</h1>
+        <h1>HUB en maintenance</h1>
         <p>Une mise &agrave; jour est en cours. Le service revient dans quelques minutes.</p>
         <p class="footer">Merci de patienter avant de relancer votre action.</p>
     </main>

@@ -128,11 +128,11 @@ class LeaveBalanceService
         $oldStatus = (string) ($old['status'] ?? '');
 
         if (! $entry->wasRecentlyCreated && $oldStatus !== '' && $oldStatus !== $newStatus) {
-            $this->recordStatusHistory($entry, $actor, $oldStatus, $newStatus, 'Modification CRM');
+            $this->recordStatusHistory($entry, $actor, $oldStatus, $newStatus, 'Modification HUB');
         }
 
         if ($entry->wasRecentlyCreated) {
-            $this->recordStatusHistory($entry, $actor, null, $newStatus, 'Creation CRM');
+            $this->recordStatusHistory($entry, $actor, null, $newStatus, 'Creation HUB');
         }
 
         $this->recordBalanceMovement($entry, $actor, $old);
@@ -150,7 +150,7 @@ class LeaveBalanceService
             'from_status' => (string) $snapshot['status'],
             'to_status' => 'deleted',
             'changed_by' => $actor->id,
-            'reason' => 'Suppression CRM',
+            'reason' => 'Suppression HUB',
             'changed_at' => now(),
         ]);
 

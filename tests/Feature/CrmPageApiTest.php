@@ -19,7 +19,7 @@ class CrmPageApiTest extends TestCase
         $this->getJson('/api/pages?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_authorized_user_can_read_page_bootstrap(): void
@@ -133,7 +133,7 @@ class CrmPageApiTest extends TestCase
         $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
-            'name' => 'CRM Page User '.$account->id,
+            'name' => 'HUB Page User '.$account->id,
             'role' => $canManage ? 'admin' : 'user',
             'active' => true,
         ]);

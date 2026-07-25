@@ -124,7 +124,7 @@ return new class extends Migration
         return [
             'module:reservations' => 'Réservations véhicules',
             'module:locations-materiel' => 'Location matériel',
-            'module:pages-crm' => 'Pages CRM',
+            'module:pages-crm' => 'Pages HUB',
             'module:administration' => 'Administration',
             'module:conges' => 'Congés',
             'module:controle-caisse' => 'Contrôle caisse',

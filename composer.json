@@ -1,10 +1,10 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "jp2creation/hub",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
-    "license": "MIT",
+    "description": "Martin Sols HUB internal operations platform.",
+    "keywords": ["laravel", "hub", "martin-sols"],
+    "license": "proprietary",
     "require": {
         "php": "^8.3",
         "ext-gd": "*",

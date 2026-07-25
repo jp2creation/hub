@@ -19,7 +19,7 @@ class CrmTeamsApiTest extends TestCase
         $this->getJson('/api/equipes?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_user_reads_members_from_default_site(): void

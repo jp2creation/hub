@@ -14,7 +14,7 @@ class MonitorQueueSizeCommand extends Command
     protected $signature = 'crm:monitor-queue-size
         {--threshold= : Nombre de jobs en attente avant alerte}';
 
-    protected $description = 'Monitor CRM queue size and register an alert when it exceeds the configured threshold.';
+    protected $description = 'Monitor HUB queue size and register an alert when it exceeds the configured threshold.';
 
     public function handle(): int
     {
@@ -63,7 +63,7 @@ class MonitorQueueSizeCommand extends Command
         }
 
         if ($alerts === 0) {
-            $this->info('Queue CRM OK.');
+            $this->info('Queue HUB OK.');
         }
 
         return self::SUCCESS;
@@ -107,7 +107,7 @@ class MonitorQueueSizeCommand extends Command
         }
 
         if ($alerts === 0) {
-            $this->info('Queue CRM OK.');
+            $this->info('Queue HUB OK.');
         }
 
         return self::SUCCESS;
@@ -132,7 +132,7 @@ class MonitorQueueSizeCommand extends Command
         CrmNotificationLog::query()->create([
             'channel' => 'monitoring',
             'recipient' => $recipient,
-            'subject' => 'Alerte queue CRM',
+            'subject' => 'Alerte queue HUB',
             'template_key' => 'queue.size.threshold',
             'locale' => (string) config('crm.notifications.locale', 'fr'),
             'status' => CrmNotificationLog::STATUS_SENT,

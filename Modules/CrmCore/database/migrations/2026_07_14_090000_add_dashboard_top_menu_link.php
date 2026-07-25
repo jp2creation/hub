@@ -31,7 +31,7 @@ return new class extends Migration
                 ['slug' => self::MODULE_SLUG],
                 [
                     'name' => 'Tableau de bord',
-                    'description' => 'Synthese et acces rapides du CRM',
+                    'description' => 'Synthese et acces rapides du HUB',
                     'route_path' => '/dashboard/crm',
                     'active' => true,
                     'sort_order' => 0,

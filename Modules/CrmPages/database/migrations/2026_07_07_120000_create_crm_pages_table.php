@@ -29,8 +29,8 @@ return new class extends Migration
         DB::table('crm_permissions')->updateOrInsert(
             ['name' => 'pages.view'],
             [
-                'label' => 'Voir les pages CRM',
-                'group_label' => 'Pages CRM',
+                'label' => 'Voir les pages HUB',
+                'group_label' => 'Pages HUB',
                 'sort_order' => 190,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -40,8 +40,8 @@ return new class extends Migration
         DB::table('crm_permissions')->updateOrInsert(
             ['name' => 'pages.manage'],
             [
-                'label' => 'Gerer les pages CRM',
-                'group_label' => 'Pages CRM',
+                'label' => 'Gerer les pages HUB',
+                'group_label' => 'Pages HUB',
                 'sort_order' => 200,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -51,8 +51,8 @@ return new class extends Migration
         DB::table('crm_modules')->updateOrInsert(
             ['slug' => 'pages-crm'],
             [
-                'name' => 'Pages CRM',
-                'description' => 'Pages internes modifiables depuis le CRM',
+                'name' => 'Pages HUB',
+                'description' => 'Pages internes modifiables depuis le HUB',
                 'route_path' => '/pages-crm',
                 'active' => true,
                 'sort_order' => 18,
@@ -66,7 +66,7 @@ return new class extends Migration
             [
                 'group_key' => 'internal',
                 'icon_key' => 'article',
-                'label' => 'Pages CRM',
+                'label' => 'Pages HUB',
                 'active' => true,
                 'sort_order' => 18,
                 'created_at' => $now,

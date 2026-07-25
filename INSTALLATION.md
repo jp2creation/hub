@@ -77,7 +77,7 @@ Initialiser les roles de base :
 php artisan db:seed
 ```
 
-Creer ou mettre a jour le compte admin CRM avec une saisie masquee :
+Creer ou mettre a jour le compte admin HUB avec une saisie masquee :
 
 ```bash
 php artisan crm:admin --email=admin@crm.jp2.fr --name="Administrateur"
@@ -164,7 +164,7 @@ Executer tous les tests :
 php artisan test
 ```
 
-Executer les tests CRM les plus courants :
+Executer les tests HUB les plus courants :
 
 ```bash
 php artisan test tests/Feature/CrmReservationApiTest.php tests/Feature/CrmEquipmentRentalApiTest.php tests/Feature/CrmLeaveApiTest.php tests/Feature/CrmCashControlApiTest.php tests/Feature/CrmCheckRemittanceApiTest.php tests/Feature/CrmDepositRequestApiTest.php tests/Feature/CrmDocumentsApiTest.php tests/Feature/CrmSalesToursApiTest.php
@@ -256,11 +256,11 @@ Verifier ensuite :
 - `APP_URL` : URL publique de l'application.
 - `DB_*` : connexion MySQL/MariaDB.
 - `CRM_ADMIN_PASSWORD_MIN`, `CRM_ADMIN_HASH_ROUNDS` : politique de mot de passe admin.
-- `CRM_API_THROTTLE_PER_MINUTE` : limite minute des API CRM Laravel.
+- `CRM_API_THROTTLE_PER_MINUTE` : limite minute des API HUB Laravel.
 - `CRM_LOGIN_THROTTLE_PER_MINUTE` : limite minute du login web et du token mobile.
 - `CRM_RESPONSE_COMPRESSION_*` : activation, taille minimale et niveau gzip des reponses API.
 - `CRM_BACKUP_DISK`, `CRM_BACKUP_PATH`, `CRM_BACKUP_KEEP` : destination et retention des sauvegardes SQL.
-- `CRM_TRUST_LARAVEL_SESSION` : autorise les API CRM a utiliser la session Laravel.
+- `CRM_TRUST_LARAVEL_SESSION` : autorise les API HUB a utiliser la session Laravel.
 - `CRM_ALLOW_LEGACY_ACTOR_IMPERSONATION` : compatibilite legacy, a garder desactivee sauf besoin controle.
 - `SANCTUM_MOBILE_TOKEN_EXPIRATION_DAYS` : duree des tokens mobiles.
 - `CORS_ALLOWED_ORIGINS` : origins autorisees pour l'API mobile et les appels `api/*`.

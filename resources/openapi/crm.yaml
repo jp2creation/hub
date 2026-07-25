@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Martin Sols HUB API
   version: 1.1.0
-  description: Documentation OpenAPI des endpoints CRM exposes par Laravel.
+  description: Documentation OpenAPI des endpoints HUB exposes par Laravel.
 servers:
   - url: https://crm.jp2.fr
 security:
@@ -45,7 +45,7 @@ paths:
   /api/dashboard:
     get:
       tags: [Dashboard]
-      summary: Lire le tableau de bord CRM.
+      summary: Lire le tableau de bord HUB.
       parameters:
         - $ref: '#/components/parameters/Action'
         - $ref: '#/components/parameters/SiteId'
@@ -805,7 +805,7 @@ paths:
         $ref: '#/components/requestBodies/CrmJsonPayload'
       responses:
         '200':
-          description: Tokens crees avec les scopes CRM du compte.
+          description: Tokens crees avec les scopes HUB du compte.
         '422':
           description: Identifiants invalides.
   /api/mobile/refresh:
@@ -898,14 +898,14 @@ components:
       required: false
       schema:
         type: string
-      description: Action metier demandee au controleur CRM.
+      description: Action metier demandee au controleur HUB.
     SiteId:
       in: query
       name: siteId
       required: false
       schema:
         type: integer
-      description: Site CRM actif.
+      description: Site HUB actif.
   requestBodies:
     CrmJsonPayload:
       required: true
@@ -916,7 +916,7 @@ components:
             additionalProperties: true
   responses:
     CrmOk:
-      description: Operation CRM effectuee.
+      description: Operation HUB effectuee.
       content:
         application/json:
           schema:

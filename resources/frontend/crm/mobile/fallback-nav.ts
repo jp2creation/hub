@@ -112,13 +112,13 @@ function menuData(): { items: { label: string; path: string }[]; title: string }
         .filter((item: CrmMenuItem) => item && item.active !== false && item.groupKey === group.menuKey)
         .sort((a: CrmMenuItem, b: CrmMenuItem) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0))
         .map((item: CrmMenuItem) => ({
-          label: item.label || 'CRM',
+          label: item.label || 'HUB',
           path: routeByKey[item.itemKey] || '#',
         }));
 
       return {
         items,
-        title: group.title || group.menuKey || 'CRM',
+        title: group.title || group.menuKey || 'HUB',
       };
     })
     .filter((group) => group.items.length > 0);

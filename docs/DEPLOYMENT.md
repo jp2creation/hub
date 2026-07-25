@@ -1,4 +1,4 @@
-# Deploiement CRM
+# Deploiement HUB
 
 Ce projet doit etre deploye depuis le depot Git local, pas par modification directe de fichiers minifies sur le serveur.
 
@@ -47,7 +47,7 @@ Le flux de production est :
 
 Les migrations doivent rester compatibles avec l'ancienne version deja servie, car elles sont executees avant le basculement du symlink. Ne pas supprimer ou renommer brutalement une colonne utilisee par la release precedente sans deploiement en deux temps.
 
-Les migrations CRM sont chargees depuis `Modules/*/database/migrations`. Avant d'envoyer une release, verifier qu'aucune migration CRM ne reste dans `database/migrations` :
+Les migrations HUB sont chargees depuis `Modules/*/database/migrations`. Avant d'envoyer une release, verifier qu'aucune migration HUB ne reste dans `database/migrations` :
 
 ```bash
 php artisan test --filter=CrmModuleManifestTest

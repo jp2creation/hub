@@ -54,7 +54,7 @@ return new class extends Migration
             foreach ([
                 ['documents-promo', 'Promo', 'Documents commerciaux et promotions.', '/documents/promo', 241],
                 ['documents-fiches-techniques', 'Fiches techniques', 'Fiches techniques produits et matériel.', '/documents/fiches-techniques', 242],
-                ['documents-procedures', 'Procédures', 'Procédures internes du CRM.', '/documents/procedures', 243],
+                ['documents-procedures', 'Procédures', 'Procédures internes du HUB.', '/documents/procedures', 243],
             ] as [$slug, $name, $description, $routePath, $sortOrder]) {
                 DB::table('crm_modules')->updateOrInsert(
                     ['slug' => $slug],

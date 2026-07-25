@@ -13,7 +13,7 @@ class PublishCrmStaticAssetsCommand extends Command
         {--force : Replace existing files}
         {--clean : Remove obsolete generated files from public/assets, except uploads}';
 
-    protected $description = 'Publish versioned CRM static assets into public/assets.';
+    protected $description = 'Publish versioned HUB static assets into public/assets.';
 
     public function handle(): int
     {
@@ -21,7 +21,7 @@ class PublishCrmStaticAssetsCommand extends Command
         $targetDirectory = public_path('assets');
 
         if (! is_dir($sourceDirectory)) {
-            $this->warn("CRM static asset source not found: {$sourceDirectory}");
+            $this->warn("HUB static asset source not found: {$sourceDirectory}");
 
             return self::SUCCESS;
         }
@@ -48,7 +48,7 @@ class PublishCrmStaticAssetsCommand extends Command
 
         $deleted = $this->option('clean') ? $this->deleteObsoleteAssets($targetDirectory, $sourcePaths) : 0;
 
-        $this->info("CRM static assets published: {$published}; obsolete files removed: {$deleted}");
+        $this->info("HUB static assets published: {$published}; obsolete files removed: {$deleted}");
 
         return self::SUCCESS;
     }

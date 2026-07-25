@@ -39,7 +39,7 @@ class CheckRemittanceService
             ->first();
 
         if (! $actor) {
-            $this->fail('Utilisateur CRM introuvable', 404);
+            $this->fail('Utilisateur HUB introuvable', 404);
         }
 
         return $actor;

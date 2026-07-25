@@ -17,3 +17,11 @@ logos and PWA icons. They are published to `public/assets` by
 
 New HUB frontend work should start in `resources/frontend/crm` or in module
 `resources/assets` files, not by editing generated files in `public`.
+
+## License
+
+This source is part of Martin Sols HUB and is governed by the repository license
+in `LICENSE.md`. It is source-available for personal evaluation and
+contributions only; professional use, commercial use, resale, hosting and
+redistribution require prior written permission from Jean-Philippe DEGERT / JP2
+Creation.

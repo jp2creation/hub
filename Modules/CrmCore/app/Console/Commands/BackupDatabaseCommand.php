@@ -27,7 +27,7 @@ class BackupDatabaseCommand extends Command
         {--no-encrypt : Desactiver le chiffrement pour cette execution}
         {--verify : Verifier localement l archive gzip avant envoi}';
 
-    protected $description = 'Create a streamed, compressed SQL backup of the CRM database.';
+    protected $description = 'Create a streamed, compressed SQL backup of the HUB database.';
 
     public function handle(): int
     {
@@ -585,7 +585,7 @@ class BackupDatabaseCommand extends Command
     private function recordBackupFailure(Throwable $exception, string $connectionName, string $disk, string $path): void
     {
         try {
-            Log::channel('crm')->error('Sauvegarde CRM echouee', [
+            Log::channel('crm')->error('Sauvegarde HUB echouee', [
                 'connection' => $connectionName,
                 'disk' => $disk,
                 'path' => $path,
@@ -599,7 +599,7 @@ class BackupDatabaseCommand extends Command
             CrmNotificationLog::query()->create([
                 'channel' => 'monitoring',
                 'recipient' => 'backup:database',
-                'subject' => 'Echec sauvegarde CRM',
+                'subject' => 'Echec sauvegarde HUB',
                 'template_key' => 'backup.database.failed',
                 'locale' => (string) config('crm.notifications.locale', 'fr'),
                 'status' => CrmNotificationLog::STATUS_FAILED,

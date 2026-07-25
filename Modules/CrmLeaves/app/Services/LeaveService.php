@@ -40,7 +40,7 @@ class LeaveService
             ->first();
 
         if (! $actor) {
-            $this->fail('Utilisateur CRM introuvable', 404);
+            $this->fail('Utilisateur HUB introuvable', 404);
         }
 
         return $actor;
@@ -203,7 +203,7 @@ class LeaveService
             $siteId = $this->optionalPositiveInt($data['siteId'] ?? $data['site_id'] ?? null);
 
             if ($employeeId <= 0) {
-                $this->fail('Utilisateur CRM requis', 400);
+                $this->fail('Utilisateur HUB requis', 400);
             }
 
             $startDate = $this->date((string) ($data['startDate'] ?? $data['start_date'] ?? ''), 'debut');
@@ -236,7 +236,7 @@ class LeaveService
                 ->find($employeeId);
 
             if (! $employee) {
-                $this->fail('Utilisateur CRM introuvable', 404);
+                $this->fail('Utilisateur HUB introuvable', 404);
             }
 
             $selectedSiteId = $this->requireEmployeeSiteAccess($actor, $employee, $siteId);
@@ -260,7 +260,7 @@ class LeaveService
                     ->find((int) $entry->employee_id);
 
                 if (! $currentEmployee) {
-                    $this->fail('Utilisateur CRM introuvable', 404);
+                    $this->fail('Utilisateur HUB introuvable', 404);
                 }
 
                 $currentSiteId = $this->requireEmployeeSiteAccess($actor, $currentEmployee, $siteId);
@@ -342,7 +342,7 @@ class LeaveService
 
             $employee = CrmLeaveEmployee::query()->lockForUpdate()->find((int) $entry->employee_id);
             if (! $employee) {
-                $this->fail('Utilisateur CRM introuvable', 404);
+                $this->fail('Utilisateur HUB introuvable', 404);
             }
 
             $selectedSiteId = $this->requireEmployeeSiteAccess($actor, $employee, $siteId);
@@ -475,7 +475,7 @@ class LeaveService
         $crmUserId = (int) $employee->crm_user_id;
 
         if ($crmUserId <= 0) {
-            $this->fail('Utilisateur non lie a un compte CRM', 403);
+            $this->fail('Utilisateur non lie a un compte HUB', 403);
         }
 
         $exists = CrmUser::query()

@@ -31,7 +31,7 @@ class CrmAdministrationApiTest extends TestCase
         $this->getJson('/api/administration?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_admin_can_read_and_save_profile(): void

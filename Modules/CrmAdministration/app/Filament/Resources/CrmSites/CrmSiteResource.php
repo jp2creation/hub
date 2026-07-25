@@ -32,7 +32,7 @@ class CrmSiteResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
-    protected static string|UnitEnum|null $navigationGroup = 'CRM';
+    protected static string|UnitEnum|null $navigationGroup = 'HUB';
 
     protected static ?string $navigationLabel = 'Sites';
 

@@ -2,6 +2,7 @@
   "name": "martin-sols-hub-mobile",
   "private": true,
   "version": "1.0.48",
+  "license": "SEE LICENSE IN ../LICENSE.md",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",

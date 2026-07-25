@@ -33,7 +33,7 @@ class ReservationApiController extends Controller
             $user = $this->authenticatedApiUser($request);
 
             if (! $user) {
-                return $this->json(['ok' => false, 'error' => 'Utilisateur CRM requis'], 401);
+                return $this->json(['ok' => false, 'error' => 'Utilisateur HUB requis'], 401);
             }
 
             $actor = $reservations->actorForUser($user);

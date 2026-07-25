@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('CRM smoke critical paths', () => {
-  test('login page renders the CRM identity and sign-in form', async ({ page }) => {
+test.describe('HUB smoke critical paths', () => {
+  test('login page renders the HUB identity and sign-in form', async ({ page }) => {
     await page.goto('/login');
 
     await expect(page).toHaveTitle(/Martin Sols/i);
@@ -9,7 +9,7 @@ test.describe('CRM smoke critical paths', () => {
     await expect(page.locator('link[rel="manifest"]')).toHaveCount(1);
   });
 
-  test('critical CRM modules are protected before authentication', async ({ page }) => {
+  test('critical HUB modules are protected before authentication', async ({ page }) => {
     const protectedRoutes = [
       '/reservations',
       '/locations-materiel',
@@ -48,7 +48,7 @@ test.describe('CRM smoke critical paths', () => {
     }
   });
 
-  test('business APIs require an authenticated CRM user for bootstrap flows', async ({ request }) => {
+  test('business APIs require an authenticated HUB user for bootstrap flows', async ({ request }) => {
     const protectedApis = [
       '/api/reservations?action=bootstrap',
       '/api/equipment-rentals?action=bootstrap',

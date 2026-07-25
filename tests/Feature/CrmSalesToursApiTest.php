@@ -27,7 +27,7 @@ class CrmSalesToursApiTest extends TestCase
         $this->getJson('/api/tournees-representants?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_authorized_user_can_manage_tour_visit_and_report(): void

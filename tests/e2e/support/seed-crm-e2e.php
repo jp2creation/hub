@@ -41,7 +41,7 @@ $fixture = DB::transaction(function () use ($password): array {
     $account = User::query()->updateOrCreate(
         ['email' => 'crm-e2e@example.test'],
         [
-            'name' => 'CRM E2E',
+            'name' => 'HUB E2E',
             'password' => $password,
         ],
     );
@@ -126,8 +126,8 @@ $fixture = DB::transaction(function () use ($password): array {
     $crmUser = CrmUser::query()->updateOrCreate(
         ['user_id' => $account->id],
         [
-            'name' => 'CRM E2E Admin',
-            'first_name' => 'CRM',
+            'name' => 'HUB E2E Admin',
+            'first_name' => 'HUB',
             'last_name' => 'E2E',
             'email' => $account->email,
             'phone' => '0102030405',

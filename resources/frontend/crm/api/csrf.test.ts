@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { isMutationMethod } from './csrf';
 
-describe('CRM CSRF helpers', () => {
+describe('HUB CSRF helpers', () => {
   it('identifies methods that need a CSRF token', () => {
     expect(isMutationMethod('POST')).toBe(true);
     expect(isMutationMethod('put')).toBe(true);

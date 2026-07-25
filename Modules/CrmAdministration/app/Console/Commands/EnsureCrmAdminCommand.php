@@ -13,7 +13,7 @@ class EnsureCrmAdminCommand extends Command
         {--name=Administrateur : Nom affiche du compte administrateur}
         {--password-env= : Nom d\'une variable d\'environnement temporaire contenant le mot de passe}';
 
-    protected $description = 'Create or update the CRM administrator account without storing the password in .env.example.';
+    protected $description = 'Create or update the HUB administrator account without storing the password in .env.example.';
 
     public function handle(AdminAccountService $admins): int
     {
@@ -39,7 +39,7 @@ class EnsureCrmAdminCommand extends Command
             return self::FAILURE;
         }
 
-        $this->info('Compte admin CRM pret : '.$admin->email);
+        $this->info('Compte admin HUB pret : '.$admin->email);
 
         return self::SUCCESS;
     }

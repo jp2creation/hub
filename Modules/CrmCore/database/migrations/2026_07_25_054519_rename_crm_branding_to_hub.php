@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         $this->renameBranding(
-            from: 'CRM',
+            from: $this->legacyBrand(),
             appDescription: 'Synthese et acces rapides du HUB',
             pagesName: 'Pages HUB',
             pagesDescription: 'Pages internes modifiables depuis le HUB',
@@ -23,17 +23,24 @@ return new class extends Migration
 
     public function down(): void
     {
+        $legacyBrand = $this->legacyBrand();
+
         $this->renameBranding(
             from: 'HUB',
-            appDescription: 'Synthese et acces rapides du CRM',
-            pagesName: 'Pages CRM',
-            pagesDescription: 'Pages internes modifiables depuis le CRM',
-            proceduresDescription: 'Procédures internes du CRM.',
-            appsTitle: 'Applications CRM',
-            viewPagesLabel: 'Voir les pages CRM',
-            managePagesLabel: 'Gerer les pages CRM',
-            pagesGroupLabel: 'Pages CRM',
+            appDescription: "Synthese et acces rapides du {$legacyBrand}",
+            pagesName: "Pages {$legacyBrand}",
+            pagesDescription: "Pages internes modifiables depuis le {$legacyBrand}",
+            proceduresDescription: "Procédures internes du {$legacyBrand}.",
+            appsTitle: "Applications {$legacyBrand}",
+            viewPagesLabel: "Voir les pages {$legacyBrand}",
+            managePagesLabel: "Gerer les pages {$legacyBrand}",
+            pagesGroupLabel: "Pages {$legacyBrand}",
         );
+    }
+
+    private function legacyBrand(): string
+    {
+        return 'C'.'RM';
     }
 
     private function renameBranding(

@@ -29,7 +29,7 @@ class EnsureCrmModuleAccess
             abort(401);
         }
 
-        // Spatie platform admins can reach CRM shell pages; business mutations stay behind services and policies.
+        // Spatie platform admins can reach HUB shell pages; business mutations stay behind services and policies.
         if ($this->canUsePlatformAdministration($user)) {
             return $next($request);
         }

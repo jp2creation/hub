@@ -66,3 +66,12 @@ Reglages iOS integres :
 - icone et ecran de lancement bases sur les assets mobiles ;
 - permissions localisation iOS pour les fonctions terrain ;
 - WebView configuree pour les liens, cookies, medias et le clavier.
+
+## Licence
+
+Cette application mobile fait partie de Martin Sols HUB et suit la licence du
+depot racine. Les sources peuvent etre consultees et testees pour evaluation
+personnelle, mais toute compilation, distribution, installation client,
+exploitation professionnelle, revente ou publication d'un APK, d'un paquet iOS
+ou d'un paquet macOS demande l'accord ecrit prealable de Jean-Philippe DEGERT /
+JP2 Creation.

@@ -9,7 +9,7 @@ class PublishCrmModuleAssetsCommand extends Command
 {
     protected $signature = 'crm:publish-module-assets {--force : Replace existing files}';
 
-    protected $description = 'Publish CRM module assets into public/modules.';
+    protected $description = 'Publish HUB module assets into public/modules.';
 
     public function handle(): int
     {
@@ -50,7 +50,7 @@ class PublishCrmModuleAssetsCommand extends Command
             }
         }
 
-        $this->info("CRM module assets published: {$published}");
+        $this->info("HUB module assets published: {$published}");
 
         return self::SUCCESS;
     }

@@ -764,7 +764,7 @@
           const payload = await response.json().catch(() => ({}));
 
           if (!response.ok || payload.ok !== true || !payload.url) {
-            throw new Error(payload.error || 'Session CRM impossible.');
+            throw new Error(payload.error || 'Session HUB impossible.');
           }
 
           return payload;

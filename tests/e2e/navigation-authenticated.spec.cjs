@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 const { authHeaders, issueMobileToken, skipWhenExternal } = require('./support/crm-e2e');
 
-test.describe('CRM authenticated navigation E2E', () => {
+test.describe('HUB authenticated navigation E2E', () => {
   skipWhenExternal(test);
 
   test('authenticated user can open critical module pages', async ({ page, request }) => {

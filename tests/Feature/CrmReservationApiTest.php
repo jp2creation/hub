@@ -32,7 +32,7 @@ class CrmReservationApiTest extends TestCase
         $this->getJson('/api/reservations?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_invalid_reservation_query_parameters_return_validation_error(): void
@@ -208,7 +208,7 @@ class CrmReservationApiTest extends TestCase
             ->getJson('/api/reservations/users?limit=1')
             ->assertOk()
             ->assertJsonPath('ok', true)
-            ->assertJsonPath('users.0.name', 'CRM Reservation User '.$account->id);
+            ->assertJsonPath('users.0.name', 'HUB Reservation User '.$account->id);
     }
 
     public function test_vehicle_day_hours_are_exposed_and_enforced(): void
@@ -721,7 +721,7 @@ class CrmReservationApiTest extends TestCase
         $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
-            'name' => 'CRM Reservation User '.$account->id,
+            'name' => 'HUB Reservation User '.$account->id,
             'role' => $role,
             'active' => true,
         ]);

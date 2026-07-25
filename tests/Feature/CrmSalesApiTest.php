@@ -30,7 +30,7 @@ class CrmSalesApiTest extends TestCase
         $this->getJson('/api/pilotage-commercial?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_authorized_user_can_sync_demo_read_dashboard_manage_objectives_and_pay_commissions(): void

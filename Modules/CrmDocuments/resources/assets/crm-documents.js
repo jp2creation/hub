@@ -419,13 +419,13 @@
     return [
       ["restricted", "Equipe du site"],
       ["private", "Privé"],
-      ["public", "Public CRM"],
+      ["public", "Public HUB"],
     ].map(([value, label]) => `<option value="${value}" ${current === value ? "selected" : ""}>${label}</option>`).join("");
   }
 
   function visibilityLabel(value) {
     return {
-      public: "Public CRM",
+      public: "Public HUB",
       restricted: "Equipe du site",
       private: "Privé",
     }[value] || "Equipe du site";

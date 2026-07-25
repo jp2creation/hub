@@ -7,7 +7,7 @@ const {
   skipWhenExternal,
 } = require('./support/crm-e2e');
 
-test.describe('CRM leaves E2E', () => {
+test.describe('HUB leaves E2E', () => {
   skipWhenExternal(test);
 
   test('mobile API completes leave create update delete flow', async ({ request }) => {

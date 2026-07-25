@@ -1,4 +1,4 @@
-# Standard des modules CRM
+# Standard des modules HUB
 
 Ce projet utilise des modules Laravel sous `Modules/Crm*`. Un nouveau module doit rester lisible, testable et deconnecte des autres modules.
 
@@ -35,9 +35,9 @@ La configuration de generation est centralisee dans `config/modules.php` : chemi
 
 ## Autorisations
 
-La separation des droits est decrite dans [CRM_AUTHORIZATION.md](CRM_AUTHORIZATION.md).
+La separation des droits est decrite dans [HUB_AUTHORIZATION.md](HUB_AUTHORIZATION.md).
 
-- Spatie Permission couvre la plateforme : Filament, Horizon et l'exception admin des pages shell CRM.
+- Spatie Permission couvre la plateforme : Filament, Horizon et l'exception admin des pages shell HUB.
 - `CrmAccessService` couvre les droits metier : modules, sites et permissions contextuelles.
 - Les controleurs ne doivent pas porter de decision metier finale. Ils appellent un service ou une Policy.
 - Les exceptions admin doivent utiliser `User::canUsePlatformAdministration()` ou `CrmAccessService`, pas une liste de roles locale.
@@ -65,14 +65,14 @@ Les modules qui veulent reagir a un evenement enregistrent leur listener dans le
 
 ## Migrations
 
-- Les migrations CRM restent dans `Modules/<Module>/database/migrations`.
+- Les migrations HUB restent dans `Modules/<Module>/database/migrations`.
 - Les migrations Laravel globales et les migrations de packages restent dans `database/migrations`.
 - Le provider de chaque module etend `Modules\CrmCore\Providers\CrmModuleServiceProvider`, qui charge automatiquement `routes/web.php` et `database/migrations`.
 - Lors d'un deploiement, `php artisan migrate --force` suffit : Laravel garde les migrations deja executees par leur nom de fichier.
 
 ## Feature flags
 
-Chaque module CRM a un flag `module:<slug>` en base dans `crm_feature_flags`.
+Chaque module HUB a un flag `module:<slug>` en base dans `crm_feature_flags`.
 
 Commandes utiles :
 

@@ -31,7 +31,7 @@ class CrmEquipmentRentalApiTest extends TestCase
         $this->getJson('/api/equipment-rentals?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_admin_can_access_equipment_without_explicit_module_permissions(): void
@@ -301,7 +301,7 @@ class CrmEquipmentRentalApiTest extends TestCase
             ->getJson('/api/equipment-rentals/users?limit=1')
             ->assertOk()
             ->assertJsonPath('ok', true)
-            ->assertJsonPath('users.0.name', 'CRM Equipment User '.$account->id);
+            ->assertJsonPath('users.0.name', 'HUB Equipment User '.$account->id);
 
         $this->actingAs($account)
             ->getJson('/api/equipment-rentals/categories')
@@ -475,9 +475,9 @@ class CrmEquipmentRentalApiTest extends TestCase
             ->json('equipmentItem');
 
         $itemId = (int) $item['id'];
-        $photoPath = substr((string) $item['photoUrl'], strlen('/storage/'));
+        $photoPath = preg_replace('#^/(?:storage|uploads)/#', '', (string) $item['photoUrl']) ?? '';
 
-        $this->assertStringStartsWith('/storage/assets/uploads/equipment/', $item['photoUrl']);
+        $this->assertMatchesRegularExpression('#^/(storage|uploads)/assets/uploads/equipment/#', $item['photoUrl']);
         Storage::disk('public')->assertExists($photoPath);
         Storage::disk('public')->assertExists(str_replace('.webp', '-thumb.webp', $photoPath));
 
@@ -555,7 +555,7 @@ class CrmEquipmentRentalApiTest extends TestCase
         $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
-            'name' => 'CRM Equipment User '.$account->id,
+            'name' => 'HUB Equipment User '.$account->id,
             'role' => 'user',
             'active' => true,
         ]);

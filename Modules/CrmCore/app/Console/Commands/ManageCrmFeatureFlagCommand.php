@@ -14,7 +14,7 @@ class ManageCrmFeatureFlagCommand extends Command
         {--disable : Desactive le flag}
         {--list : Liste les flags}';
 
-    protected $description = 'List, enable or disable CRM feature flags without redeploying.';
+    protected $description = 'List, enable or disable HUB feature flags without redeploying.';
 
     public function handle(CrmFeatureFlagService $features): int
     {

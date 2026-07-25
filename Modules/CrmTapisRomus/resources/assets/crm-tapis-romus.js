@@ -107,7 +107,7 @@
               <div class="tapis-stat"><span>Rouleaux 25 m²</span><strong>${rolls}</strong></div>
               <div class="tapis-stat"><span>Chutes</span><strong>${Math.max((rolls * 25) - surface, 0).toFixed(2)} m²</strong></div>
             </div>
-            <div class="tapis-note">Ce module est maintenant chargé comme les autres modules CRM natifs. Les prochaines intégrations ROMUS pourront être branchées ici sans dépendance au template historique.</div>
+            <div class="tapis-note">Ce module est maintenant chargé comme les autres modules HUB natifs. Les prochaines intégrations ROMUS pourront être branchées ici sans dépendance au template historique.</div>
             <div class="tapis-list">
               <div class="tapis-row"><strong>Préparation</strong><span>Calcul local</span></div>
               <div class="tapis-row"><strong>Suivi chantier</strong><span>À connecter</span></div>

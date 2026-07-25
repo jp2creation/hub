@@ -308,7 +308,7 @@
         <div class="teams-person-main">
           <span class="teams-avatar">${member.photoUrl ? `<img src="${esc(member.photoUrl)}" alt="" onerror="this.remove()" />` : ""}<b>${esc(initials(member))}</b></span>
           <span class="teams-person-identity">
-            <strong>${esc(fullName || "Membre CRM")}</strong>
+            <strong>${esc(fullName || "Membre HUB")}</strong>
             ${canViewPresence() ? `<span class="teams-person-meta">${presencePill(member)}</span>` : ""}
           </span>
         </div>

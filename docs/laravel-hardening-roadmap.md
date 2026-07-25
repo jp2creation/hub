@@ -9,28 +9,28 @@ Le HUB metier public passe par le routeur Laravel. Les anciens endpoints procedu
 ## Corrections immediates deja appliquees
 
 - Les erreurs internes des endpoints metier sont logguees cote serveur et ne sont plus retournees en clair au navigateur quand `APP_DEBUG=false`.
-- L'identite CRM par `?user_id=` dans l'URL a ete supprimee.
+- L'identite HUB par `?user_id=` dans l'URL a ete supprimee.
 - Les fichiers internes `public/api/_*.php` et les fichiers AppleDouble `._*` sont bloques par `.htaccess`.
 - `.gitignore` ignore maintenant les fichiers `._*`.
 - Une migration ajoute `crm_users.user_id` avec un index unique pour relier progressivement les utilisateurs metier aux comptes Laravel.
-- Les endpoints CRM privilegient la session Laravel : cookie Laravel -> table `sessions` -> `users.id` -> `crm_users.user_id`.
+- Les endpoints HUB privilegient la session Laravel : cookie Laravel -> table `sessions` -> `users.id` -> `crm_users.user_id`.
 - L'ancien header `X-CRM-User-Id` est desactive par defaut via `CRM_ALLOW_LEGACY_ACTOR_HEADER=false`; le champ body `actorUserId` reste toleré temporairement via `CRM_ALLOW_LEGACY_ACTOR_BODY=true`.
-- Une page de connexion CRM Laravel existe sur `/login`, avec deconnexion POST `/logout`, pour creer une session `web` hors Filament.
-- La resource Filament `Utilisateurs CRM` affiche le compte Laravel rattache et propose une action de creation/rattachement de compte pour les profils non rattaches.
+- Une page de connexion HUB Laravel existe sur `/login`, avec deconnexion POST `/logout`, pour creer une session `web` hors Filament.
+- La resource Filament `Utilisateurs HUB` affiche le compte Laravel rattache et propose une action de creation/rattachement de compte pour les profils non rattaches.
 
 ## Migration prioritaire
 
 1. Rattacher les utilisateurs HUB aux comptes Laravel.
 
-   La colonne `crm_users.user_id nullable unique` est en place. Les comptes peuvent etre crees et rattaches depuis Filament, fiche `Utilisateurs CRM`, action `Compte Laravel`.
+   La colonne `crm_users.user_id nullable unique` est en place. Les comptes peuvent etre crees et rattaches depuis Filament, fiche `Utilisateurs HUB`, action `Compte Laravel`.
 
    Note hebergement actuel : une migration separee convertit `users` en InnoDB puis ajoute la foreign key `crm_users.user_id -> users.id`.
 
-2. Proteger les routes CRM avec Laravel.
+2. Proteger les routes HUB avec Laravel.
 
    Les routes applicatives doivent utiliser `auth`, `verified` si necessaire, puis des policies ou gates metier.
 
-3. Garder les endpoints CRM dans le routeur Laravel.
+3. Garder les endpoints HUB dans le routeur Laravel.
 
    Cible permanente :
 
@@ -65,7 +65,7 @@ Le HUB metier public passe par le routeur Laravel. Les anciens endpoints procedu
 
 6. Ajouter les contraintes relationnelles.
 
-   Les migrations CRM utilisent beaucoup de `foreignId()` sans `constrained()`. Ajouter les foreign keys avec une strategie claire :
+   Les migrations HUB utilisent beaucoup de `foreignId()` sans `constrained()`. Ajouter les foreign keys avec une strategie claire :
 
    - `restrictOnDelete()` pour les donnees historiques a conserver
    - `cascadeOnDelete()` seulement pour les pivots

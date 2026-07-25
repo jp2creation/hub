@@ -249,7 +249,7 @@ function menuGroupsHtml(): string {
 
       return [
         '<section class="crm-native-nav-group">',
-        `<p class="crm-native-nav-title">${esc(group.title || group.menuKey || 'CRM')}</p>`,
+        `<p class="crm-native-nav-title">${esc(group.title || group.menuKey || 'HUB')}</p>`,
         items.map((item: CrmMenuItem) => menuItemHtml(item, routes[item.itemKey] || '#')).join(''),
         '</section>',
       ].join('');
@@ -264,7 +264,7 @@ function submenuHtml(group: CrmMenuGroup, items: CrmMenuItem[], routes: Record<s
     `<div class="crm-native-nav-submenu${active ? ' is-open' : ''}" data-crm-native-submenu>`,
     `<button class="crm-native-nav-link crm-native-nav-button${active ? ' is-active' : ''}" type="button" data-crm-native-submenu-toggle aria-expanded="${active ? 'true' : 'false'}">`,
     `<span class="crm-native-nav-icon">${iconForKey(groupIconKey(group))}</span>`,
-    `<span class="crm-native-nav-label">${esc(group.title || group.menuKey || 'CRM')}</span>`,
+    `<span class="crm-native-nav-label">${esc(group.title || group.menuKey || 'HUB')}</span>`,
     `<span class="crm-native-nav-chevron">${chevronIcon()}</span>`,
     '</button>',
     '<div class="crm-native-nav-subitems">',
@@ -282,7 +282,7 @@ function menuItemHtml(item: CrmMenuItem, path: string, nested = false): string {
   return [
     `<a class="crm-native-nav-link${nested ? ' crm-native-nav-subitem' : ''}${active ? ' is-active' : ''}" href="${esc(path)}"${target}>`,
     `<span class="crm-native-nav-icon">${iconFor(item)}</span>`,
-    `<span class="crm-native-nav-label">${esc(item.label || 'CRM')}</span>`,
+    `<span class="crm-native-nav-label">${esc(item.label || 'HUB')}</span>`,
     badgeHtml(item),
     '</a>',
   ].join('');

@@ -68,7 +68,7 @@ class CrmArchiveCommandTest extends TestCase
         ]);
 
         $this->artisan('crm:archive', ['--years' => 2, '--dry-run' => true])
-            ->expectsOutput('Archivage CRM en dry-run.')
+            ->expectsOutput('Archivage HUB en dry-run.')
             ->expectsOutput('Reservations vehicules : 1 candidat(s) avant 2024-07-19 -> crm_archived_reservations')
             ->expectsOutput('Locations materiel : 1 candidat(s) avant 2024-07-19 -> crm_archived_equipment_rentals')
             ->expectsOutput('Total candidat(s) : 2')

@@ -159,7 +159,7 @@
           return;
         }
       } catch (error) {
-        // Try the next CRM API.
+        // Try the next HUB API.
       }
     }
 

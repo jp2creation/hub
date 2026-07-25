@@ -36,7 +36,7 @@ class ArchiveCrmDataCommand extends Command
             return self::FAILURE;
         }
 
-        $this->info($this->option('dry-run') ? 'Archivage CRM en dry-run.' : 'Archivage CRM en production.');
+        $this->info($this->option('dry-run') ? 'Archivage HUB en dry-run.' : 'Archivage HUB en production.');
         $this->displayCounts($counts);
 
         if ($this->option('dry-run')) {

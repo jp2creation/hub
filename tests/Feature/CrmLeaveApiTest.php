@@ -23,7 +23,7 @@ class CrmLeaveApiTest extends TestCase
         $this->getJson('/api/conges?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_authorized_user_can_read_leave_bootstrap(): void
@@ -439,7 +439,7 @@ class CrmLeaveApiTest extends TestCase
         $site = $this->createSite('Palissy Test');
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
-            'name' => 'CRM Test User '.$account->id,
+            'name' => 'HUB Test User '.$account->id,
             'role' => $role ?? ($canManage ? 'admin' : 'user'),
             'active' => true,
         ]);

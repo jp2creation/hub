@@ -49,7 +49,7 @@ return new class extends Migration
             DB::table('crm_menu_groups')->updateOrInsert(
                 ['menu_key' => 'apps'],
                 [
-                    'title' => 'Applications CRM',
+                    'title' => 'Applications HUB',
                     'active' => true,
                     'sort_order' => 10,
                     'updated_at' => $now,

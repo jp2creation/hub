@@ -35,7 +35,7 @@ class NotifyReservationDeleted
         $this->notifications->notify($owner->account, 'reservation_deleted', [
             'reservation' => '#'.$event->entityId,
             'title' => (string) ($event->payload['title'] ?? 'Reservation'),
-            'actor' => $event->actorName ?: 'CRM',
+            'actor' => $event->actorName ?: 'HUB',
             'start' => (string) ($event->payload['startAt'] ?? ''),
             'end' => (string) ($event->payload['endAt'] ?? ''),
             'actionUrl' => '/reservations',

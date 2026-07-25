@@ -12,7 +12,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class CrmStatsOverview extends StatsOverviewWidget
 {
-    protected ?string $heading = 'Vue CRM';
+    protected ?string $heading = 'Vue HUB';
 
     protected ?string $description = 'Etat rapide des sites, reservations et utilisateurs metier.';
 
@@ -28,7 +28,7 @@ class CrmStatsOverview extends StatsOverviewWidget
             Stat::make('Reservations a venir', CrmReservation::query()->where('end_at', '>=', now())->count())
                 ->icon(Heroicon::OutlinedCalendarDays)
                 ->color('success'),
-            Stat::make('Utilisateurs CRM actifs', CrmUser::query()->where('active', true)->count())
+            Stat::make('Utilisateurs HUB actifs', CrmUser::query()->where('active', true)->count())
                 ->icon(Heroicon::OutlinedUsers)
                 ->color('info'),
         ];

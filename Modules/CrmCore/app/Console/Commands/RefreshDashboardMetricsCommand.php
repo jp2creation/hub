@@ -18,7 +18,7 @@ class RefreshDashboardMetricsCommand extends Command
         {--site= : Limiter le recalcul a un site}
         {--date= : Date de reference YYYY-MM-DD}';
 
-    protected $description = 'Refresh pre-aggregated CRM dashboard metrics.';
+    protected $description = 'Refresh pre-aggregated HUB dashboard metrics.';
 
     public function handle(): int
     {

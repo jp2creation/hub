@@ -3,7 +3,7 @@
 return [
     'default' => [
         'greeting' => 'Hello,',
-        'action' => 'Open CRM',
+        'action' => 'Ouvrir le HUB',
     ],
     'system_alert' => [
         'subject' => ':title',

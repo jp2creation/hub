@@ -629,7 +629,7 @@ class CrmSecurityTest extends TestCase
         })->name('tests.crm-activity-log');
 
         $this->actingAs($account)
-            ->withHeader('User-Agent', 'CRM Security Test Browser')
+            ->withHeader('User-Agent', 'HUB Security Test Browser')
             ->postJson('/_tests/crm-activity-log', [
                 'name' => 'Apres',
                 'password' => 'super-secret',
@@ -641,7 +641,7 @@ class CrmSecurityTest extends TestCase
 
         $this->assertNotNull($log);
         $this->assertSame('127.0.0.1', $log->ip);
-        $this->assertSame('CRM Security Test Browser', $log->user_agent);
+        $this->assertSame('HUB Security Test Browser', $log->user_agent);
 
         $context = json_decode((string) $log->context, true, flags: JSON_THROW_ON_ERROR);
 

@@ -28,7 +28,7 @@ class CrmDepositRequestApiTest extends TestCase
         $this->getJson('/api/demandes-acompte?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_create_permission_is_required_to_create_deposit_request(): void
@@ -170,7 +170,7 @@ class CrmDepositRequestApiTest extends TestCase
         $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
-            'name' => 'CRM Deposit User '.$account->id,
+            'name' => 'HUB Deposit User '.$account->id,
             'role' => array_intersect(['deposit_requests.manage', 'deposit_requests.validate'], $permissions) ? 'responsable' : 'user',
             'active' => true,
         ]);

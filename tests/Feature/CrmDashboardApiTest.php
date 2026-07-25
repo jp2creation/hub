@@ -38,7 +38,7 @@ class CrmDashboardApiTest extends TestCase
         $this->getJson('/api/dashboard')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_dashboard_returns_operational_widgets_for_authorized_user(): void

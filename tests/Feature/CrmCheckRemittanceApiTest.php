@@ -27,7 +27,7 @@ class CrmCheckRemittanceApiTest extends TestCase
         $this->getJson('/api/remise-cheques?action=bootstrap')
             ->assertStatus(401)
             ->assertJsonPath('ok', false)
-            ->assertJsonPath('error', 'Utilisateur CRM requis');
+            ->assertJsonPath('error', 'Utilisateur HUB requis');
     }
 
     public function test_manage_permission_is_required_to_create_remittance(): void
@@ -241,7 +241,7 @@ class CrmCheckRemittanceApiTest extends TestCase
         $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
-            'name' => 'CRM Check User '.$account->id,
+            'name' => 'HUB Check User '.$account->id,
             'role' => in_array('check_remittances.manage', $permissions, true) ? 'responsable' : 'user',
             'active' => true,
         ]);

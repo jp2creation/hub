@@ -6,6 +6,17 @@ HUB interne pour centraliser les outils operationnels Martin Sols : portail web,
 
 Ce depot contient l'application Laravel qui remplace les anciens endpoints PHP disperses par une base applicative versionnee, testable et extensible. L'interface principale sert aux equipes internes, tandis que l'administration Filament permet de maintenir les donnees de reference, les droits et les contenus.
 
+## Licence
+
+Ce depot est publie en **source disponible**, pas sous licence open source OSI.
+Vous pouvez consulter, cloner, tester et contribuer au code pour un usage
+personnel ou d'evaluation. Tout usage professionnel, commercial, client,
+production, hebergement, revente, distribution ou exploitation d'une version
+modifiee demande l'accord ecrit prealable de Jean-Philippe DEGERT / JP2
+Creation.
+
+Voir [LICENSE.md](LICENSE.md).
+
 ## Fonctionnalites principales
 
 - Authentification web Laravel, portail HUB protege et PWA installable.
@@ -41,7 +52,7 @@ Ce depot contient l'application Laravel qui remplace les anciens endpoints PHP d
 - Portail HUB : `/`
 - Connexion : `/login`
 - Administration : `/admin`
-- Tableau de bord : `/dashboard/crm`
+- Tableau de bord : `/`
 - Reservations vehicules : `/reservations`
 - Location materiel : `/locations-materiel`
 - Conges : `/conges`
@@ -69,11 +80,11 @@ Les anciens chemins `.php`, par exemple `/api/conges.php`, sont bloques. Les int
 - `app/Models/` : modeles Eloquent partages.
 - `database/migrations/` : schema Laravel global et migrations de packages.
 - `Modules/*/database/migrations/` : migrations metier versionnees par module.
-- `resources/views/` : vues CRM, login, erreurs et shell applicatif.
+- `resources/views/` : vues HUB, login, erreurs et shell applicatif.
 - `public/assets/` et `public/modules/` : assets compiles servis en production.
 - `tests/Feature/` et `tests/Unit/` : tests des API metier, services et securite.
 - `mobile/` : application mobile Capacitor connectee a l'API Sanctum.
-- `docs/` : documentation technique, guide utilisateur, plaquette CRM et notes de deploiement.
+- `docs/` : documentation technique, guide utilisateur, plaquette HUB et notes de deploiement.
 
 ## Installation
 
@@ -146,10 +157,10 @@ Regle importante : les fichiers de `public/assets` sont des sorties compilees. U
 ## Documentation
 
 - Architecture, schema ER et flux principaux : [docs/README.md](docs/README.md)
-- Standard des modules CRM : [docs/CRM_MODULE_STANDARD.md](docs/CRM_MODULE_STANDARD.md)
+- Standard des modules HUB : [docs/HUB_MODULE_STANDARD.md](docs/HUB_MODULE_STANDARD.md)
 - Guide de creation d'un module : [docs/MODULE_CREATION_GUIDE.md](docs/MODULE_CREATION_GUIDE.md)
-- Guide d'utilisation utilisateur : [docs/guide-utilisation-crm-martin-sols.pdf](docs/guide-utilisation-crm-martin-sols.pdf)
-- Plaquette de presentation CRM : [docs/presentation-crm-publicitaire.pdf](docs/presentation-crm-publicitaire.pdf)
+- Guide d'utilisation utilisateur : [docs/guide-utilisation-hub-martin-sols.pdf](docs/guide-utilisation-hub-martin-sols.pdf)
+- Plaquette de presentation HUB : [docs/presentation-hub-publicitaire.pdf](docs/presentation-hub-publicitaire.pdf)
 - Historique des changements : [CHANGELOG.md](CHANGELOG.md)
 
 ## Securite
@@ -159,4 +170,4 @@ Regle importante : les fichiers de `public/assets` sont des sorties compilees. U
 - Creer l'admin via `php artisan crm:admin`; ne pas stocker de mot de passe admin dans `.env.example`.
 - Desactiver les options legacy d'impersonation sauf besoin explicite.
 - L'API mobile utilise Sanctum et des tokens Bearer ; leur duree est pilotee par `SANCTUM_MOBILE_TOKEN_EXPIRATION_DAYS`.
-- Les actions critiques CRM sont journalisees dans `crm_logs`.
+- Les actions critiques HUB sont journalisees dans `crm_logs`.

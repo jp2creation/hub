@@ -1,4 +1,4 @@
-# Documentation technique CRM
+# Documentation technique HUB
 
 Ce dossier regroupe la documentation technique du HUB Martin Sols : architecture,
 schema de donnees, flux principaux, exploitation et deploiement.
@@ -7,11 +7,11 @@ schema de donnees, flux principaux, exploitation et deploiement.
 
 ```mermaid
 flowchart LR
-    Browser["Navigateur CRM"] --> WebRoutes["routes/web.php"]
+    Browser["Navigateur HUB"] --> WebRoutes["routes/web.php"]
     Mobile["Application mobile"] --> MobileApi["API mobile Sanctum"]
-    WebRoutes --> Controllers["Controllers CRM"]
+    WebRoutes --> Controllers["Controllers HUB"]
     Controllers --> Requests["Form Requests"]
-    Controllers --> Services["Services metier CRM"]
+    Controllers --> Services["Services metier HUB"]
     Services --> Queries["Query builders / conflits"]
     Services --> Models["Modeles Eloquent"]
     Models --> Database[(MySQL / MariaDB)]
@@ -38,14 +38,14 @@ flowchart LR
 - Administration Filament pour les donnees de reference et permissions.
 - PWA installable via `manifest.json` et Service Worker.
 - API mobile via Sanctum.
-- Endpoints CRM exposes par Laravel sans extension `.php`.
+- Endpoints HUB exposes par Laravel sans extension `.php`.
 - Creation admin par commande Artisan `crm:admin`, sans mot de passe stocke dans `.env.example`.
 
 ## Experience developpeur
 
-- Standard modulaire : [CRM_MODULE_STANDARD.md](CRM_MODULE_STANDARD.md)
+- Standard modulaire : [HUB_MODULE_STANDARD.md](HUB_MODULE_STANDARD.md)
 - Guide de creation d'un module : [MODULE_CREATION_GUIDE.md](MODULE_CREATION_GUIDE.md)
-- Autorisations CRM : [CRM_AUTHORIZATION.md](CRM_AUTHORIZATION.md)
+- Autorisations HUB : [HUB_AUTHORIZATION.md](HUB_AUTHORIZATION.md)
 - Deploiement : [DEPLOYMENT.md](DEPLOYMENT.md)
 - Migration des endpoints legacy : [LEGACY_API_MIGRATION.md](LEGACY_API_MIGRATION.md)
 
@@ -59,6 +59,16 @@ make deploy-check
 ```
 
 `make hooks` active `.githooks/pre-commit`, qui verifie Laravel Pint sur les fichiers PHP stages avant chaque commit.
+
+## Licence
+
+Le projet Martin Sols HUB est publie en source disponible. Le code peut etre
+consulte, teste et etudie pour un usage personnel ou d'evaluation, mais tout
+usage professionnel, commercial, client, production, hebergement, revente ou
+redistribution demande l'accord ecrit prealable de Jean-Philippe DEGERT / JP2
+Creation.
+
+Voir [../LICENSE.md](../LICENSE.md).
 
 ## Schema ER simplifie
 
@@ -107,9 +117,9 @@ erDiagram
 ## Tables metier
 
 - `crm_sites` : sites disponibles dans le HUB.
-- `crm_users` : profil CRM relie au compte Laravel `users`.
+- `crm_users` : profil HUB relie au compte Laravel `users`.
 - `crm_modules`, `crm_permissions` : activation des modules et droits fins.
-- `crm_user_sites`, `crm_user_modules`, `crm_user_permissions` : pivots de droits CRM.
+- `crm_user_sites`, `crm_user_modules`, `crm_user_permissions` : pivots de droits HUB.
 - `crm_vehicles`, `crm_reservations` : flotte et planning vehicules.
 - `crm_equipment_categories`, `crm_equipment_items`, `crm_equipment_rentals` : materiel et locations.
 - `crm_leave_employees`, `crm_leave_entries` : profils conges et absences.
@@ -133,7 +143,7 @@ sequenceDiagram
     participant U as Utilisateur
     participant L as LoginController
     participant S as Session Laravel
-    participant C as CRM
+    participant C as HUB
 
     U->>L: POST /login
     L->>S: authentifie le compte users
@@ -146,7 +156,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant UI as Interface CRM
+    participant UI as Interface HUB
     participant API as ReservationApiController
     participant Service as ReservationService
     participant Conflict as ReservationConflictQuery
@@ -165,7 +175,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant UI as Interface CRM
+    participant UI as Interface HUB
     participant API as EquipmentRentalApiController
     participant Service as EquipmentRentalService
     participant Cache as Cache Laravel
@@ -183,7 +193,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant UI as Interface CRM
+    participant UI as Interface HUB
     participant API as LeaveApiController
     participant Service as LeaveService
     participant DB as MySQL
@@ -191,7 +201,7 @@ sequenceDiagram
     UI->>API: action=save_leave
     API->>Service: utilisateur + site
     Service->>DB: transaction
-    Service->>DB: employe CRM existant lie au site
+    Service->>DB: employe HUB existant lie au site
     Service->>DB: controle chevauchement
     Service->>DB: cree ou modifie le conge
     Service-->>UI: planning conges actualise
@@ -201,7 +211,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant UI as Interface CRM
+    participant UI as Interface HUB
     participant API as API comptabilite
     participant Service as Service metier
     participant DB as MySQL
@@ -220,7 +230,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant UI as Interface CRM
+    participant UI as Interface HUB
     participant API as SalesTourApiController
     participant Service as SalesTourService
     participant DB as MySQL
@@ -242,7 +252,7 @@ sequenceDiagram
 - Le canal `horizon` est configure en `daily` sur `storage/logs/horizon.log`.
 - Le cache applicatif utilise le store configure par `CACHE_STORE`.
 - Les categories materiel actives sont mises en cache et invalidees lors des modifications.
-- Les routes API CRM utilisent `CRM_API_THROTTLE_PER_MINUTE`; login web et token mobile utilisent `CRM_LOGIN_THROTTLE_PER_MINUTE`.
+- Les routes API HUB utilisent `CRM_API_THROTTLE_PER_MINUTE`; login web et token mobile utilisent `CRM_LOGIN_THROTTLE_PER_MINUTE`.
 - Les reponses JSON API peuvent etre compressees en gzip via `CRM_RESPONSE_COMPRESSION_ENABLED`.
 - Les sauvegardes SQL sont ecrites par `backup:run` en flux gzip, sans charger le dump complet en memoire PHP.
 - En MySQL/MariaDB, `backup:run` utilise `mariadb-dump` ou `mysqldump`; en SQLite local, un export PHP streamable reste disponible pour les tests.
@@ -284,7 +294,7 @@ CRM_BACKUP_ENCRYPTION_KEY="une-cle-longue-stockee-hors-git"
 
 Le chiffrement utilise Sodium `secretstream` et produit des fichiers `.sql.gz.enc`. La verification `--verify` controle l'archive gzip avant chiffrement et envoi. Si une sauvegarde echoue, une alerte est enregistree dans `notification_logs` avec `template_key=backup.database.failed`.
 
-Un test mensuel de restauration doit etre fait sur une base isolee, jamais sur la production. Le flux recommande est : telecharger la derniere archive externe, la dechiffrer si besoin, la decompresser, restaurer dans une base temporaire, puis verifier que `php artisan migrate:status` et quelques parcours critiques CRM passent sur cette base.
+Un test mensuel de restauration doit etre fait sur une base isolee, jamais sur la production. Le flux recommande est : telecharger la derniere archive externe, la dechiffrer si besoin, la decompresser, restaurer dans une base temporaire, puis verifier que `php artisan migrate:status` et quelques parcours critiques HUB passent sur cette base.
 
 ## Deploiement
 

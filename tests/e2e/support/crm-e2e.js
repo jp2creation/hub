@@ -15,7 +15,7 @@ function isLocalE2eRun() {
 
 function skipWhenExternal(test) {
   if (!isLocalE2eRun()) {
-    test.skip(true, 'Mutating CRM E2E tests are disabled for external PLAYWRIGHT_BASE_URL.');
+    test.skip(true, 'Mutating HUB E2E tests are disabled for external PLAYWRIGHT_BASE_URL.');
   }
 }
 

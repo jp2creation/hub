@@ -12,19 +12,19 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 - Documentation technique dans `docs/README.md` avec architecture, schema ER et flux principaux.
 - Convention de release et rappel d'utilisation des tags Git.
 - Tests de conflit conges pour les demi-journees.
-- Cache applicatif centralise pour les listes de reference CRM.
-- Index de consultation sur les pivots CRM et colonnes de jointure restantes.
+- Cache applicatif centralise pour les listes de reference HUB.
+- Index de consultation sur les pivots HUB et colonnes de jointure restantes.
 - Tests unitaires du calcul de chevauchement des conges.
 - Tests d'echec API pour validation `422`, ressource introuvable `404`, limitation de tentatives et CSRF.
 - Commande Artisan `crm:admin` pour creer ou mettre a jour l'administrateur sans mot de passe dans `.env.example`.
 - Configuration CORS explicite pour les routes `api/*`, dont `api/mobile/*` et les origins Capacitor/Ionic.
 - Tests unitaires de la politique de mot de passe admin.
-- Detection automatique de la version des bundles importes par les chunks CRM pour eviter le double chargement de React.
+- Detection automatique de la version des bundles importes par les chunks HUB pour eviter le double chargement de React.
 - Stack Docker Sail PHP 8.3 avec MySQL, Redis et Mailpit.
 - Workflow GitHub Actions pour Pint, build Vite et tests Laravel en PHP 8.3.
 - `CrmActivityLogger` centralise pour journaliser les actions critiques dans `crm_logs`.
 - Nettoyage automatique des photos uploadées lors du masquage, remplacement ou suppression des vehicules et materiels.
-- Throttles Laravel explicites pour les routes API CRM, token mobile et login web.
+- Throttles Laravel explicites pour les routes API HUB, token mobile et login web.
 - Canal de log `horizon` en rotation quotidienne.
 - Nettoyage automatique des anciennes entrees de menu issues du template UI.
 - Middleware de compression gzip pour les reponses API JSON.
@@ -37,7 +37,7 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 - Module Remise de cheques avec photo, controles signature/destinataire, detection assistee et export PDF.
 - Evolution du module Controle caisse avec factures, comptage especes, ecarts, justificatifs et PDF.
 - PWA installable avec `manifest.json`, Service Worker et scripts de boot public.
-- Guide d'utilisation PDF complet et plaquette de presentation CRM dans `docs/`.
+- Guide d'utilisation PDF complet et plaquette de presentation HUB dans `docs/`.
 
 ### Changed
 
@@ -46,15 +46,15 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 - Les conflits de conges tiennent compte des demi-journees et ignorent les demandes refusees.
 - La documentation d'installation rappelle que `CRM_ADMIN_PASSWORD` doit etre defini uniquement dans le vrai `.env`.
 - Les bootstraps API reservations/location materiel prechargent les relations et reutilisent les donnees statiques cachees.
-- `CrmAsset` utilise le manifest Vite quand un asset y est declare, puis le cache-busting `filemtime` pour les bundles CRM historiques.
+- `CrmAsset` utilise le manifest Vite quand un asset y est declare, puis le cache-busting `filemtime` pour les bundles HUB historiques.
 - Les conflits de conges utilisent un service metier testable au lieu d'une logique uniquement portee par la requete SQL.
-- Les erreurs de validation des `FormRequest` API CRM retournent maintenant le statut HTTP `422`.
+- Les erreurs de validation des `FormRequest` API HUB retournent maintenant le statut HTTP `422`.
 - Le seeder ne bloque plus l'installation si aucun mot de passe admin n'est fourni ; l'admin se gere via `php artisan crm:admin`.
-- Les assets CRM generes par Laravel utilisent la meme query string que les imports Vite existants, ce qui corrige les pages blanches au rafraichissement.
-- Les creations et suppressions de conges sont maintenant tracees dans le journal CRM.
+- Les assets HUB generes par Laravel utilisent la meme query string que les imports Vite existants, ce qui corrige les pages blanches au rafraichissement.
+- Les creations et suppressions de conges sont maintenant tracees dans le journal HUB.
 - Le projet exige maintenant PHP 8.3 minimum, aligne avec l'hebergement Planethoster.
 - Les reservations vehicules et locations materiel refusent maintenant les dates passees.
-- Le menu CRM se limite aux modules reels : applications metier, administration/interne et pages internes seulement si elles existent.
+- Le menu HUB se limite aux modules reels : applications metier, administration/interne et pages internes seulement si elles existent.
 - La documentation de deploiement rappelle la generation du cache vues et le controle du scheduler.
 - Le rewrite Apache ne force plus les anciens chemins `/auth`, `/dashboard`, `/forms`, `/tables`, `/charts`, `/pages` et `/features` vers le HUB.
 - Le menu place maintenant `Conges` dans `Applications HUB`, juste sous `Equipe`.
@@ -68,7 +68,7 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 
 ### Added
 
-- Cache-busting automatique des assets CRM via `App\Support\CrmAsset`.
+- Cache-busting automatique des assets HUB via `App\Support\CrmAsset`.
 - Migration d'indexes de performance pour reservations, locations, materiel, vehicules et conges.
 - Cron serveur Laravel `schedule:run` toutes les minutes.
 - Tache planifiee `sanctum:prune-expired --hours=24`.
@@ -83,7 +83,7 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 
 ### Added
 
-- `FormRequest` dediees pour login, token mobile et actions API CRM.
+- `FormRequest` dediees pour login, token mobile et actions API HUB.
 - `ReservationConflictQuery` pour centraliser les controles de chevauchement.
 - Chargements eager loading dans les ressources Filament principales.
 - Configuration `CRM_DISPLAY_TIMEZONE`.
@@ -91,7 +91,7 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 ### Changed
 
 - Les controles de conflits vehicules, materiel et conges utilisent une classe de query dediee.
-- Les validations recurrentes des API CRM sont centralisees.
+- Les validations recurrentes des API HUB sont centralisees.
 
 ## [2026.07.11.1] - 2026-07-11
 
@@ -104,15 +104,15 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 ### Changed
 
 - Durcissement des mots de passe admin seedes.
-- Throttling des endpoints legacy CRM.
+- Throttling des endpoints legacy HUB.
 
 ## [2026.07.10.1] - 2026-07-10
 
 ### Added
 
-- Tableau de bord CRM apres connexion.
+- Tableau de bord HUB apres connexion.
 - Vue cartes pour location materiel et reservations vehicules.
-- Module conges integre au shell CRM.
+- Module conges integre au shell HUB.
 
 ### Fixed
 

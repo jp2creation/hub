@@ -91,7 +91,7 @@ class CrmModuleManifestTest extends TestCase
             ->values()
             ->all();
 
-        $this->assertSame([], $rootCrmMigrations, 'Les migrations CRM doivent vivre dans Modules/*/database/migrations.');
+        $this->assertSame([], $rootCrmMigrations, 'Les migrations HUB doivent vivre dans Modules/*/database/migrations.');
 
         $moduleMigrationDirs = collect(glob(base_path('Modules/*/database/migrations')) ?: [])
             ->map(fn (string $path): string => basename(dirname(dirname($path))))

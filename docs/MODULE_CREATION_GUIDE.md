@@ -8,7 +8,7 @@ Chaque module utilise trois noms stables :
 
 - Nom PHP : `CrmExample`
 - Namespace : `Modules\CrmExample`
-- Slug CRM : `example`
+- Slug HUB : `example`
 
 Le slug est celui utilise par le menu, les feature flags et le middleware `crm.module`.
 
@@ -71,7 +71,7 @@ La priorite controle l'ordre de chargement. Les modules de base comme `CrmCore` 
 
 ## 4. Creer le provider
 
-Tous les providers CRM doivent etendre `Modules\CrmCore\Providers\CrmModuleServiceProvider`.
+Tous les providers HUB doivent etendre `Modules\CrmCore\Providers\CrmModuleServiceProvider`.
 
 ```php
 <?php
@@ -148,14 +148,14 @@ CrmDomainEvent::dispatch(
 
 ## 7. Droits, menu et feature flag
 
-Un module doit etre declare dans les donnees CRM :
+Un module doit etre declare dans les donnees HUB :
 
 - `crm_modules` pour l'activation et le libelle.
 - `crm_permissions` pour les actions fines.
 - `crm_menu_items` pour le menu lateral.
 - `crm_feature_flags` pour l'activation a chaud.
 
-Les droits suivent la separation documentee dans [CRM_AUTHORIZATION.md](CRM_AUTHORIZATION.md) :
+Les droits suivent la separation documentee dans [HUB_AUTHORIZATION.md](HUB_AUTHORIZATION.md) :
 
 - Spatie Permission est reserve a la plateforme, Filament et Horizon.
 - `CrmAccessService` est l'autorite pour les modules metier, les sites et les permissions metier.
@@ -204,7 +204,7 @@ make build
 
 - Provider declare dans `module.json`.
 - `database/migrations` existe dans le module.
-- Aucune migration CRM dans `database/migrations`.
+- Aucune migration HUB dans `database/migrations`.
 - Routes API sans `.php` presentes.
 - Aucun alias API legacy `.php`.
 - Permissions et menu ajoutes.

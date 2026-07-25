@@ -35,7 +35,7 @@ class DashboardService
             ->first();
 
         if (! $actor) {
-            $this->fail('Utilisateur CRM introuvable', 404);
+            $this->fail('Utilisateur HUB introuvable', 404);
         }
 
         return $actor;
@@ -502,7 +502,7 @@ class DashboardService
 
             $alerts[] = [
                 'type' => 'danger',
-                'label' => 'Queue CRM',
+                'label' => 'Queue HUB',
                 'value' => (int) ($payload['jobs'] ?? 0),
                 'detail' => 'Jobs en attente sur '.(string) ($payload['queue'] ?? 'default'),
                 'href' => '/administration',
@@ -519,7 +519,7 @@ class DashboardService
         if ($backupAlert) {
             $alerts[] = [
                 'type' => 'danger',
-                'label' => 'Sauvegarde CRM',
+                'label' => 'Sauvegarde HUB',
                 'value' => 1,
                 'detail' => 'Derniere sauvegarde echouee',
                 'href' => '/administration',

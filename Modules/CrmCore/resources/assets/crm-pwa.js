@@ -16,7 +16,7 @@
     try {
       window.dispatchEvent(new CustomEvent(name, { detail: detail || {} }));
     } catch (error) {
-      // Optional browser event; never block the CRM UI.
+      // Optional browser event; never block the HUB UI.
     }
   }
 
@@ -66,7 +66,7 @@
         dispatch('crm:pwa-ready');
       })
       .catch(function () {
-        // PWA installability is optional; the CRM must continue normally.
+        // PWA installability is optional; the HUB must continue normally.
       });
   }
 

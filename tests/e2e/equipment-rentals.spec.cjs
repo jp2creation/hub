@@ -7,7 +7,7 @@ const {
   skipWhenExternal,
 } = require('./support/crm-e2e');
 
-test.describe('CRM equipment rentals E2E', () => {
+test.describe('HUB equipment rentals E2E', () => {
   skipWhenExternal(test);
 
   test('mobile API completes equipment rental create update delete flow', async ({ request }) => {

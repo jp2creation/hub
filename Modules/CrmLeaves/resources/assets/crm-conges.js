@@ -1421,7 +1421,7 @@
         <div class="leave-users-head">
           <div>
             <h2 class="leave-users-title">Utilisateurs</h2>
-            <p class="leave-users-site">Comptes CRM du site ${esc(activeSiteName())}</p>
+            <p class="leave-users-site">Comptes HUB du site ${esc(activeSiteName())}</p>
           </div>
           <span class="leave-users-count">${employees().length}</span>
         </div>

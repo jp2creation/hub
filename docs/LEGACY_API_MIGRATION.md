@@ -5,7 +5,7 @@ Objectif : garder uniquement les routes Laravel sans extension et supprimer tout
 ## Etat au 21 juillet 2026
 
 - Aucun fichier PHP legacy n'est expose dans `public/`; seul `public/index.php` reste le front controller Laravel.
-- Les modules CRM enregistrent uniquement les routes metier `/api/<module>` sans extension.
+- Les modules HUB enregistrent uniquement les routes metier `/api/<module>` sans extension.
 - Une route globale de blocage `/api/{legacyPhpPath}.php` retourne `404` avant toute action metier, afin d'empecher la redirection canonique automatique vers les routes modernes.
 - Les tentatives legacy qui atteignent Laravel sont journalisees dans `crm_logs` avec l'action `legacy php api blocked`.
 - `LegacyPhpApiController`, `AuditLegacyPhpApi`, le rate limiter `crm-legacy-api` et les variables `CRM_LEGACY_PHP_API_*` ont ete supprimes.

@@ -8,8 +8,8 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const docsDir = path.join(rootDir, 'docs');
 const assetsDir = path.join(docsDir, 'user-guide-assets');
-const htmlPath = path.join(docsDir, 'guide-utilisation-crm-martin-sols.html');
-const pdfPath = path.join(docsDir, 'guide-utilisation-crm-martin-sols.pdf');
+const htmlPath = path.join(docsDir, 'guide-utilisation-hub-martin-sols.html');
+const pdfPath = path.join(docsDir, 'guide-utilisation-hub-martin-sols.pdf');
 
 const baseUrl = (process.env.CRM_DOC_BASE_URL || 'https://crm.jp2.fr').replace(/\/$/, '');
 const email = process.env.CRM_DOC_EMAIL;
