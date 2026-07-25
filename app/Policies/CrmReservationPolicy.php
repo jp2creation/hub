@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\CrmReservation;
 use App\Models\User;
 use App\Policies\Concerns\AuthorizesCrmSiteAccess;
+use Carbon\CarbonImmutable;
 use Illuminate\Auth\Access\Response;
 
 class CrmReservationPolicy
@@ -41,10 +42,13 @@ class CrmReservationPolicy
         $siteId = (int) $reservation->getAttribute('site_id');
 
         return $this->allowIf(
-            $this->canOnSite($user, $siteId, self::MODULE, ['reservations.update_any'])
-            || (
-                $this->ownsCrmRecord($user, $reservation->getAttribute('user_id'))
-                && $this->canOnSite($user, $siteId, self::MODULE, ['reservations.update_own'])
+            $this->canActOnDatedReservation($user, $reservation)
+            && (
+                $this->canOnSite($user, $siteId, self::MODULE, ['reservations.update_any'])
+                || (
+                    $this->ownsCrmRecord($user, $reservation->getAttribute('user_id'))
+                    && $this->canOnSite($user, $siteId, self::MODULE, ['reservations.update_own'])
+                )
             ),
             'Modification non autorisee',
         );
@@ -53,10 +57,13 @@ class CrmReservationPolicy
     public function updateForSite(User $user, CrmReservation $reservation, int $siteId): Response
     {
         return $this->allowIf(
-            $this->canOnSite($user, $siteId, self::MODULE, ['reservations.update_any'])
-            || (
-                $this->ownsCrmRecord($user, $reservation->getAttribute('user_id'))
-                && $this->canOnSite($user, $siteId, self::MODULE, ['reservations.update_own'])
+            $this->canActOnDatedReservation($user, $reservation)
+            && (
+                $this->canOnSite($user, $siteId, self::MODULE, ['reservations.update_any'])
+                || (
+                    $this->ownsCrmRecord($user, $reservation->getAttribute('user_id'))
+                    && $this->canOnSite($user, $siteId, self::MODULE, ['reservations.update_own'])
+                )
             ),
             'Site non autorise',
         );
@@ -67,13 +74,36 @@ class CrmReservationPolicy
         $siteId = (int) $reservation->getAttribute('site_id');
 
         return $this->allowIf(
-            $this->canOnSite($user, $siteId, self::MODULE, ['reservations.delete_any'])
-            || (
-                $this->ownsCrmRecord($user, $reservation->getAttribute('user_id'))
-                && $this->canOnSite($user, $siteId, self::MODULE, ['reservations.delete_own'])
+            $this->canActOnDatedReservation($user, $reservation)
+            && (
+                $this->canOnSite($user, $siteId, self::MODULE, ['reservations.delete_any'])
+                || (
+                    $this->ownsCrmRecord($user, $reservation->getAttribute('user_id'))
+                    && $this->canOnSite($user, $siteId, self::MODULE, ['reservations.delete_own'])
+                )
             ),
             'Suppression non autorisee',
         );
+    }
+
+    private function canActOnDatedReservation(User $user, CrmReservation $reservation): bool
+    {
+        if (! $this->reservationIsPast($reservation)) {
+            return true;
+        }
+
+        return $this->crmUser($user)?->role === 'admin' || $this->canUseFilamentAdmin($user);
+    }
+
+    private function reservationIsPast(CrmReservation $reservation): bool
+    {
+        $startAt = $reservation->getAttribute('start_at');
+
+        if (! $startAt) {
+            return false;
+        }
+
+        return CarbonImmutable::parse($startAt)->startOfDay()->lt(CarbonImmutable::now()->startOfDay());
     }
 
     private function allowIf(bool $allowed, string $message): Response

@@ -407,6 +407,73 @@ class CrmReservationApiTest extends TestCase
             ->assertJsonPath('reservation.startAt', '2026-08-06T09:00');
     }
 
+    public function test_user_with_update_own_cannot_update_past_reservation(): void
+    {
+        [$account, $crmUser, $site, $vehicle] = $this->createCrmUser(['reservations.update_own']);
+        $yesterday = now()->subDay()->format('Y-m-d');
+
+        $reservation = CrmReservation::query()->create([
+            'site_id' => $site->id,
+            'vehicle_id' => $vehicle->id,
+            'user_id' => $crmUser->id,
+            'user_name' => $crmUser->name,
+            'title' => 'Ancienne reservation',
+            'contact_phone' => '',
+            'start_at' => $yesterday.' 08:00:00',
+            'end_at' => $yesterday.' 09:00:00',
+            'notes' => '',
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/reservations?action=update_reservation', [
+                'id' => $reservation->id,
+                'vehicleId' => $vehicle->id,
+                'startAt' => $yesterday.'T09:00',
+                'endAt' => $yesterday.'T10:00',
+                'title' => 'Ancienne modifiee',
+            ])
+            ->assertStatus(403)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('error', 'Modification non autorisee');
+
+        $this->assertDatabaseHas('crm_reservations', [
+            'id' => $reservation->id,
+            'title' => 'Ancienne reservation',
+        ]);
+    }
+
+    public function test_crm_admin_can_update_past_reservation(): void
+    {
+        [$account, $crmUser, $site, $vehicle] = $this->createCrmUser(['reservations.update_any'], 'admin');
+        $yesterday = now()->subDay()->format('Y-m-d');
+
+        $reservation = CrmReservation::query()->create([
+            'site_id' => $site->id,
+            'vehicle_id' => $vehicle->id,
+            'user_id' => $crmUser->id,
+            'user_name' => $crmUser->name,
+            'title' => 'Historique admin',
+            'contact_phone' => '',
+            'start_at' => $yesterday.' 08:00:00',
+            'end_at' => $yesterday.' 09:00:00',
+            'notes' => '',
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/reservations?action=update_reservation', [
+                'id' => $reservation->id,
+                'vehicleId' => $vehicle->id,
+                'startAt' => $yesterday.'T09:00',
+                'endAt' => $yesterday.'T10:00',
+                'title' => 'Historique corrige',
+                'notes' => 'Correction admin',
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('reservation.title', 'Historique corrige')
+            ->assertJsonPath('reservation.notes', 'Correction admin');
+    }
+
     public function test_reservation_domain_events_are_logged_centrally(): void
     {
         [$account, , , $vehicle] = $this->createCrmUser(['reservations.create']);
@@ -477,6 +544,65 @@ class CrmReservationApiTest extends TestCase
 
         $this->assertDatabaseMissing('crm_reservations', [
             'id' => $reservationId,
+        ]);
+    }
+
+    public function test_creator_with_delete_own_cannot_delete_past_reservation(): void
+    {
+        [$account, $crmUser, $site, $vehicle] = $this->createCrmUser(['reservations.delete_own']);
+        $yesterday = now()->subDay()->format('Y-m-d');
+
+        $reservation = CrmReservation::query()->create([
+            'site_id' => $site->id,
+            'vehicle_id' => $vehicle->id,
+            'user_id' => $crmUser->id,
+            'user_name' => $crmUser->name,
+            'title' => 'Reservation passee',
+            'contact_phone' => '',
+            'start_at' => $yesterday.' 08:00:00',
+            'end_at' => $yesterday.' 09:00:00',
+            'notes' => '',
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/reservations?action=delete_reservation', [
+                'id' => $reservation->id,
+            ])
+            ->assertStatus(403)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('error', 'Suppression non autorisee');
+
+        $this->assertDatabaseHas('crm_reservations', [
+            'id' => $reservation->id,
+        ]);
+    }
+
+    public function test_crm_admin_can_delete_past_reservation(): void
+    {
+        [$account, $crmUser, $site, $vehicle] = $this->createCrmUser(['reservations.delete_any'], 'admin');
+        $yesterday = now()->subDay()->format('Y-m-d');
+
+        $reservation = CrmReservation::query()->create([
+            'site_id' => $site->id,
+            'vehicle_id' => $vehicle->id,
+            'user_id' => $crmUser->id,
+            'user_name' => $crmUser->name,
+            'title' => 'Historique admin',
+            'contact_phone' => '',
+            'start_at' => $yesterday.' 08:00:00',
+            'end_at' => $yesterday.' 09:00:00',
+            'notes' => '',
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/reservations?action=delete_reservation', [
+                'id' => $reservation->id,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseMissing('crm_reservations', [
+            'id' => $reservation->id,
         ]);
     }
 
@@ -565,9 +691,9 @@ class CrmReservationApiTest extends TestCase
             ->json('vehicle');
 
         $vehicleId = (int) $vehicle['id'];
-        $photoPath = substr((string) $vehicle['photoUrl'], strlen('/storage/'));
+        $photoPath = preg_replace('#^/(?:storage|uploads)/#', '', (string) $vehicle['photoUrl']) ?? '';
 
-        $this->assertStringStartsWith('/storage/assets/uploads/vehicles/', $vehicle['photoUrl']);
+        $this->assertMatchesRegularExpression('#^/(storage|uploads)/assets/uploads/vehicles/#', $vehicle['photoUrl']);
         Storage::disk('public')->assertExists($photoPath);
         Storage::disk('public')->assertExists(str_replace('.webp', '-thumb.webp', $photoPath));
 
@@ -590,13 +716,13 @@ class CrmReservationApiTest extends TestCase
      * @param  array<int, string>  $permissions
      * @return array{0: User, 1: CrmUser, 2: CrmSite, 3: CrmVehicle}
      */
-    private function createCrmUser(array $permissions): array
+    private function createCrmUser(array $permissions, string $role = 'user'): array
     {
         $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
             'user_id' => $account->id,
             'name' => 'CRM Reservation User '.$account->id,
-            'role' => 'user',
+            'role' => $role,
             'active' => true,
         ]);
 

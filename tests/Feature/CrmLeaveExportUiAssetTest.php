@@ -23,6 +23,21 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringNotContainsString('function renderExportRows', $public);
     }
 
+    public function test_leave_export_uses_server_pdf_download_with_member_selection(): void
+    {
+        $source = (string) file_get_contents(base_path('Modules/CrmLeaves/resources/assets/crm-conges.js'));
+        $public = (string) file_get_contents(public_path('modules/crm-leaves/crm-conges.js'));
+
+        $this->assertSame($source, $public);
+        $this->assertStringContainsString('function renderExportModal()', $public);
+        $this->assertStringContainsString("request('export_options'", $public);
+        $this->assertStringContainsString("action: 'export_pdf'", $public);
+        $this->assertStringContainsString('data-export-employee', $public);
+        $this->assertStringContainsString('includeOtherSites', $public);
+        $this->assertStringContainsString('Telecharger le PDF', $public);
+        $this->assertStringNotContainsString('window.open(', $public);
+    }
+
     public function test_leave_module_mounts_without_a_global_dom_observer(): void
     {
         $source = (string) file_get_contents(base_path('Modules/CrmLeaves/resources/assets/crm-conges.js'));

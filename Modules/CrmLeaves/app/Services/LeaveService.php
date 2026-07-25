@@ -11,6 +11,8 @@ use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Modules\CrmCore\Queries\ReservationConflictQuery;
@@ -26,6 +28,7 @@ class LeaveService
         private readonly CrmActivityLogger $activity,
         private readonly CrmAccessService $access,
         private readonly LeaveBalanceService $balances,
+        private readonly LeavePdfExportService $pdfExport,
     ) {}
 
     public function actorForUser(User $user): CrmUser
@@ -74,6 +77,7 @@ class LeaveService
                 'role' => $actor->role,
                 'permissions' => $this->access->permissionNames($actor),
                 'canManage' => $this->canOnSite($actor, $selectedSiteId, 'conges.manage'),
+                'canExportOtherSites' => $this->canOnSite($actor, $selectedSiteId, 'conges.manage') && $sites->count() > 1,
                 'siteIds' => $this->siteIds($actor),
                 'selectedSiteId' => $selectedSiteId,
             ],
@@ -95,6 +99,97 @@ class LeaveService
                 ['value' => CrmLeavePeriod::Morning->value, 'label' => CrmLeavePeriod::Morning->label()],
                 ['value' => CrmLeavePeriod::Afternoon->value, 'label' => CrmLeavePeriod::Afternoon->label()],
             ],
+            'export' => $this->exportOptions($actor, ['siteId' => $selectedSiteId]),
+        ];
+    }
+
+    public function exportOptions(CrmUser $actor, array $data): array
+    {
+        $this->requireModule($actor);
+
+        $siteId = $this->optionalPositiveInt($data['siteId'] ?? $data['site_id'] ?? null);
+        $selectedSiteId = $this->resolveSiteId($actor, $siteId);
+        $includeOtherSites = $this->booleanValue($data['includeOtherSites'] ?? $data['include_other_sites'] ?? false);
+        $siteIds = $this->exportSiteIds($actor, $selectedSiteId, $includeOtherSites);
+        $employees = $this->syncEmployeesForSites($siteIds);
+        $sites = CrmSite::query()
+            ->active()
+            ->whereIn('id', $siteIds)
+            ->orderBy('id')
+            ->get()
+            ->keyBy('id');
+
+        return [
+            'ok' => true,
+            'siteIds' => $siteIds,
+            'canIncludeOtherSites' => $this->canIncludeOtherSites($actor, $selectedSiteId),
+            'employees' => $employees
+                ->map(fn (CrmLeaveEmployee $employee): array => $this->exportEmployeeRow($employee, $siteIds, $sites))
+                ->values()
+                ->all(),
+        ];
+    }
+
+    public function exportPdf(CrmUser $actor, array $data): array
+    {
+        $this->requireModule($actor);
+
+        [$from, $to] = $this->exportDateRange($data);
+        $siteId = $this->optionalPositiveInt($data['siteId'] ?? $data['site_id'] ?? null);
+        $includeOtherSites = $this->booleanValue($data['includeOtherSites'] ?? $data['include_other_sites'] ?? false);
+        $siteIds = $this->exportSiteIds($actor, $siteId, $includeOtherSites);
+        $employees = $this->syncEmployeesForSites($siteIds);
+        $requestedEmployeeIds = $this->integerList($data['employeeIds'] ?? $data['employee_ids'] ?? []);
+
+        if ($requestedEmployeeIds !== []) {
+            $allowedEmployeeIds = $employees->pluck('id')->map(fn ($id): int => (int) $id)->all();
+            $unauthorizedIds = array_values(array_diff($requestedEmployeeIds, $allowedEmployeeIds));
+
+            if ($unauthorizedIds !== []) {
+                $this->fail('Utilisateur non autorise pour cet export', 403);
+            }
+
+            $employees = $employees->filter(fn (CrmLeaveEmployee $employee): bool => in_array((int) $employee->id, $requestedEmployeeIds, true))->values();
+        }
+
+        if ($employees->isEmpty()) {
+            $this->fail('Aucun membre a exporter', 422, 'empty_leave_export');
+        }
+
+        $employeeIds = $employees->pluck('id')->map(fn ($id): int => (int) $id)->all();
+        $entries = CrmLeaveEntry::query()
+            ->whereIn('employee_id', $employeeIds)
+            ->where('status', '<>', CrmLeaveStatus::Refused->value)
+            ->whereDate('start_date', '<=', $to->toDateString())
+            ->whereDate('end_date', '>=', $from->toDateString())
+            ->orderBy('start_date')
+            ->orderBy('end_date')
+            ->get()
+            ->map(fn (CrmLeaveEntry $entry): array => $this->exportEntryPdfRow($entry));
+
+        $sites = CrmSite::query()
+            ->active()
+            ->whereIn('id', $siteIds)
+            ->orderBy('id')
+            ->pluck('name')
+            ->map(fn ($name): string => (string) $name)
+            ->all();
+
+        $pdfEmployees = $employees
+            ->map(fn (CrmLeaveEmployee $employee): array => $this->exportEmployeePdfRow($employee))
+            ->values();
+
+        $filename = sprintf('conges-%s-%s.pdf', $from->format('Ymd'), $to->format('Ymd'));
+
+        $this->activity->log(
+            $actor,
+            'export conges pdf',
+            'Export conges '.$from->toDateString().' au '.$to->toDateString().' - '.$pdfEmployees->count().' membre(s)',
+        );
+
+        return [
+            'filename' => $filename,
+            'contents' => $this->pdfExport->render($pdfEmployees, $entries, $from, $to, $sites),
         ];
     }
 
@@ -275,9 +370,20 @@ class LeaveService
 
     private function syncEmployeesForSite(int $siteId)
     {
+        return $this->syncEmployeesForSites([$siteId]);
+    }
+
+    /**
+     * @param  array<int, int>  $siteIds
+     * @return Collection<int, CrmLeaveEmployee>
+     */
+    private function syncEmployeesForSites(array $siteIds): Collection
+    {
+        $siteIds = array_values(array_unique(array_map('intval', $siteIds)));
         $users = CrmUser::query()
+            ->with(['sites' => fn ($query) => $query->whereIn('crm_sites.id', $siteIds)])
             ->where('active', true)
-            ->whereHas('sites', fn ($query) => $query->where('crm_sites.id', $siteId))
+            ->whereHas('sites', fn ($query) => $query->whereIn('crm_sites.id', $siteIds))
             ->orderBy('name')
             ->get();
 
@@ -447,6 +553,73 @@ class LeaveService
         return $this->access->canOnSite($actor, $siteId, 'conges', $permission);
     }
 
+    /**
+     * @return array<int, int>
+     */
+    private function exportSiteIds(CrmUser $actor, ?int $siteId, bool $includeOtherSites): array
+    {
+        $selectedSiteId = $this->resolveSiteId($actor, $siteId);
+        $this->requireSitePermission($actor, $selectedSiteId, 'conges.view');
+
+        if (! $includeOtherSites) {
+            return [$selectedSiteId];
+        }
+
+        if (! $this->canIncludeOtherSites($actor, $selectedSiteId)) {
+            $this->fail('Droit insuffisant pour exporter les autres sites', 403, 'cannot_export_other_sites');
+        }
+
+        return $this->siteIds($actor);
+    }
+
+    private function canIncludeOtherSites(CrmUser $actor, int $siteId): bool
+    {
+        return $this->canOnSite($actor, $siteId, 'conges.manage') && count($this->siteIds($actor)) > 1;
+    }
+
+    /**
+     * @return array{0: CarbonImmutable, 1: CarbonImmutable}
+     */
+    private function exportDateRange(array $data): array
+    {
+        $fromDate = $this->date((string) ($data['fromDate'] ?? $data['from'] ?? $data['startDate'] ?? ''), 'debut');
+        $toDate = $this->date((string) ($data['toDate'] ?? $data['to'] ?? $data['endDate'] ?? ''), 'fin');
+        $from = CarbonImmutable::parse($fromDate);
+        $to = CarbonImmutable::parse($toDate);
+
+        if ($to < $from) {
+            $this->fail('La date de fin doit etre apres le debut', 400);
+        }
+
+        if ($from->diffInDays($to) > 730) {
+            $this->fail('Periode export trop longue', 400, 'export_period_too_long');
+        }
+
+        return [$from, $to];
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function integerList(mixed $value): array
+    {
+        if (! is_array($value)) {
+            return [];
+        }
+
+        return collect($value)
+            ->map(fn ($id): int => (int) $id)
+            ->filter(fn (int $id): bool => $id > 0)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function booleanValue(mixed $value): bool
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
     private function uniqueEmployeeSlug(string $value, ?int $ignoreId = null): string
     {
         $base = Str::slug($value) ?: 'utilisateur';
@@ -525,6 +698,77 @@ class LeaveService
             'active' => (bool) $employee->active,
             'sortOrder' => (int) $employee->sort_order,
         ];
+    }
+
+    /**
+     * @param  array<int, int>  $siteIds
+     * @param  Collection<int, CrmSite>  $sites
+     */
+    private function exportEmployeeRow(CrmLeaveEmployee $employee, array $siteIds, Collection $sites): array
+    {
+        $crmUser = CrmUser::query()
+            ->with('sites:id,name')
+            ->whereKey((int) $employee->getAttribute('crm_user_id'))
+            ->first();
+        $userSiteIds = $crmUser
+            ? $crmUser->sites
+                ->pluck('id')
+                ->map(fn ($id): int => (int) $id)
+                ->intersect($siteIds)
+                ->values()
+                ->all()
+            : [];
+        $siteNames = collect($userSiteIds)
+            ->map(function (int $id) use ($sites): string {
+                $site = $sites->get($id);
+
+                return $site instanceof CrmSite ? (string) $site->getAttribute('name') : '';
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        return [
+            ...$this->employeeRow($employee),
+            'siteIds' => $userSiteIds,
+            'siteNames' => $siteNames,
+        ];
+    }
+
+    /**
+     * @return array{id:int, name:string, color:string}
+     */
+    private function exportEmployeePdfRow(CrmLeaveEmployee $employee): array
+    {
+        return [
+            'id' => (int) $employee->getAttribute('id'),
+            'name' => (string) $employee->getAttribute('name'),
+            'color' => (string) ($employee->getAttribute('color') ?: '#f59e0b'),
+        ];
+    }
+
+    /**
+     * @return array{employee_id:int, start_date:string, end_date:string, type:string, period:string, status:string}
+     */
+    private function exportEntryPdfRow(CrmLeaveEntry $entry): array
+    {
+        return [
+            'employee_id' => (int) $entry->getAttribute('employee_id'),
+            'start_date' => $this->dateAttributeToString($entry->getAttribute('start_date')),
+            'end_date' => $this->dateAttributeToString($entry->getAttribute('end_date')),
+            'type' => (string) ($entry->getAttribute('type') ?: CrmLeaveType::PaidLeave->value),
+            'period' => (string) ($entry->getAttribute('period') ?: CrmLeavePeriod::Full->value),
+            'status' => (string) ($entry->getAttribute('status') ?: CrmLeaveStatus::Approved->value),
+        ];
+    }
+
+    private function dateAttributeToString(mixed $value): string
+    {
+        if ($value instanceof CarbonInterface) {
+            return $value->toDateString();
+        }
+
+        return (string) $value;
     }
 
     private function entryRow(CrmLeaveEntry $entry): array

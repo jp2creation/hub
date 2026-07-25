@@ -81,6 +81,84 @@ class CrmLeaveApiTest extends TestCase
             ->assertJsonPath('error', 'Action inconnue');
     }
 
+    public function test_authorized_user_can_download_leave_pdf_for_selected_members(): void
+    {
+        [$account, , $site, $employee] = $this->createCrmUser(canManage: false);
+
+        CrmLeaveEntry::query()->create([
+            'employee_id' => $employee->id,
+            'start_date' => '2026-08-10',
+            'end_date' => '2026-08-12',
+            'type' => 'conge',
+            'period' => 'full',
+            'duration_days' => 3,
+            'status' => 'approved',
+        ]);
+
+        $response = $this->actingAs($account)
+            ->postJson('/api/conges?action=export_pdf&siteId='.$site->id, [
+                'fromDate' => '2026-08-01',
+                'toDate' => '2026-08-31',
+                'employeeIds' => [$employee->id],
+            ])
+            ->assertOk();
+
+        $this->assertSame('application/pdf', $response->headers->get('Content-Type'));
+        $this->assertSame('attachment; filename="conges-20260801-20260831.pdf"', $response->headers->get('Content-Disposition'));
+        $this->assertStringStartsWith('%PDF-', (string) $response->getContent());
+    }
+
+    public function test_leave_pdf_export_rejects_unauthorized_employee_ids(): void
+    {
+        [$account, , $site] = $this->createCrmUser(canManage: false);
+        $otherSite = $this->createSite('Autre Site');
+        $otherCrmUser = CrmUser::query()->create([
+            'name' => 'Autre export',
+            'role' => 'user',
+            'active' => true,
+        ]);
+        $otherCrmUser->sites()->syncWithoutDetaching([$otherSite->id => ['is_default' => true]]);
+        $otherEmployee = CrmLeaveEmployee::query()->create([
+            'crm_user_id' => $otherCrmUser->id,
+            'name' => 'Autre export',
+            'slug' => 'autre-export',
+            'color' => '#16a34a',
+            'active' => true,
+            'sort_order' => 20,
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=export_pdf&siteId='.$site->id, [
+                'fromDate' => '2026-08-01',
+                'toDate' => '2026-08-31',
+                'employeeIds' => [$otherEmployee->id],
+            ])
+            ->assertStatus(403)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('error', 'Utilisateur non autorise pour cet export');
+    }
+
+    public function test_leave_export_options_can_include_other_sites_for_manager(): void
+    {
+        [$account, , $site] = $this->createCrmUser(canManage: true);
+        $otherSite = $this->createSite('Libourne Export');
+        $otherCrmUser = CrmUser::query()->create([
+            'name' => 'Membre Libourne',
+            'role' => 'user',
+            'active' => true,
+        ]);
+        $otherCrmUser->sites()->syncWithoutDetaching([$otherSite->id => ['is_default' => true]]);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=export_options&siteId='.$site->id, [
+                'includeOtherSites' => true,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('canIncludeOtherSites', true)
+            ->assertJsonFragment(['name' => 'Membre Libourne']);
+    }
+
     public function test_manage_permission_is_required_to_create_leave(): void
     {
         [$account, , , $employee] = $this->createCrmUser(canManage: false);

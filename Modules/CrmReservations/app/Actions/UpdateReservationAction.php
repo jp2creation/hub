@@ -23,7 +23,7 @@ class UpdateReservationAction
     public function execute(CrmUser $actor, ReservationPayload $payload): CrmReservation
     {
         return DB::transaction(function () use ($actor, $payload): CrmReservation {
-            $this->requireNotPastStartDate($payload->startAt);
+            $this->requireNotPastStartDate($actor, $payload->startAt);
 
             $reservation = CrmReservation::query()
                 ->lockForUpdate()
@@ -68,8 +68,12 @@ class UpdateReservationAction
         });
     }
 
-    private function requireNotPastStartDate(string $startAt): void
+    private function requireNotPastStartDate(CrmUser $actor, string $startAt): void
     {
+        if ($actor->role === 'admin') {
+            return;
+        }
+
         if (CarbonImmutable::parse($startAt)->startOfDay()->lt(CarbonImmutable::now()->startOfDay())) {
             $this->fail('Impossible de reserver dans le passe', 422);
         }

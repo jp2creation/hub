@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\Log;
 use Modules\CrmCore\Http\Requests\CrmApiRequest;
 use Modules\CrmLeaves\Exceptions\LeaveApiException;
 use Modules\CrmLeaves\Services\LeaveService;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 class LeaveApiController extends Controller
 {
-    public function __invoke(CrmApiRequest $request, LeaveService $leaves): JsonResponse
+    public function __invoke(CrmApiRequest $request, LeaveService $leaves): Response
     {
         if ($request->isMethod('OPTIONS')) {
             return $this->json(['ok' => true]);
@@ -37,6 +38,8 @@ class LeaveApiController extends Controller
 
             return match ($action) {
                 'bootstrap' => $this->json($leaves->bootstrap($actor, $siteId)),
+                'export_options' => $this->json($leaves->exportOptions($actor, $body)),
+                'export_pdf' => $this->pdf($leaves->exportPdf($actor, $body)),
                 'save_leave' => $this->json($leaves->saveLeave($actor, $body)),
                 'delete_leave' => $this->json($leaves->deleteLeave($actor, $body)),
                 default => $this->json(['ok' => false, 'error' => 'Action inconnue'], 404),
@@ -64,5 +67,18 @@ class LeaveApiController extends Controller
         return response()
             ->json($data, $status, [], JSON_UNESCAPED_UNICODE)
             ->withHeaders($this->crmApiHeaders());
+    }
+
+    /**
+     * @param  array{filename:string, contents:string}  $export
+     */
+    private function pdf(array $export): Response
+    {
+        return response($export['contents'], 200, [
+            ...$this->crmApiHeaders(),
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$export['filename'].'"',
+            'Cache-Control' => 'private, no-store',
+        ]);
     }
 }

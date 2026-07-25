@@ -18,6 +18,7 @@
     },
     selectedDate: formatDate(new Date()),
     modal: null,
+    exportModal: null,
   };
 
   const esc = (value) =>
@@ -309,6 +310,112 @@
       notes: leave?.notes || '',
     };
     render();
+  }
+
+  function openExportModal() {
+    const { first, last } = monthBounds();
+    const list = state.data?.export?.employees || employees();
+    state.exportModal = {
+      fromDate: first,
+      toDate: last,
+      includeOtherSites: false,
+      employees: list,
+      employeeIds: list.map((employee) => Number(employee.id)),
+      loading: false,
+      downloading: false,
+      error: '',
+    };
+    render();
+  }
+
+  async function loadExportOptions(includeOtherSites) {
+    if (!state.exportModal) return;
+
+    state.exportModal.loading = true;
+    state.exportModal.error = '';
+    render();
+
+    try {
+      const data = await request('export_options', {
+        includeOtherSites,
+        fromDate: state.exportModal.fromDate,
+        toDate: state.exportModal.toDate,
+      });
+      if (!state.exportModal) return;
+
+      const existingIds = new Set(state.exportModal.employeeIds.map(Number));
+      const list = data.employees || [];
+      const keptIds = list.map((employee) => Number(employee.id)).filter((id) => existingIds.has(id));
+
+      state.exportModal.includeOtherSites = includeOtherSites;
+      state.exportModal.employees = list;
+      state.exportModal.employeeIds = keptIds.length ? keptIds : list.map((employee) => Number(employee.id));
+      state.exportModal.loading = false;
+      render();
+    } catch (error) {
+      if (!state.exportModal) return;
+
+      state.exportModal.loading = false;
+      state.exportModal.error = error instanceof Error ? error.message : 'Options export indisponibles';
+      render();
+    }
+  }
+
+  function filenameFromDisposition(header) {
+    const match = String(header || '').match(/filename="?([^"]+)"?/i);
+    return match?.[1] || 'conges.pdf';
+  }
+
+  async function downloadExportPdf() {
+    if (!state.exportModal) return;
+
+    state.exportModal.downloading = true;
+    state.exportModal.error = '';
+    render();
+
+    const modal = state.exportModal;
+    const params = new URLSearchParams({ action: 'export_pdf' });
+    const siteId = activeSiteId();
+    if (siteId) params.set('siteId', String(siteId));
+
+    try {
+      const response = await fetch(`${api}?${params.toString()}`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fromDate: modal.fromDate,
+          toDate: modal.toDate,
+          employeeIds: modal.employeeIds,
+          includeOtherSites: modal.includeOtherSites,
+          siteId: siteId ? Number(siteId) : undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Export PDF impossible');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filenameFromDisposition(response.headers.get('Content-Disposition'));
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+
+      state.exportModal = null;
+      render();
+    } catch (error) {
+      if (!state.exportModal) return;
+
+      state.exportModal.downloading = false;
+      state.exportModal.error = error instanceof Error ? error.message : 'Export PDF impossible';
+      render();
+    }
   }
 
   function renderHeader() {
@@ -607,17 +714,7 @@
   }
 
   function exportPdf() {
-    const printWindow = window.open('', '_blank', 'width=1280,height=900');
-    if (!printWindow) {
-      alert("Impossible d'ouvrir l'export PDF. Autorisez les pop-ups pour ce CRM.");
-      return;
-    }
-
-    printWindow.document.open();
-    printWindow.document.write(exportDocumentHtml());
-    printWindow.document.close();
-    printWindow.focus();
-    window.setTimeout(() => printWindow.print(), 350);
+    openExportModal();
   }
 
   async function request(action, payload = null) {
@@ -755,15 +852,28 @@
       #crm-leaves-module .leaves-modal-backdrop { position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,.48); padding:1rem; }
       #crm-leaves-module .leaves-modal { width:min(42rem,100%); max-height:calc(100vh - 2rem); overflow:auto; border-radius:.75rem; background:#fff; padding:1rem; box-shadow:0 24px 80px rgba(15,23,42,.24); }
       #crm-leaves-module .leaves-modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:.85rem; }
+      #crm-leaves-module .leaves-modal-head p { margin:.2rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.78rem; font-weight:700; }
+      #crm-leaves-module .leaves-export-modal { width:min(40rem,100%); }
       #crm-leaves-module .leaves-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
       #crm-leaves-module .leaves-field { display:grid; gap:.32rem; }
       #crm-leaves-module .leaves-field-full { grid-column:1/-1; }
+      #crm-leaves-module .leaves-check { display:flex; align-items:center; gap:.55rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.75rem; background:var(--color-surface-50,#f8fafc); padding:.75rem; color:var(--color-secondary-700,#334155); font-size:.82rem; font-weight:850; }
+      #crm-leaves-module .leaves-check input { width:1rem; min-height:1rem; accent-color:rgb(var(--theme-primary)); }
+      #crm-leaves-module .leaves-export-members { display:grid; gap:.55rem; }
+      #crm-leaves-module .leaves-export-members-head { display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+      #crm-leaves-module .leaves-button-small { min-height:2rem; padding:.4rem .6rem; font-size:.73rem; }
+      #crm-leaves-module .leaves-export-member-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem; max-height:18rem; overflow:auto; padding:.1rem; }
+      #crm-leaves-module .leaves-export-member { display:grid; grid-template-columns:1rem minmax(0,1fr); align-items:center; gap:.55rem; min-width:0; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.75rem; background:#fff; padding:.65rem; }
+      #crm-leaves-module .leaves-export-member input { width:1rem; min-height:1rem; accent-color:rgb(var(--theme-primary)); }
+      #crm-leaves-module .leaves-export-member strong { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--color-secondary-900,#0f172a); font-size:.82rem; font-weight:900; }
+      #crm-leaves-module .leaves-export-member small { display:block; margin-top:.12rem; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--color-secondary-500,#64748b); font-size:.68rem; font-weight:750; }
       #crm-leaves-module label { color:#475569; font-size:.76rem; font-weight:800; }
       #crm-leaves-module input, #crm-leaves-module select, #crm-leaves-module textarea { min-height:2.4rem; width:100%; border:1px solid #cbd5e1; border-radius:.55rem; background:#fff; color:#0f172a; padding:.5rem .65rem; font-size:.85rem; }
       #crm-leaves-module textarea { min-height:5.2rem; resize:vertical; }
       #crm-leaves-module .leaves-actions { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; }
       #crm-leaves-module .leaves-button { display:inline-flex; min-height:2.35rem; align-items:center; justify-content:center; border:1px solid #e2e8f0; border-radius:.55rem; background:#fff; color:#334155; padding:.55rem .75rem; font-size:.84rem; font-weight:800; line-height:1; text-decoration:none; }
       #crm-leaves-module .leaves-button:hover { color:rgb(var(--theme-primary)); border-color:rgb(var(--theme-primary) / .45); }
+      #crm-leaves-module .leaves-button:disabled { cursor:not-allowed; opacity:.55; }
       #crm-leaves-module .leaves-button-primary { border-color:rgb(var(--theme-primary)); background:rgb(var(--theme-primary)); color:#fff; }
       #crm-leaves-module .leaves-button-primary:hover { color:#fff; filter:brightness(.97); }
       #crm-leaves-module .leaves-notice { border:1px solid #fecaca; border-radius:.75rem; background:#fef2f2; color:#991b1b; padding:.75rem; font-size:.85rem; }
@@ -793,6 +903,7 @@
         #crm-leaves-module .leave-line,
         #crm-leaves-module .leave-lane-spacer { height:.16rem; box-shadow:none; }
         #crm-leaves-module .leaves-form-grid { grid-template-columns:1fr; }
+        #crm-leaves-module .leaves-export-member-list { grid-template-columns:1fr; max-height:16rem; }
       }
       #crm-leaves-module .leaves-page { gap:1.15rem; }
       #crm-leaves-module .leave-workspace { display:grid; grid-template-columns:minmax(0,1fr); gap:1.2rem; align-items:start; }
@@ -1365,6 +1476,84 @@
     `;
   }
 
+  function renderExportModal() {
+    if (!state.exportModal) return '';
+
+    const form = state.exportModal;
+    const canIncludeOtherSites = Boolean(state.data?.user?.canExportOtherSites || state.data?.export?.canIncludeOtherSites);
+    const employeeIds = new Set(form.employeeIds.map(Number));
+    const allSelected = form.employees.length > 0 && form.employees.every((employee) => employeeIds.has(Number(employee.id)));
+    const disabled = form.loading || form.downloading;
+
+    return `
+      <div class="leaves-modal-backdrop" data-export-modal-backdrop>
+        <div class="leaves-modal leaves-export-modal">
+          <div class="leaves-modal-head">
+            <div>
+              <strong>Exporter le planning PDF</strong>
+              <p>Choisissez la plage de dates et les membres a inclure.</p>
+            </div>
+            <button type="button" class="leaves-button" data-close-export-modal>Fermer</button>
+          </div>
+          <form class="leaves-form-grid" data-export-form>
+            <div class="leaves-field">
+              <label>Debut</label>
+              <input type="date" name="fromDate" value="${esc(form.fromDate)}" required ${disabled ? 'disabled' : ''}>
+            </div>
+            <div class="leaves-field">
+              <label>Fin</label>
+              <input type="date" name="toDate" value="${esc(form.toDate)}" required ${disabled ? 'disabled' : ''}>
+            </div>
+            ${
+              canIncludeOtherSites
+                ? `
+                  <label class="leaves-check leaves-field-full">
+                    <input type="checkbox" name="includeOtherSites" ${form.includeOtherSites ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+                    <span>Inclure les membres des autres sites autorises</span>
+                  </label>
+                `
+                : ''
+            }
+            <div class="leaves-export-members leaves-field-full">
+              <div class="leaves-export-members-head">
+                <label>Membres</label>
+                <button type="button" class="leaves-button leaves-button-small" data-export-select-all ${disabled ? 'disabled' : ''}>
+                  ${allSelected ? 'Tout enlever' : 'Tout selectionner'}
+                </button>
+              </div>
+              <div class="leaves-export-member-list">
+                ${
+                  form.loading
+                    ? '<div class="leave-day-empty">Chargement des membres...</div>'
+                    : form.employees
+                        .map((employee) => {
+                          const sites = (employee.siteNames || []).join(', ');
+                          return `
+                            <label class="leaves-export-member">
+                              <input type="checkbox" data-export-employee value="${esc(employee.id)}" ${employeeIds.has(Number(employee.id)) ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+                              <span>
+                                <strong>${esc(employee.name)}</strong>
+                                ${sites ? `<small>${esc(sites)}</small>` : ''}
+                              </span>
+                            </label>
+                          `;
+                        })
+                        .join('')
+                }
+              </div>
+            </div>
+            ${form.error ? `<div class="leaves-notice leaves-field-full">${esc(form.error)}</div>` : ''}
+            <div class="leaves-actions leaves-field-full">
+              <button type="submit" class="leaves-button leaves-button-primary" ${disabled || !form.employeeIds.length ? 'disabled' : ''}>
+                ${form.downloading ? 'Generation...' : 'Telecharger le PDF'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+  }
+
   function render() {
     if (!canRender()) return;
 
@@ -1380,6 +1569,7 @@
           </div>
         </div>
         ${renderModal()}
+        ${renderExportModal()}
       </div>
     `;
     styles();
@@ -1444,6 +1634,54 @@
         state.modal = null;
         render();
       }
+    });
+    root.querySelector('[data-close-export-modal]')?.addEventListener('click', () => {
+      state.exportModal = null;
+      render();
+    });
+    root.querySelector('[data-export-modal-backdrop]')?.addEventListener('click', (event) => {
+      if (event.target === event.currentTarget) {
+        state.exportModal = null;
+        render();
+      }
+    });
+    root.querySelector('[name="includeOtherSites"]')?.addEventListener('change', (event) => {
+      loadExportOptions(Boolean(event.currentTarget.checked));
+    });
+    root.querySelector('[data-export-select-all]')?.addEventListener('click', () => {
+      if (!state.exportModal) return;
+
+      const allIds = state.exportModal.employees.map((employee) => Number(employee.id));
+      const allSelected = allIds.length > 0 && allIds.every((id) => state.exportModal.employeeIds.map(Number).includes(id));
+      state.exportModal.employeeIds = allSelected ? [] : allIds;
+      render();
+    });
+    root.querySelectorAll('[data-export-employee]').forEach((input) =>
+      input.addEventListener('change', () => {
+        if (!state.exportModal) return;
+
+        state.exportModal.employeeIds = Array.from(root.querySelectorAll('[data-export-employee]:checked')).map((item) =>
+          Number(item.value),
+        );
+        render();
+      }),
+    );
+    root.querySelector('[data-export-form]')?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!state.exportModal) return;
+
+      const form = Object.fromEntries(new FormData(event.currentTarget).entries());
+      state.exportModal.fromDate = String(form.fromDate || state.exportModal.fromDate);
+      state.exportModal.toDate = String(form.toDate || state.exportModal.toDate);
+      await downloadExportPdf();
+    });
+    root.querySelector('[data-export-form] input[name="fromDate"]')?.addEventListener('change', (event) => {
+      if (!state.exportModal) return;
+      state.exportModal.fromDate = event.currentTarget.value;
+    });
+    root.querySelector('[data-export-form] input[name="toDate"]')?.addEventListener('change', (event) => {
+      if (!state.exportModal) return;
+      state.exportModal.toDate = event.currentTarget.value;
     });
     root.querySelector('[data-leave-form]')?.addEventListener('submit', async (event) => {
       event.preventDefault();
