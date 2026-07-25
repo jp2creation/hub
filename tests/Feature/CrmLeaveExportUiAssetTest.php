@@ -70,11 +70,11 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringContainsString('grid-template-columns:repeat(4,minmax(0,1fr))', $public);
         $this->assertStringContainsString('grid-template-columns:repeat(2,minmax(0,1fr));', $public);
         $this->assertStringContainsString('${renderHeader()}', $public);
+        $this->assertStringContainsString('${renderViewTabs()}', $public);
+        $this->assertStringContainsString('${renderFilters()}', $public);
         $this->assertStringContainsString('${renderSummary()}', $public);
-        $this->assertStringContainsString('${renderWorkflowPanel()}', $public);
-        $this->assertStringContainsString('${renderCalendar()}', $public);
-        $this->assertStringContainsString('${renderSelectedDay()}', $public);
-        $this->assertStringContainsString('${renderTeamSheet()}', $public);
+        $this->assertStringContainsString('${renderBalancePanel()}', $public);
+        $this->assertStringContainsString('${renderMainView()}', $public);
         $this->assertStringNotContainsString('${renderUsers()}\\n            ${renderSummary()}', $public);
         $this->assertStringNotContainsString('<aside class="leave-side">', $public);
         $this->assertStringNotContainsString('${renderUsers()}\\n          </aside>', $public);
@@ -97,9 +97,43 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringContainsString('function renderTeamSheet()', $public);
         $this->assertStringContainsString('Planning global', $public);
         $this->assertStringContainsString('function renderWallPlanning', $public);
+        $this->assertStringContainsString('wallStartDate: formatDate(new Date())', $public);
+        $this->assertStringContainsString('function wallDayCount()', $public);
+        $this->assertStringContainsString('function wallVisibleDays()', $public);
+        $this->assertStringContainsString('function wallMonthGroups(days)', $public);
+        $this->assertStringContainsString('data-wall-prev', $public);
+        $this->assertStringContainsString('data-wall-today', $public);
+        $this->assertStringContainsString('data-wall-next', $public);
         $this->assertStringContainsString('class="leave-wall-table"', $public);
         $this->assertStringContainsString('class="leave-wall-zone ${isZoneA(day) ? \'is-zone-a\' : \'\'}"', $public);
         $this->assertStringContainsString('class="leave-wall-cell ${wallWeekendClass(day)} ${primary ? \'has-leave\' : \'\'}"', $public);
         $this->assertStringContainsString('data-edit-leave="${esc(primary.id)}"', $public);
+    }
+
+    public function test_leave_module_contains_hr_tabs_search_and_filters(): void
+    {
+        $source = (string) file_get_contents(base_path('Modules/CrmLeaves/resources/assets/crm-conges.js'));
+        $public = (string) file_get_contents(public_path('modules/crm-leaves/crm-conges.js'));
+
+        $this->assertSame($source, $public);
+        $this->assertStringContainsString('function renderViewTabs()', $public);
+        $this->assertStringContainsString('function renderFilters()', $public);
+        $this->assertStringContainsString('function renderBalancePanel()', $public);
+        $this->assertStringContainsString('function renderRequestsTable()', $public);
+        $this->assertStringContainsString('function renderReportsPanel()', $public);
+        $this->assertStringContainsString('Congés & absences', $public);
+        $this->assertStringContainsString('Mon calendrier', $public);
+        $this->assertStringContainsString('Planning collectif', $public);
+        $this->assertStringContainsString('Validation et suivi', $public);
+        $this->assertStringContainsString('Rechercher un membre, motif, statut...', $public);
+        $this->assertStringContainsString('data-filter-query', $public);
+        $this->assertStringContainsString('data-filter-employee', $public);
+        $this->assertStringContainsString('data-filter-type', $public);
+        $this->assertStringContainsString('data-filter-status', $public);
+        $this->assertStringContainsString('data-filter-reset', $public);
+        $this->assertStringContainsString('leave-hr-layout', $public);
+        $this->assertStringContainsString('leave-side-panel', $public);
+        $this->assertStringContainsString('leave-requests-table', $public);
+        $this->assertStringContainsString('leave-reporting-card', $public);
     }
 }
