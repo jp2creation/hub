@@ -37,7 +37,7 @@ export const hostRoutes: CrmHostRoute[] = [
   {
     className: 'crm-leaves-module-host',
     id: 'crm-leaves-module',
-    label: 'Congés',
+    label: 'Congés & Absences',
     paths: ['/conges'],
   },
   {

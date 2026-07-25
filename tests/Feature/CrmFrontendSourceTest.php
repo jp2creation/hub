@@ -81,6 +81,12 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('data-crm-native-shell', $nativeShell);
         $this->assertStringContainsString('layout-sidebar crm-native-sidebar', $nativeShell);
         $this->assertStringContainsString('layout-header crm-native-header', $nativeShell);
+        $this->assertStringContainsString('martin-sols-hub-sidebar-collapsed', $nativeShell);
+        $this->assertStringContainsString('crm-native-sidebar-collapsed', $nativeShell);
+        $this->assertStringContainsString('Déployer le menu', $nativeShell);
+        $this->assertStringContainsString('Rabattre le menu', $nativeShell);
+        $this->assertStringContainsString('isDesktopSidebarMode()', $nativeShell);
+        $this->assertStringContainsString('setSidebarCollapsed(readStoredSidebarCollapsed(), false)', $nativeShell);
         $this->assertStringContainsString("fetch('/api/administration?action=profile'", $nativeShell);
         $this->assertStringContainsString('profile.navigation', $nativeShell);
         $this->assertStringContainsString('window.CRM_NAV_FALLBACK = profile.navigation', $nativeShell);
@@ -156,6 +162,14 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringNotContainsString('--crm-mobile-app-status-background:', $shellCss);
         $this->assertStringContainsString('body.crm-mobile-app .crm-native-main', $shellCss);
         $this->assertStringContainsString('body.crm-mobile-app .crm-native-header', $shellCss);
+        $this->assertStringContainsString('--sidebar-collapsed-width: 80px;', $shellCss);
+        $this->assertStringContainsString('body.crm-native-sidebar-collapsed .crm-native-sidebar', $shellCss);
+        $this->assertStringContainsString('body.crm-native-sidebar-collapsed .crm-native-body', $shellCss);
+        $this->assertStringContainsString('body.crm-native-sidebar-collapsed .crm-native-header', $shellCss);
+        $this->assertStringContainsString('body.crm-native-sidebar-collapsed .crm-native-nav-submenu:hover .crm-native-nav-subitems', $shellCss);
+        $this->assertStringContainsString('body.crm-native-sidebar-collapsed .crm-native-brand-mark', $shellCss);
+        $this->assertStringContainsString('width: 2.45rem;', $shellCss);
+        $this->assertStringContainsString('height: 2.45rem;', $shellCss);
         $this->assertStringContainsString('position: sticky;', $shellCss);
         $this->assertStringContainsString('padding-top: var(--crm-header-height);', $shellCss);
         $this->assertStringContainsString('height: var(--crm-header-height);', $shellCss);

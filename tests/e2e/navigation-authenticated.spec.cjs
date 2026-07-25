@@ -5,6 +5,8 @@ test.describe('HUB authenticated navigation E2E', () => {
   skipWhenExternal(test);
 
   test('authenticated user can open critical module pages', async ({ page, request }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+
     const fixture = await issueMobileToken(request, 'Playwright Navigation');
     const headers = authHeaders(fixture.token);
     const sessionResponse = await request.post('/api/mobile/web-session', {
@@ -24,6 +26,20 @@ test.describe('HUB authenticated navigation E2E', () => {
     await page.goto(session.url);
     expect(new URL(page.url()).pathname).toMatch(/^\/(?:dashboard\/crm)?$/);
     await expect(page.locator('body')).toContainText(/Tableau de bord/i);
+
+    const sidebar = page.locator('.crm-native-sidebar');
+    const body = page.locator('body');
+    const sidebarToggle = page.locator('[data-crm-native-sidebar-toggle]');
+
+    await expect(sidebar).toBeVisible();
+    await expect(sidebarToggle).toHaveAttribute('aria-label', /Rabattre le menu/);
+    await sidebarToggle.click();
+    await expect(body).toHaveClass(/crm-native-sidebar-collapsed/);
+    await expect(sidebar).toHaveCSS('width', '80px');
+    await expect(sidebarToggle).toHaveAttribute('aria-label', /Déployer le menu/);
+    await sidebarToggle.click();
+    await expect(body).not.toHaveClass(/crm-native-sidebar-collapsed/);
+    await expect(sidebarToggle).toHaveAttribute('aria-label', /Rabattre le menu/);
 
     const pages = [
       ['/reservations', /R[ée]servations v[ée]hicules/i, '#crm-reservations-module'],

@@ -10,6 +10,47 @@ const {
 test.describe('HUB leaves E2E', () => {
   skipWhenExternal(test);
 
+  test('team planning period controls update the calendar grid', async ({ page, request }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+
+    const fixture = await issueMobileToken(request, 'Playwright Leaves UI');
+    const sessionResponse = await request.post('/api/mobile/web-session', {
+      headers: authHeaders(fixture.token),
+      data: {
+        redirectPath: '/conges',
+        siteId: fixture.siteId,
+        embed: false,
+      },
+    });
+
+    expect(sessionResponse.status()).toBe(200);
+
+    const session = await sessionResponse.json();
+    await page.goto(session.url);
+    await expect(page.locator('#crm-leaves-module')).toBeVisible();
+
+    await page.locator('#crm-leaves-module').getByRole('button', { name: 'Mon équipe' }).click();
+    await expect(page.locator('.leave-team-timeline')).toBeVisible();
+
+    await page.locator('.leave-period-mode').getByRole('button', { name: 'Jour' }).click();
+    await expect(page.locator('.leave-team-timeline')).toHaveClass(/is-day/);
+    await expect(page.locator('col.leave-team-day-col')).toHaveCount(1);
+
+    await page.locator('.leave-period-mode').getByRole('button', { name: 'Semaine' }).click();
+    await expect(page.locator('.leave-team-timeline')).toHaveClass(/is-week/);
+    await expect(page.locator('col.leave-team-day-col')).toHaveCount(7);
+
+    const weekdayLabels = await page
+      .locator('.leave-team-timeline thead tr:nth-child(2) th span')
+      .allTextContents();
+    expect(weekdayLabels.every((label) => /^[LMMJVSD]$/.test(label.trim()))).toBe(true);
+    await expect(page.locator('.leave-team-timeline .is-alternate').first()).toBeVisible();
+
+    await page.locator('.leave-period-mode').getByRole('button', { name: 'Mois' }).click();
+    await expect(page.locator('.leave-team-timeline')).toHaveClass(/is-month/);
+    expect(await page.locator('col.leave-team-day-col').count()).toBeGreaterThan(7);
+  });
+
   test('mobile API completes leave create update delete flow', async ({ request }) => {
     const fixture = await issueMobileToken(request, 'Playwright Leaves');
     const headers = authHeaders(fixture.token);

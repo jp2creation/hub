@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 use Modules\CrmCore\Queries\ReservationConflictQuery;
 use Modules\CrmCore\Services\CrmAccessService;
 use Modules\CrmCore\Services\CrmActivityLogger;
+use Modules\CrmCore\Services\CrmImageStorage;
 use Modules\CrmLeaves\Exceptions\LeaveApiException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -29,6 +30,7 @@ class LeaveService
         private readonly CrmAccessService $access,
         private readonly LeaveBalanceService $balances,
         private readonly LeavePdfExportService $pdfExport,
+        private readonly CrmImageStorage $images,
     ) {}
 
     public function actorForUser(User $user): CrmUser
@@ -56,6 +58,7 @@ class LeaveService
         $sites = $this->availableSites($actor);
         $employees = $this->syncEmployeesForSite($selectedSiteId);
         $employeeIds = $employees->pluck('id')->map(fn ($id): int => (int) $id)->all();
+        $canManage = $this->canOnSite($actor, $selectedSiteId, 'conges.manage');
 
         $leaves = CrmLeaveEntry::query()
             ->with('employee')
@@ -79,8 +82,15 @@ class LeaveService
                 'name' => $actor->name,
                 'role' => $actor->role,
                 'permissions' => $this->access->permissionNames($actor),
-                'canManage' => $this->canOnSite($actor, $selectedSiteId, 'conges.manage'),
-                'canExportOtherSites' => $this->canOnSite($actor, $selectedSiteId, 'conges.manage') && $sites->count() > 1,
+                'canManage' => $canManage,
+                'canViewTeam' => $canManage,
+                'canViewBalances' => $canManage,
+                'canViewRequests' => true,
+                'canViewReports' => $canManage,
+                'canManageSettings' => $canManage,
+                'canCreateRequest' => true,
+                'canExport' => true,
+                'canExportOtherSites' => $canManage && $sites->count() > 1,
                 'siteIds' => $this->siteIds($actor),
                 'selectedSiteId' => $selectedSiteId,
             ],
@@ -114,7 +124,7 @@ class LeaveService
         $selectedSiteId = $this->resolveSiteId($actor, $siteId);
         $includeOtherSites = $this->booleanValue($data['includeOtherSites'] ?? $data['include_other_sites'] ?? false);
         $siteIds = $this->exportSiteIds($actor, $selectedSiteId, $includeOtherSites);
-        $employees = $this->syncEmployeesForSites($siteIds);
+        $employees = $this->exportableEmployees($actor, $selectedSiteId, $this->syncEmployeesForSites($siteIds));
         $sites = CrmSite::query()
             ->active()
             ->whereIn('id', $siteIds)
@@ -141,7 +151,8 @@ class LeaveService
         $siteId = $this->optionalPositiveInt($data['siteId'] ?? $data['site_id'] ?? null);
         $includeOtherSites = $this->booleanValue($data['includeOtherSites'] ?? $data['include_other_sites'] ?? false);
         $siteIds = $this->exportSiteIds($actor, $siteId, $includeOtherSites);
-        $employees = $this->syncEmployeesForSites($siteIds);
+        $selectedSiteId = $this->resolveSiteId($actor, $siteId);
+        $employees = $this->exportableEmployees($actor, $selectedSiteId, $this->syncEmployeesForSites($siteIds));
         $requestedEmployeeIds = $this->integerList($data['employeeIds'] ?? $data['employee_ids'] ?? []);
 
         if ($requestedEmployeeIds !== []) {
@@ -700,6 +711,21 @@ class LeaveService
     }
 
     /**
+     * @param  Collection<int, CrmLeaveEmployee>  $employees
+     * @return Collection<int, CrmLeaveEmployee>
+     */
+    private function exportableEmployees(CrmUser $actor, int $selectedSiteId, Collection $employees): Collection
+    {
+        if ($this->canOnSite($actor, $selectedSiteId, 'conges.manage')) {
+            return $employees->values();
+        }
+
+        return $employees
+            ->filter(fn (CrmLeaveEmployee $employee): bool => $this->isEmployeeLinkedToActor($employee, $actor))
+            ->values();
+    }
+
+    /**
      * @return array{0: CarbonImmutable, 1: CarbonImmutable}
      */
     private function exportDateRange(array $data): array
@@ -817,9 +843,25 @@ class LeaveService
             'name' => $employee->name,
             'slug' => $employee->slug,
             'color' => $employee->color ?: '#f59e0b',
+            'photoUrl' => $this->employeePhotoUrl($employee),
             'active' => (bool) $employee->active,
             'sortOrder' => (int) $employee->sort_order,
         ];
+    }
+
+    private function employeePhotoUrl(CrmLeaveEmployee $employee): string
+    {
+        $crmUserId = (int) $employee->getAttribute('crm_user_id');
+
+        if ($crmUserId <= 0) {
+            return '/assets/logo/logomark.png';
+        }
+
+        $photoUrl = CrmUser::query()
+            ->whereKey($crmUserId)
+            ->value('photo_url');
+
+        return $this->images->normalizePublicUrl(is_string($photoUrl) ? $photoUrl : null) ?: '/assets/logo/logomark.png';
     }
 
     /**

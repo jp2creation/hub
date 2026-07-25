@@ -15,6 +15,7 @@ type CrmProfile = {
 
 const nativeShellSelector = '[data-crm-native-shell]';
 const profileStorageKey = 'martin-sols-hub-profile';
+const sidebarStorageKey = 'martin-sols-hub-sidebar-collapsed';
 let installed = false;
 let profileLoaded = false;
 let currentProfile: CrmProfile | undefined = readStoredProfile();
@@ -43,6 +44,10 @@ function esc(value: unknown): string {
 
 function logoUrl(): string {
   return window.MartinSolsCrmAssets?.logoUrl || '/assets/logo/martin-sols-logo.png';
+}
+
+function logoMarkUrl(): string {
+  return '/assets/logo/logomark.png';
 }
 
 function navigation(): CrmFallbackNavigation {
@@ -84,6 +89,10 @@ function isActivePath(path: string): boolean {
 
 function isAccountSettingsPath(): boolean {
   return normalizedPath() === '/pages/account-settings';
+}
+
+function isDesktopSidebarMode(): boolean {
+  return window.matchMedia('(min-width: 1024px)').matches;
 }
 
 function iconSvg(path: string): string {
@@ -168,6 +177,14 @@ function readStoredProfile(): CrmProfile | undefined {
   }
 }
 
+function readStoredSidebarCollapsed(): boolean {
+  try {
+    return window.localStorage?.getItem(sidebarStorageKey) === '1';
+  } catch {
+    return false;
+  }
+}
+
 function storeProfile(profile: CrmProfile): void {
   try {
     window.sessionStorage?.setItem(
@@ -181,6 +198,14 @@ function storeProfile(profile: CrmProfile): void {
     );
   } catch {
     // The profile cache is only used to avoid a visual flash in the shell.
+  }
+}
+
+function storeSidebarCollapsed(collapsed: boolean): void {
+  try {
+    window.localStorage?.setItem(sidebarStorageKey, collapsed ? '1' : '0');
+  } catch {
+    // The sidebar state is a visual preference only.
   }
 }
 
@@ -390,11 +415,12 @@ function setImageSource(image: HTMLImageElement | null, src: string, alt: string
 
 function headerHtml(profile?: CrmProfile): string {
   const shellProfile = profile || currentProfile;
+  const sidebarCollapsed = isDesktopSidebarMode() && document.body.classList.contains('crm-native-sidebar-collapsed');
 
   return [
     '<header class="layout-header crm-native-header">',
     '<div class="layout-container layout-page crm-native-header-inner">',
-    '<button class="crm-native-menu-button" type="button" data-crm-native-sidebar-toggle aria-label="Ouvrir le menu">',
+    `<button class="crm-native-menu-button" type="button" data-crm-native-sidebar-toggle aria-label="${sidebarCollapsed ? 'Déployer le menu' : 'Rabattre le menu'}" aria-pressed="${sidebarCollapsed ? 'true' : 'false'}">`,
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>',
     '</button>',
     '<a class="crm-native-mobile-brand" href="/">',
@@ -449,7 +475,8 @@ function shellHtml(route: CrmHostRoute | null): string {
     '<div class="crm-native-shell" data-crm-native-shell>',
     '<aside class="layout-sidebar crm-native-sidebar" aria-label="Menu HUB">',
     '<a class="crm-native-brand" href="/">',
-    `<img src="${esc(logoUrl())}" alt="Martin Sols">`,
+    `<img class="crm-native-brand-full" src="${esc(logoUrl())}" alt="Martin Sols">`,
+    `<img class="crm-native-brand-mark" src="${esc(logoMarkUrl())}" alt="Martin Sols">`,
     '</a>',
     `<nav class="crm-native-nav">${menuGroupsHtml()}</nav>`,
     '<button class="crm-native-logout" type="button" data-crm-native-logout>',
@@ -586,7 +613,35 @@ function closeSidebar(): void {
   document.body.classList.remove('crm-native-sidebar-open');
 }
 
+function syncSidebarToggleButtons(): void {
+  const desktop = isDesktopSidebarMode();
+  const collapsed = desktop && document.body.classList.contains('crm-native-sidebar-collapsed');
+
+  document.querySelectorAll<HTMLElement>('[data-crm-native-sidebar-toggle]').forEach((button) => {
+    button.setAttribute('aria-label', desktop ? (collapsed ? 'Déployer le menu' : 'Rabattre le menu') : 'Ouvrir le menu');
+    button.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+  });
+}
+
+function setSidebarCollapsed(collapsed: boolean, persist = true): void {
+  document.body.classList.toggle('crm-native-sidebar-collapsed', collapsed);
+  document.documentElement.classList.toggle('crm-native-sidebar-collapsed', collapsed);
+
+  if (persist) {
+    storeSidebarCollapsed(collapsed);
+  }
+
+  syncSidebarToggleButtons();
+}
+
 function toggleSidebar(): void {
+  if (isDesktopSidebarMode()) {
+    document.body.classList.remove('crm-native-sidebar-open');
+    setSidebarCollapsed(!document.body.classList.contains('crm-native-sidebar-collapsed'));
+
+    return;
+  }
+
   document.body.classList.toggle('crm-native-sidebar-open');
 }
 
@@ -691,6 +746,15 @@ function installEvents(): void {
     }
   });
 
+  window.addEventListener('resize', () => {
+    if (isDesktopSidebarMode()) {
+      closeSidebar();
+      setSidebarCollapsed(readStoredSidebarCollapsed(), false);
+    } else {
+      syncSidebarToggleButtons();
+    }
+  });
+
   window.addEventListener('popstate', () => {
     renderNativeShell();
     closeSidebar();
@@ -724,6 +788,7 @@ function installEvents(): void {
 export function installNativeCrmShell(): void {
   installShellApi();
   installEvents();
+  setSidebarCollapsed(readStoredSidebarCollapsed(), false);
   renderNativeShell();
 
   if (document.readyState === 'loading') {

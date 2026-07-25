@@ -35,12 +35,47 @@ class CrmLeaveApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('ok', true)
             ->assertJsonPath('user.canManage', true)
+            ->assertJsonPath('user.canViewTeam', true)
+            ->assertJsonPath('user.canViewBalances', true)
+            ->assertJsonPath('user.canViewReports', true)
+            ->assertJsonPath('user.canManageSettings', true)
             ->assertJsonPath('user.siteIds.0', $site->id)
             ->assertJsonPath('selectedSiteId', $site->id)
             ->assertJsonPath('employees.0.crmUserId', $crmUser->id)
             ->assertJsonPath('employees.0.name', $crmUser->name)
+            ->assertJsonPath('employees.0.photoUrl', '/assets/logo/logomark.png')
             ->assertJsonPath('types.0.label', 'Congé')
             ->assertJsonPath('periods.2.label', 'Après-midi');
+    }
+
+    public function test_leave_bootstrap_hides_management_tabs_for_simple_users(): void
+    {
+        [$account, , $site] = $this->createCrmUser(canManage: false);
+
+        $this->actingAs($account)
+            ->getJson('/api/conges?action=bootstrap&siteId='.$site->id)
+            ->assertOk()
+            ->assertJsonPath('user.canManage', false)
+            ->assertJsonPath('user.canViewTeam', false)
+            ->assertJsonPath('user.canViewBalances', false)
+            ->assertJsonPath('user.canViewRequests', true)
+            ->assertJsonPath('user.canViewReports', false)
+            ->assertJsonPath('user.canManageSettings', false)
+            ->assertJsonPath('user.canCreateRequest', true);
+    }
+
+    public function test_leave_bootstrap_returns_normalized_profile_photo_urls(): void
+    {
+        [$account, $crmUser, $site] = $this->createCrmUser(canManage: true);
+
+        $crmUser->forceFill([
+            'photo_url' => '/storage/assets/uploads/profiles/avatar.webp',
+        ])->save();
+
+        $this->actingAs($account)
+            ->getJson('/api/conges?action=bootstrap&siteId='.$site->id)
+            ->assertOk()
+            ->assertJsonPath('employees.0.photoUrl', '/uploads/assets/uploads/profiles/avatar.webp');
     }
 
     public function test_leave_bootstrap_uses_users_linked_to_selected_site(): void
@@ -157,6 +192,25 @@ class CrmLeaveApiTest extends TestCase
             ->assertJsonPath('ok', true)
             ->assertJsonPath('canIncludeOtherSites', true)
             ->assertJsonFragment(['name' => 'Membre Libourne']);
+    }
+
+    public function test_leave_export_options_are_limited_to_current_user_without_manage_permission(): void
+    {
+        [$account, $crmUser, $site, $employee] = $this->createCrmUser(canManage: false);
+        $otherCrmUser = CrmUser::query()->create([
+            'name' => 'Autre membre',
+            'role' => 'user',
+            'active' => true,
+        ]);
+        $otherCrmUser->sites()->syncWithoutDetaching([$site->id => ['is_default' => false]]);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=export_options&siteId='.$site->id)
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('employees.0.crmUserId', $crmUser->id)
+            ->assertJsonPath('employees.0.id', $employee->id)
+            ->assertJsonCount(1, 'employees');
     }
 
     public function test_user_without_manage_can_create_own_pending_leave_request(): void
@@ -560,8 +614,8 @@ class CrmLeaveApiTest extends TestCase
         $module = CrmModule::query()->updateOrCreate(
             ['slug' => 'conges'],
             [
-                'name' => 'Conges',
-                'description' => 'Planning conges',
+                'name' => 'Congés & Absences',
+                'description' => 'Planning et gestion des congés et absences',
                 'route_path' => '/conges',
                 'active' => true,
                 'sort_order' => 24,
@@ -570,12 +624,12 @@ class CrmLeaveApiTest extends TestCase
 
         $view = CrmPermission::query()->updateOrCreate(
             ['name' => 'conges.view'],
-            ['label' => 'Voir les conges', 'group_label' => 'Conges', 'sort_order' => 185],
+            ['label' => 'Voir les congés et absences', 'group_label' => 'Congés & Absences', 'sort_order' => 185],
         );
 
         $manage = CrmPermission::query()->updateOrCreate(
             ['name' => 'conges.manage'],
-            ['label' => 'Gerer les conges', 'group_label' => 'Conges', 'sort_order' => 186],
+            ['label' => 'Gérer les congés et absences', 'group_label' => 'Congés & Absences', 'sort_order' => 186],
         );
 
         $crmUser->sites()->syncWithoutDetaching([$site->id => ['is_default' => true]]);

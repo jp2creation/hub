@@ -55,7 +55,7 @@ class CrmDashboardApiTest extends TestCase
         foreach ([
             ['Réservations véhicules', 'reservations', '/reservations'],
             ['Location matériel', 'locations-materiel', '/locations-materiel'],
-            ['Congés', 'conges', '/conges'],
+            ['Congés & Absences', 'conges', '/conges'],
             ['Contrôle caisse', 'controle-caisse', '/controle-caisse'],
             ['Remise de chèques', 'remise-cheques', '/remise-cheques'],
         ] as [$name, $slug, $routePath]) {
@@ -201,7 +201,7 @@ class CrmDashboardApiTest extends TestCase
         foreach ([
             ['Réservations véhicules', 'reservations', '/reservations'],
             ['Location matériel', 'locations-materiel', '/locations-materiel'],
-            ['Congés', 'conges', '/conges'],
+            ['Congés & Absences', 'conges', '/conges'],
             ['Contrôle caisse', 'controle-caisse', '/controle-caisse'],
         ] as [$name, $slug, $routePath]) {
             CrmModule::query()->updateOrCreate(

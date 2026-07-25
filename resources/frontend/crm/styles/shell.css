@@ -1,6 +1,7 @@
 /* HUB shell overrides moved from resources/views/crm.blade.php. */
 :root {
   --sidebar-width: 260px;
+  --sidebar-collapsed-width: 80px;
   --crm-header-height: 64px;
   --crm-template-radius: var(--radius, 0.625rem);
   --crm-template-duration: var(--duration-normal, 200ms);
@@ -69,6 +70,10 @@ body.crm-native-shell-active {
   width: min(176px, 74%);
   max-height: 50px;
   object-fit: contain;
+}
+
+.crm-native-brand-mark {
+  display: none;
 }
 
 .crm-native-nav {
@@ -263,6 +268,7 @@ body.crm-native-shell-active {
 .crm-native-body {
   min-height: 100vh;
   padding-left: var(--sidebar-width);
+  transition: padding-left 300ms var(--crm-template-ease);
 }
 
 .crm-native-header {
@@ -324,7 +330,7 @@ body.crm-native-shell-active {
 }
 
 .crm-native-menu-button {
-  display: none;
+  display: inline-grid;
 }
 
 .crm-native-mobile-brand {
@@ -521,6 +527,141 @@ html.crm-ui-module-ready .crm-native-content > * {
 
 .crm-native-backdrop {
   display: none;
+}
+
+@media (min-width: 1024px) {
+  body.crm-native-sidebar-collapsed .crm-native-sidebar {
+    width: var(--sidebar-collapsed-width);
+    overflow: visible;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-body {
+    padding-left: var(--sidebar-collapsed-width);
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-header {
+    left: var(--sidebar-collapsed-width);
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-brand {
+    padding-inline: 0.75rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-brand img {
+    width: auto;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-brand-full {
+    display: none;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-brand-mark {
+    display: block;
+    width: 2.45rem;
+    max-width: 2.45rem;
+    height: 2.45rem;
+    object-fit: contain;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav {
+    overflow: visible;
+    padding: 1rem 0.65rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-group {
+    position: relative;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-group + .crm-native-nav-group {
+    margin-top: 0.45rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-title,
+  body.crm-native-sidebar-collapsed .crm-native-nav-link > .crm-native-nav-label,
+  body.crm-native-sidebar-collapsed .crm-native-nav-link > .crm-native-nav-badge,
+  body.crm-native-sidebar-collapsed .crm-native-nav-link > .crm-native-nav-chevron,
+  body.crm-native-sidebar-collapsed .crm-native-logout > .crm-native-nav-label {
+    display: none;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-link,
+  body.crm-native-sidebar-collapsed .crm-native-logout {
+    justify-content: center;
+    gap: 0;
+    padding-inline: 0.7rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-link {
+    min-height: 2.75rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-logout {
+    min-height: 4.25rem;
+    padding-inline: 0;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-icon {
+    width: 1.45rem;
+    height: 1.45rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-icon svg {
+    width: 1.22rem;
+    height: 1.22rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-submenu {
+    position: relative;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-subitems {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 0.7rem);
+    z-index: 1060;
+    display: none !important;
+    min-width: 14rem;
+    margin: 0;
+    padding: 0.55rem;
+    border: 1px solid rgb(226 232 240);
+    border-radius: 0.75rem;
+    background: #fff;
+    box-shadow: 0 18px 42px rgb(15 23 42 / 0.14);
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-submenu:hover .crm-native-nav-subitems,
+  body.crm-native-sidebar-collapsed .crm-native-nav-submenu:focus-within .crm-native-nav-subitems {
+    display: grid !important;
+    gap: 0.18rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-subitems::before {
+    position: absolute;
+    inset: 0 auto 0 -0.8rem;
+    width: 0.8rem;
+    content: '';
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-subitem {
+    justify-content: flex-start;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-subitem .crm-native-nav-label {
+    display: inline;
+    min-width: 0;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-subitem .crm-native-nav-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-menu-button {
+    background: rgb(149 0 46 / 0.08);
+    color: rgb(149 0 46);
+  }
 }
 
 @media (max-width: 1023.98px) {
