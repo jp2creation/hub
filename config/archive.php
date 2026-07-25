@@ -42,7 +42,7 @@ return [
 
         CrmLeaveEntry::class => [
             'key' => 'leave_entries',
-            'label' => 'Conges',
+            'label' => 'Congés & Absences',
             'archive_table' => 'crm_archived_leave_entries',
             'date_column' => 'end_date',
             'start_column' => 'start_date',

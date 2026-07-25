@@ -2,7 +2,7 @@
 
 return [
     'module' => [
-        'title' => 'Congés',
+        'title' => 'Congés & Absences',
         'subtitle' => 'Planning des absences du site :site',
     ],
 

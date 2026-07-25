@@ -51,10 +51,13 @@ class CrmAdministrationApiTest extends TestCase
 
         $reservationItem = collect($readProfile['navigation']['menuItems'])
             ->firstWhere('itemKey', 'module:reservations');
+        $leavesItem = collect($readProfile['navigation']['menuItems'])
+            ->firstWhere('itemKey', 'module:conges');
         $documentsGroup = collect($readProfile['navigation']['menuGroups'])
             ->firstWhere('menuKey', 'documents');
 
         $this->assertSame('truck', $reservationItem['iconKey'] ?? null);
+        $this->assertSame('Congés & Absences', $leavesItem['label'] ?? null);
         $this->assertSame('Documents', $documentsGroup['title'] ?? null);
 
         $profile = $this->actingAs($account)
@@ -301,6 +304,7 @@ class CrmAdministrationApiTest extends TestCase
         $this->assertDatabaseHas('crm_menu_items', [
             'item_key' => 'module:conges',
             'group_key' => 'apps',
+            'label' => 'Congés & Absences',
             'sort_order' => 17,
             'active' => true,
         ]);
@@ -389,6 +393,7 @@ class CrmAdministrationApiTest extends TestCase
 
         $this->assertNotNull($congesItem);
         $this->assertSame('apps', $congesItem['groupKey']);
+        $this->assertSame('Congés & Absences', $congesItem['label']);
 
         $this->actingAs($account)
             ->postJson('/api/administration?action=save_menu_settings', [
