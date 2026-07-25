@@ -1,7 +1,7 @@
 {
     "name": "CrmTapisRomus",
     "alias": "crmtapisromus",
-    "description": "Module CRM pour le configurateur Tapis ROMUS.",
+    "description": "Module HUB pour le configurateur Tapis ROMUS.",
     "keywords": [],
     "priority": 130,
     "providers": [

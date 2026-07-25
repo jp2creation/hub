@@ -30,7 +30,7 @@ class EnsureCrmMobileTokenScope
         $request->setUserResolver(fn (): User => $user);
 
         if (! $user->tokenCan('crm:mobile')) {
-            return $this->json('Token mobile non autorise pour le CRM.', 403);
+            return $this->json('Token mobile non autorise pour le HUB.', 403);
         }
 
         if ($abilities !== []) {

@@ -28,7 +28,7 @@ class ExampleTest extends TestCase
             ->assertDontSee('Application web')
             ->assertDontSee('Connexion équipe')
             ->assertDontSee('Sécurité anti-robot')
-            ->assertDontSee('Connexion CRM');
+            ->assertDontSee('Connexion HUB');
 
         $html = (string) $response->getContent();
         $previousLibxmlState = libxml_use_internal_errors(true);

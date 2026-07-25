@@ -38,7 +38,7 @@ class CrmModuleListUiAssetTest extends TestCase
         $this->assertStringContainsString('<table class="teams-table">', $public);
         $this->assertStringNotContainsString('<th>Rôle</th>', $public);
         $this->assertStringNotContainsString('class="teams-role-pill"', $public);
-        $this->assertStringNotContainsString('Compte CRM', $public);
+        $this->assertStringNotContainsString('Compte HUB', $public);
         $this->assertStringContainsString('class="teams-mobile-list"', $public);
         $this->assertStringContainsString('function renderMemberCard', $public);
         $this->assertStringContainsString('class="teams-person-card"', $public);

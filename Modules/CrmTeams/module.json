@@ -1,7 +1,7 @@
 {
     "name": "CrmTeams",
     "alias": "crmteams",
-    "description": "Module CRM pour consulter les equipes par site.",
+    "description": "Module HUB pour consulter les equipes par site.",
     "keywords": [],
     "priority": 70,
     "providers": [
