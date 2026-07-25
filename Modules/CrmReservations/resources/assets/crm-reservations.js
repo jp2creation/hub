@@ -75,13 +75,112 @@
     return String(value || '').slice(11, 16);
   }
 
-  function scrollToReservationTarget(resolveTarget, block = 'start') {
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        const target = resolveTarget();
+  function reservationHeaderOffset() {
+    const header = document.querySelector('.crm-native-header');
+    const height = header?.getBoundingClientRect?.().height || 0;
 
-        target?.scrollIntoView({ behavior: 'smooth', block });
-      });
+    return Math.max(8, height + 8);
+  }
+
+  function isScrollableElement(node) {
+    if (!node || node === document.body || node === document.documentElement) {
+      return false;
+    }
+
+    const style = window.getComputedStyle(node);
+    const canScroll = /(auto|scroll|overlay)/.test(style.overflowY);
+
+    return canScroll && node.scrollHeight > node.clientHeight;
+  }
+
+  function findReservationScroller(target) {
+    let node = target?.parentElement || null;
+
+    while (node && node !== document.body && node !== document.documentElement) {
+      if (isScrollableElement(node)) {
+        return node;
+      }
+
+      node = node.parentElement;
+    }
+
+    const shellScroller = [document.querySelector('.crm-native-main'), document.querySelector('.crm-native-content')].find(
+      (candidate) => isScrollableElement(candidate),
+    );
+
+    if (shellScroller) {
+      return shellScroller;
+    }
+
+    return document.scrollingElement || document.documentElement;
+  }
+
+  function smoothWindowScrollTo(top) {
+    const nextTop = Math.max(0, top);
+
+    try {
+      window.scrollTo({ top: nextTop, behavior: 'smooth' });
+    } catch (error) {
+      window.scrollTo(0, nextTop);
+    }
+  }
+
+  function smoothElementScrollTo(scroller, top) {
+    const nextTop = Math.max(0, top);
+
+    try {
+      scroller.scrollTo({ top: nextTop, behavior: 'smooth' });
+    } catch (error) {
+      scroller.scrollTop = nextTop;
+    }
+  }
+
+  function scrollElementIntoReservationView(target, block = 'start') {
+    const scroller = findReservationScroller(target);
+    const targetRect = target.getBoundingClientRect();
+    const isDocumentScroller =
+      scroller === document.scrollingElement || scroller === document.documentElement || scroller === document.body;
+
+    if (isDocumentScroller) {
+      const currentTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const top =
+        block === 'end'
+          ? currentTop + targetRect.bottom - viewportHeight + 18
+          : currentTop + targetRect.top - reservationHeaderOffset();
+
+      smoothWindowScrollTo(top);
+      return;
+    }
+
+    const scrollerRect = scroller.getBoundingClientRect();
+    const top =
+      block === 'end'
+        ? scroller.scrollTop + targetRect.bottom - scrollerRect.bottom + 18
+        : scroller.scrollTop + targetRect.top - scrollerRect.top - 8;
+
+    smoothElementScrollTo(scroller, top);
+  }
+
+  function scrollToReservationTarget(resolveTarget, block = 'start', attempt = 0) {
+    window.requestAnimationFrame(() => {
+      const target = resolveTarget();
+
+      if (!target) {
+        if (attempt < 3) {
+          window.setTimeout(() => scrollToReservationTarget(resolveTarget, block, attempt + 1), 60);
+        }
+
+        return;
+      }
+
+      scrollElementIntoReservationView(target, block);
+
+      if (attempt === 0) {
+        [90, 240, 520].forEach((delay) => {
+          window.setTimeout(() => scrollElementIntoReservationView(target, block), delay);
+        });
+      }
     });
   }
 
@@ -582,12 +681,13 @@
           state.view = 'day';
           state.selection = null;
           render();
+          scrollPlanningIntoView();
           return;
         }
 
         state.view = button.dataset.view === 'week' ? 'day' : button.dataset.view;
         render();
-        if (state.view === 'month') scrollPlanningIntoView();
+        if (state.view === 'month' || state.view === 'day') scrollPlanningIntoView();
       });
     });
 
@@ -598,6 +698,7 @@
       state.view = 'day';
       state.selection = null;
       render();
+      scrollPlanningIntoView();
     });
 
     root.querySelector('[data-prev]')?.addEventListener('click', () => movePeriod(-1));
