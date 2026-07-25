@@ -2882,9 +2882,13 @@
         color:inherit;
       }
       #crm-leaves-module .leave-mini-day.is-selected {
-        background:#fff;
+        background:transparent;
         color:var(--leave-accent);
-        box-shadow:inset 0 0 0 1.5px var(--leave-accent);
+        box-shadow:none;
+      }
+      #crm-leaves-module .leave-mini-day.has-leave.is-selected {
+        background:color-mix(in srgb,var(--absence-color) 28%,#fff);
+        color:#1f2937;
       }
       #crm-leaves-module .leave-team-rangebar {
         display:flex;

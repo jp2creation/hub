@@ -74,6 +74,10 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringContainsString('is-range-end', $public);
         $this->assertStringContainsString('.leave-mini-day.is-today', $public);
         $this->assertStringContainsString('color:var(--leave-accent)', $public);
+        $this->assertStringContainsString('.leave-mini-day.has-leave.is-selected', $public);
+        $this->assertStringContainsString('background:transparent;', $public);
+        $this->assertStringContainsString('box-shadow:none;', $public);
+        $this->assertStringNotContainsString('box-shadow:inset 0 0 0 1.5px var(--leave-accent)', $public);
         $this->assertStringContainsString('gap:.08rem 0', $public);
         $this->assertStringContainsString('border-right-width:0', $public);
         $this->assertStringContainsString('border-left-width:0', $public);
