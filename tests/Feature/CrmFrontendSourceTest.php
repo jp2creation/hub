@@ -20,6 +20,8 @@ class CrmFrontendSourceTest extends TestCase
         $mainActivity = (string) file_get_contents(base_path('mobile/android/app/src/main/java/fr/martinsols/crm/MainActivity.java'));
         $iosBridge = (string) file_get_contents(base_path('mobile/ios/App/App/MartinSolsBridgeViewController.swift'));
         $iosInfoPlist = (string) file_get_contents(base_path('mobile/ios/App/App/Info.plist'));
+        $macApp = (string) file_get_contents(base_path('mobile/ios/App/MacApp/MacAppDelegate.swift'));
+        $macInfoPlist = (string) file_get_contents(base_path('mobile/ios/App/MacApp/Info.plist'));
         $androidManifest = (string) file_get_contents(base_path('mobile/android/app/src/main/AndroidManifest.xml'));
         $androidBuild = (string) file_get_contents(base_path('mobile/android/app/build.gradle'));
         $androidSettings = (string) file_get_contents(base_path('mobile/android/settings.gradle'));
@@ -444,6 +446,7 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('Sécurité de l’appareil', $mobileSettings);
         $this->assertStringContainsString('Empreinte, visage ou code appareil', $mobileSettings);
         $this->assertStringContainsString('Ouverture des réglages iOS.', $mobileSettings);
+        $this->assertStringContainsString('Ouverture des réglages de sécurité macOS.', $mobileSettings);
         $this->assertStringContainsString('Ouverture des réglages de sécurité Android.', $mobileSettings);
         $this->assertStringContainsString('Code app Martin Sols', $mobileSettings);
         $this->assertStringContainsString('Localisation terrain', $mobileSettings);
@@ -513,6 +516,18 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('private func dispatchNativeLocationResult(requestId: String, location: CLLocation?, error: String)', $iosBridge);
         $this->assertStringContainsString('getPlatformName() {', $iosBridge);
         $this->assertStringContainsString('NSFaceIDUsageDescription', $iosInfoPlist);
+        $this->assertStringContainsString('WKScriptMessageHandlerWithReply', $macApp);
+        $this->assertStringContainsString('import LocalAuthentication', $macApp);
+        $this->assertStringContainsString('import CoreLocation', $macApp);
+        $this->assertStringContainsString('import Security', $macApp);
+        $this->assertStringContainsString('private func saveMobileSessionPayload(_ payload: String) -> [String: Any]', $macApp);
+        $this->assertStringContainsString('private func showSetAppCodeDialog() -> [String: Any]', $macApp);
+        $this->assertStringContainsString('private func showAppCodePrompt(requestId: String)', $macApp);
+        $this->assertStringContainsString('private func requestNativeLocation(requestId: String, highAccuracy: Bool) -> [String: Any]', $macApp);
+        $this->assertStringContainsString('private func dispatchNativeLocationResult(requestId: String, location: CLLocation?, error: String)', $macApp);
+        $this->assertStringContainsString('document.documentElement.classList.add(\'crm-mac-app\')', $macApp);
+        $this->assertStringContainsString('getPlatformName() {', $macApp);
+        $this->assertStringContainsString('NSLocationUsageDescription', $macInfoPlist);
         $this->assertStringContainsString('@import "./template-compat/variables.css"', $templateCompatCss);
         $this->assertStringContainsString('@import "./template-compat/components.css"', $templateCompatCss);
         $this->assertStringContainsString('--theme-primary: 149 0 46;', $templateVariablesCss);

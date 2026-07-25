@@ -141,8 +141,8 @@ function platformLabel(): string {
   return 'Application web';
 }
 
-function isApplePlatform(label: string): boolean {
-  return label === 'iPhone' || label === 'iPad' || label === 'macOS';
+function isIosPlatform(label: string): boolean {
+  return label === 'iPhone' || label === 'iPad';
 }
 
 function nativePlatformName(): string {
@@ -162,7 +162,31 @@ function nativePlatformName(): string {
 }
 
 function nativeSecurityName(): string {
-  return isApplePlatform(platformLabel()) ? 'iOS' : 'Android';
+  const label = nativePlatformName();
+
+  if (isIosPlatform(label)) {
+    return 'iOS';
+  }
+
+  if (label === 'macOS') {
+    return 'macOS';
+  }
+
+  return 'Android';
+}
+
+function deviceSecuritySettingsMessage(): string {
+  const securityName = nativeSecurityName();
+
+  if (securityName === 'iOS') {
+    return 'Ouverture des réglages iOS.';
+  }
+
+  if (securityName === 'macOS') {
+    return 'Ouverture des réglages de sécurité macOS.';
+  }
+
+  return 'Ouverture des réglages de sécurité Android.';
 }
 
 function settingsIcon(name: string): string {
@@ -754,10 +778,7 @@ export function installMobileAppSettings(): void {
     void enableQuickLogin();
   });
   deviceSecurity?.addEventListener('click', () => {
-    void runNativeAction(
-      () => nativeBridge()?.openDeviceSecuritySettings?.(),
-      isApplePlatform(platformLabel()) ? 'Ouverture des réglages iOS.' : 'Ouverture des réglages de sécurité Android.',
-    );
+    void runNativeAction(() => nativeBridge()?.openDeviceSecuritySettings?.(), deviceSecuritySettingsMessage());
   });
   setAppCode?.addEventListener('click', () => {
     void runNativeAction(() => nativeBridge()?.setAppCode?.(), 'Code app Martin Sols enregistré.');
