@@ -29,13 +29,14 @@ flowchart LR
 - Portail HUB React/Blade servi par les vues Laravel.
 - Reservations vehicules avec controle de conflits.
 - Locations de materiel avec categories, planning, demi-journee ou journee.
-- Conges bases sur les utilisateurs HUB existants lies au site.
+- Conges & Absences avec demandes utilisateur, validation direction, calendrier personnel, planning equipe, soldes, rapports et export PDF.
 - Rapport de visite pour tournees commerciales, visites clients, comptes rendus et suivi des actions.
 - Controle caisse avec encaissements, sorties, comptage especes, ecarts, justificatifs et PDF.
 - Demandes d'acompte avec creation terrain et validation comptable.
 - Remises de cheques avec photos, aide OCR, controles signature/destinataire et export PDF.
 - Documents par site : Promo, Fiches techniques et Procedures.
 - Tapis ROMUS integre pour saisir les mesures et generer les PDF.
+- Pilotage commercial, Stats, KPIs Filament et synchronisation possible avec une API de facturation externe.
 - Pages HUB administrables.
 - Administration Filament pour les donnees de reference et permissions.
 - PWA installable via `manifest.json` et Service Worker.
@@ -205,8 +206,11 @@ sequenceDiagram
     Service->>DB: transaction
     Service->>DB: employe HUB existant lie au site
     Service->>DB: controle chevauchement
-    Service->>DB: cree ou modifie le conge
-    Service-->>UI: planning conges actualise
+    Service->>DB: cree une demande en attente ou validee selon les droits
+    Service-->>UI: calendrier et workflow actualises
+    UI->>API: action=approve_leave / refuse_leave
+    API->>Service: validation direction
+    Service->>DB: journalise et change le statut
 ```
 
 ### Controle caisse et remises de cheques
@@ -245,9 +249,28 @@ sequenceDiagram
     Service-->>UI: calendrier et liste actualises
 ```
 
+### Stats et pilotage commercial
+
+```mermaid
+sequenceDiagram
+    participant Scheduler as Scheduler / CLI
+    participant API as BillingApiService
+    participant Cache as Aggregats locaux
+    participant Filament as Widgets Filament
+
+    Scheduler->>API: crm:sync-billing-data
+    API-->>Scheduler: clients, factures, produits
+    Scheduler->>Cache: cached_billing_stats
+    Filament->>Cache: lecture locale rapide
+    Cache-->>Filament: KPIs et graphiques
+```
+
 ## Assets, logs et cache
 
-- Les assets servis depuis `public/assets` sont appeles avec `App\Support\CrmAsset`.
+- Le shell web est versionne dans `resources/frontend/crm`.
+- L'ancien rendu Adminex n'est pas relance comme runtime : les elements utiles sont reconstruits dans les sources natives (`resources/frontend/crm/styles/template-compat/*` et `resources/frontend/crm/styles/native-ui.css`).
+- Les assets Vite sont generes dans `public/build` avec `npm run build`.
+- Les assets statiques servis depuis `public/assets` sont publies depuis `resources/frontend/static/assets` avec `php artisan crm:publish-static-assets --force --clean` et appeles avec `App\Support\CrmAsset`.
 - Les assets de modules sont publies vers `public/modules` avec `php artisan crm:publish-module-assets --force`.
 - La version d'asset est forcee par `CRM_ASSET_VERSION`, puis par `.deployed-revision` en deploiement, puis par `filemtime`.
 - Les logs Laravel utilisent le canal `daily`, avec `LOG_DAILY_DAYS=30`.
@@ -267,7 +290,7 @@ sequenceDiagram
 Le scheduler Laravel doit etre execute toutes les minutes par cron :
 
 ```cron
-* * * * * cd /home/jpfronpi/crm/current && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /home/jpfronpi/hub/current && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 Taches actuellement planifiees :

@@ -1,6 +1,10 @@
-# Guide de creation d'un module HUB
+# Guide de creation d'un module JP2 Hub
 
-Ce guide sert de checklist pour ajouter un nouveau module Laravel dans le HUB Martin Sols sans casser la structure existante.
+Ce guide sert de checklist pour ajouter un nouveau module Laravel dans JP2 Hub sans casser la structure existante.
+
+Les modules PHP gardent le prefixe technique historique `Crm*` pour ne pas casser
+les namespaces, les migrations et les commandes existantes. Cote produit et UI,
+le vocabulaire a utiliser est **JP2 Hub**.
 
 ## 1. Choisir les noms
 
@@ -109,12 +113,12 @@ $crmApiMiddleware = ['throttle:crm-api', 'crm.compress'];
 
 Route::view('/example', 'crm')
     ->middleware(['auth', 'crm.module:example,example.view'])
-    ->name('crm.example');
+    ->name('hub.example');
 
 Route::match(['GET', 'POST', 'OPTIONS'], '/api/example', ExampleApiController::class)
     ->middleware([...$crmApiMiddleware, 'crm.mobile_scope:crm:module:example'])
     ->withoutMiddleware([VerifyCsrfToken::class])
-    ->name('crm.api.example');
+    ->name('hub.api.example');
 ```
 
 Aucun alias `/api/*.php` ne doit etre cree. Les anciens clients doivent etre migres vers les routes Laravel sans extension.

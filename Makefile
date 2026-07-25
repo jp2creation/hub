@@ -10,7 +10,7 @@ ARTISAN := $(PHP) artisan
 .PHONY: help install hooks dev test test-filter analyse quality coverage pint pint-fix build migrate migrate-force assets clear-cache optimize route-list deploy-check deploy
 
 help: ## Affiche les commandes disponibles
-	@awk 'BEGIN {FS = ":.*##"; printf "\nCommandes CRM:\n"} /^[a-zA-Z0-9_-]+:.*##/ {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"; printf "\nCommandes JP2 Hub:\n"} /^[a-zA-Z0-9_-]+:.*##/ {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 install: ## Installe le projet local complet
 	$(COMPOSER) install
@@ -60,7 +60,7 @@ migrate: ## Execute les migrations locales
 migrate-force: ## Execute les migrations avec --force
 	$(ARTISAN) migrate --force
 
-assets: ## Publie les assets statiques et modules CRM
+assets: ## Publie les assets statiques et modules HUB
 	$(ARTISAN) crm:publish-static-assets --force --clean
 	$(ARTISAN) crm:publish-module-assets --force
 
@@ -71,7 +71,7 @@ optimize: ## Reconstruit les caches Laravel de production
 	$(ARTISAN) optimize
 	$(ARTISAN) view:cache
 
-route-list: ## Liste les routes CRM principales
+route-list: ## Liste les routes HUB principales
 	$(ARTISAN) route:list --path=api
 
 deploy-check: ## Verifie le projet avant deploiement

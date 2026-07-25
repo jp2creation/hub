@@ -1,6 +1,7 @@
-# CrmStats
+# Stats JP2 Hub
 
 Module Filament de pilotage commercial alimente par une API de facturation externe.
+Le dossier garde le nom technique `CrmStats` pour rester coherent avec les namespaces historiques du projet.
 
 ## Configuration
 

@@ -1210,13 +1210,28 @@
 
   function renderTopMetrics() {
     const stats = yearlyStats();
+    const cards = [
+      { label: 'Disponibles', value: stats.available, icon: 'check', tone: '#16a34a' },
+      { label: 'Total', value: stats.total, icon: 'calendar', tone: '#2563eb' },
+      { label: 'Utilisés', value: stats.approved, icon: 'users', tone: 'rgb(var(--theme-primary,149 0 46))' },
+      { label: 'En attente', value: stats.pending, icon: 'clock', tone: '#f59e0b' },
+    ];
 
     return `
       <div class="leave-stat-strip" aria-label="Soldes congés">
-        <article><strong>${esc(formatDaysCount(stats.available))}j</strong><span>Disponibles</span><em aria-hidden="true">i</em></article>
-        <article><strong>${esc(formatDaysCount(stats.total))}j</strong><span>Total</span><em aria-hidden="true">i</em></article>
-        <article><strong>${esc(formatDaysCount(stats.approved))}j</strong><span>Utilises</span><em aria-hidden="true">i</em></article>
-        <article><strong>${esc(formatDaysCount(stats.pending))}j</strong><span>En attente</span><em aria-hidden="true">i</em></article>
+        ${cards
+          .map(
+            (card) => `
+              <article class="leave-stat-card" style="--leave-stat-color:${esc(card.tone)}">
+                <span class="leave-stat-icon" aria-hidden="true">${icon(card.icon)}</span>
+                <div class="leave-stat-copy">
+                  <small>${esc(card.label)}</small>
+                  <strong>${esc(formatDaysCount(card.value))}j</strong>
+                </div>
+              </article>
+            `,
+          )
+          .join('')}
       </div>
     `;
   }
@@ -2306,32 +2321,54 @@
       #crm-leaves-module .leave-stat-strip {
         display:grid;
         grid-template-columns:repeat(4,minmax(0,1fr));
-        border:1px solid rgba(15,23,42,.1);
-        border-radius:.45rem;
-        background:#f8f7f4;
+        gap:.8rem;
       }
       #crm-leaves-module .leave-stat-strip article {
-        display:flex;
+        display:grid;
+        grid-template-columns:2.45rem minmax(0,1fr);
         min-width:0;
         align-items:center;
-        justify-content:center;
-        gap:.35rem;
-        border-right:1px solid rgba(15,23,42,.08);
-        padding:.55rem .7rem;
-        white-space:nowrap;
-      }
-      #crm-leaves-module .leave-stat-strip article:last-child {
-        border-right:0;
+        gap:.72rem;
+        border:1px solid var(--color-surface-200,#e2e8f0);
+        border-radius:.5rem;
+        background:#fff;
+        box-shadow:0 12px 28px rgba(15,23,42,.05);
+        padding:.9rem;
       }
       #crm-leaves-module .leave-stat-strip strong {
+        display:block;
+        margin:.25rem 0 0;
         color:#172033;
-        font-size:1rem;
-        font-weight:950;
+        font-size:1.25rem;
+        font-weight:900;
+        line-height:1.1;
+        letter-spacing:0;
       }
-      #crm-leaves-module .leave-stat-strip span {
-        color:#4b5563;
-        font-size:.72rem;
-        font-weight:760;
+      #crm-leaves-module .leave-stat-icon {
+        display:grid;
+        place-items:center;
+        width:2.45rem;
+        height:2.45rem;
+        border-radius:.55rem;
+        background:color-mix(in srgb,var(--leave-stat-color,#95002e) 14%,white);
+        color:var(--leave-stat-color,#95002e);
+      }
+      #crm-leaves-module .leave-stat-icon .leave-summary-icon-svg {
+        width:1.2rem;
+        height:1.2rem;
+      }
+      #crm-leaves-module .leave-stat-copy {
+        min-width:0;
+      }
+      #crm-leaves-module .leave-stat-copy small {
+        display:block;
+        overflow:hidden;
+        color:var(--color-secondary-500,#64748b);
+        font-size:.73rem;
+        font-weight:900;
+        text-overflow:ellipsis;
+        text-transform:uppercase;
+        white-space:nowrap;
       }
       #crm-leaves-module .leave-calendar-actions,
       #crm-leaves-module .leave-wall-actions {
@@ -2729,8 +2766,7 @@
         font-weight:820;
       }
       #crm-leaves-module .leave-view-mode,
-      #crm-leaves-module .leave-year-nav,
-      #crm-leaves-module .leave-stat-strip {
+      #crm-leaves-module .leave-year-nav {
         background:var(--leave-panel-soft);
         border-color:rgba(17,24,39,.105);
         border-radius:.42rem;
@@ -2743,33 +2779,24 @@
       }
       #crm-leaves-module .leave-stat-strip {
         justify-self:end;
-        width:min(100%,31rem);
+        width:min(100%,37rem);
+        border:0;
+        border-radius:0;
+        background:transparent;
       }
       #crm-leaves-module .leave-stat-strip article {
-        min-height:2.38rem;
-        padding:.48rem .68rem;
+        min-height:4.25rem;
+        padding:.9rem;
       }
       #crm-leaves-module .leave-stat-strip strong {
         color:var(--leave-ink);
-        font-size:1.08rem;
+        font-size:1.25rem;
         line-height:1;
       }
-      #crm-leaves-module .leave-stat-strip span {
-        color:#4b5563;
-        font-size:.69rem;
-        font-weight:780;
-      }
-      #crm-leaves-module .leave-stat-strip em {
-        display:grid;
-        place-items:center;
-        width:.82rem;
-        height:.82rem;
-        border:1px solid #b8aaf2;
-        border-radius:999px;
-        color:#7767c7;
-        font-size:.5rem;
-        font-style:normal;
-        font-weight:950;
+      #crm-leaves-module .leave-stat-copy small {
+        color:var(--color-secondary-500,#64748b);
+        font-size:.73rem;
+        font-weight:900;
       }
       #crm-leaves-module .leave-calendar-actions {
         grid-column:3 / 5;
@@ -3182,12 +3209,7 @@
         }
         #crm-leaves-module .leave-stat-strip {
           grid-template-columns:repeat(2,minmax(0,1fr));
-        }
-        #crm-leaves-module .leave-stat-strip article:nth-child(2) {
-          border-right:0;
-        }
-        #crm-leaves-module .leave-stat-strip article:nth-child(-n+2) {
-          border-bottom:1px solid rgba(15,23,42,.08);
+          gap:.65rem;
         }
         #crm-leaves-module .leave-calendar-actions,
         #crm-leaves-module .leave-wall-actions {

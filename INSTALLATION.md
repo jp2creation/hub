@@ -1,12 +1,12 @@
-# Installation du HUB Martin Sols
+# Installation JP2 Hub
 
 Ce document decrit l'installation locale et les commandes utiles pour preparer une mise en production.
 
 ## Prerequis
 
-- PHP 8.3 ou superieur avec les extensions usuelles Laravel.
-- Composer.
-- Node.js et npm.
+- Docker Desktop ou Podman compatible Docker Compose pour le mode recommande avec Laravel Sail.
+- PHP 8.3 ou superieur avec les extensions usuelles Laravel si vous travaillez hors container.
+- Composer, Node.js et npm.
 - MySQL ou MariaDB.
 - Git.
 - Un serveur web compatible Laravel pour la production.
@@ -17,7 +17,69 @@ Pour l'application mobile :
 - Android Studio pour Android.
 - Xcode sur macOS pour iOS.
 
-## Installation locale
+## Installation locale recommandee avec Sail
+
+Depuis la racine du projet :
+
+```bash
+cp .env.example .env
+composer install
+vendor/bin/sail up -d
+```
+
+Configurer ensuite `.env` pour Sail :
+
+```env
+APP_NAME="JP2 Hub"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=hub
+DB_USERNAME=sail
+DB_PASSWORD=password
+
+CRM_ADMIN_EMAIL=admin@example.test
+CRM_ADMIN_NAME=Administrateur
+
+SANCTUM_MOBILE_TOKEN_EXPIRATION_DAYS=365
+```
+
+Generer la cle Laravel, migrer et initialiser les donnees :
+
+```bash
+vendor/bin/sail artisan key:generate
+vendor/bin/sail artisan migrate
+vendor/bin/sail artisan db:seed
+```
+
+Installer et compiler les assets :
+
+```bash
+vendor/bin/sail npm install
+vendor/bin/sail npm run build
+vendor/bin/sail artisan crm:publish-static-assets --force --clean
+vendor/bin/sail artisan crm:publish-module-assets --force
+```
+
+Creer ou mettre a jour le compte admin HUB avec une saisie masquee :
+
+```bash
+vendor/bin/sail artisan crm:admin --email=admin@example.test --name="Administrateur"
+```
+
+L'application est disponible sur `http://localhost` et Mailpit sur `http://localhost:8025`.
+
+Pendant le developpement, lancer Vite :
+
+```bash
+vendor/bin/sail npm run dev
+```
+
+## Installation locale sans container
 
 Depuis la racine du projet :
 
@@ -49,11 +111,11 @@ APP_URL=http://127.0.0.1:8000
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=crm
+DB_DATABASE=hub
 DB_USERNAME=root
 DB_PASSWORD=
 
-CRM_ADMIN_EMAIL=admin@crm.jp2.fr
+CRM_ADMIN_EMAIL=admin@example.test
 CRM_ADMIN_NAME=Administrateur
 
 SANCTUM_MOBILE_TOKEN_EXPIRATION_DAYS=365
@@ -80,14 +142,14 @@ php artisan db:seed
 Creer ou mettre a jour le compte admin HUB avec une saisie masquee :
 
 ```bash
-php artisan crm:admin --email=admin@crm.jp2.fr --name="Administrateur"
+php artisan crm:admin --email=admin@example.test --name="Administrateur"
 ```
 
 En deploiement non interactif, utiliser une variable temporaire du shell, sans l'ajouter a `.env` :
 
 ```powershell
 $env:CRM_ADMIN_TMP='MotDePasseFort-2026!'
-php artisan crm:admin --email=admin@crm.jp2.fr --name="Administrateur" --password-env=CRM_ADMIN_TMP
+php artisan crm:admin --email=admin@example.test --name="Administrateur" --password-env=CRM_ADMIN_TMP
 Remove-Item Env:\CRM_ADMIN_TMP
 ```
 
@@ -95,6 +157,7 @@ Compiler les assets :
 
 ```bash
 npm run build
+php artisan crm:publish-static-assets --force --clean
 php artisan crm:publish-module-assets --force
 ```
 
@@ -105,36 +168,6 @@ php artisan serve
 ```
 
 L'application sera disponible sur `http://127.0.0.1:8000`.
-
-## Installation Docker avec Sail
-
-Le projet fournit `docker-compose.yml` avec PHP 8.3, MySQL, Redis et Mailpit :
-
-```bash
-cp .env.example .env
-composer install
-```
-
-Adapter le `.env` local pour Sail :
-
-```dotenv
-DB_HOST=mysql
-DB_USERNAME=sail
-DB_PASSWORD=password
-```
-
-Puis lancer la stack :
-
-```bash
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan key:generate
-./vendor/bin/sail artisan migrate
-./vendor/bin/sail artisan db:seed
-./vendor/bin/sail npm install
-./vendor/bin/sail npm run dev
-```
-
-L'application est disponible sur `http://localhost` et Mailpit sur `http://localhost:8025`.
 
 ## Developpement
 
@@ -156,30 +189,39 @@ Le script Composer `dev` lance aussi serveur, queue, logs et Vite via `concurren
 composer run dev
 ```
 
+En Sail, prefixer les commandes :
+
+```bash
+vendor/bin/sail composer dev
+vendor/bin/sail artisan route:list --path=api
+vendor/bin/sail artisan optimize:clear
+```
+
 ## Tests et qualite
 
 Executer tous les tests :
 
 ```bash
-php artisan test
+vendor/bin/sail artisan test --compact
 ```
 
 Executer les tests HUB les plus courants :
 
 ```bash
-php artisan test tests/Feature/CrmReservationApiTest.php tests/Feature/CrmEquipmentRentalApiTest.php tests/Feature/CrmLeaveApiTest.php tests/Feature/CrmCashControlApiTest.php tests/Feature/CrmCheckRemittanceApiTest.php tests/Feature/CrmDepositRequestApiTest.php tests/Feature/CrmDocumentsApiTest.php tests/Feature/CrmSalesToursApiTest.php
+vendor/bin/sail artisan test --compact tests/Feature/CrmReservationApiTest.php tests/Feature/CrmEquipmentRentalApiTest.php tests/Feature/CrmLeaveApiTest.php tests/Feature/CrmCashControlApiTest.php tests/Feature/CrmCheckRemittanceApiTest.php tests/Feature/CrmDepositRequestApiTest.php tests/Feature/CrmDocumentsApiTest.php tests/Feature/CrmSalesToursApiTest.php
 ```
 
 Verifier le style PHP :
 
 ```bash
-vendor/bin/pint --test app routes database tests
+vendor/bin/sail composer pint
 ```
 
 Verifier la compilation frontend :
 
 ```bash
-npm run build
+vendor/bin/sail npm run build
+vendor/bin/sail artisan crm:publish-module-assets --force
 ```
 
 ## Application mobile
@@ -196,7 +238,7 @@ npm run dev
 Configurer l'URL de l'API si elle n'est pas locale :
 
 ```env
-VITE_API_BASE_URL=https://crm.example.com
+VITE_API_BASE_URL=https://hub.example.com
 ```
 
 Build et synchronisation Capacitor :
@@ -235,7 +277,6 @@ Verifier ensuite :
 
 - `/login`
 - `/`
-- `/dashboard/crm`
 - `/reservations`
 - `/locations-materiel`
 - `/conges`
@@ -245,7 +286,7 @@ Verifier ensuite :
 - `/remise-cheques`
 - `/documents/promo`
 - `/tapis-romus`
-- `/pages-crm`
+- `/pages-crm` (route historique des pages HUB)
 - `/admin`
 - `/api/conges?action=bootstrap`
 - `/api/rapport-visite?action=health`
@@ -279,25 +320,25 @@ Le workflow GitHub Actions `.github/workflows/ci.yml` execute a chaque push ou p
 Vider les caches Laravel :
 
 ```bash
-php artisan optimize:clear
+vendor/bin/sail artisan optimize:clear
 ```
 
 Regenerer l'autoload Composer :
 
 ```bash
-composer dump-autoload
+vendor/bin/sail composer dump-autoload
 ```
 
 Verifier les migrations :
 
 ```bash
-php artisan migrate:status
+vendor/bin/sail artisan migrate:status
 ```
 
 Relancer une compilation propre :
 
 ```bash
-npm run build
+vendor/bin/sail npm run build
 ```
 
 Les logs Laravel sont dans `storage/logs/laravel.log`.

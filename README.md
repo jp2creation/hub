@@ -4,6 +4,10 @@ JP2 Hub est une base Laravel modulaire concue par JP2 Creation pour centraliser 
 
 L'installation Martin Sols presente dans ce depot est l'exemple metier actuellement utilise pour valider le produit et ses modules.
 
+Le produit s'appelle **JP2 Hub**. Les prefixes techniques historiques `crm:*`,
+`CRM_*`, `Crm*` et certaines routes internes restent conserves pour compatibilite
+avec le code existant, les migrations et les scripts de deploiement.
+
 ## Objectif
 
 Ce depot contient l'application Laravel qui remplace les anciens endpoints PHP disperses par une base applicative versionnee, testable et extensible. L'interface principale sert aux equipes internes, tandis que l'administration Filament permet de maintenir les donnees de reference, les droits et les contenus.
@@ -25,13 +29,14 @@ Voir [LICENSE.md](LICENSE.md).
 - Tableau de bord multi-site avec cartes, alertes, dernieres reservations, conges en cours et notifications.
 - Gestion des reservations vehicules avec planning, conflits et droits par utilisateur/site.
 - Gestion des locations de materiel avec cartes visuelles, categories, demi-journee ou journee, planning et disponibilites.
-- Planning des conges base sur les utilisateurs HUB existants lies au site.
+- Module Conges & Absences : demande utilisateur, validation direction, calendrier personnel, planning equipe, soldes, rapports et export PDF.
 - Module Rapport de visite pour tournees commerciales, visites clients, comptes rendus et actions de suivi.
 - Comptabilite : controle caisse, demandes d'acompte, remises de cheques et lien Addvance.
 - Remises de cheques avec photo, detection assistee, controle signature/destinataire, total et export PDF.
 - Controle caisse avec comptage especes, encaissements, ecarts, justificatifs et PDF incluant les numeros de facture.
 - Documents internes : Promo, Fiches techniques et Procedures avec bibliotheque par site.
 - Module Tapis ROMUS integre au HUB avec rendu harmonise et generation PDF.
+- Pilotage commercial et Stats : tableaux de bord Filament, KPIs et synchronisation possible avec une API de facturation externe.
 - Pages HUB administrables et accessibles via slugs.
 - Administration Filament pour utilisateurs, roles, modules, menus, sites, vehicules, materiel et contenus.
 - API Laravel sans extension `.php`, avec audit des tentatives legacy bloquees.
@@ -57,14 +62,14 @@ Voir [LICENSE.md](LICENSE.md).
 - Tableau de bord : `/`
 - Reservations vehicules : `/reservations`
 - Location materiel : `/locations-materiel`
-- Conges : `/conges`
+- Conges & Absences : `/conges`
 - Rapport de visite : `/rapport-visite`
 - Controle caisse : `/controle-caisse`
 - Demandes d'acompte : `/demandes-acompte`
 - Remise de cheques : `/remise-cheques`
 - Documents : `/documents/promo`, `/documents/fiches-techniques`, `/documents/procedures`
 - Tapis ROMUS : `/tapis-romus`
-- Pages HUB : `/pages-crm`
+- Pages HUB : `/pages-crm` (route historique conservee)
 - API reservations : `/api/reservations`
 - API locations de materiel : `/api/equipment-rentals`
 - API conges : `/api/conges`
@@ -83,7 +88,9 @@ Les anciens chemins `.php`, par exemple `/api/conges.php`, sont bloques. Les int
 - `database/migrations/` : schema Laravel global et migrations de packages.
 - `Modules/*/database/migrations/` : migrations metier versionnees par module.
 - `resources/views/` : vues HUB, login, erreurs et shell applicatif.
-- `public/assets/` et `public/modules/` : assets compiles servis en production.
+- `resources/frontend/crm/` : shell HUB Vite/React, navigation, PWA, loaders, compatibilite visuelle et UI native.
+- `Modules/*/resources/assets/` : sources frontend propres aux modules.
+- `public/build/`, `public/assets/` et `public/modules/` : sorties compilees ou publiees pour la production.
 - `tests/Feature/` et `tests/Unit/` : tests des API metier, services et securite.
 - `mobile/` : application mobile Capacitor connectee a l'API Sanctum.
 - `docs/` : documentation technique, guide utilisateur, plaquette HUB et notes de deploiement.
@@ -91,49 +98,34 @@ Les anciens chemins `.php`, par exemple `/api/conges.php`, sont bloques. Les int
 ## Installation
 
 Les instructions completes sont dans [INSTALLATION.md](INSTALLATION.md).
-
-Resume local :
+Le mode local recommande utilise Laravel Sail :
 
 ```bash
-composer install
-npm install
 cp .env.example .env
-php artisan key:generate
-php artisan migrate
-npm run build
-php artisan crm:publish-module-assets --force
-php artisan serve
+composer install
+vendor/bin/sail up -d
+vendor/bin/sail artisan key:generate
+vendor/bin/sail artisan migrate
+vendor/bin/sail npm install
+vendor/bin/sail npm run build
+vendor/bin/sail artisan crm:publish-static-assets --force --clean
+vendor/bin/sail artisan crm:publish-module-assets --force
 ```
 
 Creer ou mettre a jour le compte admin avec une saisie masquee :
 
 ```bash
-php artisan crm:admin --email=admin@crm.jp2.fr --name="Administrateur"
+vendor/bin/sail artisan crm:admin --email=admin@example.test --name="Administrateur"
 ```
 
-### Demarrage Docker
-
-Une stack Laravel Sail est disponible pour travailler sans configuration PHP locale :
-
-```bash
-cp .env.example .env
-composer install
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan key:generate
-./vendor/bin/sail artisan migrate
-./vendor/bin/sail npm install
-./vendor/bin/sail npm run dev
-./vendor/bin/sail artisan crm:publish-module-assets --force
-```
-
-Pour Sail, mettre `DB_HOST=mysql`, `DB_USERNAME=sail` et `DB_PASSWORD=password` dans le `.env` local.
+Pour Sail, mettre `DB_HOST=mysql`, `DB_USERNAME=sail` et `DB_PASSWORD=password` dans le `.env` local, puis ouvrir `http://localhost`.
 
 ## Verification
 
 ```bash
-php artisan test
-composer pint
-npm run build
+vendor/bin/sail composer quality
+vendor/bin/sail npm run build
+vendor/bin/sail artisan crm:publish-module-assets --force
 ```
 
 Des tests cibles existent notamment pour les reservations, les locations de materiel, les conges, le controle caisse, les remises de cheques, les demandes d'acompte, les documents, les rapports de visite, les pages HUB, la PWA et l'authentification mobile.
@@ -154,7 +146,8 @@ make deploy-check
 
 La procedure de reference est dans [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-Regle importante : les fichiers de `public/assets` sont des sorties compilees. Une correction durable doit etre faite dans les sources applicatives puis reconstruite.
+Regle importante : ne pas modifier directement `public/build`, `public/assets` ou `public/modules`.
+Une correction durable doit etre faite dans `resources/frontend`, `Modules/*/resources/assets`, les vues Laravel ou les classes PHP, puis reconstruite/publiee.
 
 ## Documentation
 

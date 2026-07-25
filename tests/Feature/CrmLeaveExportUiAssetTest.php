@@ -80,7 +80,9 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringNotContainsString('<i aria-hidden="true"></i>', $public);
         $this->assertStringContainsString('Disponibles', $public);
         $this->assertStringContainsString('En attente', $public);
-        $this->assertStringContainsString('<em aria-hidden="true">i</em>', $public);
+        $this->assertStringContainsString('class="leave-stat-card"', $public);
+        $this->assertStringContainsString('class="leave-stat-icon"', $public);
+        $this->assertStringNotContainsString('<em aria-hidden="true">i</em>', $public);
         $this->assertStringContainsString('${renderHeader()}', $public);
         $this->assertStringContainsString('${[\'calendar\', \'team\'].includes(state.view) ? \'\' : renderFilters()}', $public);
         $this->assertStringContainsString('leave-hr-layout ${state.view === \'calendar\' ? \'\' : \'is-full\'}', $public);

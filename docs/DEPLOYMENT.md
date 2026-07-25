@@ -7,9 +7,10 @@ Ce projet doit etre deploye depuis le depot Git local, pas par modification dire
 ```bash
 composer install --no-interaction
 npm install
-php artisan test
-vendor/bin/pint --test app routes database tests
+composer quality
 npm run build
+php artisan crm:publish-static-assets --force --clean
+php artisan crm:publish-module-assets --force
 composer audit
 npm audit --audit-level=moderate
 ```
@@ -19,7 +20,7 @@ npm audit --audit-level=moderate
 Le serveur doit utiliser une racine de deploiement stable avec trois dossiers :
 
 ```text
-crm/
+hub/
 |-- current -> releases/20260720093000-abc123
 |-- releases/
 |   |-- 20260720093000-abc123/
@@ -29,7 +30,7 @@ crm/
     `-- storage/
 ```
 
-Le document root du domaine doit pointer vers `crm/current/public`. Les fichiers persistants restent dans `shared/.env` et `shared/storage`, puis chaque release les reference avec des symlinks.
+Le document root du domaine doit pointer vers `hub/current/public`. Les fichiers persistants restent dans `shared/.env` et `shared/storage`, puis chaque release les reference avec des symlinks.
 
 Le flux de production est :
 
@@ -132,9 +133,15 @@ Si la commande retourne des hits, contacter les integrateurs concernes via les I
 
 ## Regle importante
 
-Les fichiers dans `public/assets` sont generes ou publies depuis `resources/frontend/static/assets`. Toute correction durable doit etre faite dans les sources applicatives puis publiee avec `php artisan crm:publish-static-assets --force --clean`. Le snapshot `legacy-adminex-*` est transitoire : il conserve Reservations et Location materiel pendant leur migration vers `resources/frontend/adminex` ou `resources/frontend/crm`, et ne doit pas redevenir une zone de developpement.
+Les fichiers dans `public/build`, `public/assets` et `public/modules` sont des sorties de build ou de publication. Toute correction durable doit etre faite dans les sources applicatives, puis reconstruite.
 
-Les fichiers dans `public/modules` sont publies depuis `Modules/*/resources/assets` et ne sont pas versionnes. Apres une modification de module, lancer `php artisan crm:publish-module-assets --force` avant de vider les caches.
+- `public/build` vient de Vite : `npm run build`.
+- `public/assets` vient de `resources/frontend/static/assets` : `php artisan crm:publish-static-assets --force --clean`.
+- `public/modules` vient de `Modules/*/resources/assets` : `php artisan crm:publish-module-assets --force`.
+
+Adminex n'est plus une dependance runtime a remettre dans `public/assets`. Les elements visuels conserves sont reconstruits proprement dans les sources natives du HUB, notamment `resources/frontend/crm/styles/template-compat/*`, `resources/frontend/crm/styles/native-ui.css` et les assets de modules.
+
+Apres une modification de module, lancer `php artisan crm:publish-module-assets --force` avant de vider les caches.
 
 ## Script de deploiement aide
 
@@ -146,9 +153,9 @@ Les secrets ne doivent jamais etre stockes dans le depot. Configurer les variabl
 export CRM_DEPLOY_HOST=ssh.example.test
 export CRM_DEPLOY_PORT=5022
 export CRM_DEPLOY_USER=mon_utilisateur
-export CRM_DEPLOY_PATH=/home/mon_utilisateur/crm
+export CRM_DEPLOY_ROOT=/home/mon_utilisateur/hub
 export CRM_DEPLOY_COMPOSER=/home/mon_utilisateur/bin/composer
-export CRM_DEPLOY_HEALTH_URL=https://crm.example.test/up
+export CRM_DEPLOY_HEALTH_URL=https://hub.example.test/up
 
 make deploy-check
 make deploy
@@ -159,8 +166,8 @@ Options utiles :
 - `CRM_DEPLOY_BUILD=0` pour sauter `npm run build` si les assets sont deja prets.
 - `CRM_DEPLOY_ALLOW_DIRTY=1` pour deployer une copie locale non commitee, uniquement en urgence.
 - `CRM_DEPLOY_TMP_DIR=/home/mon_utilisateur` pour choisir le dossier temporaire distant.
-- `CRM_DEPLOY_ROOT=/home/mon_utilisateur/crm` pour utiliser le nouveau nom explicite au lieu de `CRM_DEPLOY_PATH`.
-- `CRM_DEPLOY_HEALTH_URL=https://crm.example.test/up` pour fixer l'URL de verification. Sans cette variable, le script utilise `APP_URL` dans `shared/.env` et ajoute `/up`.
+- `CRM_DEPLOY_ROOT=/home/mon_utilisateur/hub` est le chemin recommande. `CRM_DEPLOY_PATH` reste accepte par compatibilite avec les anciens scripts locaux.
+- `CRM_DEPLOY_HEALTH_URL=https://hub.example.test/up` pour fixer l'URL de verification. Sans cette variable, le script utilise `APP_URL` dans `shared/.env` et ajoute `/up`.
 - `CRM_DEPLOY_KEEP_RELEASES=3` pour garder les trois dernieres releases.
 - `CRM_DEPLOY_SKIP_HEALTHCHECK=1` uniquement en urgence si le serveur ne peut pas joindre son propre domaine.
 

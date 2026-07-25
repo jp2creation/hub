@@ -1,6 +1,6 @@
 # Changelog
 
-Toutes les modifications notables du HUB Martin Sols sont documentees ici.
+Toutes les modifications notables de JP2 Hub sont documentees ici.
 
 Le format suit une logique proche de "Keep a Changelog" et les releases doivent
 etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
@@ -57,7 +57,7 @@ etre taguees dans Git avec la convention `vYYYY.MM.DD.N`.
 - Le menu HUB se limite aux modules reels : applications metier, administration/interne et pages internes seulement si elles existent.
 - La documentation de deploiement rappelle la generation du cache vues et le controle du scheduler.
 - Le rewrite Apache ne force plus les anciens chemins `/auth`, `/dashboard`, `/forms`, `/tables`, `/charts`, `/pages` et `/features` vers le HUB.
-- Le menu place maintenant `Conges` dans `Applications HUB`, juste sous `Equipe`.
+- Le menu place maintenant `Conges & Absences` dans `Applications HUB`, juste sous `Equipe`.
 - Le README et la documentation technique listent les modules recents, les routes, les tables et la procedure de publication des assets modules.
 
 ### Removed
