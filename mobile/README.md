@@ -1,6 +1,7 @@
-# Martin Sols Mobile
+# JP2 Hub Mobile
 
-Application Capacitor hybride pour le HUB Martin Sols.
+Application Capacitor hybride pour JP2 Hub. L'installation Martin Sols est
+l'exemple metier actuellement embarque dans cette application.
 
 Le login, la barre du haut, le menu lateral, les commandes navigateur et les
 parametres propres a l'app sont integres dans l'app mobile. Les pages et
@@ -69,7 +70,7 @@ Reglages iOS integres :
 
 ## Licence
 
-Cette application mobile fait partie de Martin Sols HUB et suit la licence du
+Cette application mobile fait partie de JP2 Hub et suit la licence du
 depot racine. Les sources peuvent etre consultees et testees pour evaluation
 personnelle, mais toute compilation, distribution, installation client,
 exploitation professionnelle, revente ou publication d'un APK, d'un paquet iOS

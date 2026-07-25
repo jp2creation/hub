@@ -13,7 +13,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ \App\Support\CrmAsset::url('modules/crm-core/brand-morph-loader.css') }}">
-    <title>Connexion - Martin Sols HUB</title>
+    <title>Connexion - JP2 Hub</title>
     <style>
       :root {
         color-scheme: light;

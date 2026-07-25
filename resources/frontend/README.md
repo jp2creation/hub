@@ -20,7 +20,7 @@ New HUB frontend work should start in `resources/frontend/crm` or in module
 
 ## License
 
-This source is part of Martin Sols HUB and is governed by the repository license
+This source is part of JP2 Hub and is governed by the repository license
 in `LICENSE.md`. It is source-available for personal evaluation and
 contributions only; professional use, commercial use, resale, hosting and
 redistribution require prior written permission from Jean-Philippe DEGERT / JP2

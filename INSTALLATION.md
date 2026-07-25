@@ -41,7 +41,7 @@ Copy-Item .env.example .env
 Configurer ensuite `.env` :
 
 ```env
-APP_NAME="Martin Sols HUB"
+APP_NAME="JP2 Hub"
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://127.0.0.1:8000

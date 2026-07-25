@@ -1,7 +1,9 @@
-# Documentation technique HUB
+# Documentation technique JP2 Hub
 
-Ce dossier regroupe la documentation technique du HUB Martin Sols : architecture,
-schema de donnees, flux principaux, exploitation et deploiement.
+Ce dossier regroupe la documentation technique de JP2 Hub : architecture, schema
+de donnees, flux principaux, exploitation et deploiement.
+
+Martin Sols est l'implementation metier de reference utilisee dans ce depot.
 
 ## Architecture applicative
 
@@ -62,7 +64,7 @@ make deploy-check
 
 ## Licence
 
-Le projet Martin Sols HUB est publie en source disponible. Le code peut etre
+Le projet JP2 Hub est publie en source disponible. Le code peut etre
 consulte, teste et etudie pour un usage personnel ou d'evaluation, mais tout
 usage professionnel, commercial, client, production, hebergement, revente ou
 redistribution demande l'accord ecrit prealable de Jean-Philippe DEGERT / JP2

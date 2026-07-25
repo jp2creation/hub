@@ -1,4 +1,4 @@
-# Martin Sols HUB Source Available License 1.0
+# JP2 Hub Source Available License 1.0
 
 Copyright (c) 2026 Jean-Philippe DEGERT / JP2 Creation.
 All rights reserved except as expressly granted below.
@@ -9,7 +9,7 @@ restricted and require prior written permission from the copyright holder.
 
 ## 1. Definitions
 
-"Software" means the Martin Sols HUB source code, documentation, assets,
+"Software" means the JP2 Hub source code, documentation, assets,
 configuration, mobile code, modules and all related files contained in this
 repository.
 

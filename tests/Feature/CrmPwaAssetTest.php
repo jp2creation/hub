@@ -16,7 +16,7 @@ class CrmPwaAssetTest extends TestCase
 
         $manifest = json_decode((string) file_get_contents(public_path('manifest.json')), true);
 
-        $this->assertSame('Martin Sols HUB', $manifest['name']);
+        $this->assertSame('JP2 Hub', $manifest['name']);
         $this->assertSame('/', $manifest['scope']);
         $this->assertSame('standalone', $manifest['display']);
         $this->assertContains('business', $manifest['categories']);
@@ -34,7 +34,7 @@ class CrmPwaAssetTest extends TestCase
         $serviceWorker = (string) file_get_contents(public_path('sw.js'));
 
         $this->assertStringContainsString("CACHE_VERSION = 'martin-sols-hub-", $serviceWorker);
-        $this->assertStringContainsString("CACHE_VERSION = 'martin-sols-hub-v202607250900'", $serviceWorker);
+        $this->assertStringContainsString("CACHE_VERSION = 'martin-sols-hub-v202607251155'", $serviceWorker);
         $this->assertStringContainsString('cache.add(url).catch(() => null)', $serviceWorker);
         $this->assertStringContainsString("event.data.type === 'SKIP_WAITING'", $serviceWorker);
         $this->assertStringContainsString("event.data.type === 'GET_VERSION'", $serviceWorker);
@@ -42,7 +42,7 @@ class CrmPwaAssetTest extends TestCase
         $this->assertStringContainsString("notifyClients('CRM_SW_VERSION')", $serviceWorker);
         $this->assertStringContainsString("fetch(request, { cache: 'no-store' })", $serviceWorker);
         $this->assertStringContainsString("self.addEventListener('push'", $serviceWorker);
-        $this->assertStringContainsString("self.registration.showNotification(payload.title || 'Martin Sols HUB'", $serviceWorker);
+        $this->assertStringContainsString("self.registration.showNotification(payload.title || 'JP2 Hub'", $serviceWorker);
         $this->assertStringContainsString("self.addEventListener('notificationclick'", $serviceWorker);
         $this->assertStringContainsString('CRM_NOTIFICATION_CLICKED', $serviceWorker);
     }

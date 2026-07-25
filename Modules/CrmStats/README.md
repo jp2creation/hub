@@ -39,7 +39,7 @@ La synchronisation manuelle demande `sync_stats`.
 
 ## Licence
 
-Ce module fait partie de Martin Sols HUB et suit la licence du depot racine.
+Ce module fait partie de JP2 Hub et suit la licence du depot racine.
 Tout usage professionnel, commercial, client, production, hebergement, revente
 ou redistribution demande l'accord ecrit prealable de Jean-Philippe DEGERT / JP2
 Creation.

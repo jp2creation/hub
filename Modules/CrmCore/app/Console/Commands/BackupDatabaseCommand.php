@@ -143,7 +143,7 @@ class BackupDatabaseCommand extends Command
      */
     private function writeHeader($gzip, string $database, string $driver): void
     {
-        $this->writeLine($gzip, '-- Martin Sols HUB database backup');
+        $this->writeLine($gzip, '-- JP2 Hub database backup');
         $this->writeLine($gzip, '-- Driver: '.$driver);
         $this->writeLine($gzip, '-- Database: '.$database);
         $this->writeLine($gzip, '-- Created at: '.now()->toDateTimeString());

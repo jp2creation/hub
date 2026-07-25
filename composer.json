@@ -2,8 +2,8 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "jp2creation/hub",
     "type": "project",
-    "description": "Martin Sols HUB internal operations platform.",
-    "keywords": ["laravel", "hub", "martin-sols"],
+    "description": "JP2 Hub modular Laravel operations platform.",
+    "keywords": ["laravel", "hub", "jp2-hub", "martin-sols"],
     "license": "proprietary",
     "require": {
         "php": "^8.3",

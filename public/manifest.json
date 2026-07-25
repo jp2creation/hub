@@ -1,7 +1,7 @@
 {
-  "name": "Martin Sols HUB",
-  "short_name": "Martin Sols",
-  "description": "HUB Martin Sols installable sur mobile, tablette et ordinateur.",
+  "name": "JP2 Hub",
+  "short_name": "JP2 Hub",
+  "description": "JP2 Hub installable sur mobile, tablette et ordinateur.",
   "id": "/?source=pwa",
   "start_url": "/?source=pwa",
   "scope": "/",

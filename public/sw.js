@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'martin-sols-hub-v202607250900';
+const CACHE_VERSION = 'martin-sols-hub-v202607251155';
 const STATIC_CACHE = `${CACHE_VERSION}:static`;
 const OFFLINE_URL = '/offline.html';
 
@@ -90,7 +90,7 @@ self.addEventListener('push', (event) => {
   const payload = parsePushPayload(event);
 
   event.waitUntil(
-    self.registration.showNotification(payload.title || 'Martin Sols HUB', {
+    self.registration.showNotification(payload.title || 'JP2 Hub', {
       body: payload.body || '',
       icon: payload.icon || '/assets/pwa/icon-192.png',
       badge: payload.badge || '/assets/pwa/maskable-192.png',

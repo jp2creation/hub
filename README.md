@@ -1,6 +1,8 @@
-# Martin Sols HUB
+# JP2 Hub
 
-HUB interne pour centraliser les outils operationnels Martin Sols : portail web, tableau de bord multi-site, reservations, locations de materiel, conges, comptabilite, documents, rapports de visite, generation PDF et API mobile.
+JP2 Hub est une base Laravel modulaire concue par JP2 Creation pour centraliser des outils operationnels multi-site : portail web, tableau de bord, reservations, locations de materiel, conges, comptabilite, documents, rapports de visite, generation PDF et API mobile.
+
+L'installation Martin Sols presente dans ce depot est l'exemple metier actuellement utilise pour valider le produit et ses modules.
 
 ## Objectif
 

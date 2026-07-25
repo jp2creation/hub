@@ -276,7 +276,7 @@ return [
     'composer' => [
         'vendor' => env('MODULE_VENDOR', 'jp2creation'),
         'author' => [
-            'name' => env('MODULE_AUTHOR_NAME', 'Martin Sols HUB'),
+            'name' => env('MODULE_AUTHOR_NAME', 'JP2 Hub'),
             'email' => env('MODULE_AUTHOR_EMAIL', 'contact@jp2creation.fr'),
         ],
         'composer-output' => false,
