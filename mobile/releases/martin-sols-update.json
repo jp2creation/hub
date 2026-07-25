@@ -10,11 +10,11 @@
     "releaseNotes": "Version 1.54 stable : correction de la localisation native des Parametres de l app et activation de la connexion rapide depuis le HUB connecte."
   },
   "ios": {
-    "version": "1.37",
-    "buildNumber": 39,
+    "version": "1.38",
+    "buildNumber": 40,
     "installUrl": "",
     "distribution": "app-store-or-testflight",
-    "releaseNotes": "Ajout du pont natif iPhone/iPad pour les Parametres de l app, la version et les futures mises a jour."
+    "releaseNotes": "Parametres iPhone/iPad alignes sur Android avec code app, connexion rapide, localisation native et mises a jour."
   },
   "macos": {
     "version": "1.37",

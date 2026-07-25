@@ -662,7 +662,7 @@
 
           try {
             const session = await issueMobileToken(normalizedEmail, currentPassword);
-            saveNativeSession(session);
+            await saveNativeSession(session);
             await openWebSession(session);
           } catch (error) {
             setBusy(false);
@@ -717,7 +717,7 @@
             }
 
             const refreshed = await refreshMobileToken(session.refreshToken);
-            saveNativeSession(refreshed);
+            await saveNativeSession(refreshed);
             const webSession = await createWebSession(refreshed.token);
             window.location.replace(webSession.url);
           }
@@ -809,22 +809,56 @@
           }
         }
 
-        function saveNativeSession(session) {
+        async function saveNativeSession(session) {
           try {
-            const result = JSON.parse(nativeApp.saveMobileSession?.(JSON.stringify(session)) || '{}');
+            const result = await nativeResult(nativeApp.saveMobileSession?.(JSON.stringify(session)));
 
             if (result.ok === true) {
               quickLogin.hidden = false;
             }
           } catch (error) {
-            // Connexion web OK même si Android ne peut pas conserver la session rapide.
+            // Connexion web OK même si l’app ne peut pas conserver la session rapide.
           }
+        }
+
+        async function nativeResult(value) {
+          const resolved = await Promise.resolve(value || '{}');
+
+          if (typeof resolved === 'object') {
+            return resolved || {};
+          }
+
+          return JSON.parse(String(resolved || '{}'));
         }
 
         function nativeDeviceName() {
           const version = nativeApp.getVersionName?.() || 'app';
+          const platform = nativeApp.getPlatformName?.() || nativePlatformLabel();
 
-          return `Martin Sols Android ${version}`;
+          return `Martin Sols ${platform} ${version}`;
+        }
+
+        function nativePlatformLabel() {
+          const userAgent = window.navigator.userAgent || '';
+          const platform = window.navigator.platform || '';
+
+          if (/Android/i.test(userAgent)) {
+            return 'Android';
+          }
+
+          if (/iPhone|iPod/i.test(userAgent)) {
+            return 'iPhone';
+          }
+
+          if (/iPad/i.test(userAgent) || (platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)) {
+            return 'iPad';
+          }
+
+          if (/Macintosh|Mac OS X|MacIntel/i.test(`${userAgent} ${platform}`)) {
+            return 'macOS';
+          }
+
+          return 'Application mobile';
         }
 
         function setBusy(isBusy, label) {

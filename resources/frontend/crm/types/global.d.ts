@@ -32,17 +32,18 @@ declare global {
       requestLocation: () => void;
     };
     MartinSolsNativeApp?: {
-      authenticateSavedMobileSession?: (requestId: string) => void;
-      clearAppCode?: () => void;
-      clearMobileSession?: () => void;
-      checkForUpdates?: () => void;
+      authenticateSavedMobileSession?: (requestId: string) => NativeBridgeResponse;
+      clearAppCode?: () => NativeBridgeResponse;
+      clearMobileSession?: () => NativeBridgeResponse;
+      checkForUpdates?: () => NativeBridgeResponse;
       getMobileAuthStatus?: () => string;
+      getPlatformName?: () => string;
       getVersionCode?: () => string;
       getVersionName?: () => string;
-      openDeviceSecuritySettings?: () => void;
-      requestLocation?: (requestId: string, highAccuracy: boolean) => string;
-      saveMobileSession?: (payload: string) => string;
-      setAppCode?: () => void;
+      openDeviceSecuritySettings?: () => NativeBridgeResponse;
+      requestLocation?: (requestId: string, highAccuracy: boolean) => NativeBridgeResponse;
+      saveMobileSession?: (payload: string) => NativeBridgeResponse;
+      setAppCode?: () => NativeBridgeResponse;
     };
     __martinSolsCrmFetchCsrf?: boolean;
     __martinSolsCrmDeadLegacyLinksInstalled?: boolean;
@@ -57,6 +58,19 @@ export type CrmLoaderOptions = {
   delay?: number;
   timeout?: number;
   timeoutMessage?: string;
+};
+
+export type NativeBridgeResponse =
+  | Promise<NativeBridgeResult | string | null | undefined>
+  | NativeBridgeResult
+  | null
+  | string
+  | undefined;
+
+export type NativeBridgeResult = {
+  error?: string;
+  message?: string;
+  ok?: boolean;
 };
 
 export type CrmApiClient = {

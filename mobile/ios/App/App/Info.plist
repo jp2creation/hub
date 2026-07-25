@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CAPACITOR_DEBUG</key>
+	<key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr</string>
@@ -26,6 +26,8 @@
 	<true/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.business</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Martin Sols utilise Face ID pour proteger la connexion rapide dans l'app.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Martin Sols utilise votre position uniquement quand vous activez la localisation dans les parametres de l'app.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
