@@ -460,20 +460,15 @@
 
   function renderHeader() {
     return `
-      <header class="leaves-header leave-hero">
-        <div class="leave-hero-content">
-          <p class="leaves-kicker">Equipe RH</p>
-          <h1 class="leaves-title">Congés & absences</h1>
-          <p class="leaves-subtitle">Pose, validation, suivi des absences et planning collectif du site ${esc(activeSiteName())}.</p>
+      <header class="leave-app-header">
+        <div class="leave-header-main">
+          <h1>Absences</h1>
+          ${renderViewTabs()}
         </div>
-        <div class="leaves-header-actions">
-          <button type="button" class="leaves-button leaves-button-primary" data-add-request>
-            <span>+ Demande</span>
-          </button>
-          <button type="button" class="leaves-button leaves-button-export" data-export-pdf>
-            <span aria-hidden="true">PDF</span>
-            <span>Exporter</span>
-          </button>
+        <div class="leave-header-icons" aria-label="Outils congés">
+          <button type="button" class="leave-round-icon" data-filter-focus aria-label="Rechercher">⌕</button>
+          <button type="button" class="leave-round-icon" aria-label="Réglages">⚙</button>
+          <button type="button" class="leave-round-icon" aria-label="Notifications">◌</button>
         </div>
       </header>
     `;
@@ -991,10 +986,12 @@
 
   function leaveViews() {
     return [
-      { key: 'calendar', label: 'Mon calendrier', detail: 'Vue personnelle' },
-      { key: 'team', label: 'Equipe', detail: 'Planning collectif' },
-      { key: 'requests', label: 'Demandes', detail: 'Validation et suivi' },
-      { key: 'reports', label: 'Rapports', detail: 'Export et synthèse' },
+      { key: 'calendar', label: 'Mon calendrier' },
+      { key: 'team', label: 'Mon équipe' },
+      { key: 'balances', label: 'Soldes' },
+      { key: 'requests', label: 'Demandes' },
+      { key: 'reports', label: 'Rapports' },
+      { key: 'settings', label: 'Gestion' },
     ];
   }
 
@@ -1025,6 +1022,78 @@
     return selectedEmployee() || currentEmployee() || employees()[0] || null;
   }
 
+  function initials(value) {
+    return String(value || 'MS')
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part.charAt(0))
+      .join('')
+      .toLocaleUpperCase('fr-FR');
+  }
+
+  function yearPeriodLabel() {
+    const year = state.month.getFullYear();
+    return `1er janv. ${year} - 31 dec. ${year}`;
+  }
+
+  function yearlyLeavesForEmployee(employeeId = null) {
+    const first = `${state.month.getFullYear()}-01-01`;
+    const last = `${state.month.getFullYear()}-12-31`;
+
+    return filteredLeaves()
+      .filter((leave) => leave.status !== 'refused' && leave.startDate <= last && leave.endDate >= first)
+      .filter((leave) => !employeeId || Number(leave.employeeId) === Number(employeeId));
+  }
+
+  function yearlyStats() {
+    const employee = currentScopeEmployee();
+    const leaves = yearlyLeavesForEmployee(employee?.id || null);
+    const approved = leaves.filter((leave) => leave.status === 'approved').reduce((sum, leave) => sum + daysCount(leave), 0);
+    const pending = leaves.filter((leave) => leave.status === 'pending').reduce((sum, leave) => sum + daysCount(leave), 0);
+    const total = approved + pending;
+    const available = Math.max(0, 25 - total);
+
+    return { approved, pending, total, available };
+  }
+
+  function typeTotal(typeValue, employeeId = null) {
+    return yearlyLeavesForEmployee(employeeId)
+      .filter((leave) => leave.type === typeValue)
+      .reduce((sum, leave) => sum + daysCount(leave), 0);
+  }
+
+  function monthGridDays(monthDate) {
+    const days = calendarDays(monthDate);
+    while (days.length < 42) {
+      days.push(addDays(days[days.length - 1], 1));
+    }
+
+    return days.slice(0, 42);
+  }
+
+  function leavesForMiniDay(day) {
+    const date = formatDate(day);
+    const employee = currentScopeEmployee();
+
+    return activeLeaves()
+      .filter((leave) => leave.startDate <= date && leave.endDate >= date)
+      .filter((leave) => !employee || Number(leave.employeeId) === Number(employee.id));
+  }
+
+  function renderTopMetrics() {
+    const stats = yearlyStats();
+
+    return `
+      <div class="leave-stat-strip" aria-label="Soldes congés">
+        <article><strong>${esc(formatDaysCount(stats.available))}j</strong><span>Disponibles</span></article>
+        <article><strong>${esc(formatDaysCount(stats.total))}j</strong><span>Total</span></article>
+        <article><strong>${esc(formatDaysCount(stats.approved))}j</strong><span>Utilises</span></article>
+        <article><strong>${esc(formatDaysCount(stats.pending))}j</strong><span>En attente</span></article>
+      </div>
+    `;
+  }
+
   function renderViewTabs() {
     return `
       <nav class="leave-view-tabs" aria-label="Navigation congés">
@@ -1032,8 +1101,7 @@
           .map(
             (view) => `
               <button type="button" class="leave-view-tab ${state.view === view.key ? 'is-active' : ''}" data-view="${esc(view.key)}">
-                <strong>${esc(view.label)}</strong>
-                <span>${esc(view.detail)}</span>
+                ${esc(view.label)}
               </button>
             `,
           )
@@ -1044,7 +1112,7 @@
 
   function renderFilters() {
     return `
-      <section class="leave-filter-card" aria-label="Filtres congés">
+      <section class="leave-filter-card leave-app-filters" aria-label="Filtres congés">
         <div class="leave-search-field">
           <span aria-hidden="true">⌕</span>
           <input type="search" data-filter-query value="${esc(state.filters.query)}" placeholder="Rechercher un membre, motif, statut...">
@@ -1084,7 +1152,7 @@
             <option value="refused" ${state.filters.status === 'refused' ? 'selected' : ''}>Refusés</option>
           </select>
         </label>
-        <button type="button" class="leaves-button leave-filter-reset" data-filter-reset>Réinitialiser</button>
+        <button type="button" class="leaves-button leave-filter-reset" data-filter-reset>Effacer</button>
       </section>
     `;
   }
@@ -1097,23 +1165,22 @@
     const projected = used + pending;
 
     return `
-      <aside class="leave-side-panel">
-        <section class="leave-balance-card">
-          <p class="leave-panel-kicker">Soldes</p>
+      <aside class="leave-side-panel leave-absences-sidebar">
+        <section class="leave-profile-card">
+          <div class="leave-profile-avatar">${esc(initials(employee?.name || activeSiteName()))}</div>
           <h2>${esc(employee?.name || activeSiteName())}</h2>
+          <p>${esc(activeSiteName())} - Equipe</p>
           <div class="leave-balance-grid">
-            <span><strong>${esc(formatDaysCount(used))} j</strong><small>validés ${year}</small></span>
-            <span><strong>${esc(formatDaysCount(pending))} j</strong><small>en attente</small></span>
-            <span><strong>${esc(formatDaysCount(projected))} j</strong><small>prévisionnel</small></span>
+            <span><strong>${esc(formatDaysCount(used))}j</strong><small>valides ${year}</small></span>
+            <span><strong>${esc(formatDaysCount(pending))}j</strong><small>en attente</small></span>
+            <span><strong>${esc(formatDaysCount(projected))}j</strong><small>previsionnel</small></span>
           </div>
         </section>
-        <section class="leave-type-card">
-          <p class="leave-panel-kicker">Types d'absences</p>
+        <section class="leave-type-card leave-sidebar-card">
+          <h3>Absences par type</h3>
           ${(state.data?.types || [])
             .map((type) => {
-              const total = filteredLeaves()
-                .filter((leave) => leave.type === type.value && leave.status !== 'refused')
-                .reduce((sum, leave) => sum + daysCount(leave), 0);
+              const total = typeTotal(type.value, employee?.id || null);
               return `
                 <button type="button" class="leave-type-row" data-type-filter="${esc(type.value)}" style="--type-color:${esc(normalizeColor(type.color, '#38bdf8'))}">
                   <span></span>
@@ -1123,6 +1190,16 @@
               `;
             })
             .join('')}
+        </section>
+        <section class="leave-sidebar-card leave-convention-card">
+          <h3>Convention et calendrier</h3>
+          <p>Convention Martin Sols</p>
+          <p>${esc(activeSiteName())}</p>
+        </section>
+        <section class="leave-sidebar-card leave-ical-card">
+          <div class="leave-ical-emoji" aria-hidden="true">▦</div>
+          <p>Vos absences peuvent être ajoutées à votre calendrier.</p>
+          <button type="button" class="leaves-button">Lien iCal</button>
         </section>
       </aside>
     `;
@@ -1778,6 +1855,686 @@
         #crm-leaves-module .leave-wall-scroll { padding:.65rem; }
         #crm-leaves-module .leave-wall-sheet { --wall-user-width:5.8rem; --wall-day-width:1.28rem; padding:.25rem; }
       }
+      #crm-leaves-module .leaves-page {
+        gap:1.15rem;
+        color:#172033;
+      }
+      #crm-leaves-module .leave-app-header {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:1rem;
+        border-bottom:1px solid rgba(15,23,42,.08);
+        background:#fffdfa;
+        padding:.75rem 1rem;
+      }
+      #crm-leaves-module .leave-header-main {
+        display:flex;
+        min-width:0;
+        align-items:center;
+        gap:1.25rem;
+      }
+      #crm-leaves-module .leave-header-main h1 {
+        margin:0;
+        color:#172033;
+        font-size:1.25rem;
+        font-weight:950;
+        line-height:1;
+        letter-spacing:0;
+      }
+      #crm-leaves-module .leave-view-tabs {
+        display:flex;
+        min-width:0;
+        gap:1rem;
+        overflow-x:auto;
+      }
+      #crm-leaves-module .leave-view-tab {
+        position:relative;
+        min-width:max-content;
+        border:0;
+        border-radius:0;
+        background:transparent;
+        box-shadow:none;
+        color:#6b7280;
+        padding:.78rem 0 .72rem;
+        font-size:.78rem;
+        font-weight:850;
+        line-height:1;
+      }
+      #crm-leaves-module .leave-view-tab:hover {
+        background:transparent;
+        color:#172033;
+      }
+      #crm-leaves-module .leave-view-tab.is-active {
+        background:transparent;
+        color:#172033;
+        box-shadow:none;
+      }
+      #crm-leaves-module .leave-view-tab.is-active::after {
+        content:"";
+        position:absolute;
+        left:0;
+        right:0;
+        bottom:0;
+        height:2px;
+        border-radius:999px;
+        background:#172033;
+      }
+      #crm-leaves-module .leave-header-icons {
+        display:flex;
+        flex:0 0 auto;
+        align-items:center;
+        gap:.55rem;
+      }
+      #crm-leaves-module .leave-round-icon {
+        display:grid;
+        place-items:center;
+        width:2.1rem;
+        height:2.1rem;
+        border:0;
+        border-radius:999px;
+        background:transparent;
+        color:#172033;
+        font-size:1rem;
+        font-weight:850;
+      }
+      #crm-leaves-module .leave-round-icon:hover {
+        background:#f0efeb;
+      }
+      #crm-leaves-module .leave-hr-layout {
+        display:grid;
+        grid-template-columns:16.5rem minmax(0,1fr);
+        align-items:start;
+        gap:1rem;
+      }
+      #crm-leaves-module .leave-work-area {
+        display:grid;
+        min-width:0;
+        gap:1rem;
+      }
+      #crm-leaves-module .leave-absences-sidebar {
+        display:grid;
+        gap:.8rem;
+      }
+      #crm-leaves-module .leave-profile-card,
+      #crm-leaves-module .leave-sidebar-card,
+      #crm-leaves-module .leave-card {
+        border:1px solid rgba(15,23,42,.08);
+        border-radius:.55rem;
+        background:#fffdfa;
+        box-shadow:0 12px 30px rgba(15,23,42,.045);
+      }
+      #crm-leaves-module .leave-profile-card {
+        display:grid;
+        justify-items:center;
+        gap:.45rem;
+        padding:1.45rem 1rem 1rem;
+      }
+      #crm-leaves-module .leave-profile-avatar {
+        display:grid;
+        place-items:center;
+        width:4.7rem;
+        height:4.7rem;
+        border-radius:999px;
+        background:linear-gradient(135deg,#fff 0%,#f8e9ef 100%);
+        color:rgb(var(--theme-primary));
+        font-size:1.2rem;
+        font-weight:950;
+        box-shadow:inset 0 0 0 .18rem #fff, 0 10px 24px rgba(15,23,42,.08);
+      }
+      #crm-leaves-module .leave-profile-card h2 {
+        margin:.2rem 0 0;
+        color:#172033;
+        font-size:.98rem;
+        font-weight:950;
+        line-height:1.1;
+        text-align:center;
+      }
+      #crm-leaves-module .leave-profile-card p {
+        margin:0;
+        color:#6b7280;
+        font-size:.76rem;
+        font-weight:750;
+        text-align:center;
+      }
+      #crm-leaves-module .leave-balance-grid {
+        width:100%;
+        grid-template-columns:1fr;
+        gap:.35rem;
+        margin-top:.55rem;
+      }
+      #crm-leaves-module .leave-balance-grid span {
+        background:#f4f2ee;
+        border-radius:.45rem;
+        padding:.48rem .55rem;
+      }
+      #crm-leaves-module .leave-sidebar-card {
+        padding:1rem;
+      }
+      #crm-leaves-module .leave-sidebar-card h3,
+      #crm-leaves-module .leave-type-card h3 {
+        margin:0 0 .75rem;
+        color:#172033;
+        font-size:.88rem;
+        font-weight:950;
+      }
+      #crm-leaves-module .leave-type-row {
+        grid-template-columns:.8rem minmax(0,1fr) auto;
+        min-height:2.05rem;
+        border:0;
+        border-radius:.45rem;
+        background:transparent;
+        padding:.34rem .25rem;
+      }
+      #crm-leaves-module .leave-type-row span {
+        width:.8rem;
+        height:.8rem;
+        border:1px solid color-mix(in srgb,var(--type-color) 60%,#fff);
+        border-radius:.22rem;
+        background:color-mix(in srgb,var(--type-color) 22%,#fff);
+      }
+      #crm-leaves-module .leave-type-row strong,
+      #crm-leaves-module .leave-type-row em {
+        font-size:.78rem;
+      }
+      #crm-leaves-module .leave-convention-card p,
+      #crm-leaves-module .leave-ical-card p {
+        margin:.25rem 0;
+        color:#4b5563;
+        font-size:.78rem;
+        font-weight:720;
+      }
+      #crm-leaves-module .leave-ical-card {
+        justify-items:center;
+        text-align:center;
+      }
+      #crm-leaves-module .leave-ical-emoji {
+        display:grid;
+        place-items:center;
+        width:3.5rem;
+        height:3.5rem;
+        margin:0 auto .4rem;
+        border-radius:999px;
+        background:#f4f2ee;
+        color:rgb(var(--theme-primary));
+        font-size:1.35rem;
+        font-weight:950;
+      }
+      #crm-leaves-module .leave-app-filters {
+        grid-template-columns:minmax(14rem,1.7fr) repeat(3,minmax(8rem,1fr)) auto;
+        border-radius:.55rem;
+        background:#f8f7f4;
+        box-shadow:none;
+      }
+      #crm-leaves-module .leave-search-field,
+      #crm-leaves-module .leave-filter-card select,
+      #crm-leaves-module .leave-search-field input {
+        border-radius:.42rem;
+        background:#fffdfa;
+      }
+      #crm-leaves-module .leave-calendar-toolbar,
+      #crm-leaves-module .leave-team-toolbar {
+        display:grid;
+        grid-template-columns:auto auto minmax(0,1fr) auto;
+        align-items:center;
+        gap:.8rem;
+        padding:1rem;
+      }
+      #crm-leaves-module .leave-view-mode {
+        display:inline-grid;
+        grid-auto-flow:column;
+        overflow:hidden;
+        border:1px solid rgba(15,23,42,.1);
+        border-radius:.45rem;
+        background:#f4f2ee;
+      }
+      #crm-leaves-module .leave-view-mode button {
+        min-width:2.55rem;
+        min-height:2.25rem;
+        border:0;
+        border-right:1px solid rgba(15,23,42,.08);
+        background:transparent;
+        color:#4b5563;
+        padding:.4rem .65rem;
+        font-weight:850;
+      }
+      #crm-leaves-module .leave-view-mode button:last-child {
+        border-right:0;
+      }
+      #crm-leaves-module .leave-view-mode button.is-active {
+        background:#dedbd3;
+        color:#172033;
+      }
+      #crm-leaves-module .leave-year-nav {
+        display:inline-grid;
+        grid-template-columns:2rem auto 2rem;
+        align-items:center;
+        gap:.25rem;
+        border:1px solid rgba(15,23,42,.1);
+        border-radius:.45rem;
+        background:#f4f2ee;
+        padding:.15rem;
+      }
+      #crm-leaves-module .leave-year-nav button {
+        width:2rem;
+        height:2rem;
+        border:0;
+        border-radius:.35rem;
+        background:transparent;
+        color:#4b5563;
+        font-size:1.1rem;
+        font-weight:900;
+      }
+      #crm-leaves-module .leave-year-nav button:hover {
+        background:#fffdfa;
+        color:#172033;
+      }
+      #crm-leaves-module .leave-year-nav strong {
+        min-width:4.1rem;
+        color:#172033;
+        font-size:.86rem;
+        font-weight:850;
+        text-align:center;
+      }
+      #crm-leaves-module .leave-stat-strip {
+        display:grid;
+        grid-template-columns:repeat(4,minmax(0,1fr));
+        border:1px solid rgba(15,23,42,.1);
+        border-radius:.45rem;
+        background:#f8f7f4;
+      }
+      #crm-leaves-module .leave-stat-strip article {
+        display:flex;
+        min-width:0;
+        align-items:center;
+        justify-content:center;
+        gap:.35rem;
+        border-right:1px solid rgba(15,23,42,.08);
+        padding:.55rem .7rem;
+        white-space:nowrap;
+      }
+      #crm-leaves-module .leave-stat-strip article:last-child {
+        border-right:0;
+      }
+      #crm-leaves-module .leave-stat-strip strong {
+        color:#172033;
+        font-size:1rem;
+        font-weight:950;
+      }
+      #crm-leaves-module .leave-stat-strip span {
+        color:#4b5563;
+        font-size:.72rem;
+        font-weight:760;
+      }
+      #crm-leaves-module .leave-calendar-actions,
+      #crm-leaves-module .leave-wall-actions {
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:flex-end;
+        gap:.5rem;
+      }
+      #crm-leaves-module .leave-calendar-period {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:.8rem;
+        padding:0 1rem .9rem;
+        color:#6b7280;
+        font-size:.8rem;
+        font-weight:760;
+      }
+      #crm-leaves-module .leave-calendar-period strong {
+        color:#172033;
+        font-weight:850;
+      }
+      #crm-leaves-module .leave-year-calendar {
+        display:grid;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:1.1rem 1.35rem;
+        border-top:1px solid rgba(15,23,42,.08);
+        padding:1.25rem 1.6rem 1.4rem;
+      }
+      #crm-leaves-module .leave-mini-month {
+        min-width:0;
+      }
+      #crm-leaves-module .leave-mini-month h3 {
+        margin:0 0 .55rem;
+        color:#172033;
+        font-size:.88rem;
+        font-weight:950;
+        text-transform:capitalize;
+      }
+      #crm-leaves-module .leave-mini-grid {
+        display:grid;
+        grid-template-columns:repeat(7,minmax(0,1fr));
+        gap:.18rem;
+      }
+      #crm-leaves-module .leave-mini-day {
+        position:relative;
+        display:grid;
+        place-items:center;
+        min-width:0;
+        height:1.55rem;
+        border:0;
+        border-radius:.18rem;
+        background:transparent;
+        color:#172033;
+        font-size:.74rem;
+        font-weight:760;
+      }
+      #crm-leaves-module .leave-mini-day.is-muted {
+        color:#b5b8be;
+      }
+      #crm-leaves-module .leave-mini-day.has-leave {
+        background:color-mix(in srgb,var(--absence-color) 24%,#fff);
+        box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--absence-color) 58%,#fff);
+      }
+      #crm-leaves-module .leave-mini-day.has-leave i {
+        position:absolute;
+        top:.12rem;
+        width:.34rem;
+        height:.34rem;
+        border-radius:999px;
+        background:rgb(var(--theme-primary));
+      }
+      #crm-leaves-module .leave-mini-day.is-today span {
+        display:grid;
+        place-items:center;
+        width:1.35rem;
+        height:1.35rem;
+        border:1px solid #94a3b8;
+        border-radius:999px;
+      }
+      #crm-leaves-module .leave-mini-day.is-selected {
+        background:rgb(var(--theme-primary));
+        color:#fff;
+      }
+      #crm-leaves-module .leave-mini-day.is-selected i {
+        background:#fff;
+      }
+      #crm-leaves-module .leave-team-count {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:.75rem;
+        padding:0 1rem .8rem;
+        color:#172033;
+        font-size:.8rem;
+        font-weight:850;
+      }
+      #crm-leaves-module .leave-filter-chip {
+        display:inline-flex;
+        align-items:center;
+        min-height:2.25rem;
+        border:1px solid rgba(15,23,42,.08);
+        border-radius:.45rem;
+        background:#f4f2ee;
+        color:#4b5563;
+        padding:.35rem .7rem;
+        font-size:.76rem;
+        font-weight:820;
+      }
+      #crm-leaves-module .leave-team-scroll,
+      #crm-leaves-module .leave-balance-table-wrap,
+      #crm-leaves-module .leave-settings-table-wrap {
+        overflow:auto;
+        border-top:1px solid rgba(15,23,42,.08);
+      }
+      #crm-leaves-module .leave-team-timeline {
+        min-width:58rem;
+        width:100%;
+        table-layout:fixed;
+        border-collapse:collapse;
+      }
+      #crm-leaves-module .leave-team-user-col {
+        width:13rem;
+      }
+      #crm-leaves-module .leave-team-day-col {
+        width:calc((100% - 13rem) / var(--day-count));
+      }
+      #crm-leaves-module .leave-team-timeline th,
+      #crm-leaves-module .leave-team-timeline td {
+        height:2.55rem;
+        border-bottom:1px solid rgba(15,23,42,.08);
+        padding:0 .15rem;
+        text-align:center;
+        vertical-align:middle;
+      }
+      #crm-leaves-module .leave-team-timeline thead th {
+        height:3rem;
+        color:#6b7280;
+        font-size:.68rem;
+        font-weight:760;
+      }
+      #crm-leaves-module .leave-team-timeline thead th span,
+      #crm-leaves-module .leave-team-timeline thead th strong {
+        display:block;
+      }
+      #crm-leaves-module .leave-team-timeline thead th strong {
+        margin-top:.14rem;
+        color:#172033;
+        font-size:.76rem;
+        font-weight:850;
+      }
+      #crm-leaves-module .leave-team-timeline th:first-child,
+      #crm-leaves-module .leave-team-timeline tbody th {
+        position:sticky;
+        left:0;
+        z-index:1;
+        background:#fffdfa;
+        text-align:left;
+      }
+      #crm-leaves-module .leave-team-timeline .is-weekend {
+        background:#fafafa;
+      }
+      #crm-leaves-module .leave-team-person {
+        display:inline-flex;
+        min-width:0;
+        align-items:center;
+        gap:.55rem;
+      }
+      #crm-leaves-module .leave-team-person i {
+        display:grid;
+        place-items:center;
+        width:1.7rem;
+        height:1.7rem;
+        flex:0 0 auto;
+        border-radius:999px;
+        background:color-mix(in srgb,var(--person-color,#38bdf8) 25%,#fff);
+        color:#172033;
+        font-size:.58rem;
+        font-style:normal;
+        font-weight:950;
+      }
+      #crm-leaves-module .leave-team-person strong {
+        min-width:0;
+        overflow:hidden;
+        color:#172033;
+        font-size:.78rem;
+        font-weight:850;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+      #crm-leaves-module .leave-team-pill {
+        display:block;
+        width:100%;
+        height:1.35rem;
+        border:1px solid color-mix(in srgb,var(--absence-color) 65%,#fff);
+        border-radius:.42rem;
+        background:color-mix(in srgb,var(--absence-color) 26%,#fff);
+      }
+      #crm-leaves-module .leave-team-pill.is-pending {
+        border-style:dashed;
+        background:#fffdfa;
+      }
+      #crm-leaves-module .leave-balance-table,
+      #crm-leaves-module .leave-settings-table,
+      #crm-leaves-module .leave-requests-table {
+        min-width:42rem;
+        width:100%;
+        border-collapse:collapse;
+      }
+      #crm-leaves-module .leave-balance-table th,
+      #crm-leaves-module .leave-balance-table td,
+      #crm-leaves-module .leave-settings-table th,
+      #crm-leaves-module .leave-settings-table td {
+        border-bottom:1px solid rgba(15,23,42,.08);
+        padding:.9rem 1rem;
+        color:#4b5563;
+        font-size:.86rem;
+        text-align:left;
+      }
+      #crm-leaves-module .leave-balance-table th,
+      #crm-leaves-module .leave-settings-table th {
+        background:#f8f7f4;
+        color:#6b7280;
+        font-size:.72rem;
+        font-weight:850;
+      }
+      #crm-leaves-module .leave-settings-board {
+        max-width:62rem;
+        margin:0 auto;
+        padding:1.4rem;
+      }
+      #crm-leaves-module .leave-settings-head {
+        display:flex;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:1rem;
+      }
+      #crm-leaves-module .leave-settings-head h2 {
+        margin:0;
+        color:#172033;
+        font-size:1.65rem;
+        font-weight:950;
+        line-height:1.1;
+      }
+      #crm-leaves-module .leave-settings-head p {
+        max-width:33rem;
+        margin:.45rem 0 0;
+        color:#4b5563;
+        font-size:.98rem;
+        line-height:1.45;
+      }
+      #crm-leaves-module .leave-settings-search {
+        margin:1.25rem 0;
+      }
+      #crm-leaves-module .leave-color-swatch {
+        display:inline-block;
+        width:3rem;
+        height:.78rem;
+        border:2px solid color-mix(in srgb,var(--type-color) 70%,#fff);
+        border-radius:999px;
+        background:color-mix(in srgb,var(--type-color) 20%,#fff);
+      }
+      @media (max-width:1180px) {
+        #crm-leaves-module .leave-calendar-toolbar,
+        #crm-leaves-module .leave-team-toolbar {
+          grid-template-columns:1fr auto;
+        }
+        #crm-leaves-module .leave-stat-strip,
+        #crm-leaves-module .leave-calendar-actions,
+        #crm-leaves-module .leave-wall-actions {
+          grid-column:1/-1;
+        }
+        #crm-leaves-module .leave-year-calendar {
+          grid-template-columns:repeat(2,minmax(0,1fr));
+        }
+        #crm-leaves-module .leave-app-filters {
+          grid-template-columns:repeat(2,minmax(0,1fr));
+        }
+      }
+      @media (max-width:760px) {
+        #crm-leaves-module .leave-app-header {
+          align-items:flex-start;
+          padding:.85rem .85rem .6rem;
+        }
+        #crm-leaves-module .leave-header-main {
+          display:grid;
+          gap:.55rem;
+        }
+        #crm-leaves-module .leave-view-tabs {
+          max-width:calc(100vw - 7rem);
+          gap:.9rem;
+        }
+        #crm-leaves-module .leave-header-icons {
+          padding-top:.05rem;
+        }
+        #crm-leaves-module .leave-hr-layout {
+          grid-template-columns:1fr;
+        }
+        #crm-leaves-module .leave-absences-sidebar {
+          grid-template-columns:1fr;
+        }
+        #crm-leaves-module .leave-profile-card {
+          align-items:center;
+          justify-items:start;
+          grid-template-columns:3.6rem minmax(0,1fr);
+          padding:1rem;
+        }
+        #crm-leaves-module .leave-profile-avatar {
+          grid-row:span 2;
+          width:3.4rem;
+          height:3.4rem;
+          font-size:.92rem;
+        }
+        #crm-leaves-module .leave-profile-card h2,
+        #crm-leaves-module .leave-profile-card p {
+          text-align:left;
+        }
+        #crm-leaves-module .leave-balance-grid {
+          grid-column:1/-1;
+          grid-template-columns:repeat(3,minmax(0,1fr));
+        }
+        #crm-leaves-module .leave-app-filters {
+          grid-template-columns:1fr;
+        }
+        #crm-leaves-module .leave-calendar-toolbar,
+        #crm-leaves-module .leave-team-toolbar {
+          grid-template-columns:1fr;
+          gap:.65rem;
+          padding:.85rem;
+        }
+        #crm-leaves-module .leave-stat-strip {
+          grid-template-columns:repeat(2,minmax(0,1fr));
+        }
+        #crm-leaves-module .leave-stat-strip article:nth-child(2) {
+          border-right:0;
+        }
+        #crm-leaves-module .leave-stat-strip article:nth-child(-n+2) {
+          border-bottom:1px solid rgba(15,23,42,.08);
+        }
+        #crm-leaves-module .leave-calendar-actions,
+        #crm-leaves-module .leave-wall-actions {
+          justify-content:stretch;
+        }
+        #crm-leaves-module .leave-calendar-actions .leaves-button,
+        #crm-leaves-module .leave-wall-actions .leaves-button {
+          flex:1 1 auto;
+        }
+        #crm-leaves-module .leave-calendar-period {
+          display:grid;
+          padding:0 .85rem .75rem;
+        }
+        #crm-leaves-module .leave-year-calendar {
+          grid-template-columns:1fr;
+          gap:1rem;
+          padding:1rem;
+        }
+        #crm-leaves-module .leave-mini-day {
+          height:1.85rem;
+          font-size:.82rem;
+        }
+        #crm-leaves-module .leave-team-scroll {
+          margin:0 -.15rem;
+        }
+        #crm-leaves-module .leave-settings-board {
+          padding:1rem;
+        }
+        #crm-leaves-module .leave-settings-head {
+          display:grid;
+        }
+      }
     `;
     style.textContent =
       root instanceof ShadowRoot
@@ -1807,35 +2564,77 @@
     `;
   }
 
-  function renderCalendar() {
-    const days = calendarDays(state.month);
-    const weekLanes = new Map();
-    days.forEach((day) => {
-      const key = weekKey(day);
-      if (!weekLanes.has(key)) weekLanes.set(key, employeeIdsForWeek(day));
-    });
-    const employee = selectedEmployee();
-    const subtitle = employee ? `Planning conges - ${employee.name}` : `Planning conges - ${activeSiteName()}`;
+  function renderMiniMonth(monthDate) {
+    const days = monthGridDays(monthDate);
+    const today = formatDate(new Date());
+
     return `
-      <section class="leave-card leave-calendar" aria-label="Calendrier conges">
-        <div class="leave-planning-head">
-          <button type="button" class="leave-nav-button" data-prev aria-label="Mois precedent">&lt;</button>
-          <div class="leave-planning-title">
-            <h2 class="leave-month-title">${esc(monthLabel(state.month))}</h2>
-            <p class="leave-month-subtitle">${esc(subtitle)}</p>
+      <article class="leave-mini-month">
+        <h3>${esc(monthDate.toLocaleDateString('fr-FR', { month: 'long' }))}</h3>
+        <div class="leave-mini-grid">
+          ${days
+            .map((day) => {
+              const date = formatDate(day);
+              const leaves = leavesForMiniDay(day);
+              const primary = leaves[0];
+              const color = primary ? normalizeColor(typeMeta(primary.type).color, '#7dd3fc') : '';
+              const classes = [
+                'leave-mini-day',
+                day.getMonth() !== monthDate.getMonth() ? 'is-muted' : '',
+                date === today ? 'is-today' : '',
+                date === state.selectedDate ? 'is-selected' : '',
+                leaves.length ? 'has-leave' : '',
+                primary?.status === 'pending' ? 'is-pending' : '',
+              ]
+                .filter(Boolean)
+                .join(' ');
+
+              return `
+                <button type="button" class="${classes}" data-day data-date="${date}" style="${primary ? `--absence-color:${esc(color)}` : ''}" aria-label="${esc(dateLabel(date))}">
+                  <span>${day.getDate()}</span>
+                  ${leaves.length ? '<i aria-hidden="true"></i>' : ''}
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+      </article>
+    `;
+  }
+
+  function renderYearCalendar() {
+    return Array.from({ length: 12 }, (_, index) => new Date(state.month.getFullYear(), index, 1))
+      .map((monthDate) => renderMiniMonth(monthDate))
+      .join('');
+  }
+
+  function renderCalendar() {
+    const employee = selectedEmployee();
+    const subtitle = employee ? employee.name : activeSiteName();
+    return `
+      <section class="leave-card leave-calendar leave-year-card" aria-label="Calendrier conges">
+        <div class="leave-calendar-toolbar">
+          <div class="leave-view-mode">
+            <button type="button" class="is-active" aria-label="Calendrier">▣</button>
+            <button type="button" data-focus-selected aria-label="Liste">☷</button>
           </div>
-          <button type="button" class="leave-nav-button" data-next aria-label="Mois suivant">&gt;</button>
+          <div class="leave-year-nav">
+            <button type="button" data-prev aria-label="Annee precedente">‹</button>
+            <strong>${state.month.getFullYear()}</strong>
+            <button type="button" data-next aria-label="Annee suivante">›</button>
+          </div>
+          ${renderTopMetrics()}
+          <div class="leave-calendar-actions">
+            <button type="button" class="leaves-button" data-export-pdf>Exporter</button>
+            <button type="button" class="leaves-button leaves-button-primary" data-add-request>+ Demander une absence</button>
+          </div>
         </div>
-        <div class="leave-tabs" aria-label="Vues calendrier">
-          <button type="button" class="leave-tab is-active">Mois</button>
-          <button type="button" class="leave-tab" data-focus-selected>Jour</button>
-          <button type="button" class="leave-tab" data-today>Aujourd'hui</button>
+        <div class="leave-calendar-period">
+          <strong>${esc(yearPeriodLabel())}</strong>
+          <span>${esc(subtitle)}</span>
         </div>
-        <div class="leave-weekdays">
-          ${['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'].map((day) => `<span>${day}</span>`).join('')}
-        </div>
-        <div class="leave-calendar-grid">
-          ${days.map((day) => renderDay(day, weekLanes.get(weekKey(day)) || [])).join('')}
+        <div class="leave-year-calendar">
+          ${renderYearCalendar()}
         </div>
         ${renderLegend()}
       </section>
@@ -2059,22 +2858,96 @@
 
       return leave.startDate <= last && leave.endDate >= first;
     });
+    const days = wallVisibleDays();
+    const rows = exportEmployees(leaves);
 
     return `
-      <section class="leave-card leave-report-card leave-wall-card">
-        <div class="leave-card-head">
-          <div>
-            <h2 class="leave-card-title">Planning global</h2>
-            <p class="leave-card-subtitle">Du ${esc(dateLabel(period.first))} au ${esc(dateLabel(period.last))} - ${period.count} jours selon votre écran.</p>
+      <section class="leave-card leave-team-board" aria-label="Planning équipe">
+        <div class="leave-team-toolbar">
+          <div class="leave-view-mode leave-period-mode">
+            <button type="button">Jour</button>
+            <button type="button">Semaine</button>
+            <button type="button" class="is-active">Mois</button>
+          </div>
+          <div class="leave-year-nav">
+            <button type="button" data-wall-prev aria-label="Période précédente">‹</button>
+            <strong>${state.month.getFullYear()}</strong>
+            <button type="button" data-wall-next aria-label="Période suivante">›</button>
           </div>
           <div class="leave-wall-actions">
-            <button type="button" class="leave-nav-button" data-wall-prev aria-label="Période précédente">‹</button>
+            <span class="leave-filter-chip">Statut : ${esc(statusLabel(state.filters.status === 'active' ? 'approved' : state.filters.status))}</span>
+            <button type="button" class="leaves-button" data-export-pdf>Exporter</button>
+            <button type="button" class="leaves-button leaves-button-primary" data-add-request>+ Demander une absence</button>
             <button type="button" class="leaves-button" data-wall-today>Aujourd'hui</button>
-            <button type="button" class="leave-nav-button" data-wall-next aria-label="Période suivante">›</button>
           </div>
         </div>
-        <div class="leave-report-scroll leave-wall-scroll">
-          ${renderWallPlanning(leaves)}
+        <div class="leave-team-count">
+          <span>1-${rows.length} sur ${employees().length}</span>
+          <strong>Du ${esc(dateLabel(period.first))} au ${esc(dateLabel(period.last))}</strong>
+        </div>
+        <div class="leave-team-scroll">
+          <table class="leave-team-timeline" style="--day-count:${days.length}">
+            <colgroup>
+              <col class="leave-team-user-col">
+              ${days.map(() => '<col class="leave-team-day-col">').join('')}
+            </colgroup>
+            <thead>
+              <tr>
+                <th></th>
+                ${days
+                  .map(
+                    (day) => `
+                      <th class="${isWeekend(day) ? 'is-weekend' : ''}">
+                        <span>${esc(shortWeekday(day))}</span>
+                        <strong>${day.getDate()}</strong>
+                      </th>
+                    `,
+                  )
+                  .join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${
+                rows.length
+                  ? rows
+                      .map(
+                        (employee) => `
+                          <tr>
+                            <th>
+                              <span class="leave-team-person">
+                                <i style="--person-color:${esc(normalizeColor(employee.color, '#38bdf8'))}">${esc(initials(employee.name))}</i>
+                                <strong>${esc(employee.name)}</strong>
+                              </span>
+                            </th>
+                            ${days
+                              .map((day) => {
+                                const leave = wallLeavesForDate(employee, day, leaves)[0];
+                                const meta = leave ? typeMeta(leave.type) : null;
+                                const color = leave ? normalizeColor(meta.color, '#7dd3fc') : '';
+                                return `
+                                  <td class="${isWeekend(day) ? 'is-weekend' : ''}">
+                                    ${
+                                      leave
+                                        ? `<button type="button" class="leave-team-pill ${leave.status === 'pending' ? 'is-pending' : ''}" data-edit-leave="${esc(leave.id)}" style="--absence-color:${esc(color)}" title="${esc(`${employee.name} - ${meta.label}`)}"></button>`
+                                        : ''
+                                    }
+                                  </td>
+                                `;
+                              })
+                              .join('')}
+                          </tr>
+                        `,
+                      )
+                      .join('')
+                  : `
+                    <tr>
+                      <th>Aucun membre</th>
+                      ${days.map((day) => `<td class="${isWeekend(day) ? 'is-weekend' : ''}"></td>`).join('')}
+                    </tr>
+                  `
+              }
+            </tbody>
+          </table>
         </div>
         ${renderExportLegend(monthReportLeaves())}
       </section>
@@ -2161,6 +3034,110 @@
             <span class="leave-user-name">Tous</span>
             <span class="leave-user-count">${formatDaysCount(yearLeaves().reduce((sum, leave) => sum + daysCount(leave), 0))}</span>
           </button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderBalancesPanel() {
+    const rows = employees().map((employee) => {
+      const used = yearApprovedDaysForEmployee(employee.id);
+      const pending = yearPendingDaysForEmployee(employee.id);
+      const total = used + pending;
+      return { employee, used, pending, total, remaining: Math.max(0, 25 - total) };
+    });
+
+    return `
+      <section class="leave-card leave-balance-board">
+        <div class="leave-card-head">
+          <div>
+            <h2 class="leave-card-title">Soldes</h2>
+            <p class="leave-card-subtitle">Vue annuelle par membre, demandes validées et en attente.</p>
+          </div>
+          ${renderTopMetrics()}
+        </div>
+        <div class="leave-balance-table-wrap">
+          <table class="leave-balance-table">
+            <thead>
+              <tr>
+                <th>Membre</th>
+                <th>Disponibles</th>
+                <th>Utilises</th>
+                <th>En attente</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows
+                .map(
+                  (row) => `
+                    <tr>
+                      <td>
+                        <span class="leave-team-person">
+                          <i style="--person-color:${esc(normalizeColor(row.employee.color, '#38bdf8'))}">${esc(initials(row.employee.name))}</i>
+                          <strong>${esc(row.employee.name)}</strong>
+                        </span>
+                      </td>
+                      <td>${esc(formatDaysCount(row.remaining))}j</td>
+                      <td>${esc(formatDaysCount(row.used))}j</td>
+                      <td>${esc(formatDaysCount(row.pending))}j</td>
+                      <td>${esc(formatDaysCount(row.total))}j</td>
+                    </tr>
+                  `,
+                )
+                .join('')}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderSettingsPanel() {
+    const query = state.filters.query.trim().toLowerCase();
+    const types = (state.data?.types || []).filter((type) => !query || String(type.label || '').toLowerCase().includes(query));
+
+    return `
+      <section class="leave-card leave-settings-board">
+        <div class="leave-settings-head">
+          <div>
+            <h2>Types d'absence</h2>
+            <p>Créez, configurez et choisissez une couleur pour les différents types d'absences.</p>
+          </div>
+          <button type="button" class="leaves-button leaves-button-primary">+ Nouveau type</button>
+        </div>
+        <div class="leave-search-field leave-settings-search">
+          <span aria-hidden="true">⌕</span>
+          <input type="search" data-filter-query value="${esc(state.filters.query)}" placeholder="Rechercher">
+        </div>
+        <div class="leave-settings-table-wrap">
+          <table class="leave-settings-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Couleur</th>
+                <th>Solde à consommer</th>
+                <th>Approbation requise</th>
+                <th>Envoyer des rappels</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${types
+                .map((type) => {
+                  const total = typeTotal(type.value);
+                  return `
+                    <tr>
+                      <td>${esc(type.label)}</td>
+                      <td><span class="leave-color-swatch" style="--type-color:${esc(normalizeColor(type.color, '#38bdf8'))}"></span></td>
+                      <td>${total > 0 ? 'Oui' : 'Non'}</td>
+                      <td>${type.value === 'conge' || type.value === 'absence' ? 'Oui' : 'Non'}</td>
+                      <td>${type.value === 'conge' || type.value === 'absence' ? 'Oui' : 'Non'}</td>
+                    </tr>
+                  `;
+                })
+                .join('')}
+            </tbody>
+          </table>
         </div>
       </section>
     `;
@@ -2262,7 +3239,14 @@
       return `
         <div class="leave-main-column">
           ${renderTeamSheet()}
-          ${renderSelectedDay()}
+        </div>
+      `;
+    }
+
+    if (state.view === 'balances') {
+      return `
+        <div class="leave-main-column">
+          ${renderBalancesPanel()}
         </div>
       `;
     }
@@ -2280,6 +3264,14 @@
       return `
         <div class="leave-main-column">
           ${renderReportsPanel()}
+        </div>
+      `;
+    }
+
+    if (state.view === 'settings') {
+      return `
+        <div class="leave-main-column">
+          ${renderSettingsPanel()}
         </div>
       `;
     }
@@ -2456,12 +3448,12 @@
     root.innerHTML = `
       <div class="leaves-page">
         ${renderHeader()}
-        ${renderViewTabs()}
-        ${renderFilters()}
-        ${renderSummary()}
         <div class="leave-hr-layout">
           ${renderBalancePanel()}
-          ${renderMainView()}
+          <main class="leave-work-area">
+            ${renderFilters()}
+            ${renderMainView()}
+          </main>
         </div>
         ${renderModal()}
         ${renderExportModal()}
@@ -2482,14 +3474,19 @@
         render();
       }),
     );
-    root.querySelector('[data-filter-query]')?.addEventListener('input', (event) => {
-      state.filters.query = event.currentTarget.value || '';
-      if (filterRenderTimer) window.clearTimeout(filterRenderTimer);
-      filterRenderTimer = window.setTimeout(() => {
-        filterRenderTimer = null;
-        render();
-      }, 220);
+    root.querySelector('[data-filter-focus]')?.addEventListener('click', () => {
+      root.querySelector('[data-filter-query]')?.focus();
     });
+    root.querySelectorAll('[data-filter-query]').forEach((input) =>
+      input.addEventListener('input', (event) => {
+        state.filters.query = event.currentTarget.value || '';
+        if (filterRenderTimer) window.clearTimeout(filterRenderTimer);
+        filterRenderTimer = window.setTimeout(() => {
+          filterRenderTimer = null;
+          render();
+        }, 220);
+      }),
+    );
     root.querySelector('[data-filter-employee]')?.addEventListener('change', (event) => {
       state.filters.employeeId = event.currentTarget.value || 'all';
       render();
@@ -2518,13 +3515,11 @@
       }),
     );
     root.querySelector('[data-prev]')?.addEventListener('click', () => {
-      state.month = new Date(state.month.getFullYear(), state.month.getMonth() - 1, 1);
-      state.selectedDate = formatDate(state.month);
+      state.month = new Date(state.month.getFullYear() - 1, state.month.getMonth(), 1);
       render();
     });
     root.querySelector('[data-next]')?.addEventListener('click', () => {
-      state.month = new Date(state.month.getFullYear(), state.month.getMonth() + 1, 1);
-      state.selectedDate = formatDate(state.month);
+      state.month = new Date(state.month.getFullYear() + 1, state.month.getMonth(), 1);
       render();
     });
     root.querySelector('[data-today]')?.addEventListener('click', () => {
