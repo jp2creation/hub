@@ -843,6 +843,19 @@ paths:
           description: Utilisateur mobile courant.
         '401':
           $ref: '#/components/responses/Unauthorized'
+  /api/mobile/native-session:
+    post:
+      tags: [Mobile]
+      summary: Creer une session mobile depuis une session web HUB authentifiee.
+      requestBody:
+        $ref: '#/components/requestBodies/CrmJsonPayload'
+      responses:
+        '200':
+          description: Token Bearer et refresh token crees pour l'app native.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/mobile/web-session:
     post:
       tags: [Mobile]

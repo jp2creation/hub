@@ -31,6 +31,11 @@ class MobileAuthController extends Controller
         return $this->jsonResult($mobileAuth->currentUser($request));
     }
 
+    public function nativeSession(Request $request, MobileAuthService $mobileAuth): JsonResponse
+    {
+        return $this->jsonResult($mobileAuth->issueTokenForWebSession($request));
+    }
+
     public function webSession(Request $request, MobileAuthService $mobileAuth): JsonResponse
     {
         return $this->jsonResult($mobileAuth->createWebSession($request));

@@ -30,6 +30,7 @@ type NativeAppBridge = {
   getVersionCode?: () => string;
   getVersionName?: () => string;
   openDeviceSecuritySettings?: () => void;
+  requestLocation?: (requestId: string, highAccuracy: boolean) => string;
   saveMobileSession?: (payload: string) => string;
   setAppCode?: () => void;
 };
@@ -102,15 +103,15 @@ function mobileAuthStatus(): MobileAuthStatus {
 }
 
 function mobileAuthLabel(status: MobileAuthStatus): string {
-  if (status.hasSession && status.label) {
-    return status.label;
+  if (status.hasSession) {
+    return 'Active';
   }
 
   if (status.available) {
-    return status.label || 'Disponible';
+    return 'À activer';
   }
 
-  return status.message || 'Non configurée';
+  return 'Non configurée';
 }
 
 function mobileAuthSessionLabel(status: MobileAuthStatus): string {
@@ -299,6 +300,14 @@ function mountSettingsMarkup(): boolean {
               <em data-crm-mobile-auth-status>Non configurée</em>
             </div>
 
+            <button class="crm-mobile-app-settings-row is-button" type="button" data-crm-mobile-enable-auth>
+              <span class="crm-mobile-app-settings-row-copy">
+                <strong>Activer la connexion rapide</strong>
+                <small>Enregistrer cette session sur ce téléphone</small>
+              </span>
+              <em data-crm-mobile-enable-auth-label>Activer</em>
+            </button>
+
             <button class="crm-mobile-app-settings-row is-button" type="button" data-crm-mobile-clear-auth>
               <span class="crm-mobile-app-settings-row-copy">
                 <strong>Supprimer la connexion rapide</strong>
@@ -417,6 +426,8 @@ export function installMobileAppSettings(): void {
   const errorBox = document.querySelector<HTMLElement>('[data-crm-mobile-settings-error]');
   const testLocation = document.querySelector<HTMLButtonElement>('[data-crm-mobile-test-location]');
   const checkUpdate = document.querySelector<HTMLButtonElement>('[data-crm-mobile-check-update]');
+  const enableAuth = document.querySelector<HTMLButtonElement>('[data-crm-mobile-enable-auth]');
+  const enableAuthLabel = document.querySelector<HTMLElement>('[data-crm-mobile-enable-auth-label]');
   const clearAuth = document.querySelector<HTMLButtonElement>('[data-crm-mobile-clear-auth]');
   const deviceSecurity = document.querySelector<HTMLButtonElement>('[data-crm-mobile-device-security]');
   const deviceSecurityDetail = document.querySelector<HTMLElement>('[data-crm-mobile-device-security-detail]');
@@ -430,6 +441,7 @@ export function installMobileAppSettings(): void {
 
   let lastLocation: MobileLocation | null = null;
   let locationLoading = false;
+  let quickLoginLoading = false;
   const settings = readSettings();
 
   const writeSettings = () => {
@@ -541,6 +553,14 @@ export function installMobileAppSettings(): void {
       clearAuth.disabled = !currentAuthStatus.hasSession;
     }
 
+    if (enableAuth) {
+      enableAuth.disabled = quickLoginLoading || hasQuickLogin || !currentAuthStatus.available || !nativeBridge()?.saveMobileSession;
+    }
+
+    if (enableAuthLabel) {
+      enableAuthLabel.textContent = quickLoginLoading ? 'Activation...' : hasQuickLogin ? 'Active' : 'Activer';
+    }
+
     if (deviceSecurity) {
       deviceSecurity.disabled = !nativeBridge()?.openDeviceSecuritySettings;
     }
@@ -564,7 +584,166 @@ export function installMobileAppSettings(): void {
 
   const publishLocation = () => dispatchLocation(settings, lastLocation);
 
+  const nativeResult = (value: unknown): { error?: string; message?: string; ok?: boolean } | null => {
+    if (!value) {
+      return null;
+    }
+
+    if (typeof value === 'object') {
+      return value as { error?: string; message?: string; ok?: boolean };
+    }
+
+    try {
+      return JSON.parse(String(value)) as { error?: string; message?: string; ok?: boolean };
+    } catch {
+      return null;
+    }
+  };
+
+  const csrfToken = () => document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
+
+  const nativeDeviceName = () => {
+    try {
+      return `Martin Sols Android ${nativeBridge()?.getVersionName?.() || ''}`.trim();
+    } catch {
+      return 'Martin Sols Android';
+    }
+  };
+
+  const createNativeSession = async (): Promise<Record<string, unknown>> => {
+    const token = csrfToken();
+    const headers = new Headers({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    });
+
+    if (token) {
+      headers.set('X-CSRF-TOKEN', token);
+    }
+
+    const response = await fetch('/api/mobile/native-session', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers,
+      body: JSON.stringify({
+        device_name: nativeDeviceName(),
+      }),
+    });
+    const payload = (await response.json().catch(() => ({}))) as Record<string, unknown>;
+
+    if (!response.ok || payload.ok !== true || !payload.token || !payload.refreshToken) {
+      throw new Error(typeof payload.error === 'string' ? payload.error : 'Session rapide impossible.');
+    }
+
+    return payload;
+  };
+
+  const saveNativeSession = (session: Record<string, unknown>) => {
+    const result = nativeResult(nativeBridge()?.saveMobileSession?.(JSON.stringify(session)));
+
+    if (result?.ok === false) {
+      throw new Error(result.error || result.message || 'Connexion rapide refusée.');
+    }
+  };
+
+  const enableQuickLogin = async () => {
+    const currentAuthStatus = mobileAuthStatus();
+
+    if (!currentAuthStatus.available) {
+      showError('Configure d’abord un code app ou la sécurité Android.');
+      return;
+    }
+
+    quickLoginLoading = true;
+    showError('');
+    renderSettings();
+
+    try {
+      saveNativeSession(await createNativeSession());
+      quickLoginLoading = false;
+      renderSettings();
+    } catch (error) {
+      quickLoginLoading = false;
+      showError(error instanceof Error ? error.message : 'Connexion rapide impossible.');
+      renderSettings();
+    }
+  };
+
+  const requestNativeLocation = (): boolean => {
+    const requestId = `location-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const native = nativeBridge();
+
+    if (!native?.requestLocation) {
+      return false;
+    }
+
+    let timeout = 0;
+    let onResult: (event: Event) => void;
+
+    const cleanup = () => {
+      window.clearTimeout(timeout);
+      window.removeEventListener('martin-sols:native-location-result', onResult);
+    };
+
+    onResult = (event: Event) => {
+      const detail = ((event as CustomEvent).detail || {}) as {
+        error?: string;
+        location?: { accuracy?: number; latitude?: number; longitude?: number; timestamp?: number };
+        ok?: boolean;
+        requestId?: string;
+      };
+
+      if (detail.requestId !== requestId) {
+        return;
+      }
+
+      cleanup();
+      locationLoading = false;
+
+      if (detail.ok === true && detail.location) {
+        lastLocation = {
+          accuracy: Number(detail.location.accuracy) || 0,
+          latitude: Number(detail.location.latitude) || 0,
+          longitude: Number(detail.location.longitude) || 0,
+          updatedAt: new Date(Number(detail.location.timestamp) || Date.now()).toISOString(),
+        };
+        publishLocation();
+        renderSettings();
+        return;
+      }
+
+      showError(detail.error || 'Localisation Android indisponible.');
+      renderSettings();
+    };
+
+    locationLoading = true;
+    showError('');
+    renderSettings();
+    window.addEventListener('martin-sols:native-location-result', onResult);
+    timeout = window.setTimeout(() => {
+      cleanup();
+      locationLoading = false;
+      showError('Localisation trop longue. Vérifiez que le GPS Android est actif.');
+      renderSettings();
+    }, 17000);
+
+    const result = nativeResult(native.requestLocation(requestId, settings.highAccuracyLocation));
+
+    if (result?.ok === false) {
+      cleanup();
+      locationLoading = false;
+      showError(result.message || 'Localisation Android refusée.');
+      renderSettings();
+    }
+
+    return true;
+  };
+
   const requestLocation = () => {
+    if (requestNativeLocation()) {
+      return;
+    }
+
     if (!navigator.geolocation) {
       showError('Localisation indisponible sur ce navigateur.');
       return;
@@ -654,6 +833,9 @@ export function installMobileAppSettings(): void {
 
   testLocation?.addEventListener('click', requestLocation);
   checkUpdate?.addEventListener('click', requestUpdateCheck);
+  enableAuth?.addEventListener('click', () => {
+    void enableQuickLogin();
+  });
   deviceSecurity?.addEventListener('click', () => {
     nativeBridge()?.openDeviceSecuritySettings?.();
   });

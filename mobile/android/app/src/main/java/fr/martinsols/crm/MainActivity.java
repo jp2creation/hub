@@ -18,6 +18,9 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.hardware.biometrics.BiometricPrompt;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -73,9 +76,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity {
-    private static final String CRM_URL = "https://crm.jp2.fr/?mobile_app=1";
+    private static final String HUB_URL = "https://crm.jp2.fr/?mobile_app=1";
+    private static final String UPDATE_MANIFEST_API_URL = "https://api.github.com/repos/jp2creation/hub/contents/mobile/releases/martin-sols-update.json?ref=main";
     private static final String UPDATE_MANIFEST_URL = "https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json";
     private static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
+    private static final String APP_SETTINGS_OVERRIDE_ASSET = "app-settings-override.js";
     private static final String MOBILE_AUTH_PREFS = "martin_sols_mobile_auth";
     private static final String MOBILE_AUTH_KEY_ALIAS = "martin_sols_mobile_session";
     private static final String MOBILE_AUTH_SESSION_CIPHER = "session_cipher";
@@ -87,6 +92,7 @@ public class MainActivity extends Activity {
     private static final int APP_CODE_HASH_BITS = 256;
     private static final int APP_CODE_SALT_BYTES = 16;
     private static final long SPLASH_DURATION_MS = 5500L;
+    private static final long NATIVE_LOCATION_TIMEOUT_MS = 15000L;
     private static final long UPDATE_CHECK_DELAY_MS = 1500L;
     private static final long UPDATE_PROGRESS_INTERVAL_MS = 450L;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2101;
@@ -127,7 +133,12 @@ public class MainActivity extends Activity {
     private GeolocationPermissions.Callback pendingGeolocationCallback;
     private String pendingGeolocationOrigin = "";
     private String pendingDeviceCredentialRequestId = "";
+    private String pendingNativeLocationRequestId = "";
+    private boolean pendingNativeLocationHighAccuracy;
+    private LocationListener nativeLocationListener;
+    private Runnable nativeLocationTimeout;
     private CancellationSignal biometricCancellationSignal;
+    private volatile boolean trustedCrmPageActive;
     private boolean updateCheckStarted;
     private boolean updateInstallStarted;
 
@@ -166,7 +177,7 @@ public class MainActivity extends Activity {
         rootView.addView(splashLayer, matchParentLayoutParams());
 
         setContentView(rootView);
-        webView.loadUrl(CRM_URL);
+        webView.loadUrl(HUB_URL);
         handler.postDelayed(hideSplash, SPLASH_DURATION_MS);
     }
 
@@ -239,6 +250,19 @@ public class MainActivity extends Activity {
         if (callback != null && origin.length() > 0) {
             callback.invoke(origin, hasLocationPermission(), false);
         }
+
+        if (pendingNativeLocationRequestId.length() > 0) {
+            String requestId = pendingNativeLocationRequestId;
+            boolean highAccuracy = pendingNativeLocationHighAccuracy;
+
+            if (hasLocationPermission()) {
+                resolveNativeLocation(requestId, highAccuracy);
+                return;
+            }
+
+            cancelNativeLocationRequest();
+            dispatchNativeLocationResult(requestId, null, "Autorisation GPS refusee par Android.");
+        }
     }
 
     @Override
@@ -256,6 +280,7 @@ public class MainActivity extends Activity {
         handler.removeCallbacks(hideSplash);
         handler.removeCallbacks(updateDownloadProgress);
         cancelBiometricPrompt();
+        cancelNativeLocationRequest();
         unregisterUpdateDownloadReceiver();
         dismissUpdateProgressDialog();
         releaseSplashPlayer();
@@ -394,7 +419,7 @@ public class MainActivity extends Activity {
         String currentUrl = webView.getUrl();
 
         if (currentUrl == null || currentUrl.length() == 0 || "about:blank".equalsIgnoreCase(currentUrl)) {
-            webView.loadUrl(CRM_URL);
+            webView.loadUrl(HUB_URL);
         }
 
         scheduleUpdateCheck();
@@ -457,15 +482,7 @@ public class MainActivity extends Activity {
     }
 
     private boolean isTrustedCrmPage() {
-        if (webView == null || webView.getUrl() == null) {
-            return false;
-        }
-
-        Uri uri = Uri.parse(webView.getUrl());
-        String host = uri.getHost();
-        String scheme = uri.getScheme();
-
-        return "https".equalsIgnoreCase(scheme) && "crm.jp2.fr".equalsIgnoreCase(host);
+        return trustedCrmPageActive;
     }
 
     private static boolean isTrustedCrmOrigin(String origin) {
@@ -480,6 +497,10 @@ public class MainActivity extends Activity {
         return "https".equalsIgnoreCase(scheme) && "crm.jp2.fr".equalsIgnoreCase(host);
     }
 
+    private void updateTrustedCrmPage(String url) {
+        trustedCrmPageActive = isTrustedCrmOrigin(url);
+    }
+
     private void requestInitialLocationPermission() {
         if (hasLocationPermission() || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return;
@@ -491,6 +512,18 @@ public class MainActivity extends Activity {
         }, LOCATION_PERMISSION_REQUEST_CODE);
     }
 
+    private void injectAppSettingsOverride(WebView targetWebView) {
+        if (targetWebView == null || targetWebView.getUrl() == null || !isTrustedCrmOrigin(targetWebView.getUrl())) {
+            return;
+        }
+
+        try {
+            targetWebView.evaluateJavascript(readText(getAssets().open(APP_SETTINGS_OVERRIDE_ASSET)), null);
+        } catch (IOException exception) {
+            return;
+        }
+    }
+
     private boolean hasLocationPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
@@ -498,6 +531,242 @@ public class MainActivity extends Activity {
 
         return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
             || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean hasFineLocationPermission() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+            || checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestNativeLocation(String requestId, boolean highAccuracy) {
+        if (requestId == null || requestId.length() == 0) {
+            dispatchNativeLocationResult("", null, "Demande GPS invalide.");
+
+            return;
+        }
+
+        cancelNativeLocationRequest();
+
+        pendingNativeLocationRequestId = requestId;
+        pendingNativeLocationHighAccuracy = highAccuracy;
+
+        if (!hasLocationPermission() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[] {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            }, LOCATION_PERMISSION_REQUEST_CODE);
+
+            return;
+        }
+
+        resolveNativeLocation(requestId, highAccuracy);
+    }
+
+    private void resolveNativeLocation(String requestId, boolean highAccuracy) {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (locationManager == null || !hasLocationPermission()) {
+            cancelNativeLocationRequest();
+            dispatchNativeLocationResult(requestId, null, "Localisation Android indisponible.");
+
+            return;
+        }
+
+        Location fallbackLocation = bestLastKnownLocation(locationManager);
+        String provider = nativeLocationProvider(locationManager, highAccuracy);
+
+        if (provider.length() == 0) {
+            cancelNativeLocationRequest();
+
+            if (fallbackLocation != null) {
+                dispatchNativeLocationResult(requestId, fallbackLocation, "");
+                return;
+            }
+
+            dispatchNativeLocationResult(requestId, null, "GPS Android desactive sur ce telephone.");
+
+            return;
+        }
+
+        nativeLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                completeNativeLocationRequest(requestId, location, "");
+            }
+
+            @Override
+            public void onProviderDisabled(String disabledProvider) {
+            }
+
+            @Override
+            public void onProviderEnabled(String enabledProvider) {
+            }
+
+            @Override
+            public void onStatusChanged(String changedProvider, int status, Bundle extras) {
+            }
+        };
+
+        nativeLocationTimeout = new Runnable() {
+            @Override
+            public void run() {
+                if (!requestId.equals(pendingNativeLocationRequestId)) {
+                    return;
+                }
+
+                if (fallbackLocation != null) {
+                    completeNativeLocationRequest(requestId, fallbackLocation, "");
+                    return;
+                }
+
+                completeNativeLocationRequest(requestId, null, "Position GPS introuvable. Verifie que la localisation Android est activee.");
+            }
+        };
+
+        try {
+            locationManager.requestSingleUpdate(provider, nativeLocationListener, Looper.getMainLooper());
+            handler.postDelayed(nativeLocationTimeout, NATIVE_LOCATION_TIMEOUT_MS);
+        } catch (IllegalArgumentException | SecurityException exception) {
+            cancelNativeLocationRequest();
+            dispatchNativeLocationResult(requestId, fallbackLocation, fallbackLocation == null ? "Localisation Android refusee." : "");
+        }
+    }
+
+    private String nativeLocationProvider(LocationManager locationManager, boolean highAccuracy) {
+        if (highAccuracy && hasFineLocationPermission() && isProviderEnabled(locationManager, LocationManager.GPS_PROVIDER)) {
+            return LocationManager.GPS_PROVIDER;
+        }
+
+        if (isProviderEnabled(locationManager, LocationManager.NETWORK_PROVIDER)) {
+            return LocationManager.NETWORK_PROVIDER;
+        }
+
+        if (hasFineLocationPermission() && isProviderEnabled(locationManager, LocationManager.GPS_PROVIDER)) {
+            return LocationManager.GPS_PROVIDER;
+        }
+
+        return "";
+    }
+
+    private boolean isProviderEnabled(LocationManager locationManager, String provider) {
+        try {
+            return locationManager.isProviderEnabled(provider);
+        } catch (Exception exception) {
+            return false;
+        }
+    }
+
+    private Location bestLastKnownLocation(LocationManager locationManager) {
+        Location bestLocation = null;
+
+        try {
+            for (String provider : locationManager.getProviders(true)) {
+                Location location = locationManager.getLastKnownLocation(provider);
+
+                if (isBetterLocation(location, bestLocation)) {
+                    bestLocation = location;
+                }
+            }
+        } catch (SecurityException exception) {
+            return null;
+        }
+
+        return bestLocation;
+    }
+
+    private boolean isBetterLocation(Location location, Location currentBestLocation) {
+        if (location == null) {
+            return false;
+        }
+
+        if (currentBestLocation == null) {
+            return true;
+        }
+
+        long timeDelta = location.getTime() - currentBestLocation.getTime();
+        boolean isSignificantlyNewer = timeDelta > 120000L;
+        boolean isSignificantlyOlder = timeDelta < -120000L;
+
+        if (isSignificantlyNewer) {
+            return true;
+        }
+
+        if (isSignificantlyOlder) {
+            return false;
+        }
+
+        float accuracyDelta = location.getAccuracy() - currentBestLocation.getAccuracy();
+
+        return accuracyDelta < 0 || (timeDelta > 0 && accuracyDelta <= 0);
+    }
+
+    private void completeNativeLocationRequest(String requestId, Location location, String error) {
+        if (!requestId.equals(pendingNativeLocationRequestId)) {
+            return;
+        }
+
+        cancelNativeLocationRequest();
+        dispatchNativeLocationResult(requestId, location, error);
+    }
+
+    private void cancelNativeLocationRequest() {
+        if (nativeLocationTimeout != null) {
+            handler.removeCallbacks(nativeLocationTimeout);
+            nativeLocationTimeout = null;
+        }
+
+        if (nativeLocationListener != null) {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+            if (locationManager != null) {
+                try {
+                    locationManager.removeUpdates(nativeLocationListener);
+                } catch (SecurityException exception) {
+                }
+            }
+
+            nativeLocationListener = null;
+        }
+
+        pendingNativeLocationRequestId = "";
+        pendingNativeLocationHighAccuracy = false;
+    }
+
+    private void dispatchNativeLocationResult(String requestId, Location location, String error) {
+        if (webView == null) {
+            return;
+        }
+
+        JSONObject detail = new JSONObject();
+
+        try {
+            detail.put("requestId", requestId == null ? "" : requestId);
+            detail.put("ok", location != null);
+
+            if (location != null) {
+                JSONObject payload = new JSONObject();
+                payload.put("accuracy", location.hasAccuracy() ? location.getAccuracy() : 0);
+                payload.put("latitude", location.getLatitude());
+                payload.put("longitude", location.getLongitude());
+                payload.put("timestamp", location.getTime() > 0 ? location.getTime() : System.currentTimeMillis());
+                detail.put("location", payload);
+            } else {
+                detail.put("error", error == null || error.length() == 0 ? "Localisation indisponible." : error);
+            }
+        } catch (JSONException exception) {
+            return;
+        }
+
+        String script = "window.dispatchEvent(new CustomEvent('martin-sols:native-location-result',{detail:" + detail + "}));";
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (webView != null) {
+                    webView.evaluateJavascript(script, null);
+                }
+            }
+        });
     }
 
     private void handleGeolocationPermissionPrompt(String origin, GeolocationPermissions.Callback callback) {
@@ -690,11 +959,25 @@ public class MainActivity extends Activity {
             .apply();
     }
 
-    private void openDeviceSecuritySettings() {
+    private boolean openDeviceSecuritySettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && openSettingsActivity(Settings.ACTION_BIOMETRIC_ENROLL)) {
+            return true;
+        }
+
+        if (openSettingsActivity(Settings.ACTION_SECURITY_SETTINGS)) {
+            return true;
+        }
+
+        return openSettingsActivity(Settings.ACTION_SETTINGS);
+    }
+
+    private boolean openSettingsActivity(String action) {
         try {
-            startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
-        } catch (ActivityNotFoundException exception) {
-            startActivity(new Intent(Settings.ACTION_SETTINGS));
+            startActivity(new Intent(action));
+
+            return true;
+        } catch (Exception exception) {
+            return false;
         }
     }
 
@@ -1099,15 +1382,29 @@ public class MainActivity extends Activity {
     }
 
     private AppUpdate fetchAppUpdate() {
+        AppUpdate apiUpdate = fetchAppUpdateFromUrl(UPDATE_MANIFEST_API_URL + "&t=" + System.currentTimeMillis(), true);
+
+        if (apiUpdate != null) {
+            return apiUpdate;
+        }
+
+        return fetchAppUpdateFromUrl(UPDATE_MANIFEST_URL + "?t=" + System.currentTimeMillis(), false);
+    }
+
+    private AppUpdate fetchAppUpdateFromUrl(String manifestUrl, boolean githubContentsResponse) {
         HttpURLConnection connection = null;
 
         try {
-            URL url = new URL(UPDATE_MANIFEST_URL + "?t=" + System.currentTimeMillis());
+            URL url = new URL(manifestUrl);
             connection = (HttpURLConnection) url.openConnection();
+            connection.setUseCaches(false);
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Accept", githubContentsResponse ? "application/vnd.github+json" : "application/json");
+            connection.setRequestProperty("Cache-Control", "no-cache");
+            connection.setRequestProperty("Pragma", "no-cache");
+            connection.setRequestProperty("User-Agent", "Martin-Sols-Android/" + BuildConfig.VERSION_NAME);
 
             int responseCode = connection.getResponseCode();
 
@@ -1116,30 +1413,51 @@ public class MainActivity extends Activity {
             }
 
             JSONObject manifest = new JSONObject(readText(connection.getInputStream()));
-            JSONObject android = manifest.optJSONObject("android");
 
-            if (android == null) {
-                return null;
+            if (githubContentsResponse) {
+                manifest = decodeGitHubContentsManifest(manifest);
             }
 
-            int versionCode = android.optInt("versionCode", 0);
-            String versionName = android.optString("versionName", "");
-            String apkUrl = android.optString("apkUrl", "");
-            String sha256 = android.optString("sha256", "");
-            String releaseNotes = android.optString("releaseNotes", "");
-
-            if (versionCode <= 0 || apkUrl.length() == 0) {
-                return null;
-            }
-
-            return new AppUpdate(versionCode, versionName, apkUrl, sha256, releaseNotes);
-        } catch (IOException | JSONException exception) {
+            return parseAppUpdateManifest(manifest);
+        } catch (IOException | JSONException | IllegalArgumentException exception) {
             return null;
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
         }
+    }
+
+    private JSONObject decodeGitHubContentsManifest(JSONObject response) throws JSONException {
+        String encodedContent = response.optString("content", "");
+
+        if (encodedContent.length() == 0) {
+            throw new JSONException("Missing GitHub contents payload");
+        }
+
+        String decodedContent = new String(Base64.decode(encodedContent, Base64.DEFAULT), StandardCharsets.UTF_8);
+
+        return new JSONObject(decodedContent);
+    }
+
+    private AppUpdate parseAppUpdateManifest(JSONObject manifest) {
+        JSONObject android = manifest.optJSONObject("android");
+
+        if (android == null) {
+            return null;
+        }
+
+        int versionCode = android.optInt("versionCode", 0);
+        String versionName = android.optString("versionName", "");
+        String apkUrl = android.optString("apkUrl", "");
+        String sha256 = android.optString("sha256", "");
+        String releaseNotes = android.optString("releaseNotes", "");
+
+        if (versionCode <= 0 || apkUrl.length() == 0) {
+            return null;
+        }
+
+        return new AppUpdate(versionCode, versionName, apkUrl, sha256, releaseNotes);
     }
 
     private void showUpdateDialog(AppUpdate update) {
@@ -1426,6 +1744,18 @@ public class MainActivity extends Activity {
             .show();
     }
 
+    private void showNativeActionFailure(String message) {
+        if (isFinishing()) {
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+            .setTitle("Action impossible")
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show();
+    }
+
     private void cancelActiveUpdateDownload(boolean showMessage) {
         handler.removeCallbacks(updateDownloadProgress);
 
@@ -1670,7 +2000,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private static final class CrmWebViewClient extends WebViewClient {
+    private final class CrmWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             if (isWebUrl(request.getUrl())) {
@@ -1689,7 +2019,13 @@ public class MainActivity extends Activity {
             return true;
         }
 
-        private static boolean isWebUrl(Uri uri) {
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            updateTrustedCrmPage(url);
+            injectAppSettingsOverride(view);
+        }
+
+        private boolean isWebUrl(Uri uri) {
             String scheme = uri.getScheme();
 
             return "http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme);
@@ -1733,17 +2069,13 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public void checkForUpdates() {
-            if (!isTrustedCrmPage()) {
-                return;
-            }
-
-            handler.post(new Runnable() {
+        public String checkForUpdates() {
+            return runTrustedNativeAction(new Runnable() {
                 @Override
                 public void run() {
                     checkForAppUpdate(true);
                 }
-            });
+            }, "Recherche de mise a jour lancee.");
         }
 
         @JavascriptInterface
@@ -1766,50 +2098,91 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public void clearMobileSession() {
-            if (!isTrustedCrmPage()) {
-                return;
-            }
-
-            clearSavedMobileSession();
-            dispatchNativeAuthStatusChanged();
-        }
-
-        @JavascriptInterface
-        public void openDeviceSecuritySettings() {
-            if (!isTrustedCrmPage()) {
-                return;
-            }
-
-            handler.post(new Runnable() {
+        public String clearMobileSession() {
+            return runTrustedNativeAction(new Runnable() {
                 @Override
                 public void run() {
-                    MainActivity.this.openDeviceSecuritySettings();
+                    clearSavedMobileSession();
+                    dispatchNativeAuthStatusChanged();
                 }
-            });
+            }, "Connexion rapide supprimee.");
         }
 
         @JavascriptInterface
-        public void setAppCode() {
-            if (!isTrustedCrmPage()) {
-                return;
-            }
+        public String requestLocation(String requestId, boolean highAccuracy) {
+            return runTrustedNativeAction(new Runnable() {
+                @Override
+                public void run() {
+                    MainActivity.this.requestNativeLocation(requestId == null ? "" : requestId, highAccuracy);
+                }
+            }, "Recherche de localisation lancee.");
+        }
 
-            handler.post(new Runnable() {
+        @JavascriptInterface
+        public String openDeviceSecuritySettings() {
+            return runTrustedNativeAction(new Runnable() {
+                @Override
+                public void run() {
+                    if (!MainActivity.this.openDeviceSecuritySettings()) {
+                        showNativeActionFailure("Reglages Android indisponibles sur cet appareil.");
+                    }
+                }
+            }, "Ouverture des reglages de securite Android.");
+        }
+
+        @JavascriptInterface
+        public String setAppCode() {
+            return runTrustedNativeAction(new Runnable() {
                 @Override
                 public void run() {
                     showSetAppCodeDialog();
                 }
-            });
+            }, "Ouverture du code app Martin Sols.");
         }
 
         @JavascriptInterface
-        public void clearAppCode() {
+        public String clearAppCode() {
+            return runTrustedNativeAction(new Runnable() {
+                @Override
+                public void run() {
+                    MainActivity.this.clearAppCode();
+                }
+            }, "Code app supprime.");
+        }
+
+        private String runTrustedNativeAction(Runnable action, String message) {
             if (!isTrustedCrmPage()) {
-                return;
+                return nativeActionResult(false, "Page HUB non autorisee.");
             }
 
-            MainActivity.this.clearAppCode();
+            try {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            action.run();
+                        } catch (Exception exception) {
+                        }
+                    }
+                });
+
+                return nativeActionResult(true, message);
+            } catch (Exception exception) {
+                return nativeActionResult(false, "Action Android indisponible.");
+            }
+        }
+
+        private String nativeActionResult(boolean ok, String message) {
+            JSONObject result = new JSONObject();
+
+            try {
+                result.put("ok", ok);
+                result.put("message", message);
+            } catch (JSONException exception) {
+                return ok ? "{\"ok\":true}" : "{\"ok\":false}";
+            }
+
+            return result.toString();
         }
     }
 

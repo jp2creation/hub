@@ -40,6 +40,7 @@ declare global {
       getVersionCode?: () => string;
       getVersionName?: () => string;
       openDeviceSecuritySettings?: () => void;
+      requestLocation?: (requestId: string, highAccuracy: boolean) => string;
       saveMobileSession?: (payload: string) => string;
       setAppCode?: () => void;
     };

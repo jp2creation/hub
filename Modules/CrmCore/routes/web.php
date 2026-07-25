@@ -71,6 +71,10 @@ Route::get('/api/mobile/me', [MobileAuthController::class, 'me'])
     ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'crm.mobile_scope:crm:mobile'])
     ->name('crm.api.mobile.me');
 
+Route::post('/api/mobile/native-session', [MobileAuthController::class, 'nativeSession'])
+    ->middleware(['auth', ...$crmApiMiddleware])
+    ->name('crm.api.mobile.native-session');
+
 Route::post('/api/mobile/web-session', [MobileAuthController::class, 'webSession'])
     ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'crm.mobile_scope:crm:mobile'])
     ->withoutMiddleware([PreventRequestForgery::class])

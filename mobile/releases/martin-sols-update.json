@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "appName": "Martin Sols",
   "android": {
-    "versionCode": 50,
-    "versionName": "1.48",
+    "versionCode": 56,
+    "versionName": "1.54",
     "required": false,
-    "apkUrl": "https://github.com/jp2creation/hub/releases/download/martin-sols-android-v1.48/Martin_Sols_1.48.apk",
-    "sha256": "8ba867dfa3c74cbff440329953bd4e5a075731d8d55e03ed32468bc43c340adf",
-    "releaseNotes": "Version 1.48 : nouvelle architecture des Parametres de l app en cartes verticales, avec securite, code app, localisation et mises a jour."
+    "apkUrl": "https://github.com/jp2creation/hub/releases/download/martin-sols-android-v1.54/Martin_Sols_1.54.apk",
+    "sha256": "856a105515ce7e8c4992bdbd48e57fc7b6637b1b917e6da768b65ad22b3f31f1",
+    "releaseNotes": "Version 1.54 stable : correction de la localisation native des Parametres de l app et activation de la connexion rapide depuis le HUB connecte."
   },
   "ios": {
     "version": "1.37",

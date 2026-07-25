@@ -55,21 +55,33 @@ class MobileAuthService
 
         RateLimiter::clear($throttleKey);
 
-        $abilities = $this->mobileAbilities($crmUser);
-        $expiresAt = $this->accessTokenExpiresAt();
-        $accessToken = $user->createToken((string) $data['device_name'], $abilities, $expiresAt);
-        $refresh = $this->storeRefreshToken($request, $user, $accessToken, $abilities, (string) $data['device_name']);
+        return $this->issueMobileSessionFor($request, $user, $crmUser, (string) $data['device_name']);
+    }
 
-        return $this->result([
-            'ok' => true,
-            'token' => $accessToken->plainTextToken,
-            'tokenType' => 'Bearer',
-            'expiresAt' => $expiresAt?->toIso8601String(),
-            'refreshToken' => $refresh['token'],
-            'refreshExpiresAt' => $refresh['expiresAt']->toIso8601String(),
-            'scopes' => $abilities,
-            'user' => $this->userPayload($crmUser),
+    /**
+     * @return array{data: array<string, mixed>, status: int}
+     */
+    public function issueTokenForWebSession(Request $request): array
+    {
+        $data = $request->validate([
+            'device_name' => ['nullable', 'string', 'max:120'],
         ]);
+
+        $user = $request->user();
+        $crmUser = $user instanceof User ? $this->crmUserFor($user) : null;
+
+        if (! $user instanceof User || ! $crmUser || $crmUser->role === 'blocked') {
+            return $this->result(['ok' => false, 'error' => __('crm.mobile.account_unavailable')], 403);
+        }
+
+        $deviceName = trim((string) ($data['device_name'] ?? ''));
+
+        return $this->issueMobileSessionFor(
+            $request,
+            $user,
+            $crmUser,
+            $deviceName !== '' ? $deviceName : 'Martin Sols Android'
+        );
     }
 
     /**
@@ -270,6 +282,28 @@ class MobileAuthService
     private function result(array $data, int $status = 200): array
     {
         return ['data' => $data, 'status' => $status];
+    }
+
+    /**
+     * @return array{data: array<string, mixed>, status: int}
+     */
+    private function issueMobileSessionFor(Request $request, User $user, CrmUser $crmUser, string $deviceName): array
+    {
+        $abilities = $this->mobileAbilities($crmUser);
+        $expiresAt = $this->accessTokenExpiresAt();
+        $accessToken = $user->createToken($deviceName, $abilities, $expiresAt);
+        $refresh = $this->storeRefreshToken($request, $user, $accessToken, $abilities, $deviceName);
+
+        return $this->result([
+            'ok' => true,
+            'token' => $accessToken->plainTextToken,
+            'tokenType' => 'Bearer',
+            'expiresAt' => $expiresAt?->toIso8601String(),
+            'refreshToken' => $refresh['token'],
+            'refreshExpiresAt' => $refresh['expiresAt']->toIso8601String(),
+            'scopes' => $abilities,
+            'user' => $this->userPayload($crmUser),
+        ]);
     }
 
     private function crmUserFor(User $user): ?CrmUser

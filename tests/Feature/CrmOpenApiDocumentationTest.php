@@ -38,6 +38,7 @@ class CrmOpenApiDocumentationTest extends TestCase
             '/api/mobile/token:',
             '/api/mobile/refresh:',
             '/api/mobile/me:',
+            '/api/mobile/native-session:',
             '/api/mobile/web-session:',
             '/api/mobile/logout:',
         ] as $route) {

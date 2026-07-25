@@ -252,6 +252,46 @@ class MobileAuthApiTest extends TestCase
         $this->assertStringContainsString('reuse_detected', $serviceSource);
     }
 
+    public function test_authenticated_web_session_can_issue_native_mobile_session(): void
+    {
+        [$account, $crmUser] = $this->createMobileCrmUser();
+
+        $response = $this->actingAs($account)
+            ->postJson('/api/mobile/native-session', [
+                'device_name' => 'Martin Sols Android 1.54',
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('tokenType', 'Bearer')
+            ->assertJsonPath('user.name', $crmUser->name)
+            ->assertJsonPath('scopes.0', 'crm:mobile')
+            ->assertJsonPath('scopes.1', 'crm:module:reservations');
+
+        $token = (string) $response->json('token');
+
+        $this->assertNotSame('', $token);
+        $this->assertIsString($response->json('refreshToken'));
+        $this->assertDatabaseCount('crm_mobile_refresh_tokens', 1);
+
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/mobile/me')
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('user.name', $crmUser->name);
+    }
+
+    public function test_blocked_web_session_cannot_issue_native_mobile_session(): void
+    {
+        [$account] = $this->createMobileCrmUser(role: 'blocked');
+
+        $this->actingAs($account)
+            ->postJson('/api/mobile/native-session', [
+                'device_name' => 'Martin Sols Android',
+            ])
+            ->assertForbidden()
+            ->assertJsonPath('ok', false);
+    }
+
     public function test_mobile_module_scope_is_required_for_module_api_requests(): void
     {
         [$account, $crmUser] = $this->createMobileCrmUser();
