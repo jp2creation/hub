@@ -2073,7 +2073,7 @@
         justify-content:space-between;
         gap:1rem;
         border-bottom:1px solid rgba(15,23,42,.08);
-        background:#fffdfa;
+        background:var(--leave-panel);
         padding:.75rem 1rem;
       }
       #crm-leaves-module .leave-header-main {
@@ -2147,7 +2147,7 @@
         font-weight:850;
       }
       #crm-leaves-module .leave-round-icon:hover {
-        background:#f0efeb;
+        background:var(--leave-panel-soft);
       }
       #crm-leaves-module .leave-hr-layout {
         display:grid;
@@ -2172,7 +2172,7 @@
       #crm-leaves-module .leave-card {
         border:1px solid rgba(15,23,42,.08);
         border-radius:.55rem;
-        background:#fffdfa;
+        background:var(--leave-panel);
         box-shadow:0 12px 30px rgba(15,23,42,.045);
       }
       #crm-leaves-module .leave-profile-card {
@@ -2187,7 +2187,7 @@
         width:4.7rem;
         height:4.7rem;
         border-radius:999px;
-        background:linear-gradient(135deg,#fff 0%,#f8e9ef 100%);
+        background:linear-gradient(135deg,#fff 0%,var(--leave-panel-soft) 100%);
         color:rgb(var(--theme-primary));
         font-size:1.2rem;
         font-weight:950;
@@ -2215,7 +2215,7 @@
         margin-top:.55rem;
       }
       #crm-leaves-module .leave-balance-grid span {
-        background:#f4f2ee;
+        background:var(--leave-panel-soft);
         border-radius:.45rem;
         padding:.48rem .55rem;
       }
@@ -2266,7 +2266,7 @@
         height:3.5rem;
         margin:0 auto .4rem;
         border-radius:999px;
-        background:#f4f2ee;
+        background:var(--leave-panel-soft);
         color:rgb(var(--theme-primary));
         font-size:1.35rem;
         font-weight:950;
@@ -2274,14 +2274,14 @@
       #crm-leaves-module .leave-app-filters {
         grid-template-columns:minmax(14rem,1.7fr) repeat(3,minmax(8rem,1fr)) auto;
         border-radius:.55rem;
-        background:#f8f7f4;
+        background:var(--leave-panel-soft);
         box-shadow:none;
       }
       #crm-leaves-module .leave-search-field,
       #crm-leaves-module .leave-filter-card select,
       #crm-leaves-module .leave-search-field input {
         border-radius:.42rem;
-        background:#fffdfa;
+        background:var(--leave-panel);
       }
       #crm-leaves-module .leave-calendar-toolbar,
       #crm-leaves-module .leave-team-toolbar {
@@ -2297,7 +2297,7 @@
         overflow:hidden;
         border:1px solid rgba(15,23,42,.1);
         border-radius:.45rem;
-        background:#f4f2ee;
+        background:var(--leave-panel-soft);
       }
       #crm-leaves-module .leave-view-mode button {
         min-width:2.55rem;
@@ -2313,7 +2313,7 @@
         border-right:0;
       }
       #crm-leaves-module .leave-view-mode button.is-active {
-        background:#dedbd3;
+        background:var(--color-surface-200,#e4e4e7);
         color:#172033;
       }
       #crm-leaves-module .leave-year-nav {
@@ -2323,7 +2323,7 @@
         gap:.25rem;
         border:1px solid rgba(15,23,42,.1);
         border-radius:.45rem;
-        background:#f4f2ee;
+        background:var(--leave-panel-soft);
         padding:.15rem;
       }
       #crm-leaves-module .leave-year-nav button {
@@ -2337,7 +2337,7 @@
         font-weight:900;
       }
       #crm-leaves-module .leave-year-nav button:hover {
-        background:#fffdfa;
+        background:var(--leave-panel);
         color:#172033;
       }
       #crm-leaves-module .leave-year-nav strong {
@@ -2492,7 +2492,7 @@
         min-height:2.25rem;
         border:1px solid rgba(15,23,42,.08);
         border-radius:.45rem;
-        background:#f4f2ee;
+        background:var(--leave-panel-soft);
         color:#4b5563;
         padding:.35rem .7rem;
         font-size:.76rem;
@@ -2545,7 +2545,7 @@
         position:sticky;
         left:0;
         z-index:1;
-        background:#fffdfa;
+        background:var(--leave-panel);
         text-align:left;
       }
       #crm-leaves-module .leave-team-timeline .is-weekend {
@@ -2589,7 +2589,7 @@
       }
       #crm-leaves-module .leave-team-pill.is-pending {
         border-style:dashed;
-        background:#fffdfa;
+        background:var(--leave-panel);
       }
       #crm-leaves-module .leave-balance-table,
       #crm-leaves-module .leave-settings-table,
@@ -2610,7 +2610,7 @@
       }
       #crm-leaves-module .leave-balance-table th,
       #crm-leaves-module .leave-settings-table th {
-        background:#f8f7f4;
+        background:var(--leave-panel-soft);
         color:#6b7280;
         font-size:.72rem;
         font-weight:850;
@@ -2653,13 +2653,13 @@
       }
       #crm-leaves-module {
         --leave-accent:var(--theme-primary-color);
-        --leave-ink:#111827;
-        --leave-muted:#767d89;
-        --leave-panel:#fbfaf7;
-        --leave-panel-soft:#f4f2ee;
+        --leave-ink:var(--color-secondary-900,#1d354f);
+        --leave-muted:var(--color-secondary-500,#5d7287);
+        --leave-panel:#fff;
+        --leave-panel-soft:var(--color-secondary-50,#fafafa);
       }
       #crm-leaves-module .leaves-page {
-        background:#f4f6f8;
+        background:var(--color-secondary-50,#fafafa);
         border-radius:.05rem;
       }
       #crm-leaves-module .leave-app-header {
@@ -2670,7 +2670,7 @@
       }
       #crm-leaves-module .leave-header-main h1 {
         font-size:1.18rem;
-        letter-spacing:-.01em;
+        letter-spacing:0;
       }
       #crm-leaves-module .leave-view-tabs {
         gap:1.25rem;
@@ -2713,7 +2713,7 @@
       #crm-leaves-module .leave-profile-avatar {
         width:4.5rem;
         height:4.5rem;
-        background:linear-gradient(135deg,#fff 0%,#f6edf1 100%);
+        background:linear-gradient(135deg,#fff 0%,var(--leave-panel-soft) 100%);
         color:var(--leave-accent);
       }
       #crm-leaves-module .leave-profile-card h2 {
@@ -2741,7 +2741,7 @@
       #crm-leaves-module .leave-search-field,
       #crm-leaves-module .leave-filter-card select,
       #crm-leaves-module .leave-search-field input {
-        background:#fff;
+        background:var(--leave-panel);
         border-color:rgba(17,24,39,.1);
         border-radius:.38rem;
       }
@@ -2801,7 +2801,7 @@
         border-radius:.42rem;
       }
       #crm-leaves-module .leave-view-mode button.is-active {
-        background:#ddd9cf;
+        background:var(--color-surface-200,#e4e4e7);
       }
       #crm-leaves-module .leave-year-nav strong {
         color:var(--leave-ink);
@@ -2835,7 +2835,7 @@
       #crm-leaves-module .leave-filter-reset {
         min-height:2.38rem;
         border-radius:.38rem;
-        background:#fff;
+        background:var(--leave-panel);
         color:#1f2937;
       }
       #crm-leaves-module .leaves-button-primary,
@@ -3013,14 +3013,14 @@
         position:sticky;
         left:0;
         z-index:1;
-        background:#fffdfa;
+        background:var(--leave-panel);
         text-align:left;
       }
       #crm-leaves-module .leave-team-timeline .is-alternate {
-        background:#fbfaf6;
+        background:var(--leave-panel-soft);
       }
       #crm-leaves-module .leave-team-timeline .is-weekend {
-        background:#f3f6fb;
+        background:var(--leave-panel-soft);
       }
       #crm-leaves-module .leave-team-person {
         display:inline-flex;
@@ -3086,7 +3086,7 @@
       }
       #crm-leaves-module .leave-team-pill.is-pending {
         border-style:dashed;
-        background:#fffdfa;
+        background:var(--leave-panel);
       }
       #crm-leaves-module .leave-profile-avatar,
       #crm-leaves-module .leave-team-avatar,

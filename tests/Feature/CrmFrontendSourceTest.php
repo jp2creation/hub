@@ -604,6 +604,33 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertSame('7e7a85e18e6f16800e42e4e5c89bb58708a2c86f3d49ee832a4ae33b63e1abb7', hash_file('sha256', $androidIconDir.'/ic_launcher_foreground.png'));
     }
 
+    public function test_conges_cards_use_global_background_theme(): void
+    {
+        $asset = (string) file_get_contents(base_path('Modules/CrmLeaves/resources/assets/crm-conges.js'));
+
+        $this->assertStringContainsString('--leave-panel:#fff;', $asset);
+        $this->assertStringContainsString('--leave-panel-soft:var(--color-secondary-50,#fafafa);', $asset);
+        $this->assertStringContainsString('background:var(--color-secondary-50,#fafafa);', $asset);
+        $this->assertStringContainsString('background:var(--leave-panel);', $asset);
+        $this->assertStringContainsString('background:var(--leave-panel-soft);', $asset);
+
+        foreach ([
+            '#fffdfa',
+            '#fbfaf7',
+            '#f4f2ee',
+            '#f8f7f4',
+            '#fbfaf6',
+            '#f3f6fb',
+            '#ddd9cf',
+            '#dedbd3',
+            '#f6edf1',
+            '#f8e9ef',
+            '#f0efeb',
+        ] as $legacyBackground) {
+            $this->assertStringNotContainsString($legacyBackground, $asset);
+        }
+    }
+
     public function test_deployment_archive_includes_vite_build_output(): void
     {
         $script = (string) file_get_contents(base_path('scripts/deploy-planethoster.sh'));
