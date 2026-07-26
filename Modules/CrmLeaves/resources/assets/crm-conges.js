@@ -2657,6 +2657,9 @@
         --leave-muted:var(--color-secondary-500,#5d7287);
         --leave-panel:#fff;
         --leave-panel-soft:var(--color-secondary-50,#fafafa);
+        --leave-card-border:var(--color-surface-200,#e4e4e7);
+        --leave-card-radius:var(--radius,.625rem);
+        --leave-card-shadow:var(--shadow-card,0 1px 2px rgb(0 0 0 / 0.04),0 8px 24px -4px rgb(0 0 0 / 0.06));
       }
       #crm-leaves-module .leaves-page {
         background:var(--color-secondary-50,#fafafa);
@@ -2664,9 +2667,9 @@
       }
       #crm-leaves-module .leave-app-header {
         background:var(--leave-panel);
-        border:1px solid rgba(17,24,39,.06);
-        border-radius:.1rem;
-        box-shadow:none;
+        border:1px solid var(--leave-card-border);
+        border-radius:var(--leave-card-radius);
+        box-shadow:var(--leave-card-shadow);
       }
       #crm-leaves-module .leave-header-main h1 {
         font-size:1.18rem;
@@ -2703,9 +2706,9 @@
       #crm-leaves-module .leave-sidebar-card,
       #crm-leaves-module .leave-card {
         background:var(--leave-panel);
-        border-color:rgba(17,24,39,.075);
-        border-radius:.5rem;
-        box-shadow:0 18px 46px rgba(17,24,39,.055);
+        border-color:var(--leave-card-border);
+        border-radius:var(--leave-card-radius);
+        box-shadow:var(--leave-card-shadow);
       }
       #crm-leaves-module .leave-profile-card {
         padding:1.35rem 1rem .95rem;
@@ -2730,8 +2733,8 @@
       }
       #crm-leaves-module .leave-app-filters {
         background:var(--leave-panel);
-        border-color:rgba(17,24,39,.075);
-        border-radius:.5rem;
+        border-color:var(--leave-card-border);
+        border-radius:var(--leave-card-radius);
         padding:.8rem;
       }
       #crm-leaves-module .leave-filter-card label span {
@@ -2768,9 +2771,9 @@
         gap:.55rem;
         margin:0 1rem .85rem;
         padding:.6rem;
-        border:1px solid rgba(17,24,39,.075);
-        border-radius:.45rem;
-        background:#fff;
+        border:1px solid var(--leave-card-border);
+        border-radius:var(--leave-card-radius);
+        background:var(--leave-panel);
       }
       #crm-leaves-module .leave-team-filter-strip label {
         display:grid;
@@ -2797,8 +2800,8 @@
       #crm-leaves-module .leave-view-mode,
       #crm-leaves-module .leave-year-nav {
         background:var(--leave-panel-soft);
-        border-color:rgba(17,24,39,.105);
-        border-radius:.42rem;
+        border-color:var(--leave-card-border);
+        border-radius:var(--leave-card-radius);
       }
       #crm-leaves-module .leave-view-mode button.is-active {
         background:var(--color-surface-200,#e4e4e7);
@@ -2816,6 +2819,10 @@
       #crm-leaves-module .leave-stat-strip article {
         min-height:4.25rem;
         padding:.9rem;
+        border:1px solid var(--leave-card-border);
+        border-radius:var(--leave-card-radius);
+        background:var(--leave-panel);
+        box-shadow:var(--leave-card-shadow);
       }
       #crm-leaves-module .leave-stat-strip strong {
         color:var(--leave-ink);
@@ -2834,7 +2841,8 @@
       #crm-leaves-module .leaves-button,
       #crm-leaves-module .leave-filter-reset {
         min-height:2.38rem;
-        border-radius:.38rem;
+        border-color:var(--leave-card-border);
+        border-radius:var(--leave-card-radius);
         background:var(--leave-panel);
         color:#1f2937;
       }

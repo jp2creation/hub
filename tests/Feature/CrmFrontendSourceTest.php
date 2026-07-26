@@ -610,9 +610,15 @@ class CrmFrontendSourceTest extends TestCase
 
         $this->assertStringContainsString('--leave-panel:#fff;', $asset);
         $this->assertStringContainsString('--leave-panel-soft:var(--color-secondary-50,#fafafa);', $asset);
+        $this->assertStringContainsString('--leave-card-border:var(--color-surface-200,#e4e4e7);', $asset);
+        $this->assertStringContainsString('--leave-card-radius:var(--radius,.625rem);', $asset);
+        $this->assertStringContainsString('--leave-card-shadow:var(--shadow-card,0 1px 2px rgb(0 0 0 / 0.04),0 8px 24px -4px rgb(0 0 0 / 0.06));', $asset);
         $this->assertStringContainsString('background:var(--color-secondary-50,#fafafa);', $asset);
         $this->assertStringContainsString('background:var(--leave-panel);', $asset);
         $this->assertStringContainsString('background:var(--leave-panel-soft);', $asset);
+        $this->assertStringContainsString('border:1px solid var(--leave-card-border);', $asset);
+        $this->assertStringContainsString('border-radius:var(--leave-card-radius);', $asset);
+        $this->assertStringContainsString('box-shadow:var(--leave-card-shadow);', $asset);
 
         foreach ([
             '#fffdfa',
