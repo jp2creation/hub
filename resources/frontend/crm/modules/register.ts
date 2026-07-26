@@ -137,10 +137,10 @@ function loadCurrentRouteModules(): void {
       return;
     }
 
-    const key = `crm:route-module:${normalizedPath()}`;
+    const key = `hub:route-module:${normalizedPath()}`;
 
     window.dispatchEvent(
-      new CustomEvent('crm:module-loading', {
+      new CustomEvent('hub:module-loading', {
         detail: {
           key,
           delay: 0,
@@ -152,10 +152,10 @@ function loadCurrentRouteModules(): void {
 
     loadCurrentCrmModuleOverlay()
       .then(() => {
-        window.dispatchEvent(new CustomEvent('crm:module-ready', { detail: { key } }));
+        window.dispatchEvent(new CustomEvent('hub:module-ready', { detail: { key } }));
       })
       .catch((error: unknown) => {
-        window.dispatchEvent(new CustomEvent('crm:module-error', { detail: { key, error } }));
+        window.dispatchEvent(new CustomEvent('hub:module-error', { detail: { key, error } }));
       });
   }, 0);
 }
@@ -181,7 +181,7 @@ export function preloadRemainingCrmModuleOverlays(): void {
 
   idle(() => {
     Promise.all((Object.keys(moduleLoaders) as CrmModuleKey[]).map(loadModule)).catch((error: unknown) => {
-      window.dispatchEvent(new CustomEvent('crm:module-error', { detail: { error } }));
+      window.dispatchEvent(new CustomEvent('hub:module-error', { detail: { error } }));
     });
   });
 }

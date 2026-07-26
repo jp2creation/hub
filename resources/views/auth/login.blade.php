@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" style="{{ \App\Support\CrmTheme::styleAttribute() }}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,8 +17,8 @@
     <style>
       :root {
         color-scheme: light;
-        --primary: #a50034;
-        --primary-dark: #85002b;
+        --primary: var(--theme-primary-color);
+        --primary-dark: var(--theme-primary-dark-color);
         --ink: #102033;
         --muted: #697386;
         --line: #dce2ea;
@@ -218,7 +218,7 @@
       }
 
       .app-install__badge:focus {
-        outline: 4px solid rgba(165, 0, 52, 0.16);
+        outline: 4px solid rgb(var(--theme-primary) / 0.16);
         outline-offset: 2px;
       }
 
@@ -290,7 +290,7 @@
 
       .native-login__button:hover {
         background: #fff;
-        border-color: rgba(165, 0, 52, 0.38);
+        border-color: rgb(var(--theme-primary) / 0.38);
         color: var(--primary);
       }
 
@@ -352,7 +352,7 @@
       }
 
       input:focus {
-        outline: 4px solid rgba(165, 0, 52, 0.14);
+        outline: 4px solid rgb(var(--theme-primary) / 0.14);
         border-color: var(--primary);
       }
 
@@ -393,11 +393,11 @@
         font-size: 1rem;
         font-weight: 800;
         cursor: pointer;
-        box-shadow: 0 14px 30px rgba(165, 0, 52, 0.2);
+        box-shadow: 0 14px 30px rgb(var(--theme-primary) / 0.2);
       }
 
       button:focus {
-        outline: 4px solid rgba(165, 0, 52, 0.2);
+        outline: 4px solid rgb(var(--theme-primary) / 0.2);
         outline-offset: 2px;
       }
 

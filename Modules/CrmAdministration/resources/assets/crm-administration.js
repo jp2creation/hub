@@ -62,7 +62,7 @@
     const style = document.createElement("style");
     style.id = styleId;
     style.textContent = `
-      #${rootId}{--admin-primary:rgb(var(--theme-primary,149 0 46));--admin-border:var(--color-surface-200,#e2e8f0);--admin-text:var(--color-secondary-900,#0f172a);--admin-muted:var(--color-secondary-500,#64748b);display:grid;gap:1rem}
+      #${rootId}{--admin-primary:rgb(var(--theme-primary));--admin-border:var(--color-surface-200,#e2e8f0);--admin-text:var(--color-secondary-900,#0f172a);--admin-muted:var(--color-secondary-500,#64748b);display:grid;gap:1rem}
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .admin-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}

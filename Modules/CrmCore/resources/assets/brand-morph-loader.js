@@ -242,23 +242,23 @@
         show();
     });
 
-    window.addEventListener('crm:module-loading', (event) => {
+    ['hub:module-loading', 'crm:module-loading'].forEach((eventName) => window.addEventListener(eventName, (event) => {
         const detail = eventDetail(event);
-        begin(detail.key || 'crm:module', {
+        begin(detail.key || 'hub:module', {
             delay: detail.delay ?? 0,
             timeout: detail.timeout ?? 12000,
             timeoutMessage: detail.timeoutMessage
         });
-    });
+    }));
 
-    window.addEventListener('crm:module-ready', (event) => {
-        complete(eventDetail(event).key || 'crm:module');
-    });
+    ['hub:module-ready', 'crm:module-ready'].forEach((eventName) => window.addEventListener(eventName, (event) => {
+        complete(eventDetail(event).key || 'hub:module');
+    }));
 
-    window.addEventListener('crm:module-error', (event) => {
+    ['hub:module-error', 'crm:module-error'].forEach((eventName) => window.addEventListener(eventName, (event) => {
         const detail = eventDetail(event);
-        fail(detail.key || 'crm:module', detail.error || detail.message || 'Chargement du module impossible.');
-    });
+        fail(detail.key || 'hub:module', detail.error || detail.message || 'Chargement du module impossible.');
+    }));
 
     window.addEventListener('crm:navigation', completeLegacyOperations);
 

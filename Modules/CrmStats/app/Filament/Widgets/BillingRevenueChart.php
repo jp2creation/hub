@@ -2,6 +2,7 @@
 
 namespace Modules\CrmStats\Filament\Widgets;
 
+use App\Support\CrmTheme;
 use Filament\Widgets\ChartWidget;
 use Modules\CrmStats\Filament\Concerns\AuthorizesStatsAccess;
 use Modules\CrmStats\Filament\Widgets\Concerns\UsesStatsPeriod;
@@ -36,8 +37,8 @@ class BillingRevenueChart extends ChartWidget
                 [
                     'label' => 'CA',
                     'data' => $series->pluck('total')->map(fn (mixed $value): float => (float) $value)->all(),
-                    'borderColor' => '#95002e',
-                    'backgroundColor' => 'rgba(149, 0, 46, 0.12)',
+                    'borderColor' => CrmTheme::primaryHex(),
+                    'backgroundColor' => CrmTheme::primaryRgba(0.12),
                     'fill' => true,
                     'tension' => 0.35,
                 ],

@@ -4,6 +4,7 @@ namespace Modules\CrmEquipmentRentals\Filament\Resources\CrmEquipmentItems;
 
 use App\Filament\Concerns\AuthorizesResourceWithPolicy;
 use App\Models\CrmEquipmentItem;
+use App\Support\CrmTheme;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -73,7 +74,7 @@ class CrmEquipmentItemResource extends Resource
                     ->preload(),
                 ColorPicker::make('color')
                     ->label('Couleur')
-                    ->default('#95002e')
+                    ->default(CrmTheme::primaryHex())
                     ->required(),
                 TextInput::make('half_day_price')
                     ->label('Prix demi-journee')

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" style="{{ \App\Support\CrmTheme::styleAttribute() }}">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" />
@@ -10,6 +10,7 @@
     <script>
       (function () {
         try {
+          var defaultTheme = @js(\App\Support\CrmTheme::frontendConfig())
           var saved = localStorage.getItem('martin-sols-crm-theme-v2')
           if (!saved) return
 
@@ -25,7 +26,7 @@
             green: ['34 197 94', '20 184 166'],
             orange: ['249 115 22', '245 158 11'],
             red: ['239 68 68', '244 63 94'],
-            cyan: ['149 0 46', '149 0 46'],
+            cyan: [defaultTheme.primary, defaultTheme.accent],
           }
 
           if (config && config.color && presets[config.color]) {
@@ -55,8 +56,8 @@
     />
     <style>
       :root {
-        --theme-primary: 149 0 46;
-        --theme-accent: 255 194 10;
+        --theme-primary: {{ \App\Support\CrmTheme::primaryRgb() }};
+        --theme-accent: {{ \App\Support\CrmTheme::accentRgb() }};
       }
 
       body {

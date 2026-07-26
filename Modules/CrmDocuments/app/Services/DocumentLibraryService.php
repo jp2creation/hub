@@ -7,6 +7,7 @@ use App\Models\CrmDocumentDirectory;
 use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\User;
+use App\Support\CrmTheme;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -36,7 +37,7 @@ class DocumentLibraryService
             'label' => 'Promo',
             'module' => 'documents-promo',
             'route' => '/documents/promo',
-            'color' => '#a50034',
+            'color' => '',
         ],
         'fiches-techniques' => [
             'slug' => 'fiches-techniques',
@@ -125,7 +126,7 @@ class DocumentLibraryService
             'ok' => true,
             'mode' => 'mysql',
             'category' => $category,
-            'categories' => array_values(self::CATEGORIES),
+            'categories' => array_values($this->categories()),
             'selectedSiteId' => $selectedSiteId,
             'sites' => $this->siteRows($siteIds),
             'user' => [
@@ -359,12 +360,24 @@ class DocumentLibraryService
     private function category(string $slug): array
     {
         $slug = Str::slug($slug);
+        $categories = $this->categories();
 
-        if (! isset(self::CATEGORIES[$slug])) {
+        if (! isset($categories[$slug])) {
             $this->fail('Categorie documents inconnue', 404);
         }
 
-        return self::CATEGORIES[$slug];
+        return $categories[$slug];
+    }
+
+    /**
+     * @return array<string, array{slug: string, label: string, module: string, route: string, color: string}>
+     */
+    private function categories(): array
+    {
+        $categories = self::CATEGORIES;
+        $categories['promo']['color'] = CrmTheme::primaryHex();
+
+        return $categories;
     }
 
     /**

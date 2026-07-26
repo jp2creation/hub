@@ -45,7 +45,7 @@
     const style = document.createElement("style");
     style.id = styleId;
     style.textContent = `
-      #${rootId}{--dash-primary:rgb(var(--theme-primary,149 0 46));--dash-border:var(--color-surface-200,#e2e8f0);--dash-muted:var(--color-secondary-500,#64748b);--dash-text:var(--color-secondary-900,#0f172a);display:grid;gap:1rem}
+      #${rootId}{--dash-primary:rgb(var(--theme-primary));--dash-border:var(--color-surface-200,#e2e8f0);--dash-muted:var(--color-secondary-500,#64748b);--dash-text:var(--color-secondary-900,#0f172a);display:grid;gap:1rem}
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.1rem;height:1.1rem;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .dash-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
@@ -64,7 +64,7 @@
       #${rootId} .dash-card-subtitle{margin:.22rem 0 0;color:var(--dash-muted);font-size:.78rem;font-weight:700}
       #${rootId} .dash-card-body{padding:1rem}
       #${rootId} .dash-stat{display:grid;grid-template-columns:2.6rem minmax(0,1fr);align-items:center;gap:.75rem;padding:.9rem}
-      #${rootId} .dash-stat-icon{display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color,#95002e) 14%,white);color:var(--stat-color,#95002e)}
+      #${rootId} .dash-stat-icon{display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color,var(--theme-primary-color)) 14%,white);color:var(--stat-color,var(--theme-primary-color))}
       #${rootId} .dash-stat-icon svg,#${rootId} .dash-mini-icon svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .dash-stat span{display:block;color:var(--dash-muted);font-size:.72rem;font-weight:900;text-transform:uppercase}
       #${rootId} .dash-stat strong{display:block;margin:.2rem 0;color:var(--dash-text);font-size:1.45rem;font-weight:950;line-height:1.05;letter-spacing:0}
@@ -72,7 +72,7 @@
       #${rootId} .dash-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:end;gap:.55rem;min-height:12rem;padding:.2rem .15rem 0}
       #${rootId} .dash-bar{display:grid;align-items:end;gap:.45rem;min-width:0;height:11rem}
       #${rootId} .dash-bar-track{display:flex;align-items:flex-end;justify-content:center;height:9rem;border-radius:.5rem;background:linear-gradient(180deg,#f8fafc,#f1f5f9);overflow:hidden}
-      #${rootId} .dash-bar-fill{width:58%;min-height:.35rem;border-radius:.45rem .45rem 0 0;background:var(--dash-primary);box-shadow:0 10px 22px rgba(149,0,46,.24)}
+      #${rootId} .dash-bar-fill{width:58%;min-height:.35rem;border-radius:.45rem .45rem 0 0;background:var(--dash-primary);box-shadow:0 10px 22px rgb(var(--theme-primary) / .24)}
       #${rootId} .dash-bar-label{text-align:center;color:var(--dash-muted);font-size:.72rem;font-weight:850;white-space:nowrap}
       #${rootId} .dash-bar-value{text-align:center;color:var(--dash-text);font-size:.8rem;font-weight:950}
       #${rootId} .dash-list{display:grid;gap:.55rem}
@@ -83,9 +83,9 @@
       #${rootId} .dash-row-title span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #${rootId} .dash-row-meta{margin-top:.16rem;color:var(--dash-muted);font-size:.76rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .dash-badge{display:inline-flex;align-items:center;justify-content:center;min-height:1.75rem;border-radius:999px;background:#f1f5f9;padding:.25rem .65rem;color:var(--dash-text);font-size:.72rem;font-weight:900;white-space:nowrap}
-      #${rootId} .dash-dot{width:.6rem;height:.6rem;border-radius:999px;background:var(--dot-color,#95002e);box-shadow:0 0 0 3px color-mix(in srgb,var(--dot-color,#95002e) 13%,white)}
+      #${rootId} .dash-dot{width:.6rem;height:.6rem;border-radius:999px;background:var(--dot-color,var(--theme-primary-color));box-shadow:0 0 0 3px color-mix(in srgb,var(--dot-color,var(--theme-primary-color)) 13%,white)}
       #${rootId} .dash-alert{display:grid;grid-template-columns:2.35rem minmax(0,1fr) auto;align-items:center;gap:.7rem;border:1px solid var(--dash-border);border-radius:.5rem;padding:.75rem .8rem;background:#fff;color:inherit;text-decoration:none}
-      #${rootId} .dash-alert-icon{display:grid;place-items:center;width:2.35rem;height:2.35rem;border-radius:.5rem;background:color-mix(in srgb,var(--alert-color,#95002e) 13%,white);color:var(--alert-color,#95002e)}
+      #${rootId} .dash-alert-icon{display:grid;place-items:center;width:2.35rem;height:2.35rem;border-radius:.5rem;background:color-mix(in srgb,var(--alert-color,var(--theme-primary-color)) 13%,white);color:var(--alert-color,var(--theme-primary-color))}
       #${rootId} .dash-alert strong{display:block;color:var(--dash-text);font-size:.88rem;font-weight:900}
       #${rootId} .dash-alert span{display:block;margin-top:.12rem;color:var(--dash-muted);font-size:.73rem;font-weight:700}
       #${rootId} .dash-alert-value{color:var(--dash-text);font-size:1.1rem;font-weight:950}
@@ -206,7 +206,7 @@
       access.reservations ? statCard("Réservations", stats.reservationsToday || 0, "Aujourd'hui", "calendar", "#2563eb") : "",
       access.cashControl ? statCard("CA du mois", money(stats.monthlyRevenue || 0), monthName(), "euro", "#16a34a") : "",
       access.leaves ? statCard("Congés", stats.pendingLeaves || 0, "Demande(s) en attente", "user", "#f59e0b") : "",
-      access.equipmentRentals ? statCard("Matériel dispo", `${stats.equipmentAvailable || 0}/${stats.equipmentTotal || 0}`, "Disponible maintenant", "box", "#95002e") : "",
+      access.equipmentRentals ? statCard("Matériel dispo", `${stats.equipmentAvailable || 0}/${stats.equipmentTotal || 0}`, "Disponible maintenant", "box", "var(--theme-primary-color)") : "",
     ].filter(Boolean).join("");
 
     return `
@@ -351,7 +351,7 @@
     return `<div class="dash-list">${items.map((item) => `
       <a class="dash-row" href="/conges">
         <div class="dash-row-main">
-          <div class="dash-row-title"><span class="dash-dot" style="--dot-color:${esc(item.color || "#95002e")}"></span><span>${esc(item.name || "Utilisateur")}</span></div>
+          <div class="dash-row-title"><span class="dash-dot" style="--dot-color:${esc(item.color || "var(--theme-primary-color)")}"></span><span>${esc(item.name || "Utilisateur")}</span></div>
           <div class="dash-row-meta">${esc(item.type || "Congé")} · ${esc(periodLabel(item))} · ${esc(item.status || "")}</div>
         </div>
         <span class="dash-badge">${esc(item.period || "")}</span>
@@ -438,7 +438,7 @@
       danger: "#dc2626",
       warning: "#d97706",
       info: "#2563eb",
-    }[type] || "#95002e";
+    }[type] || "var(--theme-primary-color)";
   }
 
   function icon(name) {

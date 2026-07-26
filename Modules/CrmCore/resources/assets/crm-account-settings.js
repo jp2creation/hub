@@ -309,8 +309,8 @@
         overflow: hidden;
         border-radius: 999px;
         background: #fff;
-        border: 1px solid rgba(149, 0, 46, .15);
-        box-shadow: 0 12px 26px rgba(149, 0, 46, .14);
+        border: 1px solid rgb(var(--theme-primary) / .15);
+        box-shadow: 0 12px 26px rgb(var(--theme-primary) / .14);
       }
 
       .crm-account-avatar img {
@@ -322,7 +322,7 @@
 
       .crm-account-eyebrow {
         margin: 1rem 0 .25rem;
-        color: #95002e;
+        color: var(--theme-primary-color);
         font-size: .76rem;
         font-weight: 800;
         letter-spacing: .08em;
@@ -351,8 +351,8 @@
         margin-top: 1.1rem;
         padding: .45rem .7rem;
         border-radius: 999px;
-        color: #95002e;
-        background: rgba(149, 0, 46, .08);
+        color: var(--theme-primary-color);
+        background: rgb(var(--theme-primary) / .08);
         font-size: .85rem;
         font-weight: 800;
       }
@@ -362,7 +362,7 @@
         width: .55rem;
         height: .55rem;
         border-radius: 999px;
-        background: #95002e;
+        background: var(--theme-primary-color);
       }
 
       .crm-account-form {
@@ -447,8 +447,8 @@
 
       .crm-account-field input:focus,
       .crm-account-field textarea:focus {
-        border-color: rgba(149, 0, 46, .75);
-        box-shadow: 0 0 0 4px rgba(149, 0, 46, .12);
+        border-color: rgb(var(--theme-primary) / .75);
+        box-shadow: 0 0 0 4px rgb(var(--theme-primary) / .12);
       }
 
       .crm-account-field input[readonly] {
@@ -493,14 +493,14 @@
       }
 
       .crm-account-btn:hover {
-        border-color: rgba(149, 0, 46, .35);
+        border-color: rgb(var(--theme-primary) / .35);
         box-shadow: 0 12px 24px rgba(15, 23, 42, .08);
         transform: translateY(-1px);
       }
 
       .crm-account-btn-primary {
-        border-color: #95002e;
-        background: #b0003a;
+        border-color: var(--theme-primary-color);
+        background: var(--theme-primary-dark-color);
         color: #fff;
       }
 

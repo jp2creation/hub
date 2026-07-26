@@ -30,7 +30,7 @@
     const style = document.createElement("style");
     style.id = styleId;
     style.textContent = `
-      #${rootId}{--tapis-primary:rgb(var(--theme-primary,149 0 46));--tapis-border:var(--color-surface-200,#e2e8f0);--tapis-text:var(--color-secondary-900,#0f172a);--tapis-muted:var(--color-secondary-500,#64748b);display:grid;gap:1rem}
+      #${rootId}{--tapis-primary:rgb(var(--theme-primary));--tapis-border:var(--color-surface-200,#e2e8f0);--tapis-text:var(--color-secondary-900,#0f172a);--tapis-muted:var(--color-secondary-500,#64748b);display:grid;gap:1rem}
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .tapis-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}

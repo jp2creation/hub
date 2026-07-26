@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Support\CrmTheme;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -37,14 +38,14 @@ class AdminPanelProvider extends PanelProvider
             ->defaultThemeMode(ThemeMode::Light)
             ->renderHook(
                 PanelsRenderHook::STYLES_AFTER,
-                fn (): HtmlString => new HtmlString('<link href="'.asset('css/filament/crm-filament.css').'?v=2026072201" rel="stylesheet" data-navigate-track />')
+                fn (): HtmlString => new HtmlString('<link href="'.asset('css/filament/crm-filament.css').'?v=2026072201" rel="stylesheet" data-navigate-track />'.CrmTheme::styleTag()->toHtml())
             )
             ->brandName('JP2 Hub')
             ->brandLogo(asset('martin-sols-logo.png'))
             ->brandLogoHeight('2.75rem')
             ->favicon(asset('favicon.png'))
             ->colors([
-                'primary' => Color::hex('#95002e'),
+                'primary' => Color::hex(CrmTheme::primaryHex()),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverResources(in: base_path('Modules/CrmAdministration/app/Filament/Resources'), for: 'Modules\CrmAdministration\Filament\Resources')

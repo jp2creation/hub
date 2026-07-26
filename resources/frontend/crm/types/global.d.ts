@@ -134,6 +134,12 @@ export type CrmShellConfig = {
     embed: boolean;
     siteId: number | null;
   };
+  theme: {
+    accent: string;
+    accentHex: string;
+    primary: string;
+    primaryHex: string;
+  };
   themeStorageKey: string;
 };
 

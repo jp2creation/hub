@@ -320,7 +320,7 @@
         <section class="tour-stats">
           ${statCard("Rapports", state.summary.tours || 0, "Mois affiché", "calendar", "#2563eb")}
           ${statCard("Terminées", state.summary.completedTours || 0, "Rapports clos", "check", "#16a34a")}
-          ${statCard("Visites", state.summary.visits || 0, `${state.summary.doneVisits || 0} réalisée(s)`, "users", "#95002e")}
+          ${statCard("Visites", state.summary.visits || 0, `${state.summary.doneVisits || 0} réalisée(s)`, "users", "var(--theme-primary-color)")}
           ${statCard("Actions", state.summary.nextActions || 0, "Suites à prévoir", "flag", "#d97706")}
         </section>
 
@@ -866,7 +866,7 @@
       .layout-container.layout-page:has(#${rootId}),
       .layout-page:has(#${rootId}){width:100%;max-width:100%;min-width:0;overflow-x:hidden}
       main:has(#${rootId}){min-width:0;overflow-x:hidden}
-      #${rootId}{--tour-primary:rgb(var(--theme-primary,149 0 46));--tour-text:var(--color-secondary-900,#0f172a);--tour-muted:var(--color-secondary-500,#64748b);--tour-border:var(--color-surface-200,#e2e8f0);color:var(--tour-text);width:100%;max-width:100%;min-width:0;overflow-x:hidden}
+      #${rootId}{--tour-primary:rgb(var(--theme-primary));--tour-text:var(--color-secondary-900,#0f172a);--tour-muted:var(--color-secondary-500,#64748b);--tour-border:var(--color-surface-200,#e2e8f0);color:var(--tour-text);width:100%;max-width:100%;min-width:0;overflow-x:hidden}
       #${rootId} *{box-sizing:border-box}
       #${rootId} .tour-icon{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .tour-page{display:grid;gap:1rem}

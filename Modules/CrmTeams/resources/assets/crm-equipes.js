@@ -211,7 +211,7 @@
         </header>
 
         <section class="teams-stats" aria-label="Synthèse équipe">
-          ${statCard("Membres", currentMembers.length, "users", "#a50034")}
+          ${statCard("Membres", currentMembers.length, "users", "var(--theme-primary-color)")}
           ${statCard("Sites visibles", state.data.sites.length, "building", "#2563eb")}
           ${statCard("Téléphones", membersWithPhone, "phone", "#16a34a")}
           ${statCard("E-mails", membersWithEmail, "mail", "#7c3aed")}
@@ -401,7 +401,7 @@
       body.crm-teams-route{overflow-x:hidden}
       html.crm-teams-route main{max-width:100%;min-width:0;overflow-x:hidden}
       html.crm-teams-route .layout-container.layout-page{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
-      #${rootId}{--teams-primary:rgb(var(--theme-primary,149 0 46));--teams-border:var(--color-surface-200,#e2e8f0);--teams-muted:var(--color-secondary-500,#64748b);--teams-text:var(--color-secondary-900,#0f172a);display:block;min-width:0;color:var(--teams-text)}
+      #${rootId}{--teams-primary:rgb(var(--theme-primary));--teams-border:var(--color-surface-200,#e2e8f0);--teams-muted:var(--color-secondary-500,#64748b);--teams-text:var(--color-secondary-900,#0f172a);display:block;min-width:0;color:var(--teams-text)}
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} a{color:var(--teams-primary);font-weight:850;text-decoration:none}
@@ -422,7 +422,7 @@
       #${rootId} .teams-site{display:grid;gap:.12rem;width:100%;min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.65rem .8rem;color:var(--teams-text);cursor:pointer;text-align:left;box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .teams-site span{font-size:.88rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .teams-site small{color:var(--teams-muted);font-size:.72rem;font-weight:800}
-      #${rootId} .teams-site.is-active{border-color:transparent;background:var(--teams-primary);color:#fff;box-shadow:0 16px 30px rgba(149,0,46,.2)}
+      #${rootId} .teams-site.is-active{border-color:transparent;background:var(--teams-primary);color:#fff;box-shadow:0 16px 30px rgb(var(--theme-primary) / .2)}
       #${rootId} .teams-site.is-active small{color:rgba(255,255,255,.78)}
       #${rootId} .teams-card{container-name:teams-card;container-type:inline-size;min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05);overflow:hidden}
       #${rootId} .teams-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--teams-border);padding:.95rem 1rem}

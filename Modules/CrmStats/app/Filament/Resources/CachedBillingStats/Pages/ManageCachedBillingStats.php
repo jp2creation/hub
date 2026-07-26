@@ -37,7 +37,7 @@ class ManageCachedBillingStats extends ManageRecords
 
     private function callSyncCommand(): int
     {
-        $exitCode = Artisan::call('crm:sync-billing-data');
+        $exitCode = Artisan::call('hub:sync-billing-data');
 
         $notification = Notification::make()
             ->title($exitCode === 0 ? 'Synchronisation terminee' : 'Synchronisation en erreur')

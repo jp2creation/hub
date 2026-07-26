@@ -11,8 +11,10 @@ use Throwable;
 
 class MonitorQueueSizeCommand extends Command
 {
-    protected $signature = 'crm:monitor-queue-size
+    protected $signature = 'hub:monitor-queue-size
         {--threshold= : Nombre de jobs en attente avant alerte}';
+
+    protected $aliases = ['crm:monitor-queue-size'];
 
     protected $description = 'Monitor HUB queue size and register an alert when it exceeds the configured threshold.';
 

@@ -236,7 +236,7 @@
     const totalSize = docs.reduce((sum, document) => sum + Number(document.size || 0), 0);
     return `
       <section class="doc-stats">
-        ${statCard("Documents", docs.length, "file-text", "#a50034")}
+        ${statCard("Documents", docs.length, "file-text", "var(--theme-primary-color)")}
         ${statCard("Dossiers", state.data?.directories?.length || 0, "folder", "#2563eb")}
         ${statCard("Poids total", sizeLabel(totalSize), "database", "#16a34a")}
         ${statCard("Privés", docs.filter((document) => document.visibility === "private").length, "lock", "#7c3aed")}
@@ -637,7 +637,7 @@
     const style = document.createElement("style");
     style.id = "crm-documents-style";
     style.textContent = `
-      #crm-documents-module{--doc-primary:rgb(var(--theme-primary,149 0 46));--doc-border:var(--color-surface-200,#e2e8f0);--doc-muted:var(--color-secondary-500,#64748b);--doc-text:var(--color-secondary-900,#0f172a);min-width:0;color:var(--doc-text)}
+      #crm-documents-module{--doc-primary:rgb(var(--theme-primary));--doc-border:var(--color-surface-200,#e2e8f0);--doc-muted:var(--color-secondary-500,#64748b);--doc-text:var(--color-secondary-900,#0f172a);min-width:0;color:var(--doc-text)}
       #crm-documents-module *{box-sizing:border-box}
       #crm-documents-module svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #crm-documents-module .doc-page{display:grid;gap:1rem;min-width:0}
@@ -650,7 +650,7 @@
       #crm-documents-module .doc-button-primary{border-color:transparent;background:var(--doc-primary);color:#fff}
       #crm-documents-module .doc-tabs{display:flex;gap:.5rem;overflow:auto;padding:.2rem 0}
       #crm-documents-module .doc-tab{display:inline-flex;align-items:center;justify-content:center;min-height:2.35rem;border:1px solid var(--doc-border);border-radius:.5rem;background:#fff;padding:.5rem .85rem;color:var(--doc-muted);font-size:.82rem;font-weight:900;text-decoration:none;white-space:nowrap}
-      #crm-documents-module .doc-tab.is-active{border-color:transparent;background:var(--doc-primary);color:#fff;box-shadow:0 12px 24px rgba(149,0,46,.18)}
+      #crm-documents-module .doc-tab.is-active{border-color:transparent;background:var(--doc-primary);color:#fff;box-shadow:0 12px 24px rgb(var(--theme-primary) / .18)}
       #crm-documents-module .doc-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}
       #crm-documents-module .doc-stat{display:grid;grid-template-columns:2.55rem minmax(0,1fr);gap:.75rem;align-items:center;border:1px solid var(--doc-border);border-radius:.5rem;background:#fff;padding:.85rem;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #crm-documents-module .doc-stat-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color) 14%,white);color:var(--stat-color)}

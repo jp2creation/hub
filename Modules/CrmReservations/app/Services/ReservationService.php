@@ -7,6 +7,7 @@ use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\CrmVehicle;
 use App\Models\User;
+use App\Support\CrmTheme;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -219,7 +220,7 @@ class ReservationService
             $siteId = (int) ($data['siteId'] ?? $data['site_id'] ?? 0);
             $name = trim((string) ($data['name'] ?? ''));
             $description = trim((string) ($data['description'] ?? ''));
-            $color = $this->color((string) ($data['color'] ?? '#95002e'));
+            $color = $this->color((string) ($data['color'] ?? CrmTheme::primaryHex()));
             $photoDataUrl = (string) ($data['photoDataUrl'] ?? $data['photo_data_url'] ?? '');
             $dayStartTime = $this->nullableTime5($data['dayStartTime'] ?? $data['day_start_time'] ?? null);
             $dayEndTime = $this->nullableTime5($data['dayEndTime'] ?? $data['day_end_time'] ?? null);
@@ -535,7 +536,7 @@ class ReservationService
             'siteId' => (int) $vehicle->site_id,
             'name' => $vehicle->name,
             'description' => $vehicle->description ?? '',
-            'color' => $vehicle->color ?: '#95002e',
+            'color' => $vehicle->color ?: CrmTheme::primaryHex(),
             'photoUrl' => $vehicle->getAttribute('photo_url') ?? '',
             'dayStartTime' => $this->time5($vehicle->day_start_time, ''),
             'dayEndTime' => $this->time5($vehicle->day_end_time, ''),
@@ -583,7 +584,7 @@ class ReservationService
     {
         $value = trim($value);
 
-        return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? $value : '#95002e';
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? $value : CrmTheme::primaryHex();
     }
 
     private function time5(?string $value, string $default): string

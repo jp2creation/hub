@@ -9,6 +9,7 @@ use App\Models\CrmModule;
 use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\CrmVehicle;
+use App\Support\CrmTheme;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Modules\CrmCore\Services\CrmFeatureFlagService;
@@ -16,25 +17,25 @@ use Modules\CrmCore\Services\CrmImageStorage;
 
 final class CrmReferenceCache
 {
-    public const ACTIVE_SITE_ROWS = 'crm:sites:active:rows:v1';
+    public const ACTIVE_SITE_ROWS = 'hub:sites:active:rows:v1';
 
-    public const ACTIVE_SITE_IDS = 'crm:sites:active:ids:v1';
+    public const ACTIVE_SITE_IDS = 'hub:sites:active:ids:v1';
 
-    public const ACTIVE_MODULE_ROWS = 'crm:modules:active:rows:v1';
+    public const ACTIVE_MODULE_ROWS = 'hub:modules:active:rows:v1';
 
-    public const ACTIVE_MODULE_LOOKUP = 'crm:modules:active:lookup:v1';
+    public const ACTIVE_MODULE_LOOKUP = 'hub:modules:active:lookup:v1';
 
-    public const PERMISSION_ROWS = 'crm:permissions:rows:v1';
+    public const PERMISSION_ROWS = 'hub:permissions:rows:v1';
 
-    public const PERMISSION_ID_LOOKUP = 'crm:permissions:id-lookup:v1';
+    public const PERMISSION_ID_LOOKUP = 'hub:permissions:id-lookup:v1';
 
-    public const ACTIVE_USER_ROWS = 'crm:users:active:rows:v1';
+    public const ACTIVE_USER_ROWS = 'hub:users:active:rows:v1';
 
-    public const ACTIVE_VEHICLE_ROWS = 'crm:vehicles:active:rows:v1';
+    public const ACTIVE_VEHICLE_ROWS = 'hub:vehicles:active:rows:v1';
 
-    public const ACTIVE_EQUIPMENT_CATEGORY_ROWS = 'crm:equipment-categories:active:rows:v1';
+    public const ACTIVE_EQUIPMENT_CATEGORY_ROWS = 'hub:equipment-categories:active:rows:v1';
 
-    public const ACTIVE_EQUIPMENT_ITEM_ROWS = 'crm:equipment-items:active:rows:v1';
+    public const ACTIVE_EQUIPMENT_ITEM_ROWS = 'hub:equipment-items:active:rows:v1';
 
     /**
      * @return array<int, array{id: int, name: string, slug: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
@@ -235,7 +236,7 @@ final class CrmReferenceCache
                     'siteId' => (int) $vehicle->site_id,
                     'name' => $vehicle->name,
                     'description' => $vehicle->description ?? '',
-                    'color' => $vehicle->color ?: '#95002e',
+                    'color' => $vehicle->color ?: CrmTheme::primaryHex(),
                     'photoUrl' => $vehicle->getAttribute('photo_url') ?? '',
                     'dayStartTime' => self::time5($vehicle->day_start_time, ''),
                     'dayEndTime' => self::time5($vehicle->day_end_time, ''),
@@ -288,7 +289,7 @@ final class CrmReferenceCache
                     'name' => $item->name,
                     'inventoryCode' => $item->inventory_code ?? '',
                     'description' => $item->description ?? '',
-                    'color' => $item->color ?: '#95002e',
+                    'color' => $item->color ?: CrmTheme::primaryHex(),
                     'photoUrl' => $item->getAttribute('photo_url') ?? '',
                     'halfDayPrice' => (float) $item->half_day_price,
                     'dayPrice' => (float) $item->day_price,

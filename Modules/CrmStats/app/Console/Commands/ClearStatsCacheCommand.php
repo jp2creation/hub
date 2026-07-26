@@ -8,7 +8,9 @@ use Modules\CrmStats\Services\BillingStatsDashboardService;
 
 class ClearStatsCacheCommand extends Command
 {
-    protected $signature = 'crm:stats-cache-clear';
+    protected $signature = 'hub:stats-cache-clear';
+
+    protected $aliases = ['crm:stats-cache-clear'];
 
     protected $description = 'Purge le cache des tableaux de bord statistiques HUB.';
 

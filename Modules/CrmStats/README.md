@@ -27,9 +27,9 @@ Les pages Filament lisent uniquement cette table, ce qui evite tout appel API lo
 ## Commandes
 
 ```bash
-php artisan crm:sync-billing-data --from-date=2026-07-01
-php artisan crm:sync-billing-data --full
-php artisan crm:stats-cache-clear
+php artisan hub:sync-billing-data --from-date=2026-07-01
+php artisan hub:sync-billing-data --full
+php artisan hub:stats-cache-clear
 php artisan kpis:snapshot --interval=day
 ```
 

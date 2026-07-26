@@ -9,7 +9,7 @@ use Throwable;
 
 class CrmFeatureFlagService
 {
-    public const CACHE_KEY = 'crm:feature-flags:v1';
+    public const CACHE_KEY = 'hub:feature-flags:v1';
 
     public function enabled(string $key, bool $default = true): bool
     {

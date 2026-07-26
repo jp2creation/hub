@@ -53,6 +53,25 @@ class ExampleTest extends TestCase
         $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
     }
 
+    public function test_login_page_uses_shared_crm_theme_config(): void
+    {
+        config([
+            'crm_theme.colors.primary' => '#123456',
+            'crm_theme.colors.primary_dark' => '#0f2233',
+            'crm_theme.colors.accent' => '#abcdef',
+        ]);
+
+        $html = $this->get('/login')
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('name="theme-color" content="#123456"', $html);
+        $this->assertStringContainsString('style="--theme-primary: 18 52 86;', $html);
+        $this->assertStringContainsString('--theme-accent: 171 205 239;', $html);
+        $this->assertStringContainsString('--primary: var(--theme-primary-color);', $html);
+        $this->assertStringNotContainsString('--primary: #a50034;', $html);
+    }
+
     public function test_login_page_can_remember_the_user_email_without_storing_the_password(): void
     {
         $html = $this->get('/login')

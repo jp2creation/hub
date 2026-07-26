@@ -8,11 +8,13 @@ use Modules\CrmCore\Services\CrmFeatureFlagService;
 
 class ManageCrmFeatureFlagCommand extends Command
 {
-    protected $signature = 'crm:feature
+    protected $signature = 'hub:feature
         {key? : Cle du flag, ex: module:reservations}
         {--enable : Active le flag}
         {--disable : Desactive le flag}
         {--list : Liste les flags}';
+
+    protected $aliases = ['crm:feature'];
 
     protected $description = 'List, enable or disable HUB feature flags without redeploying.';
 

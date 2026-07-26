@@ -58,7 +58,7 @@ class CrmStatsSyncCommandTest extends TestCase
             'crm-stats.billing_api.key' => 'secret-key',
         ]);
 
-        $this->artisan('crm:sync-billing-data', ['--from-date' => '2026-07-01'])
+        $this->artisan('hub:sync-billing-data', ['--from-date' => '2026-07-01'])
             ->assertExitCode(0);
 
         $stat = CachedBillingStat::query()->first();

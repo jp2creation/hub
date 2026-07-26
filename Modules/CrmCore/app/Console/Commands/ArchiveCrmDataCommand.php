@@ -11,11 +11,13 @@ use RuntimeException;
 
 class ArchiveCrmDataCommand extends Command
 {
-    protected $signature = 'crm:archive
+    protected $signature = 'hub:archive
         {--years= : Nombre d annees a conserver dans les tables actives, ecrase la config}
         {--limit= : Taille de lot par table}
         {--dry-run : Compter sans archiver}
         {--model= : Archiver uniquement un modele configure, FQCN ou cle courte}';
+
+    protected $aliases = ['crm:archive'];
 
     protected $description = 'Archive les anciennes donnees des modules metier du HUB.';
 
@@ -69,14 +71,14 @@ class ArchiveCrmDataCommand extends Command
             } while ($batch['total'] > 0 && $largestBatch === $effectiveLimit);
         } catch (JsonException $error) {
             $this->error('Archivage interrompu : impossible de serialiser une ligne en JSON.');
-            Log::channel('crm')->error('Commande crm:archive echouee', [
+            Log::channel('crm')->error('Commande hub:archive echouee', [
                 'error' => $error->getMessage(),
             ]);
 
             return self::FAILURE;
         } catch (RuntimeException $error) {
             $this->error($error->getMessage());
-            Log::channel('crm')->error('Commande crm:archive echouee', [
+            Log::channel('crm')->error('Commande hub:archive echouee', [
                 'error' => $error->getMessage(),
             ]);
 
@@ -88,7 +90,7 @@ class ArchiveCrmDataCommand extends Command
             $this->line("{$result['label']} archive(s) : {$result['archived']}");
         }
 
-        Log::channel('crm')->info('Commande crm:archive executee', [
+        Log::channel('crm')->info('Commande hub:archive executee', [
             'model' => $modelFilter,
             'archived' => $totals,
         ]);

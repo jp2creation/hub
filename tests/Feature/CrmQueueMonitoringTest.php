@@ -35,7 +35,7 @@ class CrmQueueMonitoringTest extends TestCase
             ],
         ]);
 
-        $this->artisan('crm:monitor-queue-size', ['--threshold' => 1])
+        $this->artisan('hub:monitor-queue-size', ['--threshold' => 1])
             ->assertSuccessful();
 
         $this->assertDatabaseHas('notification_logs', [
@@ -73,7 +73,7 @@ class CrmQueueMonitoringTest extends TestCase
             ->with('queue')
             ->andReturn($redis);
 
-        $this->artisan('crm:monitor-queue-size', ['--threshold' => 1])
+        $this->artisan('hub:monitor-queue-size', ['--threshold' => 1])
             ->assertSuccessful();
 
         $alert = CrmNotificationLog::query()

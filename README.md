@@ -4,9 +4,8 @@ JP2 Hub est une base Laravel modulaire concue par JP2 Creation pour centraliser 
 
 L'installation Martin Sols presente dans ce depot est l'exemple metier actuellement utilise pour valider le produit et ses modules.
 
-Le produit s'appelle **JP2 Hub**. Les prefixes techniques historiques `crm:*`,
-`CRM_*`, `Crm*` et certaines routes internes restent conserves pour compatibilite
-avec le code existant, les migrations et les scripts de deploiement.
+Les conventions techniques historiques sont documentees dans les guides
+developpeur afin de ne pas brouiller l'identite publique du produit.
 
 ## Objectif
 
@@ -108,14 +107,14 @@ vendor/bin/sail artisan key:generate
 vendor/bin/sail artisan migrate
 vendor/bin/sail npm install
 vendor/bin/sail npm run build
-vendor/bin/sail artisan crm:publish-static-assets --force --clean
-vendor/bin/sail artisan crm:publish-module-assets --force
+vendor/bin/sail artisan hub:publish-static-assets --force --clean
+vendor/bin/sail artisan hub:publish-module-assets --force
 ```
 
 Creer ou mettre a jour le compte admin avec une saisie masquee :
 
 ```bash
-vendor/bin/sail artisan crm:admin --email=admin@example.test --name="Administrateur"
+vendor/bin/sail artisan hub:admin --email=admin@example.test --name="Administrateur"
 ```
 
 Pour Sail, mettre `DB_HOST=mysql`, `DB_USERNAME=sail` et `DB_PASSWORD=password` dans le `.env` local, puis ouvrir `http://localhost`.
@@ -125,7 +124,7 @@ Pour Sail, mettre `DB_HOST=mysql`, `DB_USERNAME=sail` et `DB_PASSWORD=password` 
 ```bash
 vendor/bin/sail composer quality
 vendor/bin/sail npm run build
-vendor/bin/sail artisan crm:publish-module-assets --force
+vendor/bin/sail artisan hub:publish-module-assets --force
 ```
 
 Des tests cibles existent notamment pour les reservations, les locations de materiel, les conges, le controle caisse, les remises de cheques, les demandes d'acompte, les documents, les rapports de visite, les pages HUB, la PWA et l'authentification mobile.
@@ -162,7 +161,7 @@ Une correction durable doit etre faite dans `resources/frontend`, `Modules/*/res
 
 - Ne jamais commiter `.env`, tokens, exports de base de donnees ou logs.
 - Utiliser des mots de passe forts pour les comptes admin.
-- Creer l'admin via `php artisan crm:admin`; ne pas stocker de mot de passe admin dans `.env.example`.
+- Creer l'admin via `php artisan hub:admin`; ne pas stocker de mot de passe admin dans `.env.example`.
 - Desactiver les options legacy d'impersonation sauf besoin explicite.
 - L'API mobile utilise Sanctum et des tokens Bearer ; leur duree est pilotee par `SANCTUM_MOBILE_TOKEN_EXPIRATION_DAYS`.
 - Les actions critiques HUB sont journalisees dans `crm_logs`.

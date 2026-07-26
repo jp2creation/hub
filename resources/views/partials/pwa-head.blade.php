@@ -1,4 +1,4 @@
-<meta name="theme-color" content="#95002e" />
+<meta name="theme-color" content="{{ \App\Support\CrmTheme::primaryHex() }}" />
 <meta name="application-name" content="JP2 Hub" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="JP2 Hub" />

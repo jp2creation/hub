@@ -26,7 +26,7 @@ import { installMartinSolsUi } from './ui/native-ui';
 
 const crmShellConfig = readCrmShellConfig();
 
-applyStoredTheme(crmShellConfig.themeStorageKey);
+applyStoredTheme(crmShellConfig.themeStorageKey, crmShellConfig.theme);
 installCrmShellGlobals(crmShellConfig);
 installLegacyStylesheets();
 revealBrandLoaderElement();
@@ -47,7 +47,7 @@ installNativeCrmShell();
 installCrmModuleHostGuard();
 installCurrentCrmModuleRouteLoader();
 
-const shellLoaderKey = 'crm:shell';
+const shellLoaderKey = 'hub:shell';
 
 window.CrmLoader?.begin?.(shellLoaderKey, {
   delay: 0,
@@ -58,7 +58,7 @@ window.CrmLoader?.begin?.(shellLoaderKey, {
 try {
   await loadCrmShellOverlays();
   await loadCurrentCrmModuleOverlay();
-  window.dispatchEvent(new CustomEvent('crm:module-ready', { detail: { key: shellLoaderKey } }));
+  window.dispatchEvent(new CustomEvent('hub:module-ready', { detail: { key: shellLoaderKey } }));
   preloadRemainingCrmModuleOverlays();
 } catch (error) {
   window.CrmLoader?.fail?.(shellLoaderKey, error instanceof Error ? error : new Error('Chargement du HUB impossible.'));

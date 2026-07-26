@@ -7,6 +7,7 @@ use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureCrmMobileTokenScope
@@ -29,13 +30,13 @@ class EnsureCrmMobileTokenScope
 
         $request->setUserResolver(fn (): User => $user);
 
-        if (! $user->tokenCan('crm:mobile')) {
+        if (! $this->tokenCanAny($user, 'hub:mobile')) {
             return $this->json('Token mobile non autorise pour le HUB.', 403);
         }
 
         if ($abilities !== []) {
             foreach ($abilities as $ability) {
-                if ($user->tokenCan($ability)) {
+                if ($this->tokenCanAny($user, $ability)) {
                     return $next($request);
                 }
             }
@@ -44,6 +45,33 @@ class EnsureCrmMobileTokenScope
         }
 
         return $next($request);
+    }
+
+    private function tokenCanAny(User $user, string $ability): bool
+    {
+        foreach ($this->equivalentAbilities($ability) as $equivalentAbility) {
+            if ($user->tokenCan($equivalentAbility)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function equivalentAbilities(string $ability): array
+    {
+        if (Str::startsWith($ability, 'hub:')) {
+            return [$ability, 'crm:'.Str::after($ability, 'hub:')];
+        }
+
+        if (Str::startsWith($ability, 'crm:')) {
+            return [$ability, 'hub:'.Str::after($ability, 'crm:')];
+        }
+
+        return [$ability];
     }
 
     private function json(string $message, int $status): JsonResponse

@@ -8,6 +8,7 @@ use App\Models\CrmEquipmentRental;
 use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\User;
+use App\Support\CrmTheme;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -261,7 +262,7 @@ class EquipmentRentalService
             $name = trim((string) ($data['name'] ?? ''));
             $inventoryCode = trim((string) ($data['inventoryCode'] ?? $data['inventory_code'] ?? ''));
             $description = trim((string) ($data['description'] ?? ''));
-            $color = $this->color((string) ($data['color'] ?? '#95002e'));
+            $color = $this->color((string) ($data['color'] ?? CrmTheme::primaryHex()));
             $photoDataUrl = (string) ($data['photoDataUrl'] ?? $data['photo_data_url'] ?? '');
             $halfDayPrice = $this->decimal($data['halfDayPrice'] ?? $data['half_day_price'] ?? 0);
             $dayPrice = $this->decimal($data['dayPrice'] ?? $data['day_price'] ?? 0);
@@ -791,7 +792,7 @@ class EquipmentRentalService
             'name' => $item->name,
             'inventoryCode' => $item->inventory_code ?? '',
             'description' => $item->description ?? '',
-            'color' => $item->color ?: '#95002e',
+            'color' => $item->color ?: CrmTheme::primaryHex(),
             'photoUrl' => $item->getAttribute('photo_url') ?? '',
             'halfDayPrice' => (float) $item->half_day_price,
             'dayPrice' => (float) $item->day_price,
@@ -871,7 +872,7 @@ class EquipmentRentalService
     {
         $value = trim($value);
 
-        return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? $value : '#95002e';
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? $value : CrmTheme::primaryHex();
     }
 
     private function slug(string $value): string

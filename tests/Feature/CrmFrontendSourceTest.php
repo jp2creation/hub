@@ -607,8 +607,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('if [ -d public/build ]; then', $script);
         $this->assertStringNotContainsString('if [ "$CRM_DEPLOY_BUILD" != "0" ] && [ -d public/build ]; then', $script);
         $this->assertStringContainsString('Manifest Vite absent: ${RELEASE_DIR}/public/build/manifest.json', $script);
-        $this->assertStringContainsString('php artisan crm:publish-static-assets --force --clean', $script);
-        $this->assertStringContainsString('php artisan crm:publish-module-assets --force', $script);
+        $this->assertStringContainsString('php artisan hub:publish-static-assets --force --clean', $script);
+        $this->assertStringContainsString('php artisan hub:publish-module-assets --force', $script);
         $this->assertStringContainsString('gzip -c "$LOCAL_ARCHIVE_TAR" > "$LOCAL_ARCHIVE"', $script);
         $this->assertStringContainsString('RELEASES_DIR="${CRM_DEPLOY_ROOT}/releases"', $script);
         $this->assertStringContainsString('SHARED_DIR="${CRM_DEPLOY_ROOT}/shared"', $script);

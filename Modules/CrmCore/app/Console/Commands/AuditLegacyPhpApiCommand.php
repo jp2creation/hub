@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Schema;
 
 class AuditLegacyPhpApiCommand extends Command
 {
-    protected $signature = 'crm:audit-legacy-php-api
+    protected $signature = 'hub:audit-legacy-php-api
         {--days=30 : Fenetre d audit en jours}
         {--limit=20 : Nombre maximum de lignes affichees par tableau}
         {--deactivation-date= : Date de desactivation definitive a communiquer aux integrateurs}
         {--fail-on-hits : Retourne un code erreur si des tentatives legacy existent}';
+
+    protected $aliases = ['crm:audit-legacy-php-api'];
 
     protected $description = 'Audit blocked legacy /api/*.php calls recorded in crm_logs.';
 

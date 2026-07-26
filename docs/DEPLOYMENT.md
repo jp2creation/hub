@@ -9,8 +9,8 @@ composer install --no-interaction
 npm install
 composer quality
 npm run build
-php artisan crm:publish-static-assets --force --clean
-php artisan crm:publish-module-assets --force
+php artisan hub:publish-static-assets --force --clean
+php artisan hub:publish-module-assets --force
 composer audit
 npm audit --audit-level=moderate
 ```
@@ -39,7 +39,7 @@ Le flux de production est :
 3. Extraire l'archive dans cette nouvelle release, sans toucher a `current`.
 4. Relier `.env` et `storage` depuis `shared`.
 5. Installer Composer dans la release inactive.
-6. Lancer `php artisan optimize:clear`, `migrate --force`, `storage:link --force`, `crm:publish-static-assets --force --clean`, `crm:publish-module-assets --force`, `optimize` et `view:cache`.
+6. Lancer `php artisan optimize:clear`, `migrate --force`, `storage:link --force`, `hub:publish-static-assets --force --clean`, `hub:publish-module-assets --force`, `optimize` et `view:cache`.
 7. Basculer atomiquement `current` vers la nouvelle release.
 8. Verifier automatiquement `/up`.
 9. En cas d'echec HTTP, revenir automatiquement au symlink precedent.
@@ -111,13 +111,13 @@ Planifier un test mensuel de restauration sur une base temporaire : recuperer la
 Les modules peuvent etre actives ou desactives sans redeploiement via la table `crm_feature_flags`.
 
 ```bash
-php artisan crm:feature --list
-php artisan crm:feature module:locations-materiel --disable
-php artisan crm:feature module:locations-materiel --enable
+php artisan hub:feature --list
+php artisan hub:feature module:locations-materiel --disable
+php artisan hub:feature module:locations-materiel --enable
 php artisan optimize:clear
 ```
 
-Les flags de module utilisent la forme `module:<slug>`. Une desactivation retire le module des references actives, du menu et des routes protegees par `crm.module`.
+Les flags de module utilisent la forme `module:<slug>`. Une desactivation retire le module des references actives, du menu et des routes protegees par `hub.module`.
 
 ## Migration des endpoints legacy
 
@@ -126,7 +126,7 @@ Le retrait des routes API `.php` est documente dans [LEGACY_API_MIGRATION.md](LE
 Avant la date de desactivation definitive annoncee aux integrateurs, verifier les tentatives restantes qui atteignent Laravel :
 
 ```bash
-php artisan crm:audit-legacy-php-api --days=30 --deactivation-date=2026-08-31
+php artisan hub:audit-legacy-php-api --days=30 --deactivation-date=2026-08-31
 ```
 
 Si la commande retourne des hits, contacter les integrateurs concernes via les IP/User-Agent affiches et migrer leurs appels vers `/api/<module>` sans extension. Ajouter `--fail-on-hits` dans un controle manuel ou CI pour bloquer un retrait definitif tant que des appels legacy existent.
@@ -136,12 +136,12 @@ Si la commande retourne des hits, contacter les integrateurs concernes via les I
 Les fichiers dans `public/build`, `public/assets` et `public/modules` sont des sorties de build ou de publication. Toute correction durable doit etre faite dans les sources applicatives, puis reconstruite.
 
 - `public/build` vient de Vite : `npm run build`.
-- `public/assets` vient de `resources/frontend/static/assets` : `php artisan crm:publish-static-assets --force --clean`.
-- `public/modules` vient de `Modules/*/resources/assets` : `php artisan crm:publish-module-assets --force`.
+- `public/assets` vient de `resources/frontend/static/assets` : `php artisan hub:publish-static-assets --force --clean`.
+- `public/modules` vient de `Modules/*/resources/assets` : `php artisan hub:publish-module-assets --force`.
 
 Adminex n'est plus une dependance runtime a remettre dans `public/assets`. Les elements visuels conserves sont reconstruits proprement dans les sources natives du HUB, notamment `resources/frontend/crm/styles/template-compat/*`, `resources/frontend/crm/styles/native-ui.css` et les assets de modules.
 
-Apres une modification de module, lancer `php artisan crm:publish-module-assets --force` avant de vider les caches.
+Apres une modification de module, lancer `php artisan hub:publish-module-assets --force` avant de vider les caches.
 
 ## Script de deploiement aide
 

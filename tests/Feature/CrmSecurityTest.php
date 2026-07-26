@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\BlockedLegacyPhpApiController;
 use App\Http\Middleware\BlockLegacyPhpApiPaths;
 use App\Models\CrmModule;
 use App\Models\CrmNotificationLog;
@@ -198,7 +197,7 @@ class CrmSecurityTest extends TestCase
 
     public function test_legacy_php_api_audit_command_is_green_without_hits(): void
     {
-        $this->artisan('crm:audit-legacy-php-api', ['--days' => 7])
+        $this->artisan('hub:audit-legacy-php-api', ['--days' => 7])
             ->expectsOutputToContain('Aucune tentative legacy /api/*.php')
             ->assertSuccessful();
     }
@@ -216,7 +215,7 @@ class CrmSecurityTest extends TestCase
             'context' => '{}',
         ]);
 
-        $this->artisan('crm:audit-legacy-php-api', [
+        $this->artisan('hub:audit-legacy-php-api', [
             '--days' => 7,
             '--deactivation-date' => '2026-08-31',
         ])
@@ -225,7 +224,7 @@ class CrmSecurityTest extends TestCase
             ->expectsOutputToContain('2026-08-31')
             ->assertSuccessful();
 
-        $this->artisan('crm:audit-legacy-php-api', [
+        $this->artisan('hub:audit-legacy-php-api', [
             '--days' => 7,
             '--fail-on-hits' => true,
         ])
@@ -297,14 +296,7 @@ class CrmSecurityTest extends TestCase
                 && str_ends_with($route->uri(), '.php'))
             ->values();
 
-        $this->assertCount(1, $legacyApiRoutes, $legacyApiRoutes->pluck('uri')->implode(', '));
-
-        $route = $legacyApiRoutes->first();
-
-        $this->assertSame('api/{legacyPhpPath}.php', $route->uri());
-        $this->assertSame('crm.api.legacy-php-blocked', $route->getName());
-        $this->assertSame(BlockedLegacyPhpApiController::class, $route->getControllerClass());
-        $this->assertArrayNotHasKey('crm_legacy_target', $route->defaults);
+        $this->assertCount(0, $legacyApiRoutes, $legacyApiRoutes->pluck('uri')->implode(', '));
     }
 
     public function test_public_directory_does_not_expose_legacy_php_api_scripts(): void
@@ -443,6 +435,8 @@ class CrmSecurityTest extends TestCase
 
         $this->assertStringContainsString('trustHosts', $bootstrap);
         $this->assertStringContainsString('BlockLegacyPhpApiPaths::class', $bootstrap);
+        $this->assertStringContainsString("'hub.mobile_scope'", $bootstrap);
+        $this->assertStringContainsString("'hub.module'", $bootstrap);
         $this->assertStringContainsString('replace(LaravelTrustHosts::class, TrustCrmHosts::class)', $bootstrap);
         $this->assertStringContainsString('replace(LaravelTrustProxies::class, TrustCrmProxies::class)', $bootstrap);
         $this->assertStringContainsString('TrustCrmHosts::class', $bootstrap);
@@ -714,8 +708,8 @@ class CrmSecurityTest extends TestCase
         [$account, , , $vehicle] = $this->createReservationCrmUser(['reservations.create']);
 
         $token = $account->createToken('Mobile Security Test', [
-            'crm:mobile',
-            'crm:module:reservations',
+            'hub:mobile',
+            'hub:module:reservations',
         ])->plainTextToken;
 
         $this->withHeader('Authorization', 'Bearer '.$token)
@@ -728,6 +722,27 @@ class CrmSecurityTest extends TestCase
             ->assertOk()
             ->assertJsonPath('ok', true)
             ->assertJsonPath('reservation.title', 'Mobile sans CSRF');
+    }
+
+    public function test_legacy_crm_mobile_scopes_remain_accepted_during_hub_transition(): void
+    {
+        [$account, , , $vehicle] = $this->createReservationCrmUser(['reservations.create']);
+
+        $token = $account->createToken('Mobile Legacy Scope Test', [
+            'crm:mobile',
+            'crm:module:reservations',
+        ])->plainTextToken;
+
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/mobile/reservations?action=create_reservation', [
+                'vehicleId' => $vehicle->id,
+                'startAt' => '2026-08-19T09:00',
+                'endAt' => '2026-08-19T09:30',
+                'title' => 'Mobile scope legacy',
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('reservation.title', 'Mobile scope legacy');
     }
 
     public function test_mobile_api_rejects_session_without_bearer_token(): void

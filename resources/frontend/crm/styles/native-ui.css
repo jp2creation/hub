@@ -6,8 +6,8 @@
 .ms-ui-dialog,
 .resa-dialog,
 .rent-dialog {
-  --ms-ui-primary: rgb(var(--theme-primary, 149 0 46));
-  --ms-ui-accent: rgb(var(--theme-accent, 245 178 18));
+  --ms-ui-primary: rgb(var(--theme-primary));
+  --ms-ui-accent: rgb(var(--theme-accent));
   --ms-ui-text: var(--color-secondary-900, #1d354f);
   --ms-ui-muted: var(--color-secondary-500, #5d7287);
   --ms-ui-border: var(--color-surface-200, #e4e4e7);
@@ -424,7 +424,7 @@ body.ms-ui-modal-open {
   border-color: transparent !important;
   background: var(--ms-ui-primary) !important;
   color: #fff !important;
-  box-shadow: 0 12px 28px rgb(149 0 46 / 0.18) !important;
+  box-shadow: 0 12px 28px rgb(var(--theme-primary) / 0.18) !important;
 }
 
 .crm-native-content
@@ -448,7 +448,7 @@ body.ms-ui-modal-open {
 
 .crm-native-content :is(input, select, textarea, .input, .select, .textarea, .select-trigger):focus {
   border-color: var(--ms-ui-primary) !important;
-  box-shadow: 0 0 0 3px rgb(149 0 46 / 0.12) !important;
+  box-shadow: 0 0 0 3px rgb(var(--theme-primary) / 0.12) !important;
   outline: 0 !important;
 }
 
@@ -468,8 +468,8 @@ body.ms-ui-modal-open {
 }
 
 .crm-native-content :is(.resa-row, .rent-row, .teams-row, .doc-row, .cash-row, .check-row, .deposit-row):hover {
-  border-color: rgb(149 0 46 / 0.18) !important;
-  background: rgb(149 0 46 / 0.035) !important;
+  border-color: rgb(var(--theme-primary) / 0.18) !important;
+  background: rgb(var(--theme-primary) / 0.035) !important;
   box-shadow: 0 10px 22px rgb(15 23 42 / 0.045) !important;
 }
 
@@ -622,9 +622,9 @@ body.ms-ui-modal-open {
 .ms-ui-segment button.is-active,
 .resa-segment button.is-active,
 .rent-segment button.is-active {
-  background: rgb(var(--theme-primary, 149 0 46)) !important;
+  background: rgb(var(--theme-primary)) !important;
   color: #fff !important;
-  box-shadow: 0 12px 28px rgb(149 0 46 / 0.18);
+  box-shadow: 0 12px 28px rgb(var(--theme-primary) / 0.18);
 }
 
 .ms-ui-product-grid,
@@ -667,9 +667,9 @@ body.ms-ui-modal-open {
 .ms-ui-product-card.is-active,
 .resa-product-card.is-active,
 .rent-product-card.is-active {
-  border-color: rgb(149 0 46 / 0.2) !important;
+  border-color: rgb(var(--theme-primary) / 0.2) !important;
   box-shadow:
-    0 0 0 1px rgb(149 0 46 / 0.05),
+    0 0 0 1px rgb(var(--theme-primary) / 0.05),
     var(--ms-ui-shadow-card) !important;
 }
 
@@ -683,7 +683,7 @@ body.ms-ui-modal-open {
   place-items: center;
   overflow: hidden;
   background: linear-gradient(135deg, #f9eef2, #f3edf0);
-  color: rgb(var(--theme-primary, 149 0 46));
+  color: rgb(var(--theme-primary));
   font-size: 1.3rem;
   font-weight: 700;
 }
@@ -795,7 +795,7 @@ body.ms-ui-modal-open {
 
 .resa-button-primary,
 .rent-button-primary {
-  box-shadow: 0 14px 30px rgb(149 0 46 / 0.2) !important;
+  box-shadow: 0 14px 30px rgb(var(--theme-primary) / 0.2) !important;
 }
 
 .resa-month-grid,
@@ -827,7 +827,7 @@ body.ms-ui-modal-open {
   height: 0.52rem !important;
   overflow: hidden;
   border-radius: 999px !important;
-  background: rgb(var(--theme-primary, 149 0 46)) !important;
+  background: rgb(var(--theme-primary)) !important;
   padding: 0 !important;
   color: transparent !important;
 }

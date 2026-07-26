@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
         Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
         Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
 
-        $this->command?->info('Roles initialises. Utilisez php artisan crm:admin pour creer ou mettre a jour le compte administrateur.');
+        $this->command?->info('Roles initialises. Utilisez php artisan hub:admin pour creer ou mettre a jour le compte administrateur.');
     }
 }

@@ -32,7 +32,7 @@ Les tables HUB restent donc la source de verite pour les decisions metier. Un co
 
 ## Regle de routage
 
-Le middleware `crm.module` protege les pages shell HUB.
+Le middleware `hub.module` protege les pages shell HUB.
 
 Un utilisateur avec acces plateforme Spatie peut ouvrir ces pages pour administrer et diagnostiquer le HUB, meme sans profil `CrmUser`. Cette exception est volontaire, documentee et couverte par un test.
 
@@ -47,6 +47,6 @@ Les actions metier restent controlees ensuite par :
 - Les controleurs restent minces : lecture de la requete, resolution de l'acteur, appel du service, reponse JSON.
 - Les controles de permission metier vont dans un service metier ou dans une Policy.
 - Les ressources Filament utilisent `AuthorizesResourceWithPolicy`.
-- Les routes shell utilisent `crm.module:<slug>,<permission...>`.
-- Les routes API mobile utilisent `auth:sanctum` et `crm.mobile_scope`.
+- Les routes shell utilisent `hub.module:<slug>,<permission...>`.
+- Les routes API mobile utilisent `auth:sanctum` et `hub.mobile_scope`.
 - Les exceptions admin doivent passer par `User::canUsePlatformAdministration()` ou `CrmAccessService`, jamais par une liste locale recopiee.

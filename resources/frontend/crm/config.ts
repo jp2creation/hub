@@ -17,6 +17,12 @@ export type CrmShellConfig = {
     embed: boolean;
     siteId: number | null;
   };
+  theme: {
+    accent: string;
+    accentHex: string;
+    primary: string;
+    primaryHex: string;
+  };
   themeStorageKey: string;
 };
 
@@ -37,6 +43,12 @@ const defaultConfig: CrmShellConfig = {
     embed: false,
     siteId: null,
   },
+  theme: {
+    accent: '245 178 18',
+    accentHex: '#f5b212',
+    primary: '149 0 46',
+    primaryHex: '#95002e',
+  },
   themeStorageKey: 'martin-sols-hub-theme-v1',
 };
 
@@ -56,6 +68,10 @@ function normalizeConfig(config: CrmShellConfigInput): CrmShellConfig {
       ...defaultConfig.mobile,
       ...(config.mobile || {}),
       siteId: config.mobile?.siteId ? Number(config.mobile.siteId) : null,
+    },
+    theme: {
+      ...defaultConfig.theme,
+      ...(config.theme || {}),
     },
   };
 }

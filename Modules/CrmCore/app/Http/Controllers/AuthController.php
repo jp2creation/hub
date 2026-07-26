@@ -59,7 +59,10 @@ class AuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         $user = Auth::guard('web')->user();
-        $mobileTokenId = (int) $request->session()->pull('crm_mobile_token_id', 0);
+        $mobileTokenId = (int) (
+            $request->session()->pull('hub_mobile_token_id', 0)
+            ?: $request->session()->pull('crm_mobile_token_id', 0)
+        );
 
         if ($mobileTokenId > 0 && $user instanceof User) {
             $user->tokens()->whereKey($mobileTokenId)->delete();

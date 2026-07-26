@@ -42,7 +42,7 @@ flowchart LR
 - PWA installable via `manifest.json` et Service Worker.
 - API mobile via Sanctum.
 - Endpoints HUB exposes par Laravel sans extension `.php`.
-- Creation admin par commande Artisan `crm:admin`, sans mot de passe stocke dans `.env.example`.
+- Creation admin par commande Artisan `hub:admin`, sans mot de passe stocke dans `.env.example`.
 
 ## Experience developpeur
 
@@ -258,7 +258,7 @@ sequenceDiagram
     participant Cache as Aggregats locaux
     participant Filament as Widgets Filament
 
-    Scheduler->>API: crm:sync-billing-data
+    Scheduler->>API: hub:sync-billing-data
     API-->>Scheduler: clients, factures, produits
     Scheduler->>Cache: cached_billing_stats
     Filament->>Cache: lecture locale rapide
@@ -270,8 +270,8 @@ sequenceDiagram
 - Le shell web est versionne dans `resources/frontend/crm`.
 - L'ancien rendu Adminex n'est pas relance comme runtime : les elements utiles sont reconstruits dans les sources natives (`resources/frontend/crm/styles/template-compat/*` et `resources/frontend/crm/styles/native-ui.css`).
 - Les assets Vite sont generes dans `public/build` avec `npm run build`.
-- Les assets statiques servis depuis `public/assets` sont publies depuis `resources/frontend/static/assets` avec `php artisan crm:publish-static-assets --force --clean` et appeles avec `App\Support\CrmAsset`.
-- Les assets de modules sont publies vers `public/modules` avec `php artisan crm:publish-module-assets --force`.
+- Les assets statiques servis depuis `public/assets` sont publies depuis `resources/frontend/static/assets` avec `php artisan hub:publish-static-assets --force --clean` et appeles avec `App\Support\CrmAsset`.
+- Les assets de modules sont publies vers `public/modules` avec `php artisan hub:publish-module-assets --force`.
 - La version d'asset est forcee par `CRM_ASSET_VERSION`, puis par `.deployed-revision` en deploiement, puis par `filemtime`.
 - Les logs Laravel utilisent le canal `daily`, avec `LOG_DAILY_DAYS=30`.
 - Le canal `horizon` est configure en `daily` sur `storage/logs/horizon.log`.

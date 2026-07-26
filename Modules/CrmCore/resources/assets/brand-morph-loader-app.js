@@ -321,6 +321,7 @@
   });
 
   window.addEventListener('crm:navigation', startRouteMonitor);
+  window.addEventListener('hub:module-error', handleImportError);
   window.addEventListener('crm:module-error', handleImportError);
 
   if (document.readyState === 'complete') {

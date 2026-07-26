@@ -29,6 +29,34 @@
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 
+  function themeCssVariables() {
+    return [
+      `--theme-primary:${themeRgb("--theme-primary")}`,
+      `--theme-primary-color:${themeHex("--theme-primary-color")}`,
+      `--theme-primary-dark-color:${themeHex("--theme-primary-dark-color")}`,
+      `--theme-accent:${themeRgb("--theme-accent")}`,
+      `--theme-accent-color:${themeHex("--theme-accent-color")}`,
+    ].join(";");
+  }
+
+  function themeCssValue(name) {
+    const styles = window.getComputedStyle(document.documentElement);
+
+    return styles.getPropertyValue(name).trim().replace(/\s+/g, " ");
+  }
+
+  function themeHex(name) {
+    const value = themeCssValue(name);
+
+    return /^#[0-9a-f]{6}$/i.test(value) ? value : "#000000";
+  }
+
+  function themeRgb(name) {
+    const value = themeCssValue(name);
+
+    return /^\d{1,3}\s+\d{1,3}\s+\d{1,3}$/.test(value) ? value : "0 0 0";
+  }
+
   function emptyReceiptDraft(date = "") {
     return {
       id: "",
@@ -752,7 +780,7 @@
 
   function dashboardCard(label, value, detail, icon, color) {
     return `
-      <article class="cash-dashboard-card" style="--cash-card-color:${esc(color || "#95002e")}">
+      <article class="cash-dashboard-card" style="--cash-card-color:${esc(color || "var(--theme-primary-color)")}">
         <div class="cash-dashboard-card-icon">${dashboardIcon(icon)}</div>
         <div>
           <span>${esc(label)}</span>
@@ -858,7 +886,7 @@
       <section class="cash-summary" aria-label="Synthese caisse">
         ${summaryCard("Statut", statusLabel(status), dateLabel(day.cashDate), "status", statusColor(status), statusColor(status))}
         ${summaryCard("Encaissements", money(calculations.paymentsTotal), `${day.receiptCount || 0} ligne(s)`, "receipt", "#2563eb")}
-        ${summaryCard("Caisse attendue", money(calculations.expectedCash), "Report + especes - sorties", "cash", "#95002e")}
+        ${summaryCard("Caisse attendue", money(calculations.expectedCash), "Report + especes - sorties", "cash", "var(--theme-primary-color)")}
         ${summaryCard("Ecart caisse", signedMoney(calculations.cashDifference), "Comptage physique", calculations.cashDifference !== null && Math.abs(Number(calculations.cashDifference || 0)) > 0.01 ? "alert" : "check", differenceColor, differenceColor, calculations.cashDifference !== null && Math.abs(Number(calculations.cashDifference || 0)) > 0.01)}
       </section>
     `;
@@ -866,7 +894,7 @@
 
   function summaryCard(label, value, detail, icon, color, valueColor = "", isBad = false) {
     return `
-      <div class="cash-summary-item ${isBad ? "is-bad" : ""}" style="--cash-summary-color:${esc(color || "#95002e")}">
+      <div class="cash-summary-item ${isBad ? "is-bad" : ""}" style="--cash-summary-color:${esc(color || "var(--theme-primary-color)")}">
         <div class="cash-summary-icon">${summaryIcon(icon)}</div>
         <div>
           <span>${esc(label)}</span>
@@ -1408,10 +1436,10 @@
           <meta charset="utf-8">
           <title>${esc(title)}</title>
           <style>
-            :root{font-family:Arial,Helvetica,sans-serif;color:#0f172a}
+            :root{${themeCssVariables()};font-family:Arial,Helvetica,sans-serif;color:#0f172a}
             *{box-sizing:border-box}
             body{margin:0;background:#fff;padding:24px}
-            header{display:flex;justify-content:space-between;gap:16px;border-bottom:3px solid #95002e;padding-bottom:14px;margin-bottom:18px}
+            header{display:flex;justify-content:space-between;gap:16px;border-bottom:3px solid var(--theme-primary-color);padding-bottom:14px;margin-bottom:18px}
             h1{margin:0;font-size:24px;line-height:1.15}
             h2{margin:22px 0 10px;font-size:16px}
             p{margin:4px 0;color:#475569;font-size:12px;font-weight:700}
@@ -2030,13 +2058,13 @@
       #crm-cash-control-module .cash-mini-button{min-height:2rem;padding:.4rem .55rem;font-size:.74rem}
       #crm-cash-control-module .cash-icon-button{width:2rem;min-width:2rem;padding:.35rem}
       #crm-cash-control-module .cash-icon{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-      #crm-cash-control-module .cash-button:hover,#crm-cash-control-module .cash-mini-button:hover{border-color:rgb(var(--theme-primary,149 0 46) / .45);color:rgb(var(--theme-primary,149 0 46))}
-      #crm-cash-control-module .cash-button-primary{border-color:rgb(var(--theme-primary,149 0 46));background:rgb(var(--theme-primary,149 0 46));color:#fff}
+      #crm-cash-control-module .cash-button:hover,#crm-cash-control-module .cash-mini-button:hover{border-color:rgb(var(--theme-primary) / .45);color:rgb(var(--theme-primary))}
+      #crm-cash-control-module .cash-button-primary{border-color:rgb(var(--theme-primary));background:rgb(var(--theme-primary));color:#fff}
       #crm-cash-control-module .cash-button-primary:hover{color:#fff;filter:brightness(.97)}
       #crm-cash-control-module button:disabled,#crm-cash-control-module input:disabled,#crm-cash-control-module select:disabled,#crm-cash-control-module textarea:disabled{opacity:.62;cursor:not-allowed}
       #crm-cash-control-module input,#crm-cash-control-module select,#crm-cash-control-module textarea{min-height:2.45rem;width:100%;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;color:var(--color-secondary-900,#0f172a);padding:.55rem .65rem;font-size:.84rem;font-weight:750;outline:none}
       #crm-cash-control-module textarea{min-height:5.8rem;resize:vertical}
-      #crm-cash-control-module input:focus,#crm-cash-control-module select:focus,#crm-cash-control-module textarea:focus{border-color:rgb(var(--theme-primary,149 0 46) / .55);box-shadow:0 0 0 3px rgb(var(--theme-primary,149 0 46) / .12)}
+      #crm-cash-control-module input:focus,#crm-cash-control-module select:focus,#crm-cash-control-module textarea:focus{border-color:rgb(var(--theme-primary) / .55);box-shadow:0 0 0 3px rgb(var(--theme-primary) / .12)}
       #crm-cash-control-module .cash-quick-actions{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem}
       #crm-cash-control-module .cash-quick-actions-buttons{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem}
       #crm-cash-control-module .cash-entry-check{display:flex;align-items:center;justify-content:space-between;gap:.75rem;border-bottom:1px solid var(--color-surface-200,#e2e8f0);padding:.8rem 1rem;font-size:.82rem;font-weight:850}
@@ -2054,7 +2082,7 @@
       #crm-cash-control-module .cash-dashboard-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end}
       #crm-cash-control-module .cash-dashboard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem}
       #crm-cash-control-module .cash-dashboard-card{display:grid;grid-template-columns:2.55rem minmax(0,1fr);align-items:center;gap:.75rem;min-width:0;padding:.9rem}
-      #crm-cash-control-module .cash-dashboard-card-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.55rem;background:color-mix(in srgb,var(--cash-card-color,#95002e) 14%,white);color:var(--cash-card-color,#95002e)}
+      #crm-cash-control-module .cash-dashboard-card-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.55rem;background:color-mix(in srgb,var(--cash-card-color,var(--theme-primary-color)) 14%,white);color:var(--cash-card-color,var(--theme-primary-color))}
       #crm-cash-control-module .cash-dashboard-icon{width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #crm-cash-control-module .cash-dashboard-card span,#crm-cash-control-module .cash-summary-item span{display:block;color:var(--color-secondary-500,#64748b);font-size:.73rem;font-weight:900;text-transform:uppercase}
       #crm-cash-control-module .cash-dashboard-card strong,#crm-cash-control-module .cash-summary-item strong{display:block;margin:.25rem 0;color:var(--color-secondary-900,#0f172a);font-size:1.25rem;font-weight:900;line-height:1.1;letter-spacing:0}
@@ -2066,7 +2094,7 @@
       #crm-cash-control-module .cash-list-table{min-width:58rem}
       #crm-cash-control-module .cash-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem}
       #crm-cash-control-module .cash-summary-item{display:grid;grid-template-columns:2.45rem minmax(0,1fr);align-items:center;gap:.72rem;min-width:0;padding:.9rem}
-      #crm-cash-control-module .cash-summary-icon{display:grid;place-items:center;width:2.45rem;height:2.45rem;border-radius:.55rem;background:color-mix(in srgb,var(--cash-summary-color,#95002e) 14%,white);color:var(--cash-summary-color,#95002e)}
+      #crm-cash-control-module .cash-summary-icon{display:grid;place-items:center;width:2.45rem;height:2.45rem;border-radius:.55rem;background:color-mix(in srgb,var(--cash-summary-color,var(--theme-primary-color)) 14%,white);color:var(--cash-summary-color,var(--theme-primary-color))}
       #crm-cash-control-module .cash-summary-icon-svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #crm-cash-control-module .cash-summary-item.is-bad{border-color:#fecaca;background:#fff7f7}
       #crm-cash-control-module .cash-summary-item.is-bad strong{color:#b91c1c}
@@ -2136,7 +2164,7 @@
       #crm-cash-control-module th,#crm-cash-control-module td{border-bottom:1px solid var(--color-surface-200,#e2e8f0);padding:.72rem .8rem;text-align:left;font-size:.82rem;vertical-align:middle}
       #crm-cash-control-module th{background:var(--color-surface-50,#f8fafc);color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:900;text-transform:uppercase}
       #crm-cash-control-module td{color:var(--color-secondary-800,#1e293b);font-weight:750}
-      #crm-cash-control-module td a{color:rgb(var(--theme-primary,149 0 46));font-weight:900;text-decoration:none}
+      #crm-cash-control-module td a{color:rgb(var(--theme-primary));font-weight:900;text-decoration:none}
       #crm-cash-control-module .cash-row-actions{display:flex;justify-content:flex-end;gap:.4rem}
       #crm-cash-control-module .cash-row-ok td:first-child{box-shadow:inset 3px 0 #16a34a}
       #crm-cash-control-module .cash-row-error td:first-child{box-shadow:inset 3px 0 #dc2626}

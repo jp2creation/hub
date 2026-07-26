@@ -14,7 +14,7 @@ Chaque module utilise trois noms stables :
 - Namespace : `Modules\CrmExample`
 - Slug HUB : `example`
 
-Le slug est celui utilise par le menu, les feature flags et le middleware `crm.module`.
+Le slug est celui utilise par le menu, les feature flags et le middleware `hub.module`.
 
 ## 2. Creer l'arborescence
 
@@ -112,11 +112,11 @@ use Modules\CrmExample\Http\Controllers\ExampleApiController;
 $crmApiMiddleware = ['throttle:crm-api', 'crm.compress'];
 
 Route::view('/example', 'crm')
-    ->middleware(['auth', 'crm.module:example,example.view'])
+    ->middleware(['auth', 'hub.module:example,example.view'])
     ->name('hub.example');
 
 Route::match(['GET', 'POST', 'OPTIONS'], '/api/example', ExampleApiController::class)
-    ->middleware([...$crmApiMiddleware, 'crm.mobile_scope:crm:module:example'])
+    ->middleware([...$crmApiMiddleware, 'hub.mobile_scope:hub:module:example'])
     ->withoutMiddleware([VerifyCsrfToken::class])
     ->name('hub.api.example');
 ```
@@ -168,24 +168,24 @@ Les droits suivent la separation documentee dans [HUB_AUTHORIZATION.md](HUB_AUTH
 Commande utile :
 
 ```bash
-php artisan crm:feature --list
-php artisan crm:feature module:example --disable
-php artisan crm:feature module:example --enable
+php artisan hub:feature --list
+php artisan hub:feature module:example --disable
+php artisan hub:feature module:example --enable
 ```
 
-Les actions sensibles doivent etre protegees par le middleware `crm.module`, une Policy ou un controle explicite dans le service. Une permission Spatie ne doit pas remplacer une permission metier pour une action metier contextuelle par site.
+Les actions sensibles doivent etre protegees par le middleware `hub.module`, une Policy ou un controle explicite dans le service. Une permission Spatie ne doit pas remplacer une permission metier pour une action metier contextuelle par site.
 
 ## 8. Assets du module
 
 Placer les sources propres au module dans `resources/assets`, puis publier vers `public/modules` :
 
 ```bash
-php artisan crm:publish-module-assets --force
+php artisan hub:publish-module-assets --force
 ```
 
 Ne pas modifier directement `public/modules` pour une correction durable et ne pas commiter ce dossier : il est regenere au build/deploiement.
 
-Les images, logos et assets PWA communs doivent etre places dans `resources/frontend/static/assets`, puis publies vers `public/assets` avec `php artisan crm:publish-static-assets --force --clean`. Ne pas ajouter de nouveau code metier dans le snapshot `legacy-adminex-*` : il existe seulement pour maintenir les anciens ecrans pendant leur migration.
+Les images, logos et assets PWA communs doivent etre places dans `resources/frontend/static/assets`, puis publies vers `public/assets` avec `php artisan hub:publish-static-assets --force --clean`. Ne pas ajouter de nouveau code metier dans le snapshot `legacy-adminex-*` : il existe seulement pour maintenir les anciens ecrans pendant leur migration.
 
 ## 9. Tests attendus
 

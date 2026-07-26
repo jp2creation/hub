@@ -67,7 +67,7 @@ class CrmArchiveCommandTest extends TestCase
             'end_at' => '2023-07-11 12:00:00',
         ]);
 
-        $this->artisan('crm:archive', ['--years' => 2, '--dry-run' => true])
+        $this->artisan('hub:archive', ['--years' => 2, '--dry-run' => true])
             ->expectsOutput('Archivage HUB en dry-run.')
             ->expectsOutput('Reservations vehicules : 1 candidat(s) avant 2024-07-19 -> crm_archived_reservations')
             ->expectsOutput('Locations materiel : 1 candidat(s) avant 2024-07-19 -> crm_archived_equipment_rentals')
@@ -131,7 +131,7 @@ class CrmArchiveCommandTest extends TestCase
             'end_at' => '2023-07-12 17:30:00',
         ]);
 
-        $this->artisan('crm:archive', ['--years' => 2, '--limit' => 1])
+        $this->artisan('hub:archive', ['--years' => 2, '--limit' => 1])
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('crm_reservations', ['id' => $oldReservation->id]);
@@ -181,7 +181,7 @@ class CrmArchiveCommandTest extends TestCase
             'end_at' => '2023-07-11 12:00:00',
         ]);
 
-        $this->artisan('crm:archive', ['--years' => 2, '--model' => 'equipment_rentals'])
+        $this->artisan('hub:archive', ['--years' => 2, '--model' => 'equipment_rentals'])
             ->assertSuccessful();
 
         $this->assertDatabaseHas('crm_reservations', ['id' => $reservation->id]);
@@ -330,7 +330,7 @@ class CrmArchiveCommandTest extends TestCase
             'created_by' => $crmUser->id,
         ]);
 
-        $this->artisan('crm:archive', ['--years' => 2])
+        $this->artisan('hub:archive', ['--years' => 2])
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('crm_leave_entries', ['id' => $leave->id]);

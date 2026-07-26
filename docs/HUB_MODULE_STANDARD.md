@@ -77,9 +77,9 @@ Chaque module HUB a un flag `module:<slug>` en base dans `crm_feature_flags`.
 Commandes utiles :
 
 ```bash
-php artisan crm:feature --list
-php artisan crm:feature module:reservations --disable
-php artisan crm:feature module:reservations --enable
+php artisan hub:feature --list
+php artisan hub:feature module:reservations --disable
+php artisan hub:feature module:reservations --enable
 ```
 
-Un module desactive par feature flag disparait du menu et ses routes protegees par `crm.module` retournent une erreur au lieu de continuer a servir la fonctionnalite.
+Un module desactive par feature flag disparait du menu et ses routes protegees par `hub.module` retournent une erreur au lieu de continuer a servir la fonctionnalite.

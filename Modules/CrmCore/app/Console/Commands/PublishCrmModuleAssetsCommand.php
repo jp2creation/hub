@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\File;
 
 class PublishCrmModuleAssetsCommand extends Command
 {
-    protected $signature = 'crm:publish-module-assets {--force : Replace existing files}';
+    protected $signature = 'hub:publish-module-assets {--force : Replace existing files}';
+
+    protected $aliases = ['crm:publish-module-assets'];
 
     protected $description = 'Publish HUB module assets into public/modules.';
 

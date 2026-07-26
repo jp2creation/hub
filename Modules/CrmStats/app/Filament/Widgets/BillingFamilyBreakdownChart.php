@@ -2,6 +2,7 @@
 
 namespace Modules\CrmStats\Filament\Widgets;
 
+use App\Support\CrmTheme;
 use Filament\Widgets\ChartWidget;
 use Modules\CrmStats\Filament\Concerns\AuthorizesStatsAccess;
 use Modules\CrmStats\Filament\Widgets\Concerns\UsesStatsPeriod;
@@ -36,7 +37,7 @@ class BillingFamilyBreakdownChart extends ChartWidget
                 [
                     'label' => 'CA',
                     'data' => $rows->pluck('total')->map(fn (mixed $value): float => (float) $value)->all(),
-                    'backgroundColor' => ['#95002e', '#f6b812', '#0ea5a4', '#5267e8', '#64748b', '#16a34a', '#f97316', '#7c3aed'],
+                    'backgroundColor' => [CrmTheme::primaryHex(), CrmTheme::accentHex(), '#0ea5a4', '#5267e8', '#64748b', '#16a34a', '#f97316', '#7c3aed'],
                 ],
             ],
             'labels' => $rows->pluck('product_family')->all(),

@@ -328,6 +328,7 @@ export function installMartinSolsUi(): void {
   );
 
   window.addEventListener('popstate', beginRouteTransition);
+  window.addEventListener('hub:module-ready', finishRouteTransition);
   window.addEventListener('crm:module-ready', finishRouteTransition);
   window.addEventListener('crm:route-changed', () => window.requestAnimationFrame(syncNavigationChrome));
   window.addEventListener('crm:navigation', () => window.requestAnimationFrame(syncNavigationChrome));

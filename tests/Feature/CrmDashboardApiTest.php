@@ -344,7 +344,7 @@ class CrmDashboardApiTest extends TestCase
             'end_at' => '2026-08-05 23:59:00',
         ]);
 
-        $this->artisan('crm:refresh-dashboard-metrics', ['--date' => '2026-08-05'])
+        $this->artisan('hub:refresh-dashboard-metrics', ['--date' => '2026-08-05'])
             ->assertSuccessful();
 
         $metric = DashboardMetric::currentForSite($site->id, '2026-08-05');

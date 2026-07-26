@@ -357,7 +357,7 @@
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
-      #${rootId}{--resa-primary:rgb(var(--theme-primary,149 0 46));--resa-border:var(--color-surface-200,#e2e8f0);--resa-text:var(--color-secondary-900,#0f172a);--resa-muted:var(--color-secondary-500,#64748b);--resa-green:#16a34a;--resa-red:#dc2626;--resa-blue:#4f6df5;display:grid;gap:1rem}
+      #${rootId}{--resa-primary:rgb(var(--theme-primary));--resa-border:var(--color-surface-200,#e2e8f0);--resa-text:var(--color-secondary-900,#0f172a);--resa-muted:var(--color-secondary-500,#64748b);--resa-green:#16a34a;--resa-red:#dc2626;--resa-blue:#4f6df5;display:grid;gap:1rem}
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .resa-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
@@ -379,7 +379,7 @@
       #${rootId} .resa-nav-button svg{margin:0}
       #${rootId} .resa-vehicles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}
       #${rootId} .resa-product-card{overflow:hidden;border:1px solid var(--resa-border);border-radius:.55rem;background:#fff;text-align:left;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.06);transition:transform .15s ease,box-shadow .15s ease}
-      #${rootId} .resa-product-card:hover,#${rootId} .resa-product-card.is-active{transform:translateY(-1px);box-shadow:0 16px 32px rgba(149,0,46,.13)}
+      #${rootId} .resa-product-card:hover,#${rootId} .resa-product-card.is-active{transform:translateY(-1px);box-shadow:0 16px 32px rgb(var(--theme-primary) / .13)}
       #${rootId} .resa-product-image{position:relative;display:grid;place-items:center;aspect-ratio:1.45/1;background:linear-gradient(135deg,#f7e8ee,#f3edf0);color:var(--resa-primary);font-size:1.45rem;font-weight:950;overflow:hidden}
       #${rootId} .resa-product-image img{width:100%;height:100%;object-fit:cover}
       #${rootId} .resa-dot{position:absolute;right:.62rem;top:.62rem;width:.72rem;height:.72rem;border-radius:999px;background:var(--resa-green);box-shadow:0 0 0 3px #fff}
@@ -404,10 +404,10 @@
       #${rootId} .resa-slot-column-heading span{font-size:.72rem;font-weight:900;color:var(--resa-muted)}
       #${rootId} .reservation-mobile-slot-button,#${rootId} .reservation-day-cell-button{display:grid;place-items:center;min-height:3.1rem;border:0;border-radius:.55rem;background:var(--resa-green);color:#fff;padding:.35rem .45rem;text-align:center;cursor:pointer;box-shadow:0 9px 18px rgba(22,163,74,.22)}
       #${rootId} .reservation-mobile-slot-button.is-reserved,#${rootId} .reservation-day-cell-button.is-reserved{background:var(--resa-red);box-shadow:0 9px 18px rgba(220,38,38,.22)}
-      #${rootId} .reservation-mobile-slot-button.is-selecting,#${rootId} .reservation-day-cell-button.is-selecting{background:var(--resa-primary);box-shadow:0 9px 18px rgba(149,0,46,.22)}
+      #${rootId} .reservation-mobile-slot-button.is-selecting,#${rootId} .reservation-day-cell-button.is-selecting{background:var(--resa-primary);box-shadow:0 9px 18px rgb(var(--theme-primary) / .22)}
       #${rootId} .resa-slot-time{display:block;font-size:1.02rem;font-weight:950;line-height:1}
       #${rootId} .resa-slot-meta{display:block;margin-top:.18rem;font-size:.68rem;font-weight:850;opacity:.9}
-      #${rootId} .resa-selection-panel{border:1px solid color-mix(in srgb,var(--resa-primary) 22%,white);border-radius:.6rem;background:#fff;padding:.9rem;box-shadow:0 12px 28px rgba(149,0,46,.08)}
+      #${rootId} .resa-selection-panel{border:1px solid color-mix(in srgb,var(--resa-primary) 22%,white);border-radius:.6rem;background:#fff;padding:.9rem;box-shadow:0 12px 28px rgb(var(--theme-primary) / .08)}
       #${rootId} .resa-selection-panel span{display:block;color:var(--resa-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}
       #${rootId} .resa-selection-panel strong{display:block;margin:.18rem 0;color:var(--resa-text);font-size:1.15rem;font-weight:950}
       #${rootId} .resa-selection-actions{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.7rem}

@@ -21,12 +21,12 @@ Schedule::command('cash-control:archive-receipts --quiet')
     ->dailyAt('03:00')
     ->withoutOverlapping();
 
-Schedule::command('crm:archive --quiet')
+Schedule::command('hub:archive --quiet')
     ->sundays()
     ->at('03:15')
     ->withoutOverlapping();
 
-Schedule::command('crm:monitor-queue-size --quiet')
+Schedule::command('hub:monitor-queue-size --quiet')
     ->everyFiveMinutes()
     ->withoutOverlapping();
 
@@ -36,6 +36,6 @@ if (class_exists(PruneCommand::class)) {
         ->withoutOverlapping();
 }
 
-Schedule::command('crm:refresh-dashboard-metrics --quiet')
+Schedule::command('hub:refresh-dashboard-metrics --quiet')
     ->everyFifteenMinutes()
     ->withoutOverlapping();

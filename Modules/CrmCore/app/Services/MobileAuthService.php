@@ -231,11 +231,12 @@ class MobileAuthService
         $mobileTokenId = (int) ($payload['mobile_token_id'] ?? 0);
 
         if ($mobileTokenId > 0) {
-            $request->session()->put('crm_mobile_token_id', $mobileTokenId);
+            $request->session()->put('hub_mobile_token_id', $mobileTokenId);
 
             if (($payload['mobile_app'] ?? false) === true) {
-                $request->session()->put('crm_mobile_app', true);
+                $request->session()->put('hub_mobile_app', true);
             } else {
+                $request->session()->forget('hub_mobile_app');
                 $request->session()->forget('crm_mobile_app');
             }
         }
@@ -476,7 +477,7 @@ class MobileAuthService
 
     private function webSessionCacheKey(string $token): string
     {
-        return 'crm:mobile:web-session:'.$token;
+        return 'hub:mobile:web-session:'.$token;
     }
 
     /**
@@ -595,7 +596,7 @@ class MobileAuthService
             ->where('active', true)
             ->pluck('slug')
             ->flatMap(fn (string $slug): array => $this->moduleAbilities($slug))
-            ->prepend('crm:mobile')
+            ->prepend('hub:mobile')
             ->unique()
             ->sort()
             ->values()
@@ -607,10 +608,10 @@ class MobileAuthService
      */
     private function moduleAbilities(string $slug): array
     {
-        $abilities = ['crm:module:'.$slug];
+        $abilities = ['hub:module:'.$slug];
 
         if (str_starts_with($slug, 'documents-')) {
-            $abilities[] = 'crm:module:documents';
+            $abilities[] = 'hub:module:documents';
         }
 
         return $abilities;

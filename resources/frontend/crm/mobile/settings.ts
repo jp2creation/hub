@@ -592,14 +592,8 @@ export function installMobileAppSettings(): void {
     }
 
     let timeout = 0;
-    let onResult: (event: Event) => void;
 
-    const cleanup = () => {
-      window.clearTimeout(timeout);
-      window.removeEventListener('martin-sols:native-location-result', onResult);
-    };
-
-    onResult = (event: Event) => {
+    const onResult = (event: Event): void => {
       const detail = ((event as CustomEvent).detail || {}) as {
         error?: string;
         location?: { accuracy?: number; latitude?: number; longitude?: number; timestamp?: number };
@@ -629,6 +623,11 @@ export function installMobileAppSettings(): void {
       showNotice(detail.error || `Localisation ${nativeSecurityName()} indisponible.`, true);
       renderSettings();
     };
+
+    function cleanup(): void {
+      window.clearTimeout(timeout);
+      window.removeEventListener('martin-sols:native-location-result', onResult);
+    }
 
     locationLoading = true;
     showNotice('');

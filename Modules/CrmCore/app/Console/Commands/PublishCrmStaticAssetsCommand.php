@@ -9,9 +9,11 @@ use RecursiveIteratorIterator;
 
 class PublishCrmStaticAssetsCommand extends Command
 {
-    protected $signature = 'crm:publish-static-assets
+    protected $signature = 'hub:publish-static-assets
         {--force : Replace existing files}
         {--clean : Remove obsolete generated files from public/assets, except uploads}';
+
+    protected $aliases = ['crm:publish-static-assets'];
 
     protected $description = 'Publish versioned HUB static assets into public/assets.';
 

@@ -14,9 +14,11 @@ use Illuminate\Console\Command;
 
 class RefreshDashboardMetricsCommand extends Command
 {
-    protected $signature = 'crm:refresh-dashboard-metrics
+    protected $signature = 'hub:refresh-dashboard-metrics
         {--site= : Limiter le recalcul a un site}
         {--date= : Date de reference YYYY-MM-DD}';
+
+    protected $aliases = ['crm:refresh-dashboard-metrics'];
 
     protected $description = 'Refresh pre-aggregated HUB dashboard metrics.';
 

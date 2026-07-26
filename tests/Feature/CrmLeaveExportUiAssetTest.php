@@ -68,7 +68,7 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringContainsString('class="leave-stat-strip"', $public);
         $this->assertStringContainsString('class="leave-year-calendar"', $public);
         $this->assertStringContainsString('class="leave-mini-month"', $public);
-        $this->assertStringContainsString('--leave-accent:#a30038', $public);
+        $this->assertStringContainsString('--leave-accent:var(--theme-primary-color)', $public);
         $this->assertStringContainsString('is-range-start', $public);
         $this->assertStringContainsString('is-range-middle', $public);
         $this->assertStringContainsString('is-range-end', $public);

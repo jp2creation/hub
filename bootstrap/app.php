@@ -49,7 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
         SyncBillingDataCommand::class,
     ])
     ->withSchedule(function (Schedule $schedule): void {
-        $schedule->command('crm:sync-billing-data')->hourly()->withoutOverlapping();
+        $schedule->command('hub:sync-billing-data')->hourly()->withoutOverlapping();
         $schedule->command('kpis:snapshot --interval=day')->dailyAt('02:10')->withoutOverlapping();
     })
     ->withMiddleware(function (Middleware $middleware): void {
@@ -61,6 +61,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(MirrorAuthenticatedSessionMetadata::class);
 
         $middleware->alias([
+            'hub.compress' => CompressResponse::class,
+            'hub.mobile_scope' => EnsureCrmMobileTokenScope::class,
+            'hub.module' => EnsureCrmModuleAccess::class,
             'crm.compress' => CompressResponse::class,
             'crm.mobile_scope' => EnsureCrmMobileTokenScope::class,
             'crm.module' => EnsureCrmModuleAccess::class,

@@ -29,8 +29,8 @@ class MobileAuthApiTest extends TestCase
             ->assertJsonPath('ok', true)
             ->assertJsonPath('tokenType', 'Bearer')
             ->assertJsonPath('user.modules.0.slug', 'reservations')
-            ->assertJsonPath('scopes.0', 'crm:mobile')
-            ->assertJsonPath('scopes.1', 'crm:module:reservations');
+            ->assertJsonPath('scopes.0', 'hub:mobile')
+            ->assertJsonPath('scopes.1', 'hub:module:reservations');
 
         $token = $loginResponse->json('token');
 
@@ -87,7 +87,7 @@ class MobileAuthApiTest extends TestCase
         $this->get($fullWebSessionPath)
             ->assertRedirect('/?mobile_app=1&mobile_site_id='.$crmUser->sites()->first()->id);
 
-        $this->assertTrue(session()->has('crm_mobile_app'));
+        $this->assertTrue(session()->has('hub_mobile_app'));
 
         $this->flushSession();
 
@@ -121,11 +121,11 @@ class MobileAuthApiTest extends TestCase
 
         $plainWebSessionPath = parse_url((string) $plainWebSessionUrl, PHP_URL_PATH);
 
-        $this->withSession(['crm_mobile_app' => true])
+        $this->withSession(['hub_mobile_app' => true])
             ->get($plainWebSessionPath)
             ->assertRedirect('/?mobile_site_id='.$crmUser->sites()->first()->id);
 
-        $this->assertFalse(session()->has('crm_mobile_app'));
+        $this->assertFalse(session()->has('hub_mobile_app'));
 
         $this->flushSession();
 
@@ -184,7 +184,7 @@ class MobileAuthApiTest extends TestCase
         ])
             ->assertOk()
             ->assertJsonPath('ok', true)
-            ->assertJsonPath('scopes.1', 'crm:module:reservations');
+            ->assertJsonPath('scopes.1', 'hub:module:reservations');
 
         $newAccessToken = (string) $refreshResponse->json('token');
         $newRefreshToken = (string) $refreshResponse->json('refreshToken');
@@ -264,8 +264,8 @@ class MobileAuthApiTest extends TestCase
             ->assertJsonPath('ok', true)
             ->assertJsonPath('tokenType', 'Bearer')
             ->assertJsonPath('user.name', $crmUser->name)
-            ->assertJsonPath('scopes.0', 'crm:mobile')
-            ->assertJsonPath('scopes.1', 'crm:module:reservations');
+            ->assertJsonPath('scopes.0', 'hub:mobile')
+            ->assertJsonPath('scopes.1', 'hub:module:reservations');
 
         $token = (string) $response->json('token');
 
@@ -341,8 +341,8 @@ class MobileAuthApiTest extends TestCase
             ->assertRedirect('/?mobile_app=1&mobile_site_id='.$crmUser->sites()->first()->id);
 
         $this->assertAuthenticatedAs($account);
-        $this->assertTrue(session()->has('crm_mobile_token_id'));
-        $this->assertTrue(session()->has('crm_mobile_app'));
+        $this->assertTrue(session()->has('hub_mobile_token_id'));
+        $this->assertTrue(session()->has('hub_mobile_app'));
 
         $this->post('/logout')
             ->assertRedirect('/login');
@@ -359,7 +359,7 @@ class MobileAuthApiTest extends TestCase
         [$account] = $this->createMobileCrmUser();
 
         $this->actingAs($account)
-            ->withSession(['crm_mobile_app' => true])
+            ->withSession(['hub_mobile_app' => true])
             ->get('/')
             ->assertOk()
             ->assertSee('crm-mobile-app', false)
@@ -384,12 +384,12 @@ class MobileAuthApiTest extends TestCase
         $this->flushSession();
 
         $this->actingAs($account)
-            ->withSession(['crm_mobile_app' => true])
+            ->withSession(['hub_mobile_app' => true])
             ->get('/?source=pwa')
             ->assertOk()
             ->assertDontSee('crm-mobile-app', false)
             ->assertSee('"app":false', false)
-            ->assertSessionMissing('crm_mobile_app');
+            ->assertSessionMissing('hub_mobile_app');
 
         $fallbackNav = (string) file_get_contents(resource_path('frontend/crm/mobile/fallback-nav.ts'));
         $settings = (string) file_get_contents(resource_path('frontend/crm/mobile/settings.ts'));

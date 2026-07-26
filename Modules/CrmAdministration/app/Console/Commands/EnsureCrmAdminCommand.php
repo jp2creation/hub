@@ -8,10 +8,12 @@ use Modules\CrmAdministration\Services\AdminAccountService;
 
 class EnsureCrmAdminCommand extends Command
 {
-    protected $signature = 'crm:admin
+    protected $signature = 'hub:admin
         {--email=admin@crm.jp2.fr : Email du compte administrateur}
         {--name=Administrateur : Nom affiche du compte administrateur}
         {--password-env= : Nom d\'une variable d\'environnement temporaire contenant le mot de passe}';
+
+    protected $aliases = ['crm:admin'];
 
     protected $description = 'Create or update the HUB administrator account without storing the password in .env.example.';
 

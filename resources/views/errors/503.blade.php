@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" style="{{ \App\Support\CrmTheme::styleAttribute() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,7 +7,7 @@
     <style>
         :root {
             color-scheme: light;
-            --accent: #b0003a;
+            --accent: var(--theme-primary-color);
             --text: #172033;
             --muted: #667085;
             --surface: #ffffff;

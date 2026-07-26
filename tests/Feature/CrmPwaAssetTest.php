@@ -213,7 +213,9 @@ class CrmPwaAssetTest extends TestCase
         $this->assertStringContainsString('activeOperations', $publicScript);
         $this->assertStringContainsString('crmNavigationHistoryState', $publicScript);
         $this->assertStringContainsString("window.dispatchEvent(new CustomEvent('crm:navigation'", $publicScript);
-        $this->assertStringContainsString("window.addEventListener('crm:module-error'", $publicScript);
+        $this->assertStringContainsString("'hub:module-error'", $publicScript);
+        $this->assertStringContainsString("'crm:module-error'", $publicScript);
+        $this->assertStringContainsString('window.addEventListener(eventName', $publicScript);
         $this->assertStringContainsString('if (event.defaultPrevented) return', $publicScript);
         $this->assertStringContainsString('[data-no-loader], [data-ajax], [data-crm-ajax-form]', $publicScript);
         $this->assertStringContainsString('forceHide', $publicScript);

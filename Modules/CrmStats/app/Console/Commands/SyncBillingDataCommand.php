@@ -8,10 +8,12 @@ use Modules\CrmStats\Services\BillingStatsSyncService;
 
 class SyncBillingDataCommand extends Command
 {
-    protected $signature = 'crm:sync-billing-data
+    protected $signature = 'hub:sync-billing-data
         {--from-date= : Date de debut de synchronisation, format YYYY-MM-DD}
         {--site-id= : Site HUB cible si l API ne fournit pas de site_id}
         {--full : Synchronisation complete sans filtre de date}';
+
+    protected $aliases = ['crm:sync-billing-data'];
 
     protected $description = 'Synchronise les donnees de facturation externes dans la table locale d agregats HUB.';
 

@@ -4,6 +4,7 @@ namespace Modules\CrmReservations\Filament\Resources\CrmVehicles;
 
 use App\Filament\Concerns\AuthorizesResourceWithPolicy;
 use App\Models\CrmVehicle;
+use App\Support\CrmTheme;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -75,7 +76,7 @@ class CrmVehicleResource extends Resource
                     ->required(),
                 ColorPicker::make('color')
                     ->label('Couleur')
-                    ->default('#95002e')
+                    ->default(CrmTheme::primaryHex())
                     ->required(),
                 self::optionalTimeField('day_start_time', 'Ouverture journee'),
                 self::optionalTimeField('day_end_time', 'Fermeture journee'),

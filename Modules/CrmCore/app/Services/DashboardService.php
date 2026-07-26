@@ -13,6 +13,7 @@ use App\Models\CrmReservation;
 use App\Models\CrmUser;
 use App\Models\DashboardMetric;
 use App\Models\User;
+use App\Support\CrmTheme;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -395,7 +396,7 @@ class DashboardService
             ->map(fn (CrmLeaveEntry $leave): array => [
                 'id' => $leave->id,
                 'name' => $leave->employee?->name ?? 'Utilisateur',
-                'color' => $leave->employee?->color ?? '#95002e',
+                'color' => $leave->employee?->color ?? CrmTheme::primaryHex(),
                 'type' => $this->leaveTypeLabel((string) $leave->type),
                 'period' => $this->leavePeriodLabel((string) $leave->period),
                 'status' => $this->leaveStatusLabel((string) $leave->status),

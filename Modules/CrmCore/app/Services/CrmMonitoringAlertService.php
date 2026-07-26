@@ -22,8 +22,8 @@ class CrmMonitoringAlertService
         $threshold = max(1, (int) config('crm.monitoring.failed_login_threshold', 5));
         $windowMinutes = max(1, (int) config('crm.monitoring.failed_login_window_minutes', 15));
         $cooldownMinutes = max(1, (int) config('crm.monitoring.failed_login_cooldown_minutes', 30));
-        $windowKey = 'crm:monitoring:failed-login:'.$fingerprint.':window';
-        $cooldownKey = 'crm:monitoring:failed-login:'.$fingerprint.':cooldown';
+        $windowKey = 'hub:monitoring:failed-login:'.$fingerprint.':window';
+        $cooldownKey = 'hub:monitoring:failed-login:'.$fingerprint.':cooldown';
 
         Cache::add($windowKey, 0, now()->addMinutes($windowMinutes));
 

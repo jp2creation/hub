@@ -245,7 +245,7 @@ class CrmArchiveService
             'original_id' => $record->getKey(),
             'data' => json_encode($record->getAttributes(), JSON_THROW_ON_ERROR),
             'archived_at' => now(),
-            'archived_by' => 'crm:archive',
+            'archived_by' => 'hub:archive',
             'original_started_at' => $startColumn !== '' ? $record->getAttribute($startColumn) : null,
             'original_ended_at' => $record->getAttribute($dateColumn),
             'created_at' => now(),

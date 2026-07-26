@@ -34,6 +34,34 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
 
+  function themeCssVariables() {
+    return [
+      `--theme-primary:${themeRgb('--theme-primary')}`,
+      `--theme-primary-color:${themeHex('--theme-primary-color')}`,
+      `--theme-primary-dark-color:${themeHex('--theme-primary-dark-color')}`,
+      `--theme-accent:${themeRgb('--theme-accent')}`,
+      `--theme-accent-color:${themeHex('--theme-accent-color')}`,
+    ].join(';');
+  }
+
+  function themeCssValue(name) {
+    const styles = window.getComputedStyle(document.documentElement);
+
+    return styles.getPropertyValue(name).trim().replace(/\s+/g, ' ');
+  }
+
+  function themeHex(name) {
+    const value = themeCssValue(name);
+
+    return /^#[0-9a-f]{6}$/i.test(value) ? value : '#000000';
+  }
+
+  function themeRgb(name) {
+    const value = themeCssValue(name);
+
+    return /^\d{1,3}\s+\d{1,3}\s+\d{1,3}$/.test(value) ? value : '0 0 0';
+  }
+
   function parseDate(value) {
     const [year, month, day] = String(value || '')
       .split('-')
@@ -1013,6 +1041,7 @@
           <meta charset="utf-8">
           <title>${esc(title)}</title>
           <style>
+            :root { ${themeCssVariables()} }
             @page { size:A4 landscape; margin:8mm; }
             * { box-sizing:border-box; }
             body { margin:0; background:#fff; color:#172033; font-family:Arial, Helvetica, sans-serif; font-size:9px; }
@@ -1020,7 +1049,7 @@
             .pdf-top { display:grid; grid-template-columns:42mm minmax(0,1fr) 45mm; align-items:center; gap:8mm; }
             .pdf-brand { display:flex; align-items:center; min-height:16mm; }
             .pdf-logo { max-width:35mm; max-height:14mm; object-fit:contain; }
-            .pdf-brand-fallback { display:block; color:#95002e; font-size:15px; font-weight:950; line-height:1; text-transform:uppercase; }
+            .pdf-brand-fallback { display:block; color:var(--theme-primary-color); font-size:15px; font-weight:950; line-height:1; text-transform:uppercase; }
             h1 { margin:0; color:#1f2937; font-family:Georgia, 'Times New Roman', serif; font-size:25px; font-weight:800; line-height:1.05; text-align:left; }
             .pdf-meta { text-align:right; color:#64748b; font-size:8px; font-weight:700; line-height:1.35; }
             .pdf-period { margin:0; color:#254236; font-size:10px; font-weight:800; text-align:center; }
@@ -1213,7 +1242,7 @@
     const cards = [
       { label: 'Disponibles', value: stats.available, icon: 'check', tone: '#16a34a' },
       { label: 'Total', value: stats.total, icon: 'calendar', tone: '#2563eb' },
-      { label: 'Utilisés', value: stats.approved, icon: 'users', tone: 'rgb(var(--theme-primary,149 0 46))' },
+      { label: 'Utilisés', value: stats.approved, icon: 'users', tone: 'rgb(var(--theme-primary))' },
       { label: 'En attente', value: stats.pending, icon: 'clock', tone: '#f59e0b' },
     ];
 
@@ -1507,7 +1536,7 @@
       #crm-leaves-module .leave-loading { min-height:16rem; display:grid; place-items:center; color:var(--color-secondary-500,#64748b); font-weight:800; }
       #crm-leaves-module .leave-summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; }
       #crm-leaves-module .leave-summary-card { display:grid; grid-template-columns:2.55rem minmax(0,1fr); align-items:center; gap:.75rem; min-width:0; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.75rem; background:#fff; padding:.9rem; }
-      #crm-leaves-module .leave-summary-icon { display:grid; place-items:center; width:2.55rem; height:2.55rem; border-radius:.55rem; background:color-mix(in srgb,var(--leave-summary-color,#95002e) 14%,white); color:var(--leave-summary-color,#95002e); }
+      #crm-leaves-module .leave-summary-icon { display:grid; place-items:center; width:2.55rem; height:2.55rem; border-radius:.55rem; background:color-mix(in srgb,var(--leave-summary-color,var(--theme-primary-color)) 14%,white); color:var(--leave-summary-color,var(--theme-primary-color)); }
       #crm-leaves-module .leave-summary-icon-svg { width:1.1rem; height:1.1rem; fill:none; stroke:currentColor; stroke-width:2.15; stroke-linecap:round; stroke-linejoin:round; }
       #crm-leaves-module .leave-summary-card small { display:block; color:var(--color-secondary-500,#64748b); font-size:.73rem; font-weight:900; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       #crm-leaves-module .leave-summary-card strong { display:block; margin:.18rem 0; color:var(--color-secondary-900,#0f172a); font-size:1.2rem; font-weight:950; line-height:1.08; letter-spacing:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -1515,9 +1544,9 @@
       #crm-leaves-module .leave-workflow-card { overflow:hidden; }
       #crm-leaves-module .leave-request-list { display:grid; gap:.65rem; padding:1rem; }
       #crm-leaves-module .leave-request-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.6rem; align-items:center; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.8rem; background:#fff; padding:.55rem; }
-      #crm-leaves-module .leave-request-row:hover { border-color:color-mix(in srgb,var(--request-color,#95002e) 45%,#e2e8f0); background:color-mix(in srgb,var(--request-color,#95002e) 4%,white); }
+      #crm-leaves-module .leave-request-row:hover { border-color:color-mix(in srgb,var(--request-color,var(--theme-primary-color)) 45%,#e2e8f0); background:color-mix(in srgb,var(--request-color,var(--theme-primary-color)) 4%,white); }
       #crm-leaves-module .leave-request-main { display:grid; min-width:0; grid-template-columns:.9rem minmax(0,1fr) auto; align-items:center; gap:.55rem; border:0; background:transparent; color:inherit; padding:.15rem; text-align:left; }
-      #crm-leaves-module .leave-request-dot { width:.72rem; height:.72rem; border-radius:999px; background:var(--request-color,#95002e); box-shadow:0 0 0 .22rem color-mix(in srgb,var(--request-color,#95002e) 14%,white); }
+      #crm-leaves-module .leave-request-dot { width:.72rem; height:.72rem; border-radius:999px; background:var(--request-color,var(--theme-primary-color)); box-shadow:0 0 0 .22rem color-mix(in srgb,var(--request-color,var(--theme-primary-color)) 14%,white); }
       #crm-leaves-module .leave-request-text { display:block; min-width:0; }
       #crm-leaves-module .leave-request-text strong { display:block; overflow:hidden; color:var(--color-secondary-900,#0f172a); font-size:.86rem; font-weight:900; text-overflow:ellipsis; white-space:nowrap; }
       #crm-leaves-module .leave-request-text small { display:block; margin-top:.12rem; overflow:hidden; color:var(--color-secondary-500,#64748b); font-size:.73rem; font-weight:750; text-overflow:ellipsis; white-space:nowrap; }
@@ -2350,8 +2379,8 @@
         width:2.45rem;
         height:2.45rem;
         border-radius:.55rem;
-        background:color-mix(in srgb,var(--leave-stat-color,#95002e) 14%,white);
-        color:var(--leave-stat-color,#95002e);
+        background:color-mix(in srgb,var(--leave-stat-color,var(--theme-primary-color)) 14%,white);
+        color:var(--leave-stat-color,var(--theme-primary-color));
       }
       #crm-leaves-module .leave-stat-icon .leave-summary-icon-svg {
         width:1.2rem;
@@ -2623,7 +2652,7 @@
         background:color-mix(in srgb,var(--type-color) 20%,#fff);
       }
       #crm-leaves-module {
-        --leave-accent:#a30038;
+        --leave-accent:var(--theme-primary-color);
         --leave-ink:#111827;
         --leave-muted:#767d89;
         --leave-panel:#fbfaf7;
@@ -3427,7 +3456,7 @@
         value: `${formatDaysCount(usedDays)} j`,
         detail: `Annee ${state.month.getFullYear()}`,
         icon: 'check',
-        tone: 'rgb(var(--theme-primary,149 0 46))',
+        tone: 'rgb(var(--theme-primary))',
       },
       {
         label: 'Absences',

@@ -29,6 +29,34 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
 
+  function themeCssVariables() {
+    return [
+      `--theme-primary:${themeRgb('--theme-primary')}`,
+      `--theme-primary-color:${themeHex('--theme-primary-color')}`,
+      `--theme-primary-dark-color:${themeHex('--theme-primary-dark-color')}`,
+      `--theme-accent:${themeRgb('--theme-accent')}`,
+      `--theme-accent-color:${themeHex('--theme-accent-color')}`,
+    ].join(';');
+  }
+
+  function themeCssValue(name) {
+    const styles = window.getComputedStyle(document.documentElement);
+
+    return styles.getPropertyValue(name).trim().replace(/\s+/g, ' ');
+  }
+
+  function themeHex(name) {
+    const value = themeCssValue(name);
+
+    return /^#[0-9a-f]{6}$/i.test(value) ? value : '#000000';
+  }
+
+  function themeRgb(name) {
+    const value = themeCssValue(name);
+
+    return /^\d{1,3}\s+\d{1,3}\s+\d{1,3}$/.test(value) ? value : '0 0 0';
+  }
+
   function today() {
     const date = new Date();
     return [
@@ -314,7 +342,7 @@
         <section class="check-summary">
           ${summaryCard('Remises', summary.remittanceCount || 0, 'Filtre actif', 'file', '#2563eb')}
           ${summaryCard('Chèques', summary.checkCount || 0, 'Nombre total', 'creditCard', '#0f766e')}
-          ${summaryCard('Total', money(summary.totalAmount || 0), 'Somme des remises', 'banknote', '#95002e')}
+          ${summaryCard('Total', money(summary.totalAmount || 0), 'Somme des remises', 'banknote', 'var(--theme-primary-color)')}
           ${summaryCard('Site', activeSiteName(), `${remittances.length} ligne(s)`, 'building', '#7c3aed')}
         </section>
 
@@ -2412,12 +2440,13 @@
           <meta charset="UTF-8">
           <title>${esc(remittance.reference || 'Remise de chèques')}</title>
           <style>
+            :root{${themeCssVariables()}}
             body{font-family:Arial,sans-serif;color:#0f172a;margin:32px}
-            header{display:flex;justify-content:space-between;gap:24px;border-bottom:3px solid #95002e;padding-bottom:18px;margin-bottom:24px}
+            header{display:flex;justify-content:space-between;gap:24px;border-bottom:3px solid var(--theme-primary-color);padding-bottom:18px;margin-bottom:24px}
             h1{margin:0;font-size:26px}
             p{margin:4px 0;color:#475569}
             .total{border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;text-align:right}
-            .total strong{display:block;font-size:24px;color:#95002e}
+            .total strong{display:block;font-size:24px;color:var(--theme-primary-color)}
             table{width:100%;border-collapse:collapse;margin-top:18px}
             th,td{border-bottom:1px solid #e2e8f0;padding:10px;text-align:left;font-size:13px}
             th{background:#f8fafc;color:#475569;text-transform:uppercase;font-size:11px}
@@ -2536,18 +2565,18 @@
       #crm-check-remittance-module .check-mini-button{min-height:2rem;padding:.4rem .55rem;font-size:.74rem}
       #crm-check-remittance-module .check-icon-button{width:2rem;min-width:2rem;padding:.35rem}
       #crm-check-remittance-module .check-icon{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-      #crm-check-remittance-module .check-button:hover,#crm-check-remittance-module .check-mini-button:hover{border-color:rgb(var(--theme-primary,149 0 46) / .45);color:rgb(var(--theme-primary,149 0 46))}
-      #crm-check-remittance-module .check-button-primary{border-color:rgb(var(--theme-primary,149 0 46));background:rgb(var(--theme-primary,149 0 46));color:#fff}
+      #crm-check-remittance-module .check-button:hover,#crm-check-remittance-module .check-mini-button:hover{border-color:rgb(var(--theme-primary) / .45);color:rgb(var(--theme-primary))}
+      #crm-check-remittance-module .check-button-primary{border-color:rgb(var(--theme-primary));background:rgb(var(--theme-primary));color:#fff}
       #crm-check-remittance-module .check-button-primary:hover{color:#fff;filter:brightness(.97)}
       #crm-check-remittance-module button:disabled,#crm-check-remittance-module input:disabled,#crm-check-remittance-module select:disabled,#crm-check-remittance-module textarea:disabled{opacity:.62;cursor:not-allowed}
       #crm-check-remittance-module input,#crm-check-remittance-module select,#crm-check-remittance-module textarea{min-height:2.45rem;width:100%;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;color:var(--color-secondary-900,#0f172a);padding:.55rem .65rem;font-size:.84rem;font-weight:750;outline:none}
       #crm-check-remittance-module textarea{min-height:5.6rem;resize:vertical}
-      #crm-check-remittance-module input:focus,#crm-check-remittance-module select:focus,#crm-check-remittance-module textarea:focus{border-color:rgb(var(--theme-primary,149 0 46) / .55);box-shadow:0 0 0 3px rgb(var(--theme-primary,149 0 46) / .12)}
+      #crm-check-remittance-module input:focus,#crm-check-remittance-module select:focus,#crm-check-remittance-module textarea:focus{border-color:rgb(var(--theme-primary) / .55);box-shadow:0 0 0 3px rgb(var(--theme-primary) / .12)}
       #crm-check-remittance-module label{display:grid;gap:.35rem;min-width:0}
       #crm-check-remittance-module label span{color:var(--color-secondary-600,#475569);font-size:.76rem;font-weight:900}
       #crm-check-remittance-module .check-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem}
       #crm-check-remittance-module .check-summary-card{display:grid;grid-template-columns:2.55rem minmax(0,1fr);align-items:center;gap:.75rem;min-width:0;padding:.9rem}
-      #crm-check-remittance-module .check-summary-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.55rem;background:color-mix(in srgb,var(--check-card-color,#95002e) 14%,white);color:var(--check-card-color,#95002e)}
+      #crm-check-remittance-module .check-summary-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.55rem;background:color-mix(in srgb,var(--check-card-color,var(--theme-primary-color)) 14%,white);color:var(--check-card-color,var(--theme-primary-color))}
       #crm-check-remittance-module .check-summary-card span:not(.check-summary-icon){display:block;color:var(--color-secondary-500,#64748b);font-size:.73rem;font-weight:900;text-transform:uppercase}
       #crm-check-remittance-module .check-summary-card strong{display:block;margin:.25rem 0;color:var(--color-secondary-900,#0f172a);font-size:1.17rem;font-weight:900;line-height:1.1;letter-spacing:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #crm-check-remittance-module .check-summary-card small{display:block;color:var(--color-secondary-400,#94a3b8);font-size:.72rem;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -2559,11 +2588,11 @@
       #crm-check-remittance-module th,#crm-check-remittance-module td{border-bottom:1px solid var(--color-surface-200,#e2e8f0);padding:.72rem .8rem;text-align:left;font-size:.82rem;vertical-align:middle}
       #crm-check-remittance-module th{background:var(--color-surface-50,#f8fafc);color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:900;text-transform:uppercase}
       #crm-check-remittance-module td{color:var(--color-secondary-800,#1e293b);font-weight:750}
-      #crm-check-remittance-module tr.is-selected td:first-child{box-shadow:inset 3px 0 rgb(var(--theme-primary,149 0 46))}
+      #crm-check-remittance-module tr.is-selected td:first-child{box-shadow:inset 3px 0 rgb(var(--theme-primary))}
       #crm-check-remittance-module .check-actions-cell{text-align:right}
       #crm-check-remittance-module .check-row-actions{display:flex;justify-content:flex-end;gap:.4rem}
-      #crm-check-remittance-module .check-link{border:0;background:transparent;color:rgb(var(--theme-primary,149 0 46));font-weight:900;padding:0;cursor:pointer}
-      #crm-check-remittance-module .check-status{display:inline-flex;border-radius:999px;background:rgb(var(--theme-primary,149 0 46) / .1);color:rgb(var(--theme-primary,149 0 46));padding:.25rem .5rem;font-size:.72rem;font-weight:900}
+      #crm-check-remittance-module .check-link{border:0;background:transparent;color:rgb(var(--theme-primary));font-weight:900;padding:0;cursor:pointer}
+      #crm-check-remittance-module .check-status{display:inline-flex;border-radius:999px;background:rgb(var(--theme-primary) / .1);color:rgb(var(--theme-primary));padding:.25rem .5rem;font-size:.72rem;font-weight:900}
       #crm-check-remittance-module .check-mini-button.is-danger:hover{border-color:#fecaca;color:#b91c1c;background:#fff7f7}
       #crm-check-remittance-module .check-empty{display:grid;gap:.55rem;justify-items:start;padding:1.1rem}
       #crm-check-remittance-module .check-empty strong{font-size:1rem}
@@ -2576,9 +2605,9 @@
       #crm-check-remittance-module .check-total-strip strong{color:var(--color-secondary-900,#0f172a);font-size:.9rem;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #crm-check-remittance-module .check-line-name{display:flex;align-items:center;gap:.55rem}
       #crm-check-remittance-module .check-line-name img,#crm-check-remittance-module .check-line-name span{width:2.25rem;height:2.25rem;border-radius:.45rem;border:1px solid var(--color-surface-200,#e2e8f0);object-fit:cover;background:var(--color-surface-50,#f8fafc)}
-      #crm-check-remittance-module .check-line-name span{display:grid;place-items:center;color:rgb(var(--theme-primary,149 0 46))}
+      #crm-check-remittance-module .check-line-name span{display:grid;place-items:center;color:rgb(var(--theme-primary))}
       #crm-check-remittance-module .check-photo-thumb{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;line-height:0;border-radius:.45rem}
-      #crm-check-remittance-module .check-photo-thumb:focus-visible{outline:3px solid rgb(var(--theme-primary,149 0 46) / .28);outline-offset:3px}
+      #crm-check-remittance-module .check-photo-thumb:focus-visible{outline:3px solid rgb(var(--theme-primary) / .28);outline-offset:3px}
       #crm-check-remittance-module .check-modal-backdrop{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(15,23,42,.45);padding:1rem}
       #crm-check-remittance-module .check-modal{width:min(100%,40rem);max-height:min(90vh,45rem);overflow:auto;border-radius:.75rem;background:#fff;box-shadow:0 24px 80px rgba(15,23,42,.25)}
       #crm-check-remittance-module .check-small-modal{width:min(100%,32rem)}
@@ -2607,8 +2636,8 @@
       #crm-check-remittance-module .check-readiness-item small{display:block;color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:800;line-height:1.15;margin-top:.12rem}
       #crm-check-remittance-module .check-readiness-ok{border-color:rgb(34 197 94 / .35);background:rgb(34 197 94 / .08)}
       #crm-check-remittance-module .check-readiness-ok .check-readiness-box{border-color:#16a34a;background:#22c55e}
-      #crm-check-remittance-module .check-readiness-warn{border-color:rgb(var(--theme-primary,149 0 46) / .28);background:rgb(var(--theme-primary,149 0 46) / .07)}
-      #crm-check-remittance-module .check-readiness-warn .check-readiness-box{border-color:rgb(var(--theme-primary,149 0 46) / .75);background:#fff}
+      #crm-check-remittance-module .check-readiness-warn{border-color:rgb(var(--theme-primary) / .28);background:rgb(var(--theme-primary) / .07)}
+      #crm-check-remittance-module .check-readiness-warn .check-readiness-box{border-color:rgb(var(--theme-primary) / .75);background:#fff}
       #crm-check-remittance-module .check-modal-actions{grid-column:1 / -1;display:flex;justify-content:flex-end;gap:.5rem;padding:1rem;border-top:1px solid var(--color-surface-200,#e2e8f0)}
       .dark #crm-check-remittance-module .check-card,.dark #crm-check-remittance-module .check-summary-card,.dark #crm-check-remittance-module .check-modal{background:var(--color-surface-900,#0f172a);border-color:var(--color-surface-700,#334155)}
       .dark #crm-check-remittance-module input,.dark #crm-check-remittance-module select,.dark #crm-check-remittance-module textarea{background:var(--color-surface-800,#1e293b);border-color:var(--color-surface-700,#334155);color:#fff}

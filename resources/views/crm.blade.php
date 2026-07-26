@@ -2,12 +2,14 @@
   $isRegularPwa = request()->query('source') === 'pwa';
 
   if ($isRegularPwa) {
+      session()->forget('hub_mobile_app');
       session()->forget('crm_mobile_app');
   }
 
-  $isCrmMobileApp = ! $isRegularPwa && (session('crm_mobile_app') || request()->boolean('mobile_app'));
+  $isCrmMobileApp = ! $isRegularPwa && (session('hub_mobile_app') || session('crm_mobile_app') || request()->boolean('mobile_app'));
   $crmMobileEmbed = request()->boolean('mobile_embed');
   $crmBodyClass = trim(($crmMobileEmbed ? 'crm-mobile-embed ' : '').($isCrmMobileApp ? 'crm-mobile-app' : ''));
+  $crmTheme = \App\Support\CrmTheme::frontendConfig();
   $crmShellConfig = [
       'assets' => [
           'brandMorphLoaderStylesheet' => \App\Support\CrmAsset::url('modules/crm-core/brand-morph-loader.css'),
@@ -26,10 +28,11 @@
           'siteId' => request()->integer('mobile_site_id') ?: null,
       ],
       'themeStorageKey' => 'martin-sols-hub-theme-v1',
+      'theme' => $crmTheme,
   ];
 @endphp
 <!doctype html>
-<html lang="fr">
+<html lang="fr" style="{{ \App\Support\CrmTheme::styleAttribute() }}">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" />

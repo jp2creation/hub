@@ -45,14 +45,14 @@ class CrmFeatureFlagTest extends TestCase
             'enabled' => true,
         ]);
 
-        $this->artisan('crm:feature', [
+        $this->artisan('hub:feature', [
             'key' => 'module:reservations',
             '--disable' => true,
         ])->assertExitCode(0);
 
         $this->assertFalse((bool) CrmFeatureFlag::query()->where('flag_key', 'module:reservations')->value('enabled'));
 
-        $this->artisan('crm:feature', [
+        $this->artisan('hub:feature', [
             'key' => 'module:reservations',
             '--enable' => true,
         ])->assertExitCode(0);

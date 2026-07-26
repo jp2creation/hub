@@ -502,7 +502,7 @@
     const style = document.createElement("style");
     style.id = "crm-sales-style";
     style.textContent = `
-      #crm-sales-module{--sales-primary:rgb(var(--theme-primary,149 0 46));--sales-ink:#1d334a;--sales-muted:#718197;--sales-line:#e6ebf2;--sales-soft:#f8fafc;display:block}
+      #crm-sales-module{--sales-primary:rgb(var(--theme-primary));--sales-ink:#1d334a;--sales-muted:#718197;--sales-line:#e6ebf2;--sales-soft:#f8fafc;display:block}
       #crm-sales-module .sales-page{display:grid;gap:1rem;color:var(--sales-ink);font-family:var(--font-sans,Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)}
       #crm-sales-module .sales-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
       #crm-sales-module .sales-eyebrow{display:block;margin-bottom:.35rem;color:var(--sales-primary);font-size:.72rem;font-weight:900;text-transform:uppercase}
@@ -518,7 +518,7 @@
       #crm-sales-module label{display:grid;gap:.35rem;min-width:0}
       #crm-sales-module label span{font-size:.72rem;font-weight:900;text-transform:uppercase;color:#7b8a9c}
       #crm-sales-module input,#crm-sales-module select,#crm-sales-module textarea{width:100%;min-width:0;border:1px solid var(--sales-line);border-radius:.55rem;background:#fff;color:var(--sales-ink);font:inherit;font-weight:760;padding:.72rem .8rem;outline:none}
-      #crm-sales-module input:focus,#crm-sales-module select:focus,#crm-sales-module textarea:focus{border-color:rgb(var(--theme-primary,149 0 46) / .65);box-shadow:0 0 0 3px rgb(var(--theme-primary,149 0 46) / .12)}
+      #crm-sales-module input:focus,#crm-sales-module select:focus,#crm-sales-module textarea:focus{border-color:rgb(var(--theme-primary) / .65);box-shadow:0 0 0 3px rgb(var(--theme-primary) / .12)}
       #crm-sales-module .sales-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem}
       #crm-sales-module .sales-stat{border:1px solid var(--sales-line);border-radius:.75rem;background:#fff;padding:.95rem;box-shadow:0 18px 44px rgba(29,51,74,.07);min-height:6.7rem}
       #crm-sales-module .sales-stat span{display:block;color:#7b8a9c;font-size:.72rem;font-weight:900;text-transform:uppercase}

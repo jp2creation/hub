@@ -43,11 +43,11 @@ $crmApiMiddleware = ['throttle:crm-api', 'crm.compress'];
 $crmLoginApiMiddleware = ['throttle:crm-login', 'crm.compress'];
 
 Route::match(['GET', 'OPTIONS'], '/api/dashboard', DashboardApiController::class)
-    ->middleware([...$crmApiMiddleware, 'crm.mobile_scope:crm:module:dashboard'])
+    ->middleware([...$crmApiMiddleware, 'hub.mobile_scope:hub:module:dashboard'])
     ->name('crm.api.dashboard');
 
 Route::get('/api/mobile/dashboard', DashboardApiController::class)
-    ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'crm.mobile_scope:crm:module:dashboard'])
+    ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'hub.mobile_scope:hub:module:dashboard'])
     ->withoutMiddleware([PreventRequestForgery::class])
     ->name('crm.api.mobile.dashboard');
 
@@ -68,7 +68,7 @@ Route::post('/api/mobile/refresh', [MobileAuthController::class, 'refresh'])
     ->name('crm.api.mobile.refresh');
 
 Route::get('/api/mobile/me', [MobileAuthController::class, 'me'])
-    ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'crm.mobile_scope:crm:mobile'])
+    ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'hub.mobile_scope:hub:mobile'])
     ->name('crm.api.mobile.me');
 
 Route::post('/api/mobile/native-session', [MobileAuthController::class, 'nativeSession'])
@@ -76,12 +76,12 @@ Route::post('/api/mobile/native-session', [MobileAuthController::class, 'nativeS
     ->name('crm.api.mobile.native-session');
 
 Route::post('/api/mobile/web-session', [MobileAuthController::class, 'webSession'])
-    ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'crm.mobile_scope:crm:mobile'])
+    ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'hub.mobile_scope:hub:mobile'])
     ->withoutMiddleware([PreventRequestForgery::class])
     ->name('crm.api.mobile.web-session');
 
 Route::post('/api/mobile/logout', [MobileAuthController::class, 'logout'])
-    ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'crm.mobile_scope:crm:mobile'])
+    ->middleware(['auth:sanctum', ...$crmApiMiddleware, 'hub.mobile_scope:hub:mobile'])
     ->withoutMiddleware([PreventRequestForgery::class])
     ->name('crm.api.mobile.logout');
 
