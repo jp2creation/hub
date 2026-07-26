@@ -619,6 +619,34 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('border:1px solid var(--leave-card-border);', $asset);
         $this->assertStringContainsString('border-radius:var(--leave-card-radius);', $asset);
         $this->assertStringContainsString('box-shadow:var(--leave-card-shadow);', $asset);
+        $this->assertStringContainsString('<div class="leave-header-top">', $asset);
+        $this->assertStringContainsString('grid-template-columns:repeat(4,minmax(0,1fr));', $asset);
+
+        $headerStart = strpos($asset, 'function renderHeader()');
+        $headerEnd = strpos($asset, 'function icon(name)', $headerStart ?: 0);
+        $calendarStart = strpos($asset, 'function renderCalendar()');
+        $calendarEnd = strpos($asset, 'function renderWorkflowPanel()', $calendarStart ?: 0);
+        $balancesStart = strpos($asset, 'function renderBalancesPanel()');
+        $balancesEnd = strpos($asset, 'function renderRequestsTable()', $balancesStart ?: 0);
+
+        if (
+            $headerStart === false ||
+            $headerEnd === false ||
+            $calendarStart === false ||
+            $calendarEnd === false ||
+            $balancesStart === false ||
+            $balancesEnd === false
+        ) {
+            $this->fail('Le module Congés ne contient plus les fonctions de rendu attendues.');
+        }
+
+        $headerSource = substr($asset, $headerStart, $headerEnd - $headerStart);
+        $calendarSource = substr($asset, $calendarStart, $calendarEnd - $calendarStart);
+        $balancesSource = substr($asset, $balancesStart, $balancesEnd - $balancesStart);
+
+        $this->assertStringContainsString('${renderTopMetrics()}', $headerSource);
+        $this->assertStringNotContainsString('${renderTopMetrics()}', $calendarSource);
+        $this->assertStringNotContainsString('${renderTopMetrics()}', $balancesSource);
 
         foreach ([
             '#fffdfa',

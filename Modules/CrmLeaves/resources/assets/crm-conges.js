@@ -537,15 +537,18 @@
   function renderHeader() {
     return `
       <header class="leave-app-header">
-        <div class="leave-header-main">
-          <h1>Congés &amp; Absences</h1>
-          ${renderViewTabs()}
+        <div class="leave-header-top">
+          <div class="leave-header-main">
+            <h1>Congés &amp; Absences</h1>
+          </div>
+          <div class="leave-header-icons" aria-label="Outils congés">
+            <button type="button" class="leave-round-icon" data-filter-focus aria-label="Rechercher">⌕</button>
+            <button type="button" class="leave-round-icon" aria-label="Réglages">⚙</button>
+            <button type="button" class="leave-round-icon" aria-label="Notifications">◌</button>
+          </div>
         </div>
-        <div class="leave-header-icons" aria-label="Outils congés">
-          <button type="button" class="leave-round-icon" data-filter-focus aria-label="Rechercher">⌕</button>
-          <button type="button" class="leave-round-icon" aria-label="Réglages">⚙</button>
-          <button type="button" class="leave-round-icon" aria-label="Notifications">◌</button>
-        </div>
+        ${renderTopMetrics()}
+        ${renderViewTabs()}
       </header>
     `;
   }
@@ -2666,10 +2669,26 @@
         border-radius:.05rem;
       }
       #crm-leaves-module .leave-app-header {
+        display:grid;
+        align-items:stretch;
+        gap:.85rem;
         background:var(--leave-panel);
         border:1px solid var(--leave-card-border);
         border-radius:var(--leave-card-radius);
+        padding:1rem;
         box-shadow:var(--leave-card-shadow);
+      }
+      #crm-leaves-module .leave-header-top {
+        display:flex;
+        min-width:0;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:1rem;
+      }
+      #crm-leaves-module .leave-header-main {
+        display:grid;
+        gap:.25rem;
+        min-width:0;
       }
       #crm-leaves-module .leave-header-main h1 {
         font-size:1.18rem;
@@ -2677,6 +2696,8 @@
       }
       #crm-leaves-module .leave-view-tabs {
         gap:1.25rem;
+        border-top:1px solid var(--leave-card-border);
+        padding-top:.05rem;
       }
       #crm-leaves-module .leave-view-tab {
         color:#6f7581;
@@ -2749,7 +2770,7 @@
         border-radius:.38rem;
       }
       #crm-leaves-module .leave-calendar-toolbar {
-        grid-template-columns:auto auto minmax(22rem,1fr) auto;
+        grid-template-columns:auto auto minmax(0,1fr);
         gap:.65rem 1rem;
         padding:1rem 1rem .8rem;
       }
@@ -2810,8 +2831,10 @@
         color:var(--leave-ink);
       }
       #crm-leaves-module .leave-stat-strip {
-        justify-self:end;
-        width:min(100%,37rem);
+        display:grid;
+        grid-template-columns:repeat(4,minmax(0,1fr));
+        gap:.85rem;
+        width:100%;
         border:0;
         border-radius:0;
         background:transparent;
@@ -2835,7 +2858,7 @@
         font-weight:900;
       }
       #crm-leaves-module .leave-calendar-actions {
-        grid-column:3 / 5;
+        grid-column:3;
         align-items:center;
       }
       #crm-leaves-module .leaves-button,
@@ -3183,15 +3206,18 @@
       }
       @media (max-width:760px) {
         #crm-leaves-module .leave-app-header {
-          align-items:flex-start;
+          align-items:stretch;
           padding:.85rem .85rem .6rem;
+        }
+        #crm-leaves-module .leave-header-top {
+          width:100%;
         }
         #crm-leaves-module .leave-header-main {
           display:grid;
           gap:.55rem;
         }
         #crm-leaves-module .leave-view-tabs {
-          max-width:calc(100vw - 7rem);
+          max-width:100%;
           gap:.9rem;
         }
         #crm-leaves-module .leave-header-icons {
@@ -3354,7 +3380,6 @@
             <strong>${state.month.getFullYear()}</strong>
             <button type="button" data-next aria-label="Annee suivante">›</button>
           </div>
-          ${renderTopMetrics()}
           <div class="leave-calendar-actions">
             ${canExport() ? '<button type="button" class="leaves-button" data-export-pdf>Exporter</button>' : ''}
             ${canCreateRequest() ? '<button type="button" class="leaves-button leaves-button-primary" data-add-request>+ Demander une absence</button>' : ''}
@@ -3753,7 +3778,6 @@
             <h2 class="leave-card-title">Soldes</h2>
             <p class="leave-card-subtitle">Vue annuelle par membre, demandes validées et en attente.</p>
           </div>
-          ${renderTopMetrics()}
         </div>
         <div class="leave-balance-table-wrap">
           <table class="leave-balance-table">
