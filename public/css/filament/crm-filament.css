@@ -6,7 +6,7 @@
     --crm-accent: #ffc20a;
     --crm-ink: #1d354f;
     --crm-muted: #5d7287;
-    --crm-bg: #eff2f5;
+    --crm-bg: #fafafa;
     --crm-sidebar: #ffffff;
     --crm-surface: #ffffff;
     --crm-border: #dde2e7;
@@ -347,7 +347,7 @@ html.fi {
 .dark .fi-body,
 .dark .fi-layout,
 .dark .fi-main-ctn {
-    --crm-bg: #eff2f5;
+    --crm-bg: #fafafa;
     --crm-sidebar: #ffffff;
     --crm-surface: #ffffff;
     --crm-border: #dde2e7;

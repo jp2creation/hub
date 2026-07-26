@@ -12,7 +12,7 @@
   --ms-ui-muted: var(--color-secondary-500, #5d7287);
   --ms-ui-border: var(--color-surface-200, #e4e4e7);
   --ms-ui-surface: #fff;
-  --ms-ui-soft: var(--color-secondary-50, #eff2f5);
+  --ms-ui-soft: var(--color-secondary-50, #fafafa);
   --ms-ui-radius: var(--radius, 0.625rem);
   --ms-ui-shadow-card: var(--shadow-card, 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -4px rgb(0 0 0 / 0.06));
   --ms-ui-shadow-ring: var(--shadow-card-ring, 0 0 0 1px rgb(0 0 0 / 0.03));

@@ -143,8 +143,14 @@ class CrmFrontendSourceTest extends TestCase
         $templateComponentsCss = (string) file_get_contents(resource_path('frontend/crm/styles/template-compat/components.css'));
         $nativeUi = (string) file_get_contents(resource_path('frontend/crm/ui/native-ui.ts'));
         $nativeUiCss = (string) file_get_contents(resource_path('frontend/crm/styles/native-ui.css'));
+        $filamentCss = (string) file_get_contents(public_path('css/filament/crm-filament.css'));
 
         $this->assertStringContainsString("window.matchMedia('(max-width: 767.98px)')", $mobileFallback);
+        $this->assertStringContainsString('--color-secondary-50: #fafafa;', $templateVariablesCss);
+        $this->assertStringContainsString('background: var(--color-secondary-50, #fafafa);', $shellCss);
+        $this->assertStringContainsString('--ms-ui-soft: var(--color-secondary-50, #fafafa);', $nativeUiCss);
+        $this->assertStringContainsString('--crm-bg: #fafafa;', $filamentCss);
+        $this->assertStringNotContainsString('#eff2f5', $templateVariablesCss.$shellCss.$nativeUiCss.$filamentCss);
         $this->assertStringContainsString('shouldUseFallbackNavigation', $mobileFallback);
         $this->assertStringContainsString("document.body.classList.contains('crm-mobile-app')", $mobileFallback);
         $this->assertStringContainsString("document.body.classList.contains('crm-mobile-embed')", $mobileFallback);

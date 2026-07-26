@@ -10,7 +10,7 @@
 
 .crm-native-shell {
   min-height: 100vh;
-  background: var(--color-secondary-50, #eff2f5);
+  background: var(--color-secondary-50, #fafafa);
   color: rgb(29 53 79);
   font-family:
     'DM Sans',
@@ -25,7 +25,7 @@
 }
 
 body.crm-native-shell-active {
-  background: var(--color-secondary-50, #eff2f5);
+  background: var(--color-secondary-50, #fafafa);
   color: rgb(29 53 79);
   font-family:
     'DM Sans',
