@@ -719,17 +719,17 @@ html.crm-ui-module-ready .crm-native-content > * {
 
 @media (max-width: 640px) {
   .crm-native-header-inner {
-    gap: 0.65rem;
+    gap: 0.5rem;
     padding: 0 0.75rem;
   }
 
   .crm-native-mobile-brand {
-    flex: 0 1 8.6rem;
+    flex: 0 1 7.8rem;
     justify-content: flex-start;
   }
 
   .crm-native-mobile-brand img {
-    width: min(132px, 34vw);
+    width: min(118px, 30vw);
     max-height: 38px;
   }
 
@@ -749,32 +749,61 @@ html.crm-ui-module-ready .crm-native-content > * {
   }
 
   .crm-native-header-actions {
-    gap: 0.45rem;
+    gap: 0.38rem;
   }
 
   .crm-native-header-actions .crm-active-site-switcher {
-    flex: 0 1 6.9rem !important;
-    max-width: 6.9rem !important;
+    flex: 0 1 clamp(8.4rem, 38vw, 9.8rem) !important;
+    max-width: clamp(8.4rem, 38vw, 9.8rem) !important;
   }
 
   .crm-native-header-actions .crm-active-site-trigger {
-    max-width: 6.9rem !important;
-    padding-inline: 0.62rem 1.35rem !important;
+    grid-template-columns: 0.45rem minmax(0, 1fr) 0.75rem !important;
+    gap: 0.25rem !important;
+    max-width: none !important;
+    padding-inline: 0.4rem !important;
+  }
+
+  .crm-native-header-actions .crm-active-site-dot {
+    width: 0.45rem !important;
+    height: 0.45rem !important;
+  }
+
+  .crm-native-header-actions .crm-active-site-chevron {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
   }
 }
 
 @media (max-width: 380px) {
   .crm-native-mobile-brand {
-    flex-basis: 7.3rem;
+    flex-basis: 6.9rem;
   }
 
   .crm-native-mobile-brand img {
-    width: min(114px, 31vw);
+    width: min(104px, 28vw);
   }
 
-  .crm-native-header-actions .crm-active-site-switcher,
+  .crm-native-header-actions .crm-active-site-switcher {
+    flex-basis: clamp(7.9rem, 38vw, 8.9rem) !important;
+    max-width: clamp(7.9rem, 38vw, 8.9rem) !important;
+  }
+
   .crm-native-header-actions .crm-active-site-trigger {
-    max-width: 6.1rem !important;
+    grid-template-columns: 0.42rem minmax(0, 1fr) 0.7rem !important;
+    gap: 0.22rem !important;
+    font-size: 0.75rem !important;
+    padding-inline: 0.36rem !important;
+  }
+
+  .crm-native-header-actions .crm-active-site-dot {
+    width: 0.42rem !important;
+    height: 0.42rem !important;
+  }
+
+  .crm-native-header-actions .crm-active-site-chevron {
+    width: 0.7rem !important;
+    height: 0.7rem !important;
   }
 }
 

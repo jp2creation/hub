@@ -181,6 +181,10 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('height: var(--crm-header-height);', $shellCss);
         $this->assertStringContainsString('padding: 0 0.75rem;', $shellCss);
         $this->assertStringNotContainsString('padding: 0 0.75rem !important;', $shellCss);
+        $this->assertStringContainsString('max-width: clamp(8.4rem, 38vw, 9.8rem) !important;', $shellCss);
+        $this->assertStringContainsString('flex-basis: clamp(7.9rem, 38vw, 8.9rem) !important;', $shellCss);
+        $this->assertStringNotContainsString('max-width: 6.9rem !important;', $shellCss);
+        $this->assertStringNotContainsString('max-width: 6.1rem !important;', $shellCss);
         $this->assertStringContainsString('body.crm-mobile-app .crm-mobile-fallback-header', $shellCss);
         $this->assertStringContainsString('display: none !important;', $shellCss);
         $this->assertStringNotContainsString('z-index: 9988;', $shellCss);
@@ -744,6 +748,7 @@ class CrmFrontendSourceTest extends TestCase
 
         $this->assertStringContainsString('.crm-active-site-trigger.has-site-dot .crm-active-site-dot', $activeSite);
         $this->assertStringContainsString('button.style.setProperty(\'--active-site-color\', selectedColor);', $activeSite);
+        $this->assertStringContainsString('clamp(8.5rem,36vw,10.8rem)', $activeSite);
         $this->assertStringContainsString('crm-active-site-option-dot', $activeSite);
         $this->assertStringContainsString("'.crm-active-site-option.is-active{background:rgb(var(--theme-primary) / .11);color:rgb(var(--theme-primary))}'", $activeSite);
         $this->assertStringNotContainsString('.crm-active-site-trigger.has-site-color', $activeSite);
