@@ -702,13 +702,13 @@ html.crm-ui-module-ready .crm-native-content > * {
   .crm-native-mobile-brand {
     display: flex;
     min-width: 0;
-    flex: 1;
+    flex: 0 0 2.65rem;
     justify-content: center;
   }
 
   .crm-native-mobile-brand img {
-    width: min(170px, 45vw);
-    max-height: 42px;
+    width: 2.1rem;
+    height: 2.1rem;
     object-fit: contain;
   }
 
@@ -724,13 +724,12 @@ html.crm-ui-module-ready .crm-native-content > * {
   }
 
   .crm-native-mobile-brand {
-    flex: 0 1 7.8rem;
-    justify-content: flex-start;
+    flex: 0 0 2.4rem;
   }
 
   .crm-native-mobile-brand img {
-    width: min(118px, 30vw);
-    max-height: 38px;
+    width: 2rem;
+    height: 2rem;
   }
 
   .crm-native-user {
@@ -749,12 +748,14 @@ html.crm-ui-module-ready .crm-native-content > * {
   }
 
   .crm-native-header-actions {
+    flex: 1 1 auto;
     gap: 0.38rem;
+    justify-content: flex-end;
   }
 
   .crm-native-header-actions .crm-active-site-switcher {
-    flex: 0 1 clamp(8.4rem, 38vw, 9.8rem) !important;
-    max-width: clamp(8.4rem, 38vw, 9.8rem) !important;
+    flex: 0 1 clamp(10rem, 44vw, 12rem) !important;
+    max-width: clamp(10rem, 44vw, 12rem) !important;
   }
 
   .crm-native-header-actions .crm-active-site-trigger {
@@ -777,16 +778,17 @@ html.crm-ui-module-ready .crm-native-content > * {
 
 @media (max-width: 380px) {
   .crm-native-mobile-brand {
-    flex-basis: 6.9rem;
+    flex-basis: 2.2rem;
   }
 
   .crm-native-mobile-brand img {
-    width: min(104px, 28vw);
+    width: 1.85rem;
+    height: 1.85rem;
   }
 
   .crm-native-header-actions .crm-active-site-switcher {
-    flex-basis: clamp(7.9rem, 38vw, 8.9rem) !important;
-    max-width: clamp(7.9rem, 38vw, 8.9rem) !important;
+    flex-basis: clamp(9.6rem, 44vw, 10.8rem) !important;
+    max-width: clamp(9.6rem, 44vw, 10.8rem) !important;
   }
 
   .crm-native-header-actions .crm-active-site-trigger {

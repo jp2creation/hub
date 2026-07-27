@@ -81,6 +81,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('data-crm-native-shell', $nativeShell);
         $this->assertStringContainsString('layout-sidebar crm-native-sidebar', $nativeShell);
         $this->assertStringContainsString('layout-header crm-native-header', $nativeShell);
+        $this->assertStringContainsString('<img src="${esc(logoMarkUrl())}" alt="Martin Sols">', $nativeShell);
+        $this->assertStringNotContainsString('<img src="${esc(logoUrl())}" alt="Martin Sols">', $nativeShell);
         $this->assertStringContainsString('martin-sols-hub-sidebar-collapsed', $nativeShell);
         $this->assertStringContainsString('crm-native-sidebar-collapsed', $nativeShell);
         $this->assertStringContainsString('Déployer le menu', $nativeShell);
@@ -181,8 +183,10 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('height: var(--crm-header-height);', $shellCss);
         $this->assertStringContainsString('padding: 0 0.75rem;', $shellCss);
         $this->assertStringNotContainsString('padding: 0 0.75rem !important;', $shellCss);
-        $this->assertStringContainsString('max-width: clamp(8.4rem, 38vw, 9.8rem) !important;', $shellCss);
-        $this->assertStringContainsString('flex-basis: clamp(7.9rem, 38vw, 8.9rem) !important;', $shellCss);
+        $this->assertStringContainsString('flex: 0 0 2.4rem;', $shellCss);
+        $this->assertStringContainsString('max-width: clamp(10rem, 44vw, 12rem) !important;', $shellCss);
+        $this->assertStringContainsString('flex-basis: clamp(9.6rem, 44vw, 10.8rem) !important;', $shellCss);
+        $this->assertStringNotContainsString('width: min(118px, 30vw);', $shellCss);
         $this->assertStringNotContainsString('max-width: 6.9rem !important;', $shellCss);
         $this->assertStringNotContainsString('max-width: 6.1rem !important;', $shellCss);
         $this->assertStringContainsString('body.crm-mobile-app .crm-mobile-fallback-header', $shellCss);
@@ -747,8 +751,9 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('window.CRM_ACTIVE_SITE?.reload?.();', $administration);
 
         $this->assertStringContainsString('.crm-active-site-trigger.has-site-dot .crm-active-site-dot', $activeSite);
+        $this->assertStringContainsString('.crm-active-site-control{position:relative;min-width:0;flex:1 1 auto;width:100%}', $activeSite);
         $this->assertStringContainsString('button.style.setProperty(\'--active-site-color\', selectedColor);', $activeSite);
-        $this->assertStringContainsString('clamp(8.5rem,36vw,10.8rem)', $activeSite);
+        $this->assertStringContainsString('clamp(10rem,44vw,12rem)', $activeSite);
         $this->assertStringContainsString('crm-active-site-option-dot', $activeSite);
         $this->assertStringContainsString("'.crm-active-site-option.is-active{background:rgb(var(--theme-primary) / .11);color:rgb(var(--theme-primary))}'", $activeSite);
         $this->assertStringNotContainsString('.crm-active-site-trigger.has-site-color', $activeSite);
