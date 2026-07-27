@@ -35,7 +35,7 @@ class TeamApiController extends Controller
             $body = $request->body();
 
             return match ($action) {
-                'bootstrap' => $this->json($teams->bootstrap($actor, $request->siteId($body))),
+                'bootstrap' => $this->json($teams->bootstrap($actor, $request->siteId($body), $request->allSites($body))),
                 default => $this->json(['ok' => false, 'error' => 'Action inconnue'], 404),
             };
         } catch (HttpExceptionInterface $error) {

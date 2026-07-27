@@ -42,6 +42,13 @@ class CrmModuleListUiAssetTest extends TestCase
         $this->assertStringContainsString('class="teams-mobile-list"', $public);
         $this->assertStringContainsString('function renderMemberCard', $public);
         $this->assertStringContainsString('class="teams-person-card"', $public);
+        $this->assertStringContainsString('searchAllSites: false', $public);
+        $this->assertStringContainsString('params.set("allSites", "1")', $public);
+        $this->assertStringContainsString('function renderSearchScope(searchAllSites)', $public);
+        $this->assertStringContainsString('data-teams-all-sites', $public);
+        $this->assertStringContainsString('Tous les sites', $public);
+        $this->assertStringContainsString('${showSites ? "<th>Sites</th>" : ""}', $public);
+        $this->assertStringContainsString('function memberSites(member)', $public);
         $this->assertStringContainsString('html.crm-teams-route main .layout-container.layout-page{width:100%;max-width:100%;min-width:0;overflow-x:hidden}', $public);
         $this->assertStringNotContainsString('html.crm-teams-route .layout-container.layout-page{width:100%;max-width:100%;min-width:0;overflow-x:hidden}', $public);
         $this->assertStringContainsString('.teams-table-wrap{display:none}', $public);

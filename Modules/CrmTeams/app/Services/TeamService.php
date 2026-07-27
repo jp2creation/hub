@@ -32,7 +32,7 @@ class TeamService
         return $actor;
     }
 
-    public function bootstrap(CrmUser $actor, ?int $requestedSiteId = null): array
+    public function bootstrap(CrmUser $actor, ?int $requestedSiteId = null, bool $allSites = false): array
     {
         $siteIds = $this->access->siteIdsForModule($actor, 'equipes', ['teams.view']);
 
@@ -50,8 +50,9 @@ class TeamService
             'mode' => 'mysql',
             'user' => $this->actorRow($actor, $siteIds, $selectedSiteId),
             'selectedSiteId' => $selectedSiteId,
+            'allSites' => $allSites,
             'sites' => $this->siteRows($siteIds),
-            'members' => $this->memberRows($actor, $selectedSiteId),
+            'members' => $this->memberRows($actor, $allSites ? $siteIds : [$selectedSiteId]),
         ];
     }
 
@@ -117,12 +118,14 @@ class TeamService
     }
 
     /**
+     * @param  array<int, int>  $siteIds
      * @return array<int, array<string, mixed>>
      */
-    private function memberRows(CrmUser $actor, int $siteId): array
+    private function memberRows(CrmUser $actor, array $siteIds): array
     {
+        $siteLookup = array_fill_keys($siteIds, true);
         $members = collect(CrmReferenceCache::activeUserRows())
-            ->filter(fn (array $member): bool => in_array($siteId, $member['siteIds'], true))
+            ->filter(fn (array $member): bool => $this->memberBelongsToSiteLookup($member, $siteLookup))
             ->sortBy(fn (array $member): string => sprintf(
                 '%s|%s|%s',
                 $member['firstName'] ?: $member['name'],
@@ -143,6 +146,21 @@ class TeamService
             ))
             ->values()
             ->all();
+    }
+
+    /**
+     * @param  array{siteIds: array<int, int>}  $member
+     * @param  array<int, bool>  $siteLookup
+     */
+    private function memberBelongsToSiteLookup(array $member, array $siteLookup): bool
+    {
+        foreach ($member['siteIds'] as $siteId) {
+            if (isset($siteLookup[(int) $siteId])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

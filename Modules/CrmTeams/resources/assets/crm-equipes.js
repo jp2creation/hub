@@ -15,6 +15,7 @@
     loading: false,
     error: "",
     query: "",
+    searchAllSites: false,
   };
 
   const esc = (value) => String(value ?? "")
@@ -62,6 +63,7 @@
     const params = new URLSearchParams({ action });
     const siteId = activeSiteId();
     if (siteId) params.set("siteId", String(siteId));
+    if (state.searchAllSites) params.set("allSites", "1");
 
     let lastError = null;
 
@@ -94,7 +96,9 @@
     render();
 
     try {
-      state.data = await request("bootstrap");
+      const payload = await request("bootstrap");
+      state.data = payload;
+      state.searchAllSites = Boolean(payload.allSites);
     } catch (error) {
       state.error = error instanceof Error ? error.message : "Impossible de charger l'équipe.";
       state.data = null;
@@ -143,6 +147,7 @@
         member.name,
         member.phone,
         member.email,
+        memberSites(member),
       ].some((value) => normalize(value).includes(query));
     });
   }
@@ -195,6 +200,11 @@
     const currentMembers = members();
     const membersWithPhone = currentMembers.filter((member) => member.phone).length;
     const membersWithEmail = currentMembers.filter((member) => member.email).length;
+    const searchAllSites = Boolean(state.searchAllSites);
+    const membersTitle = searchAllSites ? "Tous les sites" : (site?.name || "Site actif");
+    const membersScope = searchAllSites
+      ? `${currentMembers.length} membre${currentMembers.length > 1 ? "s" : ""} sur ${state.data.sites.length} site${state.data.sites.length > 1 ? "s" : ""} visible${state.data.sites.length > 1 ? "s" : ""}`
+      : `${currentMembers.length} membre${currentMembers.length > 1 ? "s" : ""}`;
 
     root.innerHTML = `
       <div class="teams-page">
@@ -204,10 +214,13 @@
             <h1>Équipe</h1>
             <p>${esc(site?.name || "Site actif")}</p>
           </div>
-          <label class="teams-search">
-            ${icon("search")}
-            <input type="search" value="${esc(state.query)}" placeholder="Rechercher un membre" data-teams-search />
-          </label>
+          <div class="teams-header-tools">
+            <label class="teams-search">
+              ${icon("search")}
+              <input type="search" value="${esc(state.query)}" placeholder="Rechercher un membre" data-teams-search />
+            </label>
+            ${renderSearchScope(searchAllSites)}
+          </div>
         </header>
 
         <section class="teams-stats" aria-label="Synthèse équipe">
@@ -222,11 +235,11 @@
         <section class="teams-card">
           <div class="teams-card-head">
             <div>
-              <h2>${esc(site?.name || "Site actif")}</h2>
-              <p>${currentMembers.length} membre${currentMembers.length > 1 ? "s" : ""}</p>
+              <h2>${esc(membersTitle)}</h2>
+              <p>${esc(membersScope)}</p>
             </div>
           </div>
-          ${currentMembers.length ? renderMembers(currentMembers) : renderEmptyMembers()}
+          ${currentMembers.length ? renderMembers(currentMembers, searchAllSites) : renderEmptyMembers(searchAllSites)}
         </section>
       </div>
     `;
@@ -243,6 +256,17 @@
           <strong>${esc(value)}</strong>
         </span>
       </div>
+    `;
+  }
+
+  function renderSearchScope(searchAllSites) {
+    if ((state.data?.sites || []).length <= 1) return "";
+
+    return `
+      <label class="teams-search-scope" title="Inclure les membres de tous les sites visibles">
+        <input type="checkbox" ${searchAllSites ? "checked" : ""} data-teams-all-sites />
+        <span>Tous les sites</span>
+      </label>
     `;
   }
 
@@ -301,7 +325,7 @@
     `;
   }
 
-  function renderMembers(list) {
+  function renderMembers(list, showSites) {
     return `
       <div class="teams-table-wrap">
         <table class="teams-table">
@@ -311,6 +335,7 @@
               ${canViewPresence() ? "<th>Statut</th>" : ""}
               <th>Prénom</th>
               <th>Nom</th>
+              ${showSites ? "<th>Sites</th>" : ""}
               <th>Téléphone</th>
               <th>Mail</th>
             </tr>
@@ -329,6 +354,7 @@
                 ${canViewPresence() ? `<td>${presencePill(member)}</td>` : ""}
                 <td>${cell(member.firstName)}</td>
                 <td>${cell(member.lastName)}</td>
+                ${showSites ? `<td>${cell(memberSites(member))}</td>` : ""}
                 <td>${member.phone ? `<a href="tel:${esc(phoneHref(member.phone))}">${esc(member.phone)}</a>` : `<span class="teams-muted">Non renseigné</span>`}</td>
                 <td>${member.email ? `<a href="mailto:${esc(member.email)}">${esc(member.email)}</a>` : `<span class="teams-muted">Non renseigné</span>`}</td>
               </tr>
@@ -337,12 +363,12 @@
         </table>
       </div>
       <div class="teams-mobile-list" aria-label="Membres">
-        ${list.map((member) => renderMemberCard(member)).join("")}
+        ${list.map((member) => renderMemberCard(member, showSites)).join("")}
       </div>
     `;
   }
 
-  function renderMemberCard(member) {
+  function renderMemberCard(member, showSites) {
     const fullName = member.name || [member.firstName, member.lastName].filter(Boolean).join(" ");
 
     return `
@@ -363,6 +389,10 @@
             <dt>Nom</dt>
             <dd>${cell(member.lastName)}</dd>
           </div>
+          ${showSites ? `<div>
+            <dt>Sites</dt>
+            <dd>${cell(memberSites(member))}</dd>
+          </div>` : ""}
           <div>
             <dt>Téléphone</dt>
             <dd>${member.phone ? `<a href="tel:${esc(phoneHref(member.phone))}">${esc(member.phone)}</a>` : `<span class="teams-muted">Non renseigné</span>`}</dd>
@@ -391,8 +421,14 @@
     `;
   }
 
-  function renderEmptyMembers() {
-    return `<div class="teams-empty">Aucun membre pour ce site.</div>`;
+  function memberSites(member) {
+    return (Array.isArray(member?.siteNames) ? member.siteNames : [])
+      .filter(Boolean)
+      .join(", ");
+  }
+
+  function renderEmptyMembers(searchAllSites = false) {
+    return `<div class="teams-empty">${searchAllSites ? "Aucun membre trouvé sur les sites visibles." : "Aucun membre pour ce site."}</div>`;
   }
 
   function cell(value) {
@@ -435,6 +471,11 @@
       input?.setSelectionRange?.(state.query.length, state.query.length);
     });
 
+    root.querySelector("[data-teams-all-sites]")?.addEventListener("change", (event) => {
+      state.searchAllSites = Boolean(event.currentTarget.checked);
+      load();
+    });
+
   }
 
   function ensureStyles() {
@@ -457,8 +498,11 @@
       #${rootId} .teams-title span{display:block;color:var(--teams-primary);font-size:.72rem;font-weight:950;text-transform:uppercase;letter-spacing:.04em}
       #${rootId} .teams-title h1{margin:.15rem 0 0;color:var(--teams-text);font-size:1.85rem;line-height:1.05;font-weight:950;letter-spacing:0}
       #${rootId} .teams-title p{margin:.3rem 0 0;color:var(--teams-muted);font-size:.88rem;font-weight:750}
+      #${rootId} .teams-header-tools{display:grid;gap:.55rem;justify-items:end;width:min(100%,22rem);min-width:0}
       #${rootId} .teams-search{display:grid;grid-template-columns:1.1rem minmax(0,1fr);align-items:center;gap:.55rem;width:min(100%,22rem);min-height:2.55rem;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:0 .8rem;color:var(--teams-muted);box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .teams-search input{width:100%;min-width:0;border:0;background:transparent;color:var(--teams-text);font:inherit;font-size:.9rem;font-weight:750;outline:none}
+      #${rootId} .teams-search-scope{display:inline-flex;align-items:center;gap:.45rem;min-height:2rem;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.35rem .65rem;color:var(--teams-muted);font-size:.78rem;font-weight:850;box-shadow:0 10px 24px rgba(15,23,42,.04);cursor:pointer;user-select:none}
+      #${rootId} .teams-search-scope input{width:.95rem;height:.95rem;margin:0;accent-color:var(--teams-primary)}
       #${rootId} .teams-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13.5rem),1fr));gap:.85rem;min-width:0}
       #${rootId} .teams-stat{display:grid;grid-template-columns:2.55rem minmax(0,1fr);gap:.75rem;align-items:center;min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.85rem;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #${rootId} .teams-stat-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color) 14%,white);color:var(--stat-color)}
@@ -512,14 +556,14 @@
       #${rootId} .teams-muted{color:var(--teams-muted);font-weight:750}
       #${rootId} .teams-empty,.teams-loading{display:grid;place-items:center;min-height:9rem;border:1px dashed var(--teams-border);border-radius:.5rem;color:var(--teams-muted);font-size:.88rem;font-weight:850;text-align:center;padding:1rem}
       .dark #${rootId}{--teams-border:var(--color-surface-700,#334155);--teams-muted:var(--color-secondary-400,#94a3b8);--teams-text:#fff}
-      .dark #${rootId} .teams-search,.dark #${rootId} .teams-stat,.dark #${rootId} .teams-card,.dark #${rootId} .teams-site-info{background:var(--color-surface-900,#0f172a);border-color:var(--teams-border)}
+      .dark #${rootId} .teams-search,.dark #${rootId} .teams-search-scope,.dark #${rootId} .teams-stat,.dark #${rootId} .teams-card,.dark #${rootId} .teams-site-info{background:var(--color-surface-900,#0f172a);border-color:var(--teams-border)}
       .dark #${rootId} .teams-site-info.has-site-photo::after{background:linear-gradient(90deg,rgba(15,23,42,.22),rgba(15,23,42,.68) 58%,var(--color-surface-900,#0f172a) 100%)}
       .dark #${rootId} .teams-site-info.has-site-photo .teams-site-info-title{background:linear-gradient(90deg,rgba(15,23,42,.84),rgba(15,23,42,.62),rgba(15,23,42,.12))}
       .dark #${rootId} .teams-table th{background:var(--color-surface-800,#1e293b)}
       .dark #${rootId} .teams-person-details div,.dark #${rootId} .teams-site-info-item{background:var(--color-surface-800,#1e293b)}
       @container teams-card (max-width:58rem){#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid}}
       @media (max-width:1100px){#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .teams-site-info{grid-template-columns:1fr}#${rootId} .teams-site-info.has-site-photo::before{inset:0 0 auto 0;width:100%;height:7.5rem;-webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,transparent 100%)}#${rootId} .teams-site-info.has-site-photo::after{inset:0 0 auto 0;width:100%;height:7.5rem;background:linear-gradient(180deg,rgba(255,255,255,.42),#fff 100%)}.dark #${rootId} .teams-site-info.has-site-photo::after{background:linear-gradient(180deg,rgba(15,23,42,.48),var(--color-surface-900,#0f172a) 100%)}#${rootId} .teams-site-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-      @media (max-width:720px){#${rootId} .teams-header{align-items:stretch;flex-direction:column}#${rootId} .teams-title h1{font-size:1.55rem}#${rootId} .teams-search{width:100%}#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .teams-stat{grid-template-columns:2.25rem minmax(0,1fr);padding:.7rem}#${rootId} .teams-stat-icon{width:2.25rem;height:2.25rem}#${rootId} .teams-site-info-grid{grid-template-columns:1fr}#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid;grid-template-columns:1fr}}
+      @media (max-width:720px){#${rootId} .teams-header{align-items:stretch;flex-direction:column}#${rootId} .teams-title h1{font-size:1.55rem}#${rootId} .teams-header-tools,#${rootId} .teams-search{width:100%}#${rootId} .teams-header-tools{justify-items:stretch}#${rootId} .teams-search-scope{justify-content:flex-start;width:max-content;max-width:100%}#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .teams-stat{grid-template-columns:2.25rem minmax(0,1fr);padding:.7rem}#${rootId} .teams-stat-icon{width:2.25rem;height:2.25rem}#${rootId} .teams-site-info-grid{grid-template-columns:1fr}#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid;grid-template-columns:1fr}}
       @media (max-width:390px){#${rootId} .teams-person-details{grid-template-columns:1fr}}
     `;
     document.head.appendChild(style);

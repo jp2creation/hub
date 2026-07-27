@@ -22,6 +22,8 @@ class CrmApiRequest extends FormRequest
             'action' => ['sometimes', 'string', 'max:80'],
             'siteId' => ['sometimes', 'integer', 'min:1'],
             'site_id' => ['sometimes', 'integer', 'min:1'],
+            'allSites' => ['sometimes', 'boolean'],
+            'all_sites' => ['sometimes', 'boolean'],
         ];
     }
 
@@ -37,6 +39,8 @@ class CrmApiRequest extends FormRequest
             'siteId.min' => 'Site invalide.',
             'site_id.integer' => 'Site invalide.',
             'site_id.min' => 'Site invalide.',
+            'allSites.boolean' => 'Recherche tous sites invalide.',
+            'all_sites.boolean' => 'Recherche tous sites invalide.',
         ];
     }
 
@@ -70,6 +74,20 @@ class CrmApiRequest extends FormRequest
         $siteId = (int) $value;
 
         return $siteId > 0 ? $siteId : null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $body
+     */
+    public function allSites(array $body = []): bool
+    {
+        $value = $this->query('allSites')
+            ?? $this->query('all_sites')
+            ?? $body['allSites']
+            ?? $body['all_sites']
+            ?? null;
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 
     protected function failedValidation(Validator $validator): void

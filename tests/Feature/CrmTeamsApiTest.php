@@ -87,6 +87,44 @@ class CrmTeamsApiTest extends TestCase
             ]);
     }
 
+    public function test_user_can_read_members_from_all_authorized_sites(): void
+    {
+        [$account, , $palissy, $bordeaux] = $this->createCrmContext();
+        $lyon = CrmSite::query()->create([
+            'name' => 'Lyon',
+            'slug' => 'lyon',
+            'active' => true,
+        ]);
+
+        $this->createMember($palissy, [
+            'name' => 'Marie Durand',
+            'first_name' => 'Marie',
+            'last_name' => 'Durand',
+            'email' => 'marie@example.test',
+        ]);
+        $this->createMember($bordeaux, [
+            'name' => 'Paul Bordeaux',
+            'first_name' => 'Paul',
+            'last_name' => 'Bordeaux',
+            'email' => 'paul@example.test',
+        ]);
+        $this->createMember($lyon, [
+            'name' => 'Luc Lyon',
+            'first_name' => 'Luc',
+            'last_name' => 'Lyon',
+            'email' => 'luc@example.test',
+        ]);
+
+        $this->actingAs($account)
+            ->getJson('/api/equipes?action=bootstrap&allSites=1')
+            ->assertOk()
+            ->assertJsonPath('allSites', true)
+            ->assertJsonPath('selectedSiteId', $palissy->id)
+            ->assertJsonFragment(['firstName' => 'Marie'])
+            ->assertJsonFragment(['firstName' => 'Paul'])
+            ->assertJsonMissing(['firstName' => 'Luc']);
+    }
+
     public function test_team_members_return_normalized_profile_photo_urls(): void
     {
         [$account, $crmUser, $palissy] = $this->createCrmContext();
