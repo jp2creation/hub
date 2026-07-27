@@ -143,6 +143,7 @@ class CrmEquipmentRentalApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('ok', true)
             ->assertJsonPath('equipmentItems.0.name', 'Ponceuse Test')
+            ->assertJsonPath('equipmentItems.0.showHalfDayPrice', true)
             ->assertJsonPath('equipmentItems.0.showDayPrice', true)
             ->assertJsonPath('equipmentItems.0.rentalMode', 'half_day_and_day')
             ->assertJsonPath('equipmentRentals.0.title', 'Location test')
@@ -462,6 +463,7 @@ class CrmEquipmentRentalApiTest extends TestCase
                 'photoDataUrl' => $this->crmPngDataUrl(),
                 'halfDayPrice' => '12,5',
                 'dayPrice' => '20',
+                'showHalfDayPrice' => false,
                 'showDayPrice' => false,
                 'rentalMode' => 'day_only',
                 'depositAmount' => '100',
@@ -469,6 +471,7 @@ class CrmEquipmentRentalApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('ok', true)
             ->assertJsonPath('equipmentItem.name', 'Scie test')
+            ->assertJsonPath('equipmentItem.showHalfDayPrice', false)
             ->assertJsonPath('equipmentItem.showDayPrice', false)
             ->assertJsonPath('equipmentItem.rentalMode', 'day_only')
             ->assertJsonPath('equipmentCategory.slug', 'outillage')
@@ -492,6 +495,7 @@ class CrmEquipmentRentalApiTest extends TestCase
 
         $this->assertDatabaseHas('crm_equipment_items', [
             'id' => $itemId,
+            'show_half_day_price' => false,
             'show_day_price' => false,
             'rental_mode' => 'day_only',
             'active' => false,

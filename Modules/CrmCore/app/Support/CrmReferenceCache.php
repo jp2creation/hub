@@ -283,7 +283,7 @@ final class CrmReferenceCache
     }
 
     /**
-     * @return array<int, array{id: int, siteId: int, categoryId: int|null, name: string, inventoryCode: string, description: string, color: string, photoUrl: string, halfDayPrice: float, dayPrice: float, showDayPrice: bool, rentalMode: string, depositAmount: float, active: bool, sortOrder: int}>
+     * @return array<int, array{id: int, siteId: int, categoryId: int|null, name: string, inventoryCode: string, description: string, color: string, photoUrl: string, halfDayPrice: float, dayPrice: float, showHalfDayPrice: bool, showDayPrice: bool, rentalMode: string, depositAmount: float, active: bool, sortOrder: int}>
      */
     public static function activeEquipmentItemRows(): array
     {
@@ -305,6 +305,7 @@ final class CrmReferenceCache
                     'photoUrl' => $item->getAttribute('photo_url') ?? '',
                     'halfDayPrice' => (float) $item->half_day_price,
                     'dayPrice' => (float) $item->day_price,
+                    'showHalfDayPrice' => (bool) ($item->show_half_day_price ?? true),
                     'showDayPrice' => (bool) ($item->show_day_price ?? true),
                     'rentalMode' => in_array($item->getAttribute('rental_mode'), ['half_day_and_day', 'day_only'], true)
                         ? (string) $item->getAttribute('rental_mode')

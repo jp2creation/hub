@@ -171,6 +171,7 @@ $fixture = DB::transaction(function () use ($password): array {
             'color' => '#95002e',
             'half_day_price' => 45,
             'day_price' => 80,
+            'show_half_day_price' => true,
             'show_day_price' => true,
             'rental_mode' => 'half_day_and_day',
             'deposit_amount' => 300,

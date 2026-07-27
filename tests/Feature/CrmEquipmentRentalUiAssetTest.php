@@ -56,6 +56,9 @@ class CrmEquipmentRentalUiAssetTest extends TestCase
         $this->assertStringNotContainsString('Toutes les locations à venir', $equipmentAsset);
         $this->assertStringContainsString('data-delete-rental', $equipmentAsset);
         $this->assertStringContainsString('rent-summary-image', $equipmentAsset);
+        $this->assertStringContainsString('showHalfDayPrice !== false', $equipmentAsset);
+        $this->assertStringContainsString('item.rentalMode === "day_only"', $equipmentAsset);
+        $this->assertStringContainsString('Tarif masqué', $equipmentAsset);
         $this->assertStringContainsString('document.readyState ===', $equipmentAsset);
 
         $this->assertStringContainsString("id: 'crm-equipment-rentals-module'", $hosts);

@@ -266,6 +266,7 @@ class EquipmentRentalService
             $photoDataUrl = (string) ($data['photoDataUrl'] ?? $data['photo_data_url'] ?? '');
             $halfDayPrice = $this->decimal($data['halfDayPrice'] ?? $data['half_day_price'] ?? 0);
             $dayPrice = $this->decimal($data['dayPrice'] ?? $data['day_price'] ?? 0);
+            $showHalfDayPrice = $this->boolean($data['showHalfDayPrice'] ?? $data['show_half_day_price'] ?? true);
             $showDayPrice = $this->boolean($data['showDayPrice'] ?? $data['show_day_price'] ?? true);
             $rentalMode = $this->rentalMode($data['rentalMode'] ?? $data['rental_mode'] ?? 'half_day_and_day');
             $depositAmount = $this->decimal($data['depositAmount'] ?? $data['deposit_amount'] ?? 0);
@@ -378,6 +379,7 @@ class EquipmentRentalService
                 'photo_url' => $photoUrl,
                 'half_day_price' => $halfDayPrice,
                 'day_price' => $dayPrice,
+                'show_half_day_price' => $showHalfDayPrice,
                 'show_day_price' => $showDayPrice,
                 'rental_mode' => $rentalMode,
                 'deposit_amount' => $depositAmount,
@@ -796,6 +798,7 @@ class EquipmentRentalService
             'photoUrl' => $item->getAttribute('photo_url') ?? '',
             'halfDayPrice' => (float) $item->half_day_price,
             'dayPrice' => (float) $item->day_price,
+            'showHalfDayPrice' => (bool) ($item->show_half_day_price ?? true),
             'showDayPrice' => (bool) ($item->show_day_price ?? true),
             'rentalMode' => $this->rentalMode($item->getAttribute('rental_mode') ?? 'half_day_and_day'),
             'depositAmount' => (float) $item->deposit_amount,

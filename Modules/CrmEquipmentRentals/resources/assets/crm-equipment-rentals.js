@@ -764,9 +764,17 @@
 
   function priceLabel(item) {
     if (!item) return '';
-    if (item.showDayPrice === false) return `${Number(item.halfDayPrice || 0)} EUR/½j`;
+    const showHalfDayPrice = item.showHalfDayPrice !== false;
+    const showDayPrice = item.showDayPrice !== false;
 
-    return `${Number(item.dayPrice || 0)} EUR/j`;
+    if (item.rentalMode === 'day_only') {
+      return showDayPrice ? `${Number(item.dayPrice || 0)} EUR/j` : 'Tarif masqué';
+    }
+
+    if (showDayPrice) return `${Number(item.dayPrice || 0)} EUR/j`;
+    if (showHalfDayPrice) return `${Number(item.halfDayPrice || 0)} EUR/½j`;
+
+    return 'Tarif masqué';
   }
 
   function itemInitials(item) {

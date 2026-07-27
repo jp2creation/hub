@@ -86,6 +86,9 @@ class CrmEquipmentItemResource extends Resource
                     ->numeric()
                     ->default(0)
                     ->required(),
+                Toggle::make('show_half_day_price')
+                    ->label('Afficher le prix demi-journee sur les cartes')
+                    ->default(true),
                 Toggle::make('show_day_price')
                     ->label('Afficher le prix journee sur les cartes')
                     ->default(true),
@@ -130,7 +133,8 @@ class CrmEquipmentItemResource extends Resource
                 IconEntry::make('active')->label('Actif')->boolean(),
                 TextEntry::make('half_day_price')->label('Demi-journee')->formatStateUsing(fn ($state): string => number_format((float) $state, 2, ',', ' ').' EUR'),
                 TextEntry::make('day_price')->label('Journee')->formatStateUsing(fn ($state): string => number_format((float) $state, 2, ',', ' ').' EUR'),
-                IconEntry::make('show_day_price')->label('Prix affiche')->boolean(),
+                IconEntry::make('show_half_day_price')->label('Prix demi-journee affiche')->boolean(),
+                IconEntry::make('show_day_price')->label('Prix journee affiche')->boolean(),
                 TextEntry::make('rental_mode')
                     ->label('Mode')
                     ->formatStateUsing(fn ($state): string => $state === 'day_only' ? 'Journee uniquement' : 'Demi-journee et journee'),
@@ -171,8 +175,13 @@ class CrmEquipmentItemResource extends Resource
                     ->label('Journee')
                     ->formatStateUsing(fn ($state): string => number_format((float) $state, 2, ',', ' ').' EUR')
                     ->sortable(),
+                IconColumn::make('show_half_day_price')
+                    ->label('Demi-j. carte')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
                 IconColumn::make('show_day_price')
-                    ->label('Prix carte')
+                    ->label('Journee carte')
                     ->boolean()
                     ->sortable()
                     ->toggleable(),
