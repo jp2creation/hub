@@ -698,6 +698,26 @@ body.ms-ui-modal-open {
   background: #fff;
 }
 
+.resa-vehicle-card .resa-product-image {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 100% !important;
+  aspect-ratio: auto !important;
+  background: rgb(241 245 249) !important;
+}
+
+.resa-vehicle-card .resa-product-image img {
+  object-fit: cover !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.resa-vehicle-card .resa-product-body {
+  min-height: 0 !important;
+  align-content: center !important;
+  padding: 0.66rem 0.78rem !important;
+}
+
 .ms-ui-product-body,
 .resa-product-body,
 .rent-product-body {
@@ -939,7 +959,7 @@ body.ms-ui-modal-open {
   .resa-product-card {
     display: grid !important;
     grid-template-columns: 5.45rem minmax(0, 1fr) !important;
-    min-height: 5.65rem !important;
+    min-height: 5.55rem !important;
   }
 
   .ms-ui-product-image,

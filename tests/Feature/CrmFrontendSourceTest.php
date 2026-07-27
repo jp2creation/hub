@@ -781,16 +781,21 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringNotContainsString('function contrastColor(color)', $activeSite);
     }
 
-    public function test_reservation_vehicle_selector_uses_compact_hub_mobile_cards(): void
+    public function test_reservation_vehicle_selector_uses_compact_hub_cards(): void
     {
         $reservations = (string) file_get_contents(base_path('Modules/CrmReservations/resources/assets/crm-reservations.js'));
         $nativeUiCss = (string) file_get_contents(resource_path('frontend/crm/styles/native-ui.css'));
 
         $this->assertStringContainsString('resa-card resa-vehicle-card', $reservations);
-        $this->assertStringContainsString('repeat(auto-fit,minmax(14rem,1fr))', $reservations);
+        $this->assertStringContainsString('resa-card-count', $reservations);
+        $this->assertStringContainsString('repeat(auto-fill,minmax(min(100%,18rem),18rem))', $reservations);
+        $this->assertStringContainsString('grid-template-columns:5.45rem minmax(0,1fr)', $reservations);
+        $this->assertStringContainsString('.resa-vehicle-card .resa-card-body{background:#fafafa}', $reservations);
         $this->assertStringContainsString('resa-product-status', $reservations);
         $this->assertStringContainsString('#${rootId} .resa-vehicles{grid-template-columns:1fr;gap:.65rem}', $reservations);
         $this->assertStringContainsString('.resa-vehicles {', $nativeUiCss);
+        $this->assertStringContainsString('.resa-vehicle-card .resa-product-image {', $nativeUiCss);
+        $this->assertStringContainsString('object-fit: cover !important;', $nativeUiCss);
         $this->assertStringContainsString('grid-template-columns: 1fr !important;', $nativeUiCss);
         $this->assertStringContainsString('.resa-product-card {', $nativeUiCss);
         $this->assertStringNotContainsString('class="resa-dot', $reservations);
