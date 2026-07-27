@@ -249,9 +249,10 @@
   function renderSiteInfo(site) {
     const hours = siteHoursLabel(site);
     const color = siteColor(site);
+    const photoUrl = sitePhotoUrl(site);
 
     return `
-      <section class="teams-site-info" style="--site-color:${esc(color)}" aria-label="Informations du site">
+      <section class="teams-site-info${photoUrl ? " has-site-photo" : ""}" style="${siteStyle(color, photoUrl)}" aria-label="Informations du site">
         <div class="teams-site-info-title">
           <span>${icon("building")}</span>
           <div>
@@ -267,6 +268,20 @@
         </div>
       </section>
     `;
+  }
+
+  function siteStyle(color, photoUrl) {
+    return `--site-color:${esc(color)}${photoUrl ? `;--site-photo:url('${esc(cssUrl(photoUrl))}')` : ""}`;
+  }
+
+  function sitePhotoUrl(site) {
+    const url = String(site?.photoUrl || "").trim();
+
+    return /^(\/|https?:\/\/)/i.test(url) ? url : "";
+  }
+
+  function cssUrl(value) {
+    return String(value || "").replace(/[\\'"\n\r\f]/g, "");
   }
 
   function siteInfoItem(label, value, iconName, href = "") {
@@ -449,8 +464,12 @@
       #${rootId} .teams-stat-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color) 14%,white);color:var(--stat-color)}
       #${rootId} .teams-stat small{display:block;color:var(--teams-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}
       #${rootId} .teams-stat strong{display:block;margin:.15rem 0 0;color:var(--teams-text);font-size:1.3rem;font-weight:950;line-height:1.05}
-      #${rootId} .teams-site-info{display:grid;grid-template-columns:minmax(14rem,.8fr) minmax(0,1.2fr);gap:1rem;align-items:stretch;min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.9rem;box-shadow:0 12px 28px rgba(15,23,42,.05)}
+      #${rootId} .teams-site-info{position:relative;display:grid;grid-template-columns:minmax(14rem,.8fr) minmax(0,1.2fr);gap:1rem;align-items:stretch;min-width:0;overflow:hidden;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.9rem;box-shadow:0 12px 28px rgba(15,23,42,.05)}
+      #${rootId} .teams-site-info.has-site-photo::before{position:absolute;inset:0 auto 0 0;width:min(46%,32rem);background-image:var(--site-photo);background-size:cover;background-position:center;content:"";pointer-events:none;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 54%,transparent 100%);mask-image:linear-gradient(90deg,#000 0%,#000 54%,transparent 100%)}
+      #${rootId} .teams-site-info.has-site-photo::after{position:absolute;inset:0 auto 0 0;width:min(46%,32rem);background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,.62) 58%,#fff 100%);content:"";pointer-events:none}
+      #${rootId} .teams-site-info-title,#${rootId} .teams-site-info-grid{position:relative;z-index:1}
       #${rootId} .teams-site-info-title{display:grid;grid-template-columns:2.55rem minmax(0,1fr);align-items:center;gap:.75rem;min-width:0}
+      #${rootId} .teams-site-info.has-site-photo .teams-site-info-title{border-radius:.48rem;background:linear-gradient(90deg,rgba(255,255,255,.82),rgba(255,255,255,.58),rgba(255,255,255,.08));padding:.65rem}
       #${rootId} .teams-site-info-title > span{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--site-color,var(--teams-primary)) 14%,white);color:var(--site-color,var(--teams-primary))}
       #${rootId} .teams-site-info-title h2{margin:0;color:var(--teams-text);font-size:1.08rem;font-weight:950;line-height:1.15;letter-spacing:0}
       #${rootId} .teams-site-info-title p{margin:.18rem 0 0;color:var(--teams-muted);font-size:.78rem;font-weight:750}
@@ -494,10 +513,12 @@
       #${rootId} .teams-empty,.teams-loading{display:grid;place-items:center;min-height:9rem;border:1px dashed var(--teams-border);border-radius:.5rem;color:var(--teams-muted);font-size:.88rem;font-weight:850;text-align:center;padding:1rem}
       .dark #${rootId}{--teams-border:var(--color-surface-700,#334155);--teams-muted:var(--color-secondary-400,#94a3b8);--teams-text:#fff}
       .dark #${rootId} .teams-search,.dark #${rootId} .teams-stat,.dark #${rootId} .teams-card,.dark #${rootId} .teams-site-info{background:var(--color-surface-900,#0f172a);border-color:var(--teams-border)}
+      .dark #${rootId} .teams-site-info.has-site-photo::after{background:linear-gradient(90deg,rgba(15,23,42,.22),rgba(15,23,42,.68) 58%,var(--color-surface-900,#0f172a) 100%)}
+      .dark #${rootId} .teams-site-info.has-site-photo .teams-site-info-title{background:linear-gradient(90deg,rgba(15,23,42,.84),rgba(15,23,42,.62),rgba(15,23,42,.12))}
       .dark #${rootId} .teams-table th{background:var(--color-surface-800,#1e293b)}
       .dark #${rootId} .teams-person-details div,.dark #${rootId} .teams-site-info-item{background:var(--color-surface-800,#1e293b)}
       @container teams-card (max-width:58rem){#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid}}
-      @media (max-width:1100px){#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .teams-site-info{grid-template-columns:1fr}#${rootId} .teams-site-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+      @media (max-width:1100px){#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .teams-site-info{grid-template-columns:1fr}#${rootId} .teams-site-info.has-site-photo::before{inset:0 0 auto 0;width:100%;height:7.5rem;-webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,transparent 100%)}#${rootId} .teams-site-info.has-site-photo::after{inset:0 0 auto 0;width:100%;height:7.5rem;background:linear-gradient(180deg,rgba(255,255,255,.42),#fff 100%)}.dark #${rootId} .teams-site-info.has-site-photo::after{background:linear-gradient(180deg,rgba(15,23,42,.48),var(--color-surface-900,#0f172a) 100%)}#${rootId} .teams-site-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
       @media (max-width:720px){#${rootId} .teams-header{align-items:stretch;flex-direction:column}#${rootId} .teams-title h1{font-size:1.55rem}#${rootId} .teams-search{width:100%}#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .teams-stat{grid-template-columns:2.25rem minmax(0,1fr);padding:.7rem}#${rootId} .teams-stat-icon{width:2.25rem;height:2.25rem}#${rootId} .teams-site-info-grid{grid-template-columns:1fr}#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid;grid-template-columns:1fr}}
       @media (max-width:390px){#${rootId} .teams-person-details{grid-template-columns:1fr}}
     `;

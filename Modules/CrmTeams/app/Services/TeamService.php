@@ -76,7 +76,7 @@ class TeamService
 
     /**
      * @param  array<int, int>  $siteIds
-     * @return array<int, array{id: int, name: string, slug: string, active: bool, membersCount: int, address: string, phone: string, email: string, color: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
+     * @return array<int, array{id: int, name: string, slug: string, active: bool, membersCount: int, address: string, phone: string, email: string, color: string, photoUrl: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
      */
     private function siteRows(array $siteIds): array
     {
@@ -104,6 +104,7 @@ class TeamService
                 'phone' => $site['phone'] ?? '',
                 'email' => $site['email'] ?? '',
                 'color' => $site['color'] ?? CrmTheme::primaryHex(),
+                'photoUrl' => $site['photoUrl'] ?? '',
                 'hours' => $site['hours'] ?? [
                     'morningStart' => '07:30',
                     'morningEnd' => '12:00',

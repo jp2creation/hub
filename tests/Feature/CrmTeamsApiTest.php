@@ -58,6 +58,7 @@ class CrmTeamsApiTest extends TestCase
         $this->assertSame('05 59 11 22 33', $site['phone'] ?? null);
         $this->assertSame('palissy@example.test', $site['email'] ?? null);
         $this->assertSame('#2563eb', $site['color'] ?? null);
+        $this->assertSame('/uploads/assets/uploads/sites/palissy.webp', $site['photoUrl'] ?? null);
         $this->assertSame('08:00', $site['hours']['morningStart'] ?? null);
     }
 
@@ -127,6 +128,7 @@ class CrmTeamsApiTest extends TestCase
             'phone' => '05 59 11 22 33',
             'email' => 'palissy@example.test',
             'color' => '#2563eb',
+            'photo_url' => '/storage/assets/uploads/sites/palissy.webp',
             'morning_start' => '08:00:00',
         ]);
         $bordeaux = CrmSite::query()->create([

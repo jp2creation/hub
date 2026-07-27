@@ -746,7 +746,12 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('Informations du site sélectionné', $teams);
         $this->assertStringContainsString('${siteInfoItem("Adresse", site?.address || "", "mapPin")}', $teams);
         $this->assertStringContainsString('${siteInfoItem("Téléphone", site?.phone || "", "phone", site?.phone ? `tel:${phoneHref(site.phone)}` : "")}', $teams);
-        $this->assertStringContainsString('style="--site-color:${esc(color)}"', $teams);
+        $this->assertStringContainsString('const photoUrl = sitePhotoUrl(site);', $teams);
+        $this->assertStringContainsString('class="teams-site-info${photoUrl ? " has-site-photo" : ""}"', $teams);
+        $this->assertStringContainsString('style="${siteStyle(color, photoUrl)}"', $teams);
+        $this->assertStringContainsString('--site-photo:url', $teams);
+        $this->assertStringContainsString('.teams-site-info.has-site-photo::before', $teams);
+        $this->assertStringContainsString('mask-image:linear-gradient(90deg,#000 0%,#000 54%,transparent 100%)', $teams);
         $this->assertStringContainsString('window.addEventListener(activeSiteEvent', $teams);
         $this->assertStringNotContainsString('class="teams-sites"', $teams);
         $this->assertStringNotContainsString('data-site-id', $teams);
