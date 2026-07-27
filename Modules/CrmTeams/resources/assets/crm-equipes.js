@@ -565,6 +565,8 @@
       #${rootId} .teams-header-tools{display:grid;gap:.55rem;justify-items:end;width:min(100%,22rem);min-width:0}
       #${rootId} .teams-search{display:grid;grid-template-columns:1.1rem minmax(0,1fr);align-items:center;gap:.55rem;width:min(100%,22rem);min-height:2.55rem;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:0 .8rem;color:var(--teams-muted);box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .teams-search input{width:100%;min-width:0;border:0;background:transparent;color:var(--teams-text);font:inherit;font-size:.9rem;font-weight:750;outline:none}
+      #${rootId} .teams-search:focus-within{border-color:var(--teams-border);box-shadow:0 10px 24px rgba(15,23,42,.04)}
+      #${rootId} .teams-search input:focus{outline:none;box-shadow:none}
       #${rootId} .teams-search-scope{display:inline-flex;align-items:center;gap:.45rem;min-height:2rem;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.35rem .65rem;color:var(--teams-muted);font-size:.78rem;font-weight:850;box-shadow:0 10px 24px rgba(15,23,42,.04);cursor:pointer;user-select:none}
       #${rootId} .teams-search-scope input{width:.95rem;height:.95rem;margin:0;accent-color:var(--teams-primary)}
       #${rootId} .teams-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13.5rem),1fr));gap:.85rem;min-width:0}

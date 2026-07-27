@@ -51,6 +51,8 @@ class CrmModuleListUiAssetTest extends TestCase
         $this->assertStringContainsString('function restoreSearchFocus(input, selectionStart, selectionEnd)', $public);
         $this->assertStringContainsString('data-teams-stats', $public);
         $this->assertStringContainsString('data-teams-members-card', $public);
+        $this->assertStringContainsString('.teams-search:focus-within{border-color:var(--teams-border);box-shadow:0 10px 24px rgba(15,23,42,.04)}', $public);
+        $this->assertStringContainsString('.teams-search input:focus{outline:none;box-shadow:none}', $public);
         $this->assertStringContainsString('data-teams-all-sites', $public);
         $this->assertStringContainsString('if (root?.contains(event.target)) return;', $public);
         $this->assertStringContainsString('} else if (!root.querySelector(".teams-page")) {', $public);
