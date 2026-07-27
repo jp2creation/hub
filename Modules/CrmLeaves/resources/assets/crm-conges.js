@@ -2681,10 +2681,16 @@
       }
       #crm-leaves-module .leave-app-header {
         display:grid;
+        grid-template-columns:minmax(0,1fr);
         align-items:stretch;
+        justify-items:stretch;
         gap:1rem;
+        justify-self:stretch;
+        align-self:stretch;
         width:100%;
+        inline-size:100%;
         max-width:100%;
+        max-inline-size:none;
         min-width:0;
         background:transparent;
         border:0;
@@ -2698,6 +2704,15 @@
         align-items:flex-end;
         justify-content:space-between;
         gap:1rem;
+      }
+      #crm-leaves-module .leave-header-top,
+      #crm-leaves-module .leave-stat-strip,
+      #crm-leaves-module .leave-view-tabs {
+        grid-column:1/-1;
+        width:100%;
+        inline-size:100%;
+        max-width:100%;
+        min-width:0;
       }
       #crm-leaves-module .leave-header-main {
         display:grid;
@@ -2713,6 +2728,7 @@
         letter-spacing:0;
       }
       #crm-leaves-module .leave-view-tabs {
+        display:flex;
         gap:1.25rem;
         border-top:1px solid var(--leave-card-border);
         padding-top:.05rem;
@@ -2872,6 +2888,7 @@
         border-radius:.5rem;
         background:var(--leave-panel);
         box-shadow:0 12px 28px rgba(15,23,42,.05);
+        width:100%;
       }
       #crm-leaves-module .leave-stat-icon {
         display:grid;

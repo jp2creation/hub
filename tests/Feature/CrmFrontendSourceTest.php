@@ -624,7 +624,12 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('.layout-page:has(#crm-leaves-module){width:100%;max-width:100%;min-width:0;overflow-x:hidden}', $asset);
         $this->assertStringContainsString('main:has(#crm-leaves-module){min-width:0;overflow-x:hidden}', $asset);
         $this->assertStringContainsString('<em>${esc(card.detail)}</em>', $asset);
+        $this->assertStringContainsString('grid-template-columns:minmax(0,1fr);', $asset);
+        $this->assertStringContainsString('grid-column:1/-1;', $asset);
+        $this->assertStringContainsString('inline-size:100%;', $asset);
+        $this->assertStringContainsString('max-inline-size:none;', $asset);
         $this->assertStringContainsString('grid-template-columns:repeat(4,minmax(0,1fr));', $asset);
+        $this->assertStringContainsString('justify-items:stretch;', $asset);
         $this->assertStringContainsString('justify-self:stretch;', $asset);
         $this->assertStringContainsString('background:transparent;', $asset);
         $this->assertStringContainsString('box-shadow:none;', $asset);
