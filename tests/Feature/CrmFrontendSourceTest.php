@@ -621,6 +621,11 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('box-shadow:var(--leave-card-shadow);', $asset);
         $this->assertStringContainsString('<div class="leave-header-top">', $asset);
         $this->assertStringContainsString('grid-template-columns:repeat(4,minmax(0,1fr));', $asset);
+        $this->assertStringContainsString('background:transparent;', $asset);
+        $this->assertStringContainsString('box-shadow:none;', $asset);
+        $this->assertStringContainsString('grid-template-columns:2.6rem minmax(0,1fr);', $asset);
+        $this->assertStringContainsString('box-shadow:0 12px 28px rgba(15,23,42,.05);', $asset);
+        $this->assertStringContainsString('font-size:1.45rem;', $asset);
 
         $headerStart = strpos($asset, 'function renderHeader()');
         $headerEnd = strpos($asset, 'function icon(name)', $headerStart ?: 0);
@@ -645,6 +650,9 @@ class CrmFrontendSourceTest extends TestCase
         $balancesSource = substr($asset, $balancesStart, $balancesEnd - $balancesStart);
 
         $this->assertStringContainsString('${renderTopMetrics()}', $headerSource);
+        $this->assertStringNotContainsString('leave-header-icons', $headerSource);
+        $this->assertStringNotContainsString('leave-round-icon', $headerSource);
+        $this->assertStringNotContainsString('data-filter-focus', $asset);
         $this->assertStringNotContainsString('${renderTopMetrics()}', $calendarSource);
         $this->assertStringNotContainsString('${renderTopMetrics()}', $balancesSource);
 

@@ -541,11 +541,6 @@
           <div class="leave-header-main">
             <h1>Congés &amp; Absences</h1>
           </div>
-          <div class="leave-header-icons" aria-label="Outils congés">
-            <button type="button" class="leave-round-icon" data-filter-focus aria-label="Rechercher">⌕</button>
-            <button type="button" class="leave-round-icon" aria-label="Réglages">⚙</button>
-            <button type="button" class="leave-round-icon" aria-label="Notifications">◌</button>
-          </div>
         </div>
         ${renderTopMetrics()}
         ${renderViewTabs()}
@@ -2671,17 +2666,17 @@
       #crm-leaves-module .leave-app-header {
         display:grid;
         align-items:stretch;
-        gap:.85rem;
-        background:var(--leave-panel);
-        border:1px solid var(--leave-card-border);
-        border-radius:var(--leave-card-radius);
-        padding:1rem;
-        box-shadow:var(--leave-card-shadow);
+        gap:1rem;
+        background:transparent;
+        border:0;
+        border-radius:0;
+        padding:0;
+        box-shadow:none;
       }
       #crm-leaves-module .leave-header-top {
         display:flex;
         min-width:0;
-        align-items:flex-start;
+        align-items:flex-end;
         justify-content:space-between;
         gap:1rem;
       }
@@ -2691,7 +2686,11 @@
         min-width:0;
       }
       #crm-leaves-module .leave-header-main h1 {
-        font-size:1.18rem;
+        margin:0;
+        color:var(--leave-ink);
+        font-size:1.8rem;
+        font-weight:900;
+        line-height:1.1;
         letter-spacing:0;
       }
       #crm-leaves-module .leave-view-tabs {
@@ -2840,22 +2839,48 @@
         background:transparent;
       }
       #crm-leaves-module .leave-stat-strip article {
-        min-height:4.25rem;
+        display:grid;
+        grid-template-columns:2.6rem minmax(0,1fr);
+        min-width:0;
+        align-items:center;
+        gap:.75rem;
         padding:.9rem;
         border:1px solid var(--leave-card-border);
-        border-radius:var(--leave-card-radius);
+        border-radius:.5rem;
         background:var(--leave-panel);
-        box-shadow:var(--leave-card-shadow);
+        box-shadow:0 12px 28px rgba(15,23,42,.05);
+      }
+      #crm-leaves-module .leave-stat-icon {
+        display:grid;
+        place-items:center;
+        width:2.6rem;
+        height:2.6rem;
+        border-radius:.5rem;
+        background:color-mix(in srgb,var(--leave-stat-color,var(--theme-primary-color)) 14%,white);
+        color:var(--leave-stat-color,var(--theme-primary-color));
+      }
+      #crm-leaves-module .leave-stat-icon .leave-summary-icon-svg {
+        width:1.2rem;
+        height:1.2rem;
       }
       #crm-leaves-module .leave-stat-strip strong {
+        display:block;
+        margin:.2rem 0 0;
         color:var(--leave-ink);
-        font-size:1.25rem;
-        line-height:1;
+        font-size:1.45rem;
+        font-weight:950;
+        line-height:1.05;
+        letter-spacing:0;
       }
       #crm-leaves-module .leave-stat-copy small {
+        display:block;
+        overflow:hidden;
         color:var(--color-secondary-500,#64748b);
-        font-size:.73rem;
+        font-size:.72rem;
         font-weight:900;
+        text-overflow:ellipsis;
+        text-transform:uppercase;
+        white-space:nowrap;
       }
       #crm-leaves-module .leave-calendar-actions {
         grid-column:3;
@@ -3207,7 +3232,7 @@
       @media (max-width:760px) {
         #crm-leaves-module .leave-app-header {
           align-items:stretch;
-          padding:.85rem .85rem .6rem;
+          padding:0;
         }
         #crm-leaves-module .leave-header-top {
           width:100%;
@@ -4211,9 +4236,6 @@
         render();
       }),
     );
-    root.querySelector('[data-filter-focus]')?.addEventListener('click', () => {
-      root.querySelector('[data-filter-query]')?.focus();
-    });
     root.querySelectorAll('[data-filter-query]').forEach((input) =>
       input.addEventListener('input', (event) => {
         state.filters.query = event.currentTarget.value || '';
