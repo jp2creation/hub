@@ -540,6 +540,7 @@
         <div class="leave-header-top">
           <div class="leave-header-main">
             <h1>Congés &amp; Absences</h1>
+            <p class="leave-header-subtitle">${esc(activeSiteName())}</p>
           </div>
         </div>
         ${renderTopMetrics()}
@@ -2727,24 +2728,52 @@
         line-height:1.1;
         letter-spacing:0;
       }
+      #crm-leaves-module .leave-header-subtitle {
+        margin:.35rem 0 0;
+        color:var(--leave-muted);
+        font-size:.92rem;
+        font-weight:650;
+        line-height:1.25;
+      }
       #crm-leaves-module .leave-view-tabs {
         display:flex;
-        gap:1.25rem;
-        border-top:1px solid var(--leave-card-border);
-        padding-top:.05rem;
+        flex-wrap:wrap;
+        align-items:center;
+        gap:.45rem;
+        border-top:0;
+        padding-top:0;
       }
       #crm-leaves-module .leave-view-tab {
-        color:#6f7581;
-        font-size:.76rem;
-        padding:.84rem 0 .8rem;
+        position:relative;
+        display:inline-flex;
+        min-height:2.35rem;
+        align-items:center;
+        justify-content:center;
+        border:1px solid var(--leave-card-border);
+        border-radius:.5rem;
+        background:var(--leave-panel);
+        color:var(--color-secondary-700,#334155);
+        padding:.55rem .82rem;
+        font-size:.8rem;
+        font-weight:900;
+        line-height:1;
+        white-space:nowrap;
+        box-shadow:0 10px 24px rgba(15,23,42,.04);
       }
-      #crm-leaves-module .leave-view-tab.is-active,
       #crm-leaves-module .leave-view-tab:hover {
-        color:var(--leave-ink);
+        border-color:rgb(var(--theme-primary) / .4);
+        background:rgb(var(--theme-primary) / .04);
+        color:rgb(var(--theme-primary));
+      }
+      #crm-leaves-module .leave-view-tab.is-active {
+        border-color:rgb(var(--theme-primary));
+        background:rgb(var(--theme-primary));
+        color:#fff;
+        box-shadow:0 12px 24px rgb(var(--theme-primary) / .16);
       }
       #crm-leaves-module .leave-view-tab.is-active::after {
-        height:2px;
-        background:var(--leave-ink);
+        content:none;
+        display:none;
       }
       #crm-leaves-module .leave-round-icon {
         color:#111827;
@@ -3293,7 +3322,14 @@
         }
         #crm-leaves-module .leave-view-tabs {
           max-width:100%;
-          gap:.9rem;
+          flex-wrap:nowrap;
+          gap:.5rem;
+          overflow-x:auto;
+          padding-bottom:.05rem;
+          -webkit-overflow-scrolling:touch;
+        }
+        #crm-leaves-module .leave-view-tab {
+          flex:0 0 auto;
         }
         #crm-leaves-module .leave-header-icons {
           padding-top:.05rem;

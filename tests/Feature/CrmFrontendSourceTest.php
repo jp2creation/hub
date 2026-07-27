@@ -624,6 +624,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('.layout-page:has(#crm-leaves-module){width:100%;max-width:100%;min-width:0;overflow-x:hidden}', $asset);
         $this->assertStringContainsString('main:has(#crm-leaves-module){min-width:0;overflow-x:hidden}', $asset);
         $this->assertStringContainsString('<em>${esc(card.detail)}</em>', $asset);
+        $this->assertStringContainsString('<p class="leave-header-subtitle">${esc(activeSiteName())}</p>', $asset);
+        $this->assertStringContainsString('#crm-leaves-module .leave-header-subtitle', $asset);
         $this->assertStringContainsString('grid-template-columns:minmax(0,1fr);', $asset);
         $this->assertStringContainsString('grid-column:1/-1;', $asset);
         $this->assertStringContainsString('inline-size:100%;', $asset);
@@ -635,6 +637,10 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('box-shadow:none;', $asset);
         $this->assertStringContainsString('grid-template-columns:2.6rem minmax(0,1fr);', $asset);
         $this->assertStringContainsString('box-shadow:0 12px 28px rgba(15,23,42,.05);', $asset);
+        $this->assertStringContainsString('min-height:2.35rem;', $asset);
+        $this->assertStringContainsString('border-radius:.5rem;', $asset);
+        $this->assertStringContainsString('box-shadow:0 10px 24px rgba(15,23,42,.04);', $asset);
+        $this->assertStringContainsString('content:none;', $asset);
         $this->assertStringContainsString('font-size:1.45rem;', $asset);
 
         $headerStart = strpos($asset, 'function renderHeader()');
@@ -660,6 +666,7 @@ class CrmFrontendSourceTest extends TestCase
         $balancesSource = substr($asset, $balancesStart, $balancesEnd - $balancesStart);
 
         $this->assertStringContainsString('${renderTopMetrics()}', $headerSource);
+        $this->assertStringContainsString('leave-header-subtitle', $headerSource);
         $this->assertStringNotContainsString('leave-header-icons', $headerSource);
         $this->assertStringNotContainsString('leave-round-icon', $headerSource);
         $this->assertStringNotContainsString('data-filter-focus', $asset);
