@@ -529,6 +529,8 @@ class AdministrationService
             $address = trim((string) ($data['address'] ?? ''));
             $phone = trim((string) ($data['phone'] ?? ''));
             $email = trim((string) ($data['email'] ?? ''));
+            $photoDataUrl = (string) ($data['photoDataUrl'] ?? $data['photo_data_url'] ?? '');
+            $removePhoto = $this->boolean($data['removePhoto'] ?? $data['remove_photo'] ?? null, false);
 
             if ($name === '') {
                 $this->fail('Nom du site obligatoire', 400);
@@ -556,6 +558,20 @@ class AdministrationService
             $morningEnd = $this->normalizeTime($data, 'morningEnd', 'morning_end', $site?->morning_end ?: '12:00');
             $afternoonStart = $this->normalizeTime($data, 'afternoonStart', 'afternoon_start', $site?->afternoon_start ?: '13:30');
             $afternoonEnd = $this->normalizeTime($data, 'afternoonEnd', 'afternoon_end', $site?->afternoon_end ?: '17:30');
+            $photoUrl = trim((string) ($site?->photo_url ?? ''));
+
+            if ($removePhoto) {
+                $photoUrl = '';
+            }
+
+            if ($photoDataUrl !== '') {
+                $photoUrl = $this->images->storeDataUrl($photoDataUrl, 'sites', $photoUrl, [
+                    'label' => 'Photo du site',
+                    'imageMaxWidth' => 1600,
+                    'imageMaxHeight' => 1200,
+                    'thumbnailSize' => 480,
+                ])['url'];
+            }
 
             if (
                 $this->minutes($morningStart) >= $this->minutes($morningEnd)
@@ -572,6 +588,7 @@ class AdministrationService
                 'phone' => $phone !== '' ? $phone : null,
                 'email' => $email !== '' ? $email : null,
                 'color' => $color,
+                'photo_url' => $photoUrl !== '' ? $photoUrl : null,
                 'morning_start' => $morningStart,
                 'morning_end' => $morningEnd,
                 'afternoon_start' => $afternoonStart,
@@ -1089,6 +1106,7 @@ class AdministrationService
             'phone' => trim((string) $site->phone),
             'email' => trim((string) $site->email),
             'color' => $this->siteColor((string) $site->color),
+            'photoUrl' => $this->images->normalizePublicUrl($site->photo_url),
             'hours' => [
                 'morningStart' => $this->time5($site->morning_start, '07:30'),
                 'morningEnd' => $this->time5($site->morning_end, '12:00'),

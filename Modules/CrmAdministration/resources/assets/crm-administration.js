@@ -93,15 +93,23 @@
       #${rootId} .admin-check input{width:1rem;height:1rem}
       #${rootId} .admin-site-heading{display:flex;align-items:center;gap:.55rem;min-width:0}
       #${rootId} .admin-site-swatch{display:inline-block;width:1rem;height:1rem;flex:0 0 auto;border:1px solid var(--admin-border);border-radius:999px;background:var(--site-color,var(--admin-primary));box-shadow:0 0 0 .18rem color-mix(in srgb,var(--site-color,var(--admin-primary)) 12%,transparent)}
+      #${rootId} .admin-site-photo{display:grid;grid-template-columns:6.2rem minmax(0,1fr);align-items:center;gap:.8rem;border:1px solid var(--admin-border);border-radius:.55rem;background:#f8fafc;padding:.7rem}
+      #${rootId} .admin-site-photo-preview{display:grid;place-items:center;width:6.2rem;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;color:var(--admin-muted);font-size:.72rem;font-weight:900;text-align:center}
+      #${rootId} .admin-site-photo-preview img{width:100%;height:100%;object-fit:cover}
+      #${rootId} .admin-site-photo-content{display:grid;gap:.18rem;min-width:0}
+      #${rootId} .admin-site-photo-content strong{color:var(--admin-text);font-size:.9rem;font-weight:950}
+      #${rootId} .admin-site-photo-content p{margin:0;color:var(--admin-muted);font-size:.74rem;font-weight:750}
+      #${rootId} .admin-site-photo-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem}
       #${rootId} .admin-actions{display:flex;justify-content:flex-end;gap:.55rem;flex-wrap:wrap}
       #${rootId} .admin-empty,#${rootId} .admin-loading{display:grid;place-items:center;min-height:7rem;border:1px dashed var(--admin-border);border-radius:.55rem;color:var(--admin-muted);font-weight:850;text-align:center;padding:1rem}
       #${rootId} .admin-alert{border:1px solid #fecaca;border-radius:.55rem;background:#fff1f2;padding:.8rem;color:#b91c1c;font-weight:850}
       #${rootId} .admin-menu-groups{display:grid;grid-template-columns:minmax(16rem,.7fr) minmax(0,1.3fr);gap:.85rem}
       #${rootId} .admin-icon-preview{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:.45rem;background:#f7e8ee;color:var(--admin-primary)}
       .dark #${rootId}{--admin-border:var(--color-surface-700,#334155);--admin-text:#fff;--admin-muted:var(--color-secondary-400,#94a3b8)}
-      .dark #${rootId} .admin-card,.dark #${rootId} .admin-row,.dark #${rootId} .admin-button,.dark #${rootId} .admin-tab,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea{background:var(--color-surface-900,#0f172a);border-color:var(--admin-border)}
+      .dark #${rootId} .admin-card,.dark #${rootId} .admin-row,.dark #${rootId} .admin-button,.dark #${rootId} .admin-tab,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .admin-site-photo,.dark #${rootId} .admin-site-photo-preview{background:var(--color-surface-900,#0f172a);border-color:var(--admin-border)}
       @media (max-width:900px){#${rootId} .admin-menu-groups,#${rootId} .admin-grid,#${rootId} .admin-grid-3{grid-template-columns:1fr}}
       @media (max-width:700px){#${rootId} .admin-top{display:grid}#${rootId} .admin-title h1{font-size:1.55rem}#${rootId} .admin-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-tab{width:100%}#${rootId} .admin-actions{display:grid;grid-template-columns:1fr 1fr}}
+      @media (max-width:520px){#${rootId} .admin-site-photo{grid-template-columns:1fr}#${rootId} .admin-site-photo-preview{width:100%;max-width:14rem}}
     `;
     document.head.appendChild(style);
   }
@@ -300,6 +308,7 @@
           <span class="admin-site-heading" style="--site-color:${esc(color)}"><i class="admin-site-swatch" aria-hidden="true"></i><strong>${esc(site.name || "Nouveau site")}</strong></span>
           <span>${site.active === false ? "Masqué" : "Actif"}</span>
         </div>
+        ${renderSitePhoto(site)}
         <div class="admin-grid-3">
           <label>Nom <input name="name" value="${esc(site.name || "")}" required></label>
           <label>Couleur <input name="color" type="color" value="${esc(color)}"></label>
@@ -317,6 +326,27 @@
           ${site.id ? `<button class="admin-button admin-button-danger" type="button" data-delete-site="${esc(site.id)}">Supprimer</button>` : ""}
         </div>
       </form>
+    `;
+  }
+
+  function renderSitePhoto(site) {
+    const src = site.photoUrl || "";
+
+    return `
+      <div class="admin-site-photo">
+        <span class="admin-site-photo-preview" data-site-photo-preview>${src ? `<img src="${esc(src)}" alt="${esc(site.name || "Site")}" loading="lazy">` : "<span>Photo du site</span>"}</span>
+        <div class="admin-site-photo-content">
+          <strong>Photo du site</strong>
+          <p>Image affichée avec les informations du site.</p>
+          <div class="admin-site-photo-actions">
+            <button class="admin-button" type="button" data-site-photo-pick>${src ? "Remplacer" : "Choisir une photo"}</button>
+            <button class="admin-button admin-button-danger" type="button" data-site-photo-remove${src ? "" : " hidden"}>Supprimer</button>
+          </div>
+          <input type="file" accept="image/png,image/jpeg,image/webp" hidden data-site-photo-input>
+          <input type="hidden" name="photoDataUrl" value="">
+          <input type="hidden" name="removePhoto" value="">
+        </div>
+      </div>
     `;
   }
 
@@ -416,12 +446,13 @@
     root.querySelector("[data-save-menu]")?.addEventListener("click", saveMenu);
     root.querySelectorAll("[data-module-form]").forEach((form) => form.addEventListener("submit", saveModule));
     root.querySelectorAll("[data-site-form]").forEach((form) => form.addEventListener("submit", saveSite));
+    root.querySelectorAll("[data-site-form]").forEach(bindSitePhotoForm);
     root.querySelectorAll("[data-page-form]").forEach((form) => form.addEventListener("submit", savePage));
     root.querySelectorAll("[data-user-form]").forEach((form) => form.addEventListener("submit", saveUser));
     root.querySelectorAll("[data-delete-site]").forEach((button) => button.addEventListener("click", deleteSite));
     root.querySelectorAll("[data-delete-page]").forEach((button) => button.addEventListener("click", deletePage));
     root.querySelector("[data-new-site]")?.addEventListener("click", () => {
-      state.data.sites = [{ id: "", name: "", active: true, address: "", phone: "", email: "", color: defaultSiteColor(), hours: {} }, ...(state.data?.sites || [])];
+      state.data.sites = [{ id: "", name: "", active: true, address: "", phone: "", email: "", color: defaultSiteColor(), photoUrl: "", hours: {} }, ...(state.data?.sites || [])];
       render();
     });
     root.querySelector("[data-new-page]")?.addEventListener("click", () => {
@@ -488,9 +519,68 @@
         morningEnd: String(data.get("morningEnd") || "12:00"),
         afternoonStart: String(data.get("afternoonStart") || "13:30"),
         afternoonEnd: String(data.get("afternoonEnd") || "17:30"),
+        photoDataUrl: String(data.get("photoDataUrl") || ""),
+        removePhoto: Boolean(data.get("removePhoto")),
         active: Boolean(data.get("active")),
       },
     }));
+  }
+
+  function bindSitePhotoForm(form) {
+    const input = form.querySelector("[data-site-photo-input]");
+    const pick = form.querySelector("[data-site-photo-pick]");
+    const remove = form.querySelector("[data-site-photo-remove]");
+    const photoData = form.querySelector('[name="photoDataUrl"]');
+    const removePhoto = form.querySelector('[name="removePhoto"]');
+    const preview = form.querySelector("[data-site-photo-preview]");
+
+    pick?.addEventListener("click", () => input?.click());
+
+    input?.addEventListener("change", async () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+
+      if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+        alert("Choisis une image PNG, JPG ou WebP.");
+        input.value = "";
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert("La photo ne doit pas dépasser 5 Mo.");
+        input.value = "";
+        return;
+      }
+
+      try {
+        const dataUrl = await readFileAsDataUrl(file);
+        photoData.value = dataUrl;
+        removePhoto.value = "";
+        preview.innerHTML = `<img src="${esc(dataUrl)}" alt="">`;
+        remove?.removeAttribute("hidden");
+        if (pick) pick.textContent = "Remplacer";
+      } catch (error) {
+        alert(error.message || "Photo illisible.");
+      }
+    });
+
+    remove?.addEventListener("click", () => {
+      photoData.value = "";
+      removePhoto.value = "1";
+      if (input) input.value = "";
+      preview.innerHTML = "<span>Photo du site</span>";
+      remove.setAttribute("hidden", "");
+      if (pick) pick.textContent = "Choisir une photo";
+    });
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(new Error("Photo illisible"));
+      reader.readAsDataURL(file);
+    });
   }
 
   async function savePage(event) {

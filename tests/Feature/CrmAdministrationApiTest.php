@@ -454,6 +454,7 @@ class CrmAdministrationApiTest extends TestCase
                 'phone' => '05 59 00 00 00',
                 'email' => 'atelier-nord@example.test',
                 'color' => '#2563eb',
+                'photoDataUrl' => $this->crmPngDataUrl(16, 10),
                 'hours' => [
                     'morningStart' => '08:00',
                     'morningEnd' => '12:15',
@@ -465,6 +466,14 @@ class CrmAdministrationApiTest extends TestCase
             ->assertJsonPath('ok', true)
             ->json('id');
 
+        $photoUrl = (string) CrmSite::query()->whereKey($siteId)->value('photo_url');
+
+        $this->assertStringStartsWith('/uploads/assets/uploads/sites/', $photoUrl);
+        $this->assertStringEndsWith('.webp', $photoUrl);
+        $photoPath = substr($photoUrl, strlen('/uploads/'));
+        Storage::disk('public')->assertExists($photoPath);
+        Storage::disk('public')->assertExists(str_replace('.webp', '-thumb.webp', $photoPath));
+
         $this->assertDatabaseHas('crm_sites', [
             'id' => $siteId,
             'name' => 'Atelier Nord',
@@ -475,6 +484,7 @@ class CrmAdministrationApiTest extends TestCase
             'phone' => '05 59 00 00 00',
             'email' => 'atelier-nord@example.test',
             'color' => '#2563eb',
+            'photo_url' => $photoUrl,
         ]);
 
         $this->actingAs($account)
@@ -486,7 +496,35 @@ class CrmAdministrationApiTest extends TestCase
                 'phone' => '05 59 00 00 00',
                 'email' => 'atelier-nord@example.test',
                 'color' => '#2563eb',
+                'photoUrl' => $photoUrl,
             ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_site', [
+                'id' => $siteId,
+                'name' => 'Atelier Nord',
+                'active' => true,
+                'address' => '12 rue des Artisans, 64000 Pau',
+                'phone' => '05 59 00 00 00',
+                'email' => 'atelier-nord@example.test',
+                'color' => '#2563eb',
+                'removePhoto' => true,
+                'hours' => [
+                    'morningStart' => '08:00',
+                    'morningEnd' => '12:15',
+                    'afternoonStart' => '13:45',
+                    'afternoonEnd' => '18:00',
+                ],
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseHas('crm_sites', [
+            'id' => $siteId,
+            'photo_url' => null,
+        ]);
+        Storage::disk('public')->assertMissing($photoPath);
+        Storage::disk('public')->assertMissing(str_replace('.webp', '-thumb.webp', $photoPath));
     }
 
     public function test_admin_site_color_must_be_hex(): void

@@ -17,7 +17,7 @@ use Modules\CrmCore\Services\CrmImageStorage;
 
 final class CrmReferenceCache
 {
-    public const ACTIVE_SITE_ROWS = 'hub:sites:active:rows:v2';
+    public const ACTIVE_SITE_ROWS = 'hub:sites:active:rows:v3';
 
     public const ACTIVE_SITE_IDS = 'hub:sites:active:ids:v1';
 
@@ -38,7 +38,7 @@ final class CrmReferenceCache
     public const ACTIVE_EQUIPMENT_ITEM_ROWS = 'hub:equipment-items:active:rows:v1';
 
     /**
-     * @return array<int, array{id: int, name: string, slug: string, address: string, phone: string, email: string, color: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
+     * @return array<int, array{id: int, name: string, slug: string, address: string, phone: string, email: string, color: string, photoUrl: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
      */
     public static function activeSiteRows(): array
     {
@@ -55,6 +55,7 @@ final class CrmReferenceCache
                     'phone' => trim((string) $site->phone),
                     'email' => trim((string) $site->email),
                     'color' => self::siteColor($site),
+                    'photoUrl' => app(CrmImageStorage::class)->normalizePublicUrl($site->photo_url),
                     'hours' => self::siteHours($site),
                 ])
                 ->values()

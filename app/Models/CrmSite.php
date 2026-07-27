@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Modules\CrmCore\Services\UploadedCrmFileCleaner;
 use Modules\CrmCore\Support\CrmReferenceCache;
 
 /**
@@ -25,6 +26,7 @@ use Modules\CrmCore\Support\CrmReferenceCache;
  * @property string|null $morning_start
  * @property string $name
  * @property string|null $phone
+ * @property string|null $photo_url
  * @property string|null $slug
  * @property-read object{is_default?: mixed}|null $pivot
  * @property-read Collection<int, CrmVehicle> $vehicles
@@ -53,6 +55,7 @@ class CrmSite extends Model
         'phone',
         'email',
         'color',
+        'photo_url',
         'deleted_at',
     ];
 
@@ -108,7 +111,18 @@ class CrmSite extends Model
             CrmReferenceCache::forgetUsers();
         });
 
-        static::deleted(function (): void {
+        static::updated(function (CrmSite $site): void {
+            if ($site->wasChanged('photo_url')) {
+                app(UploadedCrmFileCleaner::class)->deletePublicUpload($site->getOriginal('photo_url'));
+            }
+
+            if ($site->wasChanged('active') && ! $site->active) {
+                app(UploadedCrmFileCleaner::class)->deletePublicUpload($site->getAttribute('photo_url'));
+            }
+        });
+
+        static::deleted(function (CrmSite $site): void {
+            app(UploadedCrmFileCleaner::class)->deletePublicUpload($site->getAttribute('photo_url'));
             CrmReferenceCache::forgetSites();
             CrmReferenceCache::forgetUsers();
         });

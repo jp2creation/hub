@@ -755,6 +755,11 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('<label>Couleur <input name="color" type="color"', $administration);
         $this->assertStringContainsString('<label>Téléphone <input name="phone" type="tel"', $administration);
         $this->assertStringContainsString('<label>Adresse <input name="address"', $administration);
+        $this->assertStringContainsString('function renderSitePhoto(site)', $administration);
+        $this->assertStringContainsString('data-site-photo-input', $administration);
+        $this->assertStringContainsString('name="photoDataUrl"', $administration);
+        $this->assertStringContainsString('photoDataUrl: String(data.get("photoDataUrl") || "")', $administration);
+        $this->assertStringContainsString('function readFileAsDataUrl(file)', $administration);
         $this->assertStringContainsString('window.CRM_ACTIVE_SITE?.reload?.();', $administration);
 
         $this->assertStringContainsString('.crm-active-site-trigger.has-site-dot .crm-active-site-dot', $activeSite);
