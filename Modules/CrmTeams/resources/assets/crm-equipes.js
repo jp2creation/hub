@@ -9,6 +9,7 @@
   let root = null;
   let mountedPath = "";
   let bootScheduled = false;
+  let filterRenderTimer = null;
 
   const state = {
     data: null,
@@ -91,6 +92,7 @@
   async function load() {
     if (!isRoute()) return;
 
+    clearFilterRenderTimer();
     state.loading = true;
     state.error = "";
     render();
@@ -198,13 +200,7 @@
 
     const site = activeSite();
     const currentMembers = members();
-    const membersWithPhone = currentMembers.filter((member) => member.phone).length;
-    const membersWithEmail = currentMembers.filter((member) => member.email).length;
     const searchAllSites = Boolean(state.searchAllSites);
-    const membersTitle = searchAllSites ? "Tous les sites" : (site?.name || "Site actif");
-    const membersScope = searchAllSites
-      ? `${currentMembers.length} membre${currentMembers.length > 1 ? "s" : ""} sur ${state.data.sites.length} site${state.data.sites.length > 1 ? "s" : ""} visible${state.data.sites.length > 1 ? "s" : ""}`
-      : `${currentMembers.length} membre${currentMembers.length > 1 ? "s" : ""}`;
 
     root.innerHTML = `
       <div class="teams-page">
@@ -223,28 +219,48 @@
           </div>
         </header>
 
-        <section class="teams-stats" aria-label="Synthèse équipe">
-          ${statCard("Membres", currentMembers.length, "users", "var(--theme-primary-color)")}
-          ${statCard("Sites visibles", state.data.sites.length, "building", "#2563eb")}
-          ${statCard("Téléphones", membersWithPhone, "phone", "#16a34a")}
-          ${statCard("E-mails", membersWithEmail, "mail", "#7c3aed")}
-        </section>
+        ${renderStats(currentMembers)}
 
         ${renderSiteInfo(site)}
 
-        <section class="teams-card">
-          <div class="teams-card-head">
-            <div>
-              <h2>${esc(membersTitle)}</h2>
-              <p>${esc(membersScope)}</p>
-            </div>
-          </div>
-          ${currentMembers.length ? renderMembers(currentMembers, searchAllSites) : renderEmptyMembers(searchAllSites)}
-        </section>
+        ${renderMembersCard(currentMembers, searchAllSites, site)}
       </div>
     `;
 
     bind();
+  }
+
+  function renderStats(currentMembers) {
+    const membersWithPhone = currentMembers.filter((member) => member.phone).length;
+    const membersWithEmail = currentMembers.filter((member) => member.email).length;
+
+    return `
+      <section class="teams-stats" aria-label="Synthèse équipe" data-teams-stats>
+        ${statCard("Membres", currentMembers.length, "users", "var(--theme-primary-color)")}
+        ${statCard("Sites visibles", state.data.sites.length, "building", "#2563eb")}
+        ${statCard("Téléphones", membersWithPhone, "phone", "#16a34a")}
+        ${statCard("E-mails", membersWithEmail, "mail", "#7c3aed")}
+      </section>
+    `;
+  }
+
+  function renderMembersCard(currentMembers, searchAllSites, site) {
+    const membersTitle = searchAllSites ? "Tous les sites" : (site?.name || "Site actif");
+    const membersScope = searchAllSites
+      ? `${currentMembers.length} membre${currentMembers.length > 1 ? "s" : ""} sur ${state.data.sites.length} site${state.data.sites.length > 1 ? "s" : ""} visible${state.data.sites.length > 1 ? "s" : ""}`
+      : `${currentMembers.length} membre${currentMembers.length > 1 ? "s" : ""}`;
+
+    return `
+      <section class="teams-card" data-teams-members-card>
+        <div class="teams-card-head">
+          <div>
+            <h2>${esc(membersTitle)}</h2>
+            <p>${esc(membersScope)}</p>
+          </div>
+        </div>
+        ${currentMembers.length ? renderMembers(currentMembers, searchAllSites) : renderEmptyMembers(searchAllSites)}
+      </section>
+    `;
   }
 
   function statCard(label, value, iconName, color) {
@@ -464,11 +480,10 @@
 
   function bind() {
     root.querySelector("[data-teams-search]")?.addEventListener("input", (event) => {
-      state.query = event.target.value;
-      render();
-      const input = root.querySelector("[data-teams-search]");
-      input?.focus();
-      input?.setSelectionRange?.(state.query.length, state.query.length);
+      const input = event.currentTarget;
+
+      state.query = input.value;
+      scheduleFilteredMembersRender(input);
     });
 
     root.querySelector("[data-teams-all-sites]")?.addEventListener("change", (event) => {
@@ -476,6 +491,55 @@
       load();
     });
 
+  }
+
+  function scheduleFilteredMembersRender(input) {
+    const selectionStart = input.selectionStart ?? input.value.length;
+    const selectionEnd = input.selectionEnd ?? selectionStart;
+
+    clearFilterRenderTimer();
+    filterRenderTimer = window.setTimeout(() => {
+      filterRenderTimer = null;
+      renderFilteredMembers();
+      restoreSearchFocus(input, selectionStart, selectionEnd);
+    }, 180);
+  }
+
+  function clearFilterRenderTimer() {
+    if (!filterRenderTimer) return;
+
+    window.clearTimeout(filterRenderTimer);
+    filterRenderTimer = null;
+  }
+
+  function renderFilteredMembers() {
+    if (!root || !state.data) return;
+
+    const currentMembers = members();
+    const searchAllSites = Boolean(state.searchAllSites);
+    const site = activeSite();
+    const stats = root.querySelector("[data-teams-stats]");
+    const membersCard = root.querySelector("[data-teams-members-card]");
+
+    if (stats) {
+      stats.outerHTML = renderStats(currentMembers);
+    }
+
+    if (membersCard) {
+      membersCard.outerHTML = renderMembersCard(currentMembers, searchAllSites, site);
+    }
+  }
+
+  function restoreSearchFocus(input, selectionStart, selectionEnd) {
+    const restore = () => {
+      if (!input.isConnected) return;
+
+      input.focus({ preventScroll: true });
+      input.setSelectionRange?.(selectionStart, selectionEnd);
+    };
+
+    window.setTimeout(restore, 0);
+    window.requestAnimationFrame?.(restore);
   }
 
   function ensureStyles() {
@@ -594,7 +658,7 @@
 
       if (mountedPath !== window.location.pathname || forceLoad || !state.data) {
         load();
-      } else {
+      } else if (!root.querySelector(".teams-page")) {
         render();
       }
     }, 80);
@@ -613,7 +677,11 @@
     if (isRoute()) load();
   });
   document.addEventListener("DOMContentLoaded", () => scheduleBoot());
-  document.addEventListener("click", () => scheduleBoot(), true);
+  document.addEventListener("click", (event) => {
+    if (root?.contains(event.target)) return;
+
+    scheduleBoot();
+  }, true);
   window.setTimeout(() => scheduleBoot(), 0);
   watchRouteChanges();
 })();
