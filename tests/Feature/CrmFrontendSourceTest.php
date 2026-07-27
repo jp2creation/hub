@@ -649,6 +649,8 @@ class CrmFrontendSourceTest extends TestCase
         $calendarEnd = strpos($asset, 'function renderWorkflowPanel()', $calendarStart ?: 0);
         $balancesStart = strpos($asset, 'function renderBalancesPanel()');
         $balancesEnd = strpos($asset, 'function renderRequestsTable()', $balancesStart ?: 0);
+        $balancePanelStart = strpos($asset, 'function renderBalancePanel()');
+        $balancePanelEnd = strpos($asset, 'async function request(', $balancePanelStart ?: 0);
 
         if (
             $headerStart === false ||
@@ -656,7 +658,9 @@ class CrmFrontendSourceTest extends TestCase
             $calendarStart === false ||
             $calendarEnd === false ||
             $balancesStart === false ||
-            $balancesEnd === false
+            $balancesEnd === false ||
+            $balancePanelStart === false ||
+            $balancePanelEnd === false
         ) {
             $this->fail('Le module Congés ne contient plus les fonctions de rendu attendues.');
         }
@@ -664,6 +668,7 @@ class CrmFrontendSourceTest extends TestCase
         $headerSource = substr($asset, $headerStart, $headerEnd - $headerStart);
         $calendarSource = substr($asset, $calendarStart, $calendarEnd - $calendarStart);
         $balancesSource = substr($asset, $balancesStart, $balancesEnd - $balancesStart);
+        $balancePanelSource = substr($asset, $balancePanelStart, $balancePanelEnd - $balancePanelStart);
 
         $this->assertStringContainsString('${renderTopMetrics()}', $headerSource);
         $this->assertStringContainsString('leave-header-subtitle', $headerSource);
@@ -672,6 +677,10 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringNotContainsString('data-filter-focus', $asset);
         $this->assertStringNotContainsString('${renderTopMetrics()}', $calendarSource);
         $this->assertStringNotContainsString('${renderTopMetrics()}', $balancesSource);
+        $this->assertStringNotContainsString('leave-profile-card', $balancePanelSource);
+        $this->assertStringNotContainsString('leave-balance-grid', $balancePanelSource);
+        $this->assertStringContainsString('leave-type-card leave-sidebar-card', $balancePanelSource);
+        $this->assertStringContainsString('Absences par type', $balancePanelSource);
 
         foreach ([
             '#fffdfa',

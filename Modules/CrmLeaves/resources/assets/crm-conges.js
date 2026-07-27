@@ -1378,23 +1378,9 @@
 
   function renderBalancePanel() {
     const employee = currentScopeEmployee();
-    const year = state.month.getFullYear();
-    const used = employee ? yearApprovedDaysForEmployee(employee.id) : yearLeaves().filter((leave) => leave.status === 'approved').reduce((sum, leave) => sum + daysCount(leave), 0);
-    const pending = employee ? yearPendingDaysForEmployee(employee.id) : yearLeaves().filter((leave) => leave.status === 'pending').reduce((sum, leave) => sum + daysCount(leave), 0);
-    const projected = used + pending;
 
     return `
       <aside class="leave-side-panel leave-absences-sidebar">
-        <section class="leave-profile-card">
-          ${employeeAvatar(employee, 'leave-profile-avatar', activeSiteName())}
-          <h2>${esc(employee?.name || activeSiteName())}</h2>
-          <p>${esc(activeSiteName())} - Equipe</p>
-          <div class="leave-balance-grid">
-            <span><strong>${esc(formatDaysCount(used))}j</strong><small>valides ${year}</small></span>
-            <span><strong>${esc(formatDaysCount(pending))}j</strong><small>en attente</small></span>
-            <span><strong>${esc(formatDaysCount(projected))}j</strong><small>previsionnel</small></span>
-          </div>
-        </section>
         <section class="leave-type-card leave-sidebar-card">
           <h3>Absences par type</h3>
           ${(state.data?.types || [])
