@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Modules\CrmCore\Http\Controllers\AuthController;
 
+Route::view('/privacy-policy', 'privacy-policy')->name('privacy-policy');
+Route::view('/politique-confidentialite', 'privacy-policy')->name('privacy-policy.fr');
+
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [AuthController::class, 'show'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:crm-login');

@@ -1,0 +1,134 @@
+:root {
+  color-scheme: light;
+  --primary: var(--theme-primary-color, #b0003a);
+  --primary-dark: var(--theme-primary-dark-color, #8c002f);
+  --ink: #102033;
+  --muted: #697386;
+  --line: #dce2ea;
+  --surface: #ffffff;
+  --page: #f3f6fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--page);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+a {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.privacy-page {
+  width: min(100% - 32px, 920px);
+  margin: 0 auto;
+  padding: 42px 0 56px;
+}
+
+.privacy-hero,
+.privacy-section {
+  border: 1px solid rgba(220, 226, 234, 0.96);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 18px 46px rgba(16, 32, 51, 0.08);
+}
+
+.privacy-hero {
+  padding: clamp(30px, 6vw, 54px);
+}
+
+.privacy-hero h1,
+.privacy-section h2 {
+  margin: 0;
+  color: var(--ink);
+}
+
+.privacy-hero h1 {
+  max-width: 740px;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1.04;
+}
+
+.privacy-hero p {
+  max-width: 680px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.privacy-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin: 0 0 16px;
+  padding: 4px 10px;
+  border: 1px solid rgb(var(--theme-primary, 176 0 58) / 0.22);
+  border-radius: 999px;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.privacy-date {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.privacy-section {
+  margin-top: 16px;
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.privacy-section h2 {
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  line-height: 1.2;
+}
+
+.privacy-section p,
+.privacy-section li {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.privacy-section p {
+  margin: 14px 0 0;
+}
+
+.privacy-section ul {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding-left: 22px;
+}
+
+.privacy-section li::marker {
+  color: var(--primary);
+}
+
+@media (max-width: 640px) {
+  .privacy-page {
+    width: min(100% - 24px, 920px);
+    padding: 24px 0 40px;
+  }
+
+  .privacy-hero,
+  .privacy-section {
+    border-radius: 10px;
+  }
+}
