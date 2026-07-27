@@ -291,7 +291,7 @@
       .crm-account-head h1 {
         margin: 0;
         color: var(--color-secondary-900, #0f172a);
-        font-size: clamp(1.85rem, 2.4vw, 2.3rem);
+        font-size: clamp(1.6rem, 2vw, 2rem);
         font-weight: 950;
         line-height: 1.05;
         letter-spacing: 0;
@@ -300,7 +300,7 @@
       .crm-account-head p {
         margin: .35rem 0 0;
         color: var(--color-secondary-500, #64748b);
-        font-size: .95rem;
+        font-size: .86rem;
         font-weight: 800;
         line-height: 1.35;
       }
@@ -315,7 +315,7 @@
         background: #fff;
         box-shadow: 0 12px 28px rgba(15, 23, 42, .05);
         color: var(--color-secondary-700, #334155);
-        font-size: .82rem;
+        font-size: .76rem;
         font-weight: 900;
         padding: .45rem .8rem;
         white-space: nowrap;
@@ -367,7 +367,7 @@
         min-width: 0;
         overflow: hidden;
         color: var(--color-secondary-500, #64748b);
-        font-size: .73rem;
+        font-size: .68rem;
         font-weight: 900;
         line-height: 1.15;
         text-overflow: ellipsis;
@@ -381,7 +381,7 @@
         overflow: hidden;
         margin: .25rem 0;
         color: var(--color-secondary-900, #0f172a);
-        font-size: 1.17rem;
+        font-size: 1rem;
         font-weight: 950;
         line-height: 1.1;
         letter-spacing: 0;
@@ -394,7 +394,7 @@
         min-width: 0;
         overflow: hidden;
         color: var(--color-secondary-400, #94a3b8);
-        font-size: .72rem;
+        font-size: .67rem;
         font-weight: 800;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -454,7 +454,7 @@
         max-width: 100%;
         overflow-wrap: anywhere;
         color: var(--color-secondary-900, #0f172a);
-        font-size: 1.15rem;
+        font-size: 1.02rem;
         font-weight: 950;
         line-height: 1.12;
         letter-spacing: 0;
@@ -465,7 +465,7 @@
         max-width: 100%;
         overflow: hidden;
         color: var(--color-secondary-500, #64748b);
-        font-size: .82rem;
+        font-size: .76rem;
         font-weight: 800;
         line-height: 1.25;
         text-overflow: ellipsis;
@@ -482,7 +482,7 @@
         border-radius: 999px;
         color: var(--theme-primary-color);
         background: rgb(var(--theme-primary) / .08);
-        font-size: .78rem;
+        font-size: .72rem;
         font-weight: 900;
       }
 
@@ -541,14 +541,14 @@
       }
 
       .crm-account-section-item strong {
-        font-size: .84rem;
+        font-size: .78rem;
         font-weight: 900;
       }
 
       .crm-account-section-item small {
         margin-top: .05rem;
         color: var(--color-secondary-400, #94a3b8);
-        font-size: .71rem;
+        font-size: .67rem;
         font-weight: 800;
       }
 
@@ -577,7 +577,7 @@
       .crm-account-form-header h2 {
         margin: 0;
         color: var(--color-secondary-900, #0f172a);
-        font-size: 1.16rem;
+        font-size: 1.02rem;
         font-weight: 950;
         letter-spacing: 0;
       }
@@ -585,14 +585,14 @@
       .crm-account-form-header p {
         margin: .2rem 0 0;
         color: var(--color-secondary-500, #64748b);
-        font-size: .82rem;
+        font-size: .76rem;
         font-weight: 800;
       }
 
       .crm-account-status {
         min-height: 1.2rem;
         color: #16a34a;
-        font-size: .88rem;
+        font-size: .78rem;
         font-weight: 850;
         text-align: right;
       }
@@ -617,7 +617,7 @@
 
       .crm-account-field label {
         color: var(--color-secondary-700, #334155);
-        font-size: .82rem;
+        font-size: .76rem;
         font-weight: 900;
       }
 
@@ -630,9 +630,10 @@
         background: #fff;
         color: var(--color-secondary-900, #0f172a);
         font: inherit;
+        font-size: .88rem;
         font-weight: 750;
         outline: none;
-        padding: .75rem .85rem;
+        padding: .68rem .78rem;
         transition: border-color .18s ease, box-shadow .18s ease;
       }
 
@@ -686,14 +687,14 @@
 
       .crm-account-photo-copy strong {
         color: var(--color-secondary-900, #0f172a);
-        font-size: .9rem;
+        font-size: .82rem;
         font-weight: 950;
       }
 
       .crm-account-photo-copy span {
         margin-top: .1rem;
         color: var(--color-secondary-500, #64748b);
-        font-size: .78rem;
+        font-size: .72rem;
         font-weight: 800;
       }
 
@@ -713,6 +714,7 @@
         color: var(--color-secondary-700, #334155);
         cursor: pointer;
         font: inherit;
+        font-size: .84rem;
         font-weight: 850;
         padding: .7rem 1rem;
         transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
