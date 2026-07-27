@@ -747,6 +747,10 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('${siteInfoItem("Adresse", site?.address || "", "mapPin")}', $teams);
         $this->assertStringContainsString('${siteInfoItem("Téléphone", site?.phone || "", "phone", site?.phone ? `tel:${phoneHref(site.phone)}` : "")}', $teams);
         $this->assertStringContainsString('style="--site-color:${esc(color)}"', $teams);
+        $this->assertStringContainsString('window.addEventListener(activeSiteEvent', $teams);
+        $this->assertStringNotContainsString('class="teams-sites"', $teams);
+        $this->assertStringNotContainsString('data-site-id', $teams);
+        $this->assertStringNotContainsString('function renderSiteButton', $teams);
 
         $this->assertStringContainsString('<label>Couleur <input name="color" type="color"', $administration);
         $this->assertStringContainsString('<label>Téléphone <input name="phone" type="tel"', $administration);

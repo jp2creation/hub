@@ -217,10 +217,6 @@
           ${statCard("E-mails", membersWithEmail, "mail", "#7c3aed")}
         </section>
 
-        <nav class="teams-sites" aria-label="Sites">
-          ${state.data.sites.map((siteItem) => renderSiteButton(siteItem)).join("")}
-        </nav>
-
         ${renderSiteInfo(site)}
 
         <section class="teams-card">
@@ -247,18 +243,6 @@
           <strong>${esc(value)}</strong>
         </span>
       </div>
-    `;
-  }
-
-  function renderSiteButton(site) {
-    const active = Number(site.id) === selectedSiteId();
-    const color = siteColor(site);
-
-    return `
-      <button class="teams-site ${active ? "is-active" : ""}" type="button" data-site-id="${esc(site.id)}" style="--site-color:${esc(color)}">
-        <span>${esc(site.name)}</span>
-        <small>${esc(site.membersCount)} membre${Number(site.membersCount) > 1 ? "s" : ""}</small>
-      </button>
     `;
   }
 
@@ -436,24 +420,6 @@
       input?.setSelectionRange?.(state.query.length, state.query.length);
     });
 
-    root.querySelectorAll("[data-site-id]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const siteId = numberOrNull(button.getAttribute("data-site-id"));
-        if (!siteId || siteId === selectedSiteId()) return;
-
-        if (window.CRM_ACTIVE_SITE?.setSiteId) {
-          window.CRM_ACTIVE_SITE.setSiteId(siteId);
-        } else {
-          try {
-            window.localStorage.setItem(activeSiteStorageKey, String(siteId));
-          } catch (error) {
-            // Reloading through the API will still use the explicit site id when possible.
-          }
-
-          window.dispatchEvent(new CustomEvent(activeSiteEvent, { detail: { siteId } }));
-        }
-      });
-    });
   }
 
   function ensureStyles() {
@@ -483,13 +449,6 @@
       #${rootId} .teams-stat-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color) 14%,white);color:var(--stat-color)}
       #${rootId} .teams-stat small{display:block;color:var(--teams-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}
       #${rootId} .teams-stat strong{display:block;margin:.15rem 0 0;color:var(--teams-text);font-size:1.3rem;font-weight:950;line-height:1.05}
-      #${rootId} .teams-sites{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,8.75rem),1fr));gap:.55rem;min-width:0;overflow:visible;padding:.05rem .05rem .2rem}
-      #${rootId} .teams-site{display:grid;gap:.12rem;width:100%;min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.65rem .8rem;color:var(--teams-text);cursor:pointer;text-align:left;box-shadow:0 10px 24px rgba(15,23,42,.04);transition:border-color .16s ease,background-color .16s ease,color .16s ease,box-shadow .16s ease}
-      #${rootId} .teams-site span{font-size:.88rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      #${rootId} .teams-site small{color:var(--teams-muted);font-size:.72rem;font-weight:800}
-      #${rootId} .teams-site:hover{border-color:color-mix(in srgb,var(--site-color,var(--teams-primary)) 45%,var(--teams-border))}
-      #${rootId} .teams-site.is-active{border-color:transparent;background:var(--site-color,var(--teams-primary));color:#fff;box-shadow:0 16px 30px color-mix(in srgb,var(--site-color,var(--teams-primary)) 22%,transparent)}
-      #${rootId} .teams-site.is-active small{color:rgba(255,255,255,.78)}
       #${rootId} .teams-site-info{display:grid;grid-template-columns:minmax(14rem,.8fr) minmax(0,1.2fr);gap:1rem;align-items:stretch;min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.9rem;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #${rootId} .teams-site-info-title{display:grid;grid-template-columns:2.55rem minmax(0,1fr);align-items:center;gap:.75rem;min-width:0}
       #${rootId} .teams-site-info-title > span{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--site-color,var(--teams-primary)) 14%,white);color:var(--site-color,var(--teams-primary))}
@@ -534,12 +493,12 @@
       #${rootId} .teams-muted{color:var(--teams-muted);font-weight:750}
       #${rootId} .teams-empty,.teams-loading{display:grid;place-items:center;min-height:9rem;border:1px dashed var(--teams-border);border-radius:.5rem;color:var(--teams-muted);font-size:.88rem;font-weight:850;text-align:center;padding:1rem}
       .dark #${rootId}{--teams-border:var(--color-surface-700,#334155);--teams-muted:var(--color-secondary-400,#94a3b8);--teams-text:#fff}
-      .dark #${rootId} .teams-search,.dark #${rootId} .teams-stat,.dark #${rootId} .teams-site,.dark #${rootId} .teams-card,.dark #${rootId} .teams-site-info{background:var(--color-surface-900,#0f172a);border-color:var(--teams-border)}
+      .dark #${rootId} .teams-search,.dark #${rootId} .teams-stat,.dark #${rootId} .teams-card,.dark #${rootId} .teams-site-info{background:var(--color-surface-900,#0f172a);border-color:var(--teams-border)}
       .dark #${rootId} .teams-table th{background:var(--color-surface-800,#1e293b)}
       .dark #${rootId} .teams-person-details div,.dark #${rootId} .teams-site-info-item{background:var(--color-surface-800,#1e293b)}
       @container teams-card (max-width:58rem){#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid}}
       @media (max-width:1100px){#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .teams-site-info{grid-template-columns:1fr}#${rootId} .teams-site-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-      @media (max-width:720px){#${rootId} .teams-header{align-items:stretch;flex-direction:column}#${rootId} .teams-title h1{font-size:1.55rem}#${rootId} .teams-search{width:100%}#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .teams-stat{grid-template-columns:2.25rem minmax(0,1fr);padding:.7rem}#${rootId} .teams-stat-icon{width:2.25rem;height:2.25rem}#${rootId} .teams-sites{display:flex;overflow:auto;-webkit-overflow-scrolling:touch}#${rootId} .teams-site{flex:0 0 auto;width:auto;min-width:8.6rem}#${rootId} .teams-site-info-grid{grid-template-columns:1fr}#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid;grid-template-columns:1fr}}
+      @media (max-width:720px){#${rootId} .teams-header{align-items:stretch;flex-direction:column}#${rootId} .teams-title h1{font-size:1.55rem}#${rootId} .teams-search{width:100%}#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .teams-stat{grid-template-columns:2.25rem minmax(0,1fr);padding:.7rem}#${rootId} .teams-stat-icon{width:2.25rem;height:2.25rem}#${rootId} .teams-site-info-grid{grid-template-columns:1fr}#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid;grid-template-columns:1fr}}
       @media (max-width:390px){#${rootId} .teams-person-details{grid-template-columns:1fr}}
     `;
     document.head.appendChild(style);
