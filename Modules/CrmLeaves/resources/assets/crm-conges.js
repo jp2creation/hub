@@ -1237,11 +1237,12 @@
 
   function renderTopMetrics() {
     const stats = yearlyStats();
+    const year = state.month.getFullYear();
     const cards = [
-      { label: 'Disponibles', value: stats.available, icon: 'check', tone: '#16a34a' },
-      { label: 'Total', value: stats.total, icon: 'calendar', tone: '#2563eb' },
-      { label: 'Utilisés', value: stats.approved, icon: 'users', tone: 'rgb(var(--theme-primary))' },
-      { label: 'En attente', value: stats.pending, icon: 'clock', tone: '#f59e0b' },
+      { label: 'Disponibles', value: stats.available, detail: 'Solde restant', icon: 'check', tone: '#16a34a' },
+      { label: 'Total', value: stats.total, detail: 'Prévisionnel', icon: 'calendar', tone: '#2563eb' },
+      { label: 'Utilisés', value: stats.approved, detail: `Validés ${year}`, icon: 'users', tone: 'rgb(var(--theme-primary))' },
+      { label: 'En attente', value: stats.pending, detail: 'À valider', icon: 'clock', tone: '#f59e0b' },
     ];
 
     return `
@@ -1254,6 +1255,7 @@
                 <div class="leave-stat-copy">
                   <small>${esc(card.label)}</small>
                   <strong>${esc(formatDaysCount(card.value))}j</strong>
+                  <em>${esc(card.detail)}</em>
                 </div>
               </article>
             `,
@@ -2649,6 +2651,9 @@
         border-radius:999px;
         background:color-mix(in srgb,var(--type-color) 20%,#fff);
       }
+      .layout-container.layout-page:has(#crm-leaves-module),
+      .layout-page:has(#crm-leaves-module){width:100%;max-width:100%;min-width:0;overflow-x:hidden}
+      main:has(#crm-leaves-module){min-width:0;overflow-x:hidden}
       #crm-leaves-module {
         --leave-accent:var(--theme-primary-color);
         --leave-ink:var(--color-secondary-900,#1d354f);
@@ -2658,8 +2663,19 @@
         --leave-card-border:var(--color-surface-200,#e4e4e7);
         --leave-card-radius:var(--radius,.625rem);
         --leave-card-shadow:var(--shadow-card,0 1px 2px rgb(0 0 0 / 0.04),0 8px 24px -4px rgb(0 0 0 / 0.06));
+        width:100%;
+        max-width:100%;
+        min-width:0;
+        overflow-x:hidden;
+        box-sizing:border-box;
+      }
+      #crm-leaves-module * {
+        box-sizing:border-box;
       }
       #crm-leaves-module .leaves-page {
+        width:100%;
+        max-width:100%;
+        min-width:0;
         background:var(--color-secondary-50,#fafafa);
         border-radius:.05rem;
       }
@@ -2667,6 +2683,9 @@
         display:grid;
         align-items:stretch;
         gap:1rem;
+        width:100%;
+        max-width:100%;
+        min-width:0;
         background:transparent;
         border:0;
         border-radius:0;
@@ -2834,6 +2853,10 @@
         grid-template-columns:repeat(4,minmax(0,1fr));
         gap:.85rem;
         width:100%;
+        max-width:100%;
+        min-width:0;
+        justify-self:stretch;
+        align-items:stretch;
         border:0;
         border-radius:0;
         background:transparent;
@@ -2880,6 +2903,16 @@
         font-weight:900;
         text-overflow:ellipsis;
         text-transform:uppercase;
+        white-space:nowrap;
+      }
+      #crm-leaves-module .leave-stat-copy em {
+        display:block;
+        overflow:hidden;
+        color:var(--color-secondary-400,#94a3b8);
+        font-size:.72rem;
+        font-style:normal;
+        font-weight:750;
+        text-overflow:ellipsis;
         white-space:nowrap;
       }
       #crm-leaves-module .leave-calendar-actions {

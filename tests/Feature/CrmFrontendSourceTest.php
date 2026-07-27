@@ -620,7 +620,12 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('border-radius:var(--leave-card-radius);', $asset);
         $this->assertStringContainsString('box-shadow:var(--leave-card-shadow);', $asset);
         $this->assertStringContainsString('<div class="leave-header-top">', $asset);
+        $this->assertStringContainsString('.layout-container.layout-page:has(#crm-leaves-module),', $asset);
+        $this->assertStringContainsString('.layout-page:has(#crm-leaves-module){width:100%;max-width:100%;min-width:0;overflow-x:hidden}', $asset);
+        $this->assertStringContainsString('main:has(#crm-leaves-module){min-width:0;overflow-x:hidden}', $asset);
+        $this->assertStringContainsString('<em>${esc(card.detail)}</em>', $asset);
         $this->assertStringContainsString('grid-template-columns:repeat(4,minmax(0,1fr));', $asset);
+        $this->assertStringContainsString('justify-self:stretch;', $asset);
         $this->assertStringContainsString('background:transparent;', $asset);
         $this->assertStringContainsString('box-shadow:none;', $asset);
         $this->assertStringContainsString('grid-template-columns:2.6rem minmax(0,1fr);', $asset);
