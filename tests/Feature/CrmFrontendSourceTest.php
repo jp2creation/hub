@@ -81,8 +81,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('data-crm-native-shell', $nativeShell);
         $this->assertStringContainsString('layout-sidebar crm-native-sidebar', $nativeShell);
         $this->assertStringContainsString('layout-header crm-native-header', $nativeShell);
-        $this->assertStringContainsString('<img src="${esc(logoMarkUrl())}" alt="Martin Sols">', $nativeShell);
-        $this->assertStringNotContainsString('<img src="${esc(logoUrl())}" alt="Martin Sols">', $nativeShell);
+        $this->assertStringContainsString('<img class="crm-native-mobile-brand-mark" src="${esc(logoMarkUrl())}" alt="Martin Sols">', $nativeShell);
+        $this->assertStringContainsString('<img class="crm-native-mobile-brand-full" src="${esc(logoUrl())}" alt="Martin Sols">', $nativeShell);
         $this->assertStringContainsString('martin-sols-hub-sidebar-collapsed', $nativeShell);
         $this->assertStringContainsString('crm-native-sidebar-collapsed', $nativeShell);
         $this->assertStringContainsString('Déployer le menu', $nativeShell);
@@ -183,6 +183,9 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('height: var(--crm-header-height);', $shellCss);
         $this->assertStringContainsString('padding: 0 0.75rem;', $shellCss);
         $this->assertStringNotContainsString('padding: 0 0.75rem !important;', $shellCss);
+        $this->assertStringContainsString('flex: 0 1 clamp(7rem, 22vw, 9.25rem);', $shellCss);
+        $this->assertStringContainsString('body.crm-native-sidebar-open .crm-native-mobile-brand-full', $shellCss);
+        $this->assertStringContainsString('@media (max-width: 767px)', $shellCss);
         $this->assertStringContainsString('flex: 0 0 2.4rem;', $shellCss);
         $this->assertStringContainsString('max-width: clamp(10rem, 44vw, 12rem) !important;', $shellCss);
         $this->assertStringContainsString('flex-basis: clamp(9.6rem, 44vw, 10.8rem) !important;', $shellCss);

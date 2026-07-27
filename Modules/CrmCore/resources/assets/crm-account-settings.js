@@ -267,10 +267,10 @@
 
       .crm-account-shell {
         width: 100%;
-        max-width: 980px;
+        max-width: 1180px;
         min-width: 0;
         margin: 0 auto;
-        padding: 1.5rem 0 2rem;
+        padding: .35rem 0 2rem;
         color: #24364b;
         box-sizing: border-box;
       }
@@ -281,36 +281,165 @@
         box-sizing: border-box;
       }
 
-      .crm-account-grid {
+      .crm-account-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .crm-account-head h1 {
+        margin: 0;
+        color: var(--color-secondary-900, #0f172a);
+        font-size: clamp(1.85rem, 2.4vw, 2.3rem);
+        font-weight: 950;
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      .crm-account-head p {
+        margin: .35rem 0 0;
+        color: var(--color-secondary-500, #64748b);
+        font-size: .95rem;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .crm-account-head-badge {
+        display: inline-flex;
+        min-height: 2.35rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--color-surface-200, #e2e8f0);
+        border-radius: .5rem;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, .05);
+        color: var(--color-secondary-700, #334155);
+        font-size: .82rem;
+        font-weight: 900;
+        padding: .45rem .8rem;
+        white-space: nowrap;
+      }
+
+      .crm-account-stats {
         display: grid;
-        grid-template-columns: minmax(0, .78fr) minmax(320px, 1.22fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: .8rem;
+        margin-top: 1rem;
+        min-width: 0;
+      }
+
+      .crm-account-stat {
+        display: grid;
+        grid-template-columns: 2.55rem minmax(0, 1fr);
+        align-items: center;
+        gap: .75rem;
+        min-width: 0;
+        border: 1px solid var(--color-surface-200, #e2e8f0);
+        border-radius: .5rem;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, .05);
+        padding: .9rem;
+      }
+
+      .crm-account-stat-icon {
+        display: grid;
+        width: 2.55rem;
+        height: 2.55rem;
+        place-items: center;
+        border-radius: .55rem;
+        background: color-mix(in srgb, var(--account-stat-color, var(--theme-primary-color)) 14%, white);
+        color: var(--account-stat-color, var(--theme-primary-color));
+      }
+
+      .crm-account-icon {
+        width: 1.1rem;
+        height: 1.1rem;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .crm-account-stat span:not(.crm-account-stat-icon) {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        color: var(--color-secondary-500, #64748b);
+        font-size: .73rem;
+        font-weight: 900;
+        line-height: 1.15;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .crm-account-stat strong {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        margin: .25rem 0;
+        color: var(--color-secondary-900, #0f172a);
+        font-size: 1.17rem;
+        font-weight: 950;
+        line-height: 1.1;
+        letter-spacing: 0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .crm-account-stat small {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        color: var(--color-secondary-400, #94a3b8);
+        font-size: .72rem;
+        font-weight: 800;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .crm-account-layout {
+        display: grid;
+        grid-template-columns: minmax(15rem, .34fr) minmax(0, 1fr);
         gap: 1rem;
         align-items: start;
         min-width: 0;
+        margin-top: 1rem;
       }
 
       .crm-account-card {
         min-width: 0;
-        border: 1px solid rgba(148, 163, 184, .24);
-        border-radius: 18px;
+        border: 1px solid var(--color-surface-200, #e2e8f0);
+        border-radius: .5rem;
         background: #fff;
-        box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, .05);
       }
 
-      .crm-account-summary {
-        padding: 1.35rem;
+      .crm-account-profile {
         position: sticky;
         top: 6.5rem;
+        overflow: hidden;
+      }
+
+      .crm-account-profile-top {
+        display: grid;
+        justify-items: center;
+        gap: .55rem;
+        padding: 1.2rem 1rem 1rem;
+        text-align: center;
       }
 
       .crm-account-avatar {
-        width: 88px;
-        height: 88px;
+        width: 5rem;
+        height: 5rem;
         overflow: hidden;
         border-radius: 999px;
         background: #fff;
-        border: 1px solid rgb(var(--theme-primary) / .15);
-        box-shadow: 0 12px 26px rgb(var(--theme-primary) / .14);
+        border: 1px solid rgb(var(--theme-primary) / .16);
+        box-shadow: 0 10px 22px rgb(var(--theme-primary) / .13);
+        flex: 0 0 auto;
       }
 
       .crm-account-avatar img {
@@ -320,41 +449,41 @@
         display: block;
       }
 
-      .crm-account-eyebrow {
-        margin: 1rem 0 .25rem;
-        color: var(--theme-primary-color);
-        font-size: .76rem;
-        font-weight: 800;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-      }
-
-      .crm-account-summary h1 {
+      .crm-account-profile h2 {
         margin: 0;
-        color: #1f3349;
-        font-size: clamp(1.55rem, 2vw, 2rem);
-        line-height: 1.05;
-        letter-spacing: 0;
+        max-width: 100%;
         overflow-wrap: anywhere;
+        color: var(--color-secondary-900, #0f172a);
+        font-size: 1.15rem;
+        font-weight: 950;
+        line-height: 1.12;
+        letter-spacing: 0;
       }
 
-      .crm-account-summary p {
-        margin: .65rem 0 0;
-        color: #64748b;
-        line-height: 1.5;
+      .crm-account-profile p {
+        margin: 0;
+        max-width: 100%;
+        overflow: hidden;
+        color: var(--color-secondary-500, #64748b);
+        font-size: .82rem;
+        font-weight: 800;
+        line-height: 1.25;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .crm-account-role {
         display: inline-flex;
         align-items: center;
         gap: .45rem;
-        margin-top: 1.1rem;
-        padding: .45rem .7rem;
+        min-height: 1.9rem;
+        margin-top: .15rem;
+        padding: .35rem .65rem;
         border-radius: 999px;
         color: var(--theme-primary-color);
         background: rgb(var(--theme-primary) / .08);
-        font-size: .85rem;
-        font-weight: 800;
+        font-size: .78rem;
+        font-weight: 900;
       }
 
       .crm-account-role::before {
@@ -363,6 +492,64 @@
         height: .55rem;
         border-radius: 999px;
         background: var(--theme-primary-color);
+      }
+
+      .crm-account-section-nav {
+        display: grid;
+        gap: .25rem;
+        border-top: 1px solid var(--color-surface-200, #e2e8f0);
+        padding: .8rem;
+      }
+
+      .crm-account-section-item {
+        display: grid;
+        grid-template-columns: 2rem minmax(0, 1fr);
+        align-items: center;
+        gap: .65rem;
+        min-height: 2.65rem;
+        border-radius: .5rem;
+        color: var(--color-secondary-600, #475569);
+        padding: .4rem .55rem;
+      }
+
+      .crm-account-section-item.is-active {
+        background: rgb(var(--theme-primary) / .1);
+        color: rgb(var(--theme-primary));
+      }
+
+      .crm-account-section-icon {
+        display: grid;
+        width: 2rem;
+        height: 2rem;
+        place-items: center;
+        border-radius: .5rem;
+        background: var(--color-surface-100, #f4f4f5);
+        color: currentColor;
+      }
+
+      .crm-account-section-item.is-active .crm-account-section-icon {
+        background: #fff;
+      }
+
+      .crm-account-section-item strong,
+      .crm-account-section-item small {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .crm-account-section-item strong {
+        font-size: .84rem;
+        font-weight: 900;
+      }
+
+      .crm-account-section-item small {
+        margin-top: .05rem;
+        color: var(--color-secondary-400, #94a3b8);
+        font-size: .71rem;
+        font-weight: 800;
       }
 
       .crm-account-form {
@@ -376,36 +563,45 @@
         align-items: center;
         justify-content: space-between;
         gap: .75rem;
-        padding: 1.1rem 1.25rem;
-        border-bottom: 1px solid rgba(148, 163, 184, .18);
+        padding: 1rem;
+        border-bottom: 1px solid var(--color-surface-200, #e2e8f0);
       }
 
       .crm-account-form-footer {
-        border-top: 1px solid rgba(148, 163, 184, .18);
+        border-top: 1px solid var(--color-surface-200, #e2e8f0);
         border-bottom: 0;
         justify-content: flex-end;
-        background: #f8fafc;
+        background: var(--color-surface-50, #f8fafc);
       }
 
       .crm-account-form-header h2 {
         margin: 0;
-        color: #1f3349;
-        font-size: 1.25rem;
+        color: var(--color-secondary-900, #0f172a);
+        font-size: 1.16rem;
+        font-weight: 950;
         letter-spacing: 0;
+      }
+
+      .crm-account-form-header p {
+        margin: .2rem 0 0;
+        color: var(--color-secondary-500, #64748b);
+        font-size: .82rem;
+        font-weight: 800;
       }
 
       .crm-account-status {
         min-height: 1.2rem;
         color: #16a34a;
         font-size: .88rem;
-        font-weight: 700;
+        font-weight: 850;
+        text-align: right;
       }
 
       .crm-account-form-body {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem;
-        padding: 1.25rem;
+        gap: .85rem;
+        padding: 1rem;
         min-width: 0;
       }
 
@@ -420,23 +616,23 @@
       }
 
       .crm-account-field label {
-        color: #334155;
-        font-size: .9rem;
-        font-weight: 800;
+        color: var(--color-secondary-700, #334155);
+        font-size: .82rem;
+        font-weight: 900;
       }
 
       .crm-account-field input,
       .crm-account-field textarea {
         width: 100%;
         min-width: 0;
-        border: 1px solid rgba(148, 163, 184, .35);
-        border-radius: 14px;
+        border: 1px solid var(--color-surface-200, #e2e8f0);
+        border-radius: .5rem;
         background: #fff;
-        color: #1f3349;
+        color: var(--color-secondary-900, #0f172a);
         font: inherit;
-        font-weight: 650;
+        font-weight: 750;
         outline: none;
-        padding: .85rem .95rem;
+        padding: .75rem .85rem;
         transition: border-color .18s ease, box-shadow .18s ease;
       }
 
@@ -452,27 +648,57 @@
       }
 
       .crm-account-field input[readonly] {
-        background: #f8fafc;
-        color: #64748b;
+        background: var(--color-surface-50, #f8fafc);
+        color: var(--color-secondary-500, #64748b);
       }
 
       .crm-account-photo-row {
-        display: flex;
+        display: grid;
+        grid-template-columns: 4rem minmax(0, 1fr) auto;
         align-items: center;
-        flex-wrap: wrap;
-        gap: .9rem;
+        gap: .85rem;
         grid-column: 1 / -1;
         padding: .8rem;
-        border: 1px solid rgba(148, 163, 184, .2);
-        border-radius: 16px;
-        background: #f8fafc;
+        border: 1px solid var(--color-surface-200, #e2e8f0);
+        border-radius: .5rem;
+        background: var(--color-surface-50, #f8fafc);
       }
 
       .crm-account-photo-row .crm-account-avatar {
-        width: 64px;
-        height: 64px;
+        width: 4rem;
+        height: 4rem;
         box-shadow: none;
         flex: 0 0 auto;
+      }
+
+      .crm-account-photo-copy {
+        min-width: 0;
+      }
+
+      .crm-account-photo-copy strong,
+      .crm-account-photo-copy span {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .crm-account-photo-copy strong {
+        color: var(--color-secondary-900, #0f172a);
+        font-size: .9rem;
+        font-weight: 950;
+      }
+
+      .crm-account-photo-copy span {
+        margin-top: .1rem;
+        color: var(--color-secondary-500, #64748b);
+        font-size: .78rem;
+        font-weight: 800;
+      }
+
+      .crm-account-photo-action {
+        justify-self: end;
       }
 
       .crm-account-btn {
@@ -480,10 +706,11 @@
         align-items: center;
         justify-content: center;
         min-height: 42px;
-        border: 1px solid rgba(148, 163, 184, .28);
-        border-radius: 12px;
+        gap: .42rem;
+        border: 1px solid var(--color-surface-200, #e2e8f0);
+        border-radius: .5rem;
         background: #fff;
-        color: #334155;
+        color: var(--color-secondary-700, #334155);
         cursor: pointer;
         font: inherit;
         font-weight: 850;
@@ -499,8 +726,8 @@
       }
 
       .crm-account-btn-primary {
-        border-color: var(--theme-primary-color);
-        background: var(--theme-primary-dark-color);
+        border-color: rgb(var(--theme-primary));
+        background: rgb(var(--theme-primary));
         color: #fff;
       }
 
@@ -511,40 +738,93 @@
       }
 
       .crm-account-error {
-        padding: 1rem 1.25rem;
+        padding: 1rem;
         color: #b91c1c;
         font-weight: 800;
       }
 
-      @media (max-width: 1180px) {
-        .crm-account-shell {
-          padding: .85rem 0 1.5rem;
+      .dark .crm-account-card,
+      .dark .crm-account-stat,
+      .dark .crm-account-head-badge {
+        border-color: var(--color-surface-700, #334155);
+        background: var(--color-surface-900, #0f172a);
+      }
+
+      .dark .crm-account-form-footer,
+      .dark .crm-account-photo-row {
+        background: var(--color-surface-800, #1e293b);
+      }
+
+      .dark .crm-account-head h1,
+      .dark .crm-account-stat strong,
+      .dark .crm-account-profile h2,
+      .dark .crm-account-form-header h2,
+      .dark .crm-account-photo-copy strong,
+      .dark .crm-account-field input,
+      .dark .crm-account-field textarea {
+        color: #fff;
+      }
+
+      @media (max-width: 1100px) {
+        .crm-account-stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .crm-account-grid {
+        .crm-account-layout {
           grid-template-columns: 1fr;
         }
 
-        .crm-account-summary {
+        .crm-account-profile {
           position: static;
         }
+      }
 
+      @media (max-width: 760px) {
         .crm-account-form-body {
           grid-template-columns: 1fr;
+        }
+
+        .crm-account-head {
+          display: grid;
+        }
+
+        .crm-account-head-badge {
+          justify-self: start;
         }
       }
 
       @media (max-width: 640px) {
+        .crm-account-shell {
+          padding: 0 0 1.5rem;
+        }
+
+        .crm-account-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .crm-account-form-header {
+          display: grid;
+        }
+
+        .crm-account-status {
+          text-align: left;
+        }
+
         .crm-account-form-footer {
           flex-direction: column-reverse;
           align-items: stretch;
         }
 
         .crm-account-photo-row {
-          align-items: flex-start;
+          grid-template-columns: 4rem minmax(0, 1fr);
+          align-items: center;
         }
 
-        .crm-account-photo-row > div:last-child,
+        .crm-account-photo-action {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
         .crm-account-photo-row .crm-account-btn {
           width: 100%;
         }
@@ -570,36 +850,113 @@
     `;
   }
 
+  function accountIcon(name) {
+    const icons = {
+      check: '<path d="m5 12 4 4L19 6"></path>',
+      devices: '<rect x="3" y="5" width="18" height="12" rx="2"></rect><path d="M8 21h8m-4-4v4"></path>',
+      mail: '<rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path>',
+      phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 5.15 12.8 19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.13.96.35 1.9.66 2.81a2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45c.91.31 1.85.53 2.81.66A2 2 0 0 1 22 16.92Z"></path>',
+      profile: '<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path><path d="M4 21a8 8 0 0 1 16 0"></path>',
+      shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-5"></path>',
+      user: '<path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle>',
+    };
+
+    return `<svg class="crm-account-icon" viewBox="0 0 24 24" aria-hidden="true">${icons[name] || icons.profile}</svg>`;
+  }
+
+  function profileDisplayName(profile) {
+    return profile.displayName || profile.name || 'Utilisateur';
+  }
+
+  function accountValue(value, fallback) {
+    const text = String(value || '').trim();
+
+    return text || fallback;
+  }
+
+  function accountStatCard(label, value, detail, iconName, color) {
+    return `
+      <article class="crm-account-stat" style="--account-stat-color:${escapeHtml(color)}">
+        <span class="crm-account-stat-icon">${accountIcon(iconName)}</span>
+        <span>
+          ${escapeHtml(label)}
+          <strong>${escapeHtml(value)}</strong>
+          <small>${escapeHtml(detail)}</small>
+        </span>
+      </article>
+    `;
+  }
+
   function accountMarkup(profile, status) {
     const src = pendingPhotoDataUrl || photoUrl(profile);
     const canEditIdentity = profile.canEditIdentity !== false;
     const readOnly = canEditIdentity ? '' : 'readonly';
+    const displayName = profileDisplayName(profile);
+    const email = accountValue(profile.email, 'Non renseignée');
+    const phone = accountValue(profile.phone, 'À renseigner');
 
     return `
       <section class="crm-account-shell">
-        <div class="crm-account-grid">
-          <aside class="crm-account-card crm-account-summary">
-            <div class="crm-account-avatar">
-              <img src="${escapeHtml(src)}" alt="${escapeHtml(profile.displayName)}" onerror="this.onerror=null;this.src='${escapeHtml(DEFAULT_PHOTO)}'" />
+        <header class="crm-account-head">
+          <div>
+            <h1>Paramètres du compte</h1>
+            <p>Profil, photo et coordonnées utilisés dans le HUB.</p>
+          </div>
+          <span class="crm-account-head-badge">Compte HUB</span>
+        </header>
+
+        <section class="crm-account-stats" aria-label="Synthèse du compte">
+          ${accountStatCard('Identité', displayName, 'Profil affiché', 'user', '#2563eb')}
+          ${accountStatCard('Rôle', roleLabel(profile.role), 'Droits du compte', 'shield', 'var(--theme-primary-color)')}
+          ${accountStatCard('E-mail', email, 'Adresse de contact', 'mail', '#0f766e')}
+          ${accountStatCard('Téléphone', phone, 'Coordonnées', 'phone', '#f59e0b')}
+        </section>
+
+        <div class="crm-account-layout">
+          <aside class="crm-account-card crm-account-profile">
+            <div class="crm-account-profile-top">
+              <div class="crm-account-avatar">
+                <img src="${escapeHtml(src)}" alt="${escapeHtml(displayName)}" onerror="this.onerror=null;this.src='${escapeHtml(DEFAULT_PHOTO)}'" />
+              </div>
+              <h2>${escapeHtml(displayName)}</h2>
+              <p>${escapeHtml(email)}</p>
+              <span class="crm-account-role">${escapeHtml(roleLabel(profile.role))}</span>
             </div>
-            <p class="crm-account-eyebrow">Compte utilisateur</p>
-            <h1>${escapeHtml(profile.displayName || profile.name || 'Utilisateur')}</h1>
-            <p>Ces informations alimentent la photo, le nom et le r\u00f4le affich\u00e9s dans le menu du haut.</p>
-            <span class="crm-account-role">${escapeHtml(roleLabel(profile.role))}</span>
+            <div class="crm-account-section-nav" aria-label="Sections du compte">
+              <span class="crm-account-section-item is-active">
+                <span class="crm-account-section-icon">${accountIcon('profile')}</span>
+                <span><strong>Profil</strong><small>Identité et photo</small></span>
+              </span>
+              <span class="crm-account-section-item">
+                <span class="crm-account-section-icon">${accountIcon('mail')}</span>
+                <span><strong>Coordonnées</strong><small>E-mail et téléphone</small></span>
+              </span>
+              <span class="crm-account-section-item">
+                <span class="crm-account-section-icon">${accountIcon('devices')}</span>
+                <span><strong>Préférences HUB</strong><small>Affichage du compte</small></span>
+              </span>
+            </div>
           </aside>
 
           <form class="crm-account-card crm-account-form" data-crm-account-form>
             <div class="crm-account-form-header">
-              <h2>Informations personnelles</h2>
+              <div>
+                <h2>Informations personnelles</h2>
+                <p>Ces informations alimentent la barre du haut et le menu utilisateur.</p>
+              </div>
               <span class="crm-account-status" data-crm-account-status>${escapeHtml(status || '')}</span>
             </div>
 
             <div class="crm-account-form-body">
               <div class="crm-account-photo-row">
                 <div class="crm-account-avatar">
-                  <img data-crm-account-preview src="${escapeHtml(src)}" alt="${escapeHtml(profile.displayName)}" onerror="this.onerror=null;this.src='${escapeHtml(DEFAULT_PHOTO)}'" />
+                  <img data-crm-account-preview src="${escapeHtml(src)}" alt="${escapeHtml(displayName)}" onerror="this.onerror=null;this.src='${escapeHtml(DEFAULT_PHOTO)}'" />
                 </div>
-                <div>
+                <div class="crm-account-photo-copy">
+                  <strong>Photo de profil</strong>
+                  <span>Affichée dans la barre du haut et le menu utilisateur.</span>
+                </div>
+                <div class="crm-account-photo-action">
                   <button class="crm-account-btn" type="button" data-crm-account-photo-button>Changer la photo</button>
                   <input type="file" accept="image/*" hidden data-crm-account-photo-input />
                 </div>

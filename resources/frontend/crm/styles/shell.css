@@ -702,18 +702,58 @@ html.crm-ui-module-ready .crm-native-content > * {
   .crm-native-mobile-brand {
     display: flex;
     min-width: 0;
-    flex: 0 0 2.65rem;
+    flex: 0 1 clamp(7rem, 22vw, 9.25rem);
+    align-items: center;
     justify-content: center;
+    overflow: hidden;
   }
 
   .crm-native-mobile-brand img {
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .crm-native-mobile-brand-mark {
+    display: none;
     width: 2.1rem;
     height: 2.1rem;
-    object-fit: contain;
+  }
+
+  .crm-native-mobile-brand-full {
+    display: block;
+    width: min(8.6rem, 100%);
+    height: auto;
+    max-height: 2.65rem;
+  }
+
+  body.crm-native-sidebar-open .crm-native-mobile-brand {
+    flex: 0 0 2.65rem;
+  }
+
+  body.crm-native-sidebar-open .crm-native-mobile-brand-mark {
+    display: block;
+  }
+
+  body.crm-native-sidebar-open .crm-native-mobile-brand-full {
+    display: none;
   }
 
   .crm-native-content {
     padding: 1.35rem 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .crm-native-mobile-brand {
+    flex: 0 0 2.65rem;
+  }
+
+  .crm-native-mobile-brand-mark {
+    display: block;
+  }
+
+  .crm-native-mobile-brand-full {
+    display: none;
   }
 }
 
@@ -727,7 +767,7 @@ html.crm-ui-module-ready .crm-native-content > * {
     flex: 0 0 2.4rem;
   }
 
-  .crm-native-mobile-brand img {
+  .crm-native-mobile-brand-mark {
     width: 2rem;
     height: 2rem;
   }
@@ -781,7 +821,7 @@ html.crm-ui-module-ready .crm-native-content > * {
     flex-basis: 2.2rem;
   }
 
-  .crm-native-mobile-brand img {
+  .crm-native-mobile-brand-mark {
     width: 1.85rem;
     height: 1.85rem;
   }

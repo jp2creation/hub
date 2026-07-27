@@ -117,6 +117,11 @@ class CrmAccountSettingsTest extends TestCase
         $this->assertStringContainsString("'X-CSRF-TOKEN'", $source);
         $this->assertStringContainsString('[data-crm-native-profile-photo]', $source);
         $this->assertStringContainsString('mountedTarget?.dataset.crmAccountSettingsMounted', $source);
+        $this->assertStringContainsString('Paramètres du compte', $source);
+        $this->assertStringContainsString('Profil, photo et coordonnées utilisés dans le HUB.', $source);
+        $this->assertStringContainsString('crm-account-stats', $source);
+        $this->assertStringContainsString('crm-account-section-nav', $source);
+        $this->assertStringContainsString('crm-account-photo-copy', $source);
         $this->assertStringContainsString('failedProfileImageSources', $shell);
         $this->assertStringContainsString('profileStorageKey', $shell);
         $this->assertStringContainsString('window.sessionStorage?.setItem', $shell);
