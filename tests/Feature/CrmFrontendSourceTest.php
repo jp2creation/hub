@@ -742,10 +742,12 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('<label>Adresse <input name="address"', $administration);
         $this->assertStringContainsString('window.CRM_ACTIVE_SITE?.reload?.();', $administration);
 
-        $this->assertStringContainsString('.crm-active-site-trigger.has-site-color', $activeSite);
+        $this->assertStringContainsString('.crm-active-site-trigger.has-site-dot .crm-active-site-dot', $activeSite);
         $this->assertStringContainsString('button.style.setProperty(\'--active-site-color\', selectedColor);', $activeSite);
-        $this->assertStringContainsString('crm-active-site-option.is-active.has-site-color', $activeSite);
-        $this->assertStringContainsString('function contrastColor(color)', $activeSite);
+        $this->assertStringContainsString('crm-active-site-option-dot', $activeSite);
+        $this->assertStringContainsString("'.crm-active-site-option.is-active{background:rgb(var(--theme-primary) / .11);color:rgb(var(--theme-primary))}'", $activeSite);
+        $this->assertStringNotContainsString('.crm-active-site-trigger.has-site-color', $activeSite);
+        $this->assertStringNotContainsString('function contrastColor(color)', $activeSite);
     }
 
     public function test_dom_ready_sensitive_crm_modules_boot_even_when_loaded_late(): void
