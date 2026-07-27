@@ -799,15 +799,15 @@ html.crm-ui-module-ready .crm-native-content > * {
   }
 
   .crm-native-header-actions .crm-active-site-trigger {
-    grid-template-columns: 0.45rem minmax(0, 1fr) 0.75rem !important;
+    grid-template-columns: 0.9rem minmax(0, 1fr) 0.75rem !important;
     gap: 0.25rem !important;
     max-width: none !important;
     padding-inline: 0.4rem !important;
   }
 
-  .crm-native-header-actions .crm-active-site-dot {
-    width: 0.45rem !important;
-    height: 0.45rem !important;
+  .crm-native-header-actions .crm-active-site-mark {
+    width: 0.9rem !important;
+    height: 0.9rem !important;
   }
 
   .crm-native-header-actions .crm-active-site-chevron {
@@ -832,15 +832,15 @@ html.crm-ui-module-ready .crm-native-content > * {
   }
 
   .crm-native-header-actions .crm-active-site-trigger {
-    grid-template-columns: 0.42rem minmax(0, 1fr) 0.7rem !important;
+    grid-template-columns: 0.82rem minmax(0, 1fr) 0.7rem !important;
     gap: 0.22rem !important;
     font-size: 0.75rem !important;
     padding-inline: 0.36rem !important;
   }
 
-  .crm-native-header-actions .crm-active-site-dot {
-    width: 0.42rem !important;
-    height: 0.42rem !important;
+  .crm-native-header-actions .crm-active-site-mark {
+    width: 0.82rem !important;
+    height: 0.82rem !important;
   }
 
   .crm-native-header-actions .crm-active-site-chevron {

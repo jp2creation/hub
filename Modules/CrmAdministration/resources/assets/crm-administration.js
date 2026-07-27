@@ -33,6 +33,13 @@
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
   }
 
+  function canManageUsers() {
+    const actor = state.data?.actor || {};
+    const permissions = Array.isArray(actor.permissions) ? actor.permissions : [];
+
+    return actor.role === "admin" || permissions.includes("platform.manage_users");
+  }
+
   async function request(action, options = {}) {
     const url = new URL(api, window.location.origin);
     url.searchParams.set("action", action);
@@ -100,13 +107,16 @@
       #${rootId} .admin-site-photo-content strong{color:var(--admin-text);font-size:.9rem;font-weight:950}
       #${rootId} .admin-site-photo-content p{margin:0;color:var(--admin-muted);font-size:.74rem;font-weight:750}
       #${rootId} .admin-site-photo-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem}
+      #${rootId} .admin-password-panel{display:grid;gap:.65rem;border:1px solid var(--admin-border);border-radius:.55rem;background:#f8fafc;padding:.8rem}
+      #${rootId} .admin-password-panel strong{color:var(--admin-text);font-size:.9rem;font-weight:950}
+      #${rootId} .admin-password-panel p,#${rootId} .admin-help{margin:.12rem 0 0;color:var(--admin-muted);font-size:.74rem;font-weight:750;text-transform:none}
       #${rootId} .admin-actions{display:flex;justify-content:flex-end;gap:.55rem;flex-wrap:wrap}
       #${rootId} .admin-empty,#${rootId} .admin-loading{display:grid;place-items:center;min-height:7rem;border:1px dashed var(--admin-border);border-radius:.55rem;color:var(--admin-muted);font-weight:850;text-align:center;padding:1rem}
       #${rootId} .admin-alert{border:1px solid #fecaca;border-radius:.55rem;background:#fff1f2;padding:.8rem;color:#b91c1c;font-weight:850}
       #${rootId} .admin-menu-groups{display:grid;grid-template-columns:minmax(16rem,.7fr) minmax(0,1.3fr);gap:.85rem}
       #${rootId} .admin-icon-preview{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:.45rem;background:#f7e8ee;color:var(--admin-primary)}
       .dark #${rootId}{--admin-border:var(--color-surface-700,#334155);--admin-text:#fff;--admin-muted:var(--color-secondary-400,#94a3b8)}
-      .dark #${rootId} .admin-card,.dark #${rootId} .admin-row,.dark #${rootId} .admin-button,.dark #${rootId} .admin-tab,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .admin-site-photo,.dark #${rootId} .admin-site-photo-preview{background:var(--color-surface-900,#0f172a);border-color:var(--admin-border)}
+      .dark #${rootId} .admin-card,.dark #${rootId} .admin-row,.dark #${rootId} .admin-button,.dark #${rootId} .admin-tab,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .admin-site-photo,.dark #${rootId} .admin-site-photo-preview,.dark #${rootId} .admin-password-panel{background:var(--color-surface-900,#0f172a);border-color:var(--admin-border)}
       @media (max-width:900px){#${rootId} .admin-menu-groups,#${rootId} .admin-grid,#${rootId} .admin-grid-3{grid-template-columns:1fr}}
       @media (max-width:700px){#${rootId} .admin-top{display:grid}#${rootId} .admin-title h1{font-size:1.55rem}#${rootId} .admin-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-tab{width:100%}#${rootId} .admin-actions{display:grid;grid-template-columns:1fr 1fr}}
       @media (max-width:520px){#${rootId} .admin-site-photo{grid-template-columns:1fr}#${rootId} .admin-site-photo-preview{width:100%;max-width:14rem}}
@@ -427,8 +437,30 @@
           </label>
           <label class="admin-check"><input name="active" type="checkbox"${user.active !== false ? " checked" : ""}> Actif</label>
         </div>
+        ${renderUserPasswordFields(user)}
         <div class="admin-actions"><button class="admin-button admin-button-primary" type="submit">Enregistrer</button></div>
       </form>
+    `;
+  }
+
+  function renderUserPasswordFields(user) {
+    if (!canManageUsers()) return "";
+
+    if (!user.hasAccount) {
+      return `<p class="admin-help">Compte Laravel non rattaché : créez le compte avant de définir un mot de passe.</p>`;
+    }
+
+    return `
+      <div class="admin-password-panel">
+        <div>
+          <strong>Mot de passe</strong>
+          <p>Laisser vide pour conserver le mot de passe actuel.</p>
+        </div>
+        <div class="admin-grid">
+          <label>Nouveau mot de passe <input name="password" type="password" autocomplete="new-password"></label>
+          <label>Confirmation <input name="passwordConfirmation" type="password" autocomplete="new-password"></label>
+        </div>
+      </div>
     `;
   }
 
@@ -608,22 +640,29 @@
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
+    const body = {
+      id: Number(data.get("id") || 0),
+      name: String(data.get("name") || ""),
+      email: String(data.get("email") || ""),
+      phone: String(data.get("phone") || ""),
+      role: String(data.get("role") || "user"),
+      primarySiteId: Number(data.get("primarySiteId") || 0),
+      siteIds: mergePrimarySite(parseJsonArray(data.get("siteIds")), Number(data.get("primarySiteId") || 0)),
+      moduleIds: parseJsonArray(data.get("moduleIds")),
+      permissionIds: parseJsonArray(data.get("permissionIds")),
+      accessRules: parseJsonArray(data.get("accessRules")),
+      active: Boolean(data.get("active")),
+    };
+    const password = String(data.get("password") || "");
+
+    if (password !== "") {
+      body.password = password;
+      body.passwordConfirmation = String(data.get("passwordConfirmation") || "");
+    }
 
     await save("user", () => request("save_user", {
       method: "POST",
-      body: {
-        id: Number(data.get("id") || 0),
-        name: String(data.get("name") || ""),
-        email: String(data.get("email") || ""),
-        phone: String(data.get("phone") || ""),
-        role: String(data.get("role") || "user"),
-        primarySiteId: Number(data.get("primarySiteId") || 0),
-        siteIds: mergePrimarySite(parseJsonArray(data.get("siteIds")), Number(data.get("primarySiteId") || 0)),
-        moduleIds: parseJsonArray(data.get("moduleIds")),
-        permissionIds: parseJsonArray(data.get("permissionIds")),
-        accessRules: parseJsonArray(data.get("accessRules")),
-        active: Boolean(data.get("active")),
-      },
+      body,
     }));
   }
 

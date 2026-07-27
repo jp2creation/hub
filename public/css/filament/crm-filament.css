@@ -243,6 +243,31 @@ html.fi {
     box-shadow: none;
 }
 
+.fi-fo-checkbox-list-options.crm-scrollable-checkbox-list-options {
+    max-height: 18rem;
+    overflow-y: auto;
+    padding-inline-end: .35rem;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.fi-fo-checkbox-list-options.crm-scrollable-checkbox-list-options::-webkit-scrollbar {
+    width: 8px;
+}
+
+.fi-fo-checkbox-list-options.crm-scrollable-checkbox-list-options::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.fi-fo-checkbox-list-options.crm-scrollable-checkbox-list-options::-webkit-scrollbar-thumb {
+    background: rgba(93, 114, 135, .28);
+    border-radius: 999px;
+}
+
+.fi-fo-checkbox-list-options.crm-scrollable-checkbox-list-options::-webkit-scrollbar-thumb:hover {
+    background: rgba(93, 114, 135, .42);
+}
+
 .fi-btn-color-primary,
 .fi-ac-btn-action.fi-color-primary {
     background: var(--crm-primary-display) !important;

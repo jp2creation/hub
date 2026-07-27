@@ -15,6 +15,7 @@ use App\Support\CrmTheme;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 use Modules\CrmCore\Services\CrmAccessService;
 use Modules\CrmCore\Services\CrmActivityLogger;
 use Modules\CrmCore\Services\CrmImageStorage;
@@ -29,6 +30,7 @@ class AdministrationService
         private readonly CrmActivityLogger $activity,
         private readonly CrmAccessService $access,
         private readonly CrmImageStorage $images,
+        private readonly AdminAccountService $accounts,
     ) {}
 
     public function ensureDefaults(): void
@@ -340,7 +342,7 @@ class AdministrationService
             ->orderBy('title')
             ->get();
         $users = CrmUser::query()
-            ->with(['sites:id', 'modules:id', 'permissions:id,name', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id'])
+            ->with(['account:id', 'sites:id', 'modules:id', 'permissions:id,name', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id'])
             ->orderByDesc('active')
             ->orderBy('name')
             ->get();
@@ -742,6 +744,11 @@ class AdministrationService
                 $this->fail('Utilisateur introuvable', 404);
             }
 
+            $password = $this->requestedPassword($data);
+            if ($password !== null && ! $this->hasPermission($actor, 'platform.manage_users')) {
+                $this->fail('Droit administration insuffisant', 403);
+            }
+
             $updates = [
                 'name' => $name,
                 'role' => $role,
@@ -771,12 +778,64 @@ class AdministrationService
             $user->modules()->sync($moduleIds);
             $user->permissions()->sync($permissionIds);
             $this->syncAccessRules($user, $accessRules);
+            $passwordUpdated = $this->updateLinkedAccountPassword($user, $data, $password);
             CrmReferenceCache::forgetUsers();
 
             $this->log($actor, $id > 0 ? 'modification utilisateur' : 'creation utilisateur', $name);
+            if ($passwordUpdated) {
+                $this->log($actor, 'modification mot de passe utilisateur', $name);
+            }
 
             return ['ok' => true, 'id' => $user->id];
         });
+    }
+
+    private function requestedPassword(array $data): ?string
+    {
+        if (! array_key_exists('password', $data)) {
+            return null;
+        }
+
+        $password = (string) $data['password'];
+
+        return $password !== '' ? $password : null;
+    }
+
+    private function updateLinkedAccountPassword(CrmUser $user, array $data, ?string $password): bool
+    {
+        if ($password === null) {
+            return false;
+        }
+
+        $confirmation = (string) ($data['passwordConfirmation'] ?? $data['password_confirmation'] ?? '');
+        if ($password !== $confirmation) {
+            $this->fail('Confirmation du mot de passe invalide', 400);
+        }
+
+        try {
+            $this->accounts->assertStrongPassword($password);
+        } catch (ValidationException) {
+            $this->fail('Mot de passe trop faible', 400);
+        }
+
+        $accountId = (int) ($user->user_id ?? 0);
+        if ($accountId <= 0) {
+            $this->fail('Compte Laravel introuvable', 404);
+        }
+
+        $account = User::query()
+            ->lockForUpdate()
+            ->find($accountId);
+
+        if (! $account) {
+            $this->fail('Compte Laravel introuvable', 404);
+        }
+
+        $account->forceFill([
+            'password' => $password,
+        ])->save();
+
+        return true;
     }
 
     private function ensureDefaultSites(): array
@@ -1184,7 +1243,7 @@ class AdministrationService
 
     private function userRow(CrmUser $user): array
     {
-        $user->loadMissing(['sites:id', 'modules:id', 'permissions:id,name,sort_order', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id']);
+        $user->loadMissing(['account:id', 'sites:id', 'modules:id', 'permissions:id,name,sort_order', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id']);
         $siteIds = $user->sites->pluck('id')->map(fn ($id): int => (int) $id)->sort()->values()->all();
 
         return [
@@ -1196,6 +1255,7 @@ class AdministrationService
             'phone' => $user->phone,
             'role' => $user->role,
             'active' => (bool) $user->active,
+            'hasAccount' => filled($user->user_id) && $user->account !== null,
             'primarySiteId' => $this->primarySiteId($user, $siteIds),
             'siteIds' => $siteIds,
             'moduleIds' => $user->modules->pluck('id')->map(fn ($id): int => (int) $id)->sort()->values()->all(),

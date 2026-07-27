@@ -30,7 +30,10 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use Modules\CrmAdministration\Filament\Resources\CrmUsers\Pages\ManageCrmUsers;
+use Modules\CrmAdministration\Services\AdminAccountService;
 use Spatie\Permission\Models\Role;
 use UnitEnum;
 
@@ -91,6 +94,31 @@ class CrmUserResource extends Resource
                         Toggle::make('active')
                             ->label('Compte actif')
                             ->default(true),
+                        TextInput::make('password')
+                            ->label('Nouveau mot de passe')
+                            ->password()
+                            ->revealable()
+                            ->autocomplete('new-password')
+                            ->nullable()
+                            ->visible(fn (string $operation): bool => $operation === 'edit' && self::canManageHubUsers())
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->rule(Password::min(max(12, (int) config('crm.admin_password.min_length', 12)))
+                                ->mixedCase()
+                                ->numbers()
+                                ->symbols())
+                            ->maxLength(255)
+                            ->helperText('Laisser vide pour conserver le mot de passe actuel.'),
+                        TextInput::make('password_confirmation')
+                            ->label('Confirmation du mot de passe')
+                            ->password()
+                            ->revealable()
+                            ->autocomplete('new-password')
+                            ->nullable()
+                            ->visible(fn (string $operation): bool => $operation === 'edit' && self::canManageHubUsers())
+                            ->requiredWith('password')
+                            ->same('password')
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->maxLength(255),
                     ])
                     ->columns(3),
                 Section::make('Acces HUB')
@@ -99,17 +127,26 @@ class CrmUserResource extends Resource
                             ->label('Sites autorises')
                             ->relationship('sites', 'name')
                             ->columns(2)
-                            ->bulkToggleable(),
+                            ->bulkToggleable()
+                            ->extraAttributes([
+                                'class' => 'crm-scrollable-checkbox-list-options',
+                            ], merge: true),
                         CheckboxList::make('modules')
                             ->label('Modules autorises')
                             ->relationship('modules', 'name')
                             ->columns(2)
-                            ->bulkToggleable(),
+                            ->bulkToggleable()
+                            ->extraAttributes([
+                                'class' => 'crm-scrollable-checkbox-list-options',
+                            ], merge: true),
                         CheckboxList::make('permissions')
                             ->label('Permissions')
                             ->relationship('permissions', 'label')
                             ->columns(2)
-                            ->bulkToggleable(),
+                            ->bulkToggleable()
+                            ->extraAttributes([
+                                'class' => 'crm-scrollable-checkbox-list-options',
+                            ], merge: true),
                     ]),
             ]);
     }
@@ -252,7 +289,54 @@ class CrmUserResource extends Resource
                     ->slideOver()
                     ->modalWidth(Width::SevenExtraLarge)
                     ->stickyModalHeader()
-                    ->stickyModalFooter(),
+                    ->stickyModalFooter()
+                    ->before(function (EditAction $action, CrmUser $record): void {
+                        $password = (string) ($action->getRawData()['password'] ?? '');
+
+                        if ($password === '') {
+                            return;
+                        }
+
+                        if (! self::canManageHubUsers()) {
+                            throw ValidationException::withMessages([
+                                'password' => 'Droit administration insuffisant.',
+                            ]);
+                        }
+
+                        if (! $record->user_id || ! User::query()->whereKey((int) $record->user_id)->exists()) {
+                            throw ValidationException::withMessages([
+                                'password' => 'Compte Laravel introuvable.',
+                            ]);
+                        }
+                    })
+                    ->mutateDataUsing(function (array $data): array {
+                        unset($data['password'], $data['password_confirmation']);
+
+                        return $data;
+                    })
+                    ->after(function (EditAction $action, CrmUser $record): void {
+                        $password = (string) ($action->getRawData()['password'] ?? '');
+
+                        if ($password === '') {
+                            return;
+                        }
+
+                        app(AdminAccountService::class)->assertStrongPassword($password);
+
+                        $account = User::query()
+                            ->lockForUpdate()
+                            ->find((int) $record->user_id);
+
+                        if (! $account) {
+                            throw ValidationException::withMessages([
+                                'password' => 'Compte Laravel introuvable.',
+                            ]);
+                        }
+
+                        $account->forceFill([
+                            'password' => $password,
+                        ])->save();
+                    }),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
@@ -267,5 +351,28 @@ class CrmUserResource extends Resource
         return [
             'index' => ManageCrmUsers::route('/'),
         ];
+    }
+
+    private static function canManageHubUsers(?User $user = null): bool
+    {
+        $user ??= auth()->user();
+
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        $crmUser = $user->crmUser;
+        if (! $crmUser instanceof CrmUser || ! $crmUser->active) {
+            return false;
+        }
+
+        if ($crmUser->role === 'admin') {
+            return true;
+        }
+
+        $crmUser->loadMissing('permissions:id,name,sort_order');
+
+        return $crmUser->permissions
+            ->contains(fn ($permission): bool => $permission->name === 'platform.manage_users');
     }
 }

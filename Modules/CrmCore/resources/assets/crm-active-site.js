@@ -58,6 +58,19 @@
     return site.name || site.slug || ('Site #' + site.id);
   }
 
+  function martinSiteMark(className) {
+    return [
+      '<svg class="' + className + '" viewBox="0 0 24 24" aria-hidden="true" focusable="false">',
+      '<rect class="crm-site-mark-frame" x="2.5" y="2.5" width="19" height="19" rx="4"></rect>',
+      '<path class="crm-site-mark-primary" d="M3.6 3.6h7.1v6.9H3.6z"></path>',
+      '<path class="crm-site-mark-secondary" d="M11.8 3.6h8.6v5.7h-8.6z"></path>',
+      '<path class="crm-site-mark-secondary" d="M3.6 11.6h5.9v8.8H3.6z"></path>',
+      '<path class="crm-site-mark-primary" d="M14.5 9.3h5.9v11.1h-5.9z"></path>',
+      '<path class="crm-site-mark-primary" d="M9.5 15.1h5v5.3h-5z"></path>',
+      '</svg>',
+    ].join('');
+  }
+
   function setMenuOpen(host, open) {
     if (!host) {
       return;
@@ -179,29 +192,29 @@
       '.crm-active-site-switcher{position:relative;display:flex;align-items:center;gap:.35rem;min-width:0;max-width:36vw}',
       '.crm-active-site-label{font-size:.72rem;font-weight:800;line-height:1;text-transform:uppercase;color:var(--color-secondary-500,#64748b);white-space:nowrap}',
       '.crm-active-site-control{position:relative;min-width:0;flex:1 1 auto;width:100%}',
-      '.crm-active-site-trigger{display:grid;grid-template-columns:.62rem minmax(0,1fr) 1rem;align-items:center;gap:.55rem;width:100%;height:2.2rem;max-width:8rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.55rem;background:var(--color-surface-50,#f8fafc);padding:0 .65rem;font:inherit;font-size:.78rem;font-weight:800;color:var(--color-secondary-900,#0f172a);text-align:left;outline:none;cursor:pointer;box-shadow:0 1px 2px rgb(15 23 42 / .03)}',
+      '.crm-active-site-trigger{display:grid;grid-template-columns:1.1rem minmax(0,1fr) 1rem;align-items:center;gap:.5rem;width:100%;height:2.2rem;max-width:8.7rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.55rem;background:var(--color-surface-50,#f8fafc);padding:0 .62rem;font:inherit;font-size:.78rem;font-weight:800;color:var(--color-secondary-900,#0f172a);text-align:left;outline:none;cursor:pointer;box-shadow:0 1px 2px rgb(15 23 42 / .03)}',
       '.crm-active-site-trigger:hover,.crm-active-site-trigger:focus{border-color:rgb(var(--theme-primary) / .55);box-shadow:0 0 0 3px rgb(var(--theme-primary) / .12)}',
       '.crm-active-site-trigger:disabled{cursor:wait;opacity:.72}',
-      '.crm-active-site-dot{display:block;width:.62rem;height:.62rem;border-radius:999px;background:var(--active-site-color,transparent);box-shadow:0 0 0 2px #fff,0 0 0 3px color-mix(in srgb,var(--active-site-color,#cbd5e1) 28%,transparent);opacity:0}',
-      '.crm-active-site-trigger.has-site-dot .crm-active-site-dot{opacity:1}',
+      '.crm-active-site-mark,.crm-active-site-option-mark{display:block;overflow:visible;--site-mark-primary:var(--active-site-color,rgb(var(--theme-primary)));--site-mark-secondary:color-mix(in srgb,var(--site-mark-primary) 50%,#fff)}',
+      '.crm-active-site-mark{width:1.08rem;height:1.08rem}',
+      '.crm-active-site-option-mark{width:1.35rem;height:1.35rem}',
+      '.crm-active-site-mark .crm-site-mark-frame,.crm-active-site-option-mark .crm-site-mark-frame{fill:#fff;stroke:color-mix(in srgb,var(--site-mark-primary) 28%,#cbd5e1);stroke-width:.8}',
+      '.crm-active-site-mark .crm-site-mark-primary,.crm-active-site-option-mark .crm-site-mark-primary{fill:var(--site-mark-primary)}',
+      '.crm-active-site-mark .crm-site-mark-secondary,.crm-active-site-option-mark .crm-site-mark-secondary{fill:var(--site-mark-secondary)}',
       '.crm-active-site-current{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
       '.crm-active-site-chevron{width:1rem;height:1rem;transition:transform .18s cubic-bezier(.2,0,0,1)}',
       '.crm-active-site-switcher.is-open .crm-active-site-chevron{transform:rotate(180deg)}',
       '.crm-active-site-menu{position:absolute;top:calc(100% + .62rem);right:0;z-index:var(--z-dropdown,1000);width:min(14rem,calc(100vw - 1.5rem));padding:.5rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:1rem;background:#fff;box-shadow:0 16px 34px rgb(15 23 42 / .12),0 2px 8px rgb(15 23 42 / .05);transform-origin:top right}',
       '.crm-active-site-menu[hidden]{display:none!important}',
       '.crm-active-site-menu:before{position:absolute;top:-.35rem;right:1.15rem;width:.7rem;height:.7rem;border-top:1px solid var(--color-surface-200,#e2e8f0);border-left:1px solid var(--color-surface-200,#e2e8f0);background:#fff;content:"";transform:rotate(45deg)}',
-      '.crm-active-site-option{position:relative;z-index:1;display:grid;width:100%;grid-template-columns:1.85rem .62rem minmax(0,1fr);align-items:center;gap:.65rem;border:0;border-radius:.8rem;background:transparent;padding:.7rem .78rem;color:var(--color-secondary-800,#243b53);font:inherit;text-align:left;cursor:pointer}',
+      '.crm-active-site-option{position:relative;z-index:1;display:grid;width:100%;grid-template-columns:1.35rem minmax(0,1fr);align-items:center;gap:.65rem;border:0;border-radius:.8rem;background:transparent;padding:.7rem .78rem;color:var(--color-secondary-800,#243b53);font:inherit;text-align:left;cursor:pointer}',
       '.crm-active-site-option:hover,.crm-active-site-option:focus-visible{background:rgb(var(--theme-primary) / .08);color:rgb(var(--theme-primary))}',
       '.crm-active-site-option.is-active{background:rgb(var(--theme-primary) / .11);color:rgb(var(--theme-primary))}',
-      '.crm-active-site-option-icon{display:grid;width:1.85rem;height:1.85rem;place-items:center;border-radius:.65rem;background:rgb(var(--theme-primary) / .08);color:rgb(var(--theme-primary))}',
-      '.crm-active-site-option-icon svg{width:1rem;height:1rem;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}',
-      '.crm-active-site-option-dot{display:block;width:.62rem;height:.62rem;border-radius:999px;background:var(--option-site-color,transparent);box-shadow:0 0 0 2px #fff,0 0 0 3px color-mix(in srgb,var(--option-site-color,#cbd5e1) 24%,transparent);opacity:0}',
-      '.crm-active-site-option.has-site-dot .crm-active-site-option-dot{opacity:1}',
       '.crm-active-site-option-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:800}',
       '.crm-active-site-empty{padding:.65rem .75rem;color:var(--color-secondary-500,#64748b);font-size:.84rem;font-weight:700}',
       '.dark .crm-active-site-trigger,.dark .crm-active-site-menu{border-color:var(--color-surface-700,#334155);background:var(--color-surface-800,#1e293b);color:#fff}',
       '.dark .crm-active-site-menu:before{border-color:var(--color-surface-700,#334155);background:var(--color-surface-800,#1e293b)}',
-      '@media (max-width:767px){.crm-active-site-label{display:none}.crm-active-site-switcher{flex:0 1 clamp(10rem,44vw,12rem);max-width:clamp(10rem,44vw,12rem)}.crm-active-site-trigger{max-width:none;grid-template-columns:.45rem minmax(0,1fr) .8rem;gap:.3rem;padding:0 .45rem}.crm-active-site-dot{width:.45rem;height:.45rem}.crm-active-site-chevron{width:.8rem;height:.8rem}}',
+      '@media (max-width:767px){.crm-active-site-label{display:none}.crm-active-site-switcher{flex:0 1 clamp(10rem,44vw,12rem);max-width:clamp(10rem,44vw,12rem)}.crm-active-site-trigger{max-width:none;grid-template-columns:.92rem minmax(0,1fr) .8rem;gap:.3rem;padding:0 .45rem}.crm-active-site-mark{width:.92rem;height:.92rem}.crm-active-site-chevron{width:.8rem;height:.8rem}}',
       '@media (min-width:768px){.crm-active-site-switcher{gap:.45rem;flex:0 0 auto;max-width:none}.crm-active-site-trigger{height:2.35rem;min-width:9.5rem;max-width:13rem;padding:0 .8rem;font-size:.84rem}}',
     ].join('');
     document.head.appendChild(style);
@@ -240,7 +253,7 @@
         '<span class="crm-active-site-label">Site</span>',
         '<div class="crm-active-site-control">',
         '<button class="crm-active-site-trigger" type="button" data-crm-active-site-toggle aria-haspopup="listbox" aria-expanded="false" aria-label="Changer de site">',
-        '<span class="crm-active-site-dot" data-crm-active-site-dot aria-hidden="true"></span>',
+        martinSiteMark('crm-active-site-mark'),
         '<span class="crm-active-site-current" data-crm-active-site-current>Chargement...</span>',
         '<svg class="crm-active-site-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>',
         '</button>',
@@ -278,7 +291,6 @@
 
     if (!state.sites.length) {
       button.disabled = true;
-      button.classList.remove('has-site-dot');
       button.style.removeProperty('--active-site-color');
       current.textContent = state.loading ? 'Chargement...' : 'Aucun site';
       menu.innerHTML = '<div class="crm-active-site-empty">' + escapeHtml(current.textContent) + '</div>';
@@ -290,7 +302,6 @@
     var selectedSite = activeSite();
     var selectedColor = siteColor(selectedSite);
     current.textContent = siteLabel(selectedSite);
-    button.classList.toggle('has-site-dot', Boolean(selectedColor));
     if (selectedColor) {
       button.style.setProperty('--active-site-color', selectedColor);
     } else {
@@ -301,13 +312,12 @@
       var active = Number(site.id) === Number(state.activeSiteId || state.sites[0].id);
       var color = siteColor(site);
       var style = color
-        ? ' style="--option-site-color:' + escapeHtml(color) + '"'
+        ? ' style="--active-site-color:' + escapeHtml(color) + '"'
         : '';
 
       return [
-        '<button class="crm-active-site-option' + (active ? ' is-active' : '') + (color ? ' has-site-dot' : '') + '" type="button" role="option" aria-selected="' + (active ? 'true' : 'false') + '" data-crm-active-site-option="' + String(site.id) + '"' + style + '>',
-        '<span class="crm-active-site-option-icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + (active ? '<path d="m5 12 4 4 10-10"></path>' : '<path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.4"></circle>') + '</svg></span>',
-        '<span class="crm-active-site-option-dot" aria-hidden="true"></span>',
+        '<button class="crm-active-site-option' + (active ? ' is-active' : '') + '" type="button" role="option" aria-selected="' + (active ? 'true' : 'false') + '" data-crm-active-site-option="' + String(site.id) + '"' + style + '>',
+        martinSiteMark('crm-active-site-option-mark'),
         '<span class="crm-active-site-option-label">' + escapeHtml(siteLabel(site)) + '</span>',
         '</button>',
       ].join('');

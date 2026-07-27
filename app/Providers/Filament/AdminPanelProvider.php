@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->defaultThemeMode(ThemeMode::Light)
             ->renderHook(
                 PanelsRenderHook::STYLES_AFTER,
-                fn (): HtmlString => new HtmlString('<link href="'.asset('css/filament/crm-filament.css').'?v=2026072201" rel="stylesheet" data-navigate-track />'.CrmTheme::styleTag()->toHtml())
+                fn (): HtmlString => new HtmlString('<link href="'.asset('css/filament/crm-filament.css').'?v=2026072702" rel="stylesheet" data-navigate-track />'.CrmTheme::styleTag()->toHtml())
             )
             ->brandName('JP2 Hub')
             ->brandLogo(asset('martin-sols-logo.png'))

@@ -11,7 +11,11 @@ use App\Models\CrmUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
+use Modules\CrmAdministration\Filament\Resources\CrmUsers\Pages\ManageCrmUsers;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class CrmAdministrationApiTest extends TestCase
@@ -575,6 +579,165 @@ class CrmAdministrationApiTest extends TestCase
         $this->assertDatabaseMissing('crm_user_modules', ['user_id' => $userId]);
         $this->assertDatabaseMissing('crm_user_permissions', ['user_id' => $userId]);
         $this->assertDatabaseHas('crm_user_sites', ['user_id' => $userId, 'site_id' => $siteId]);
+    }
+
+    public function test_admin_can_change_linked_member_password_from_hub_administration(): void
+    {
+        [$account] = $this->createAdminUser();
+        $targetAccount = User::factory()->create([
+            'name' => 'Membre Password',
+            'email' => 'membre.password@example.test',
+            'password' => 'Ancien-Membre-2026!',
+        ]);
+        $target = CrmUser::query()->create([
+            'user_id' => $targetAccount->id,
+            'name' => 'Membre Password',
+            'email' => $targetAccount->email,
+            'role' => 'user',
+            'active' => true,
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_user', [
+                'id' => $target->id,
+                'name' => 'Membre Password',
+                'email' => $targetAccount->email,
+                'role' => 'user',
+                'active' => true,
+                'password' => 'Nouveau-Membre-2026!',
+                'passwordConfirmation' => 'Nouveau-Membre-2026!',
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('id', $target->id);
+
+        $this->assertTrue(Hash::check('Nouveau-Membre-2026!', $targetAccount->refresh()->password));
+
+        $users = $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json('users');
+        $targetRow = collect($users)->firstWhere('id', $target->id);
+
+        $this->assertTrue($targetRow['hasAccount']);
+        $this->assertArrayNotHasKey('password', $targetRow);
+    }
+
+    public function test_member_password_confirmation_is_required_when_password_changes(): void
+    {
+        [$account] = $this->createAdminUser();
+        $targetAccount = User::factory()->create([
+            'password' => 'Ancien-Membre-2026!',
+        ]);
+        $target = CrmUser::query()->create([
+            'user_id' => $targetAccount->id,
+            'name' => 'Membre Confirmation',
+            'email' => $targetAccount->email,
+            'role' => 'user',
+            'active' => true,
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_user', [
+                'id' => $target->id,
+                'name' => 'Membre Confirmation',
+                'email' => $targetAccount->email,
+                'role' => 'user',
+                'active' => true,
+                'password' => 'Nouveau-Membre-2026!',
+                'passwordConfirmation' => 'Autre-Membre-2026!',
+            ])
+            ->assertStatus(400)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('error', 'Confirmation du mot de passe invalide');
+
+        $this->assertTrue(Hash::check('Ancien-Membre-2026!', $targetAccount->refresh()->password));
+    }
+
+    public function test_role_manager_without_user_permission_cannot_change_member_password(): void
+    {
+        $actorAccount = User::factory()->create();
+        $actor = CrmUser::query()->create([
+            'user_id' => $actorAccount->id,
+            'name' => 'Gestionnaire Roles',
+            'role' => 'user',
+            'active' => true,
+        ]);
+        $permission = CrmPermission::query()->create([
+            'name' => 'platform.manage_roles',
+            'label' => 'Gerer les roles',
+            'group_label' => 'Administration',
+            'sort_order' => 180,
+        ]);
+        $actor->permissions()->sync([$permission->id]);
+        $targetAccount = User::factory()->create([
+            'password' => 'Ancien-Membre-2026!',
+        ]);
+        $target = CrmUser::query()->create([
+            'user_id' => $targetAccount->id,
+            'name' => 'Membre Refuse',
+            'email' => $targetAccount->email,
+            'role' => 'user',
+            'active' => true,
+        ]);
+
+        $this->actingAs($actorAccount)
+            ->postJson('/api/administration?action=save_user', [
+                'id' => $target->id,
+                'name' => 'Membre Refuse',
+                'email' => $targetAccount->email,
+                'role' => 'user',
+                'active' => true,
+                'password' => 'Nouveau-Membre-2026!',
+                'passwordConfirmation' => 'Nouveau-Membre-2026!',
+            ])
+            ->assertStatus(403)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('error', 'Droit administration insuffisant');
+
+        $this->assertTrue(Hash::check('Ancien-Membre-2026!', $targetAccount->refresh()->password));
+    }
+
+    public function test_filament_user_edit_action_can_change_linked_member_password(): void
+    {
+        [$account] = $this->createAdminUser();
+        Role::query()->firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $account->assignRole('admin');
+
+        $targetAccount = User::factory()->create([
+            'name' => 'Membre Filament',
+            'email' => 'membre.filament@example.test',
+            'password' => 'Ancien-Filament-2026!',
+        ]);
+        $target = CrmUser::query()->create([
+            'user_id' => $targetAccount->id,
+            'name' => 'Membre Filament',
+            'email' => $targetAccount->email,
+            'role' => 'user',
+            'active' => true,
+        ]);
+
+        $this->actingAs($account);
+
+        Livewire::test(ManageCrmUsers::class)
+            ->callTableAction('edit', $target, [
+                'name' => 'Membre Filament',
+                'first_name' => null,
+                'last_name' => null,
+                'email' => $targetAccount->email,
+                'phone' => null,
+                'user_id' => $targetAccount->id,
+                'role' => 'user',
+                'active' => true,
+                'password' => 'Nouveau-Filament-2026!',
+                'password_confirmation' => 'Nouveau-Filament-2026!',
+                'sites' => [],
+                'modules' => [],
+                'permissions' => [],
+            ])
+            ->assertHasNoActionErrors();
+
+        $this->assertTrue(Hash::check('Nouveau-Filament-2026!', $targetAccount->refresh()->password));
     }
 
     /**

@@ -585,6 +585,11 @@ class CrmSecurityTest extends TestCase
         $this->assertStringContainsString('->slideOver()', $crmUserResource);
         $this->assertStringContainsString('->modalWidth(Width::SevenExtraLarge)', $crmUserResource);
         $this->assertStringContainsString('->stickyModalFooter()', $crmUserResource);
+        $this->assertSame(3, substr_count($crmUserResource, 'crm-scrollable-checkbox-list-options'));
+        $this->assertStringContainsString("TextInput::make('password')", $crmUserResource);
+        $this->assertStringContainsString('AdminAccountService::class', $crmUserResource);
+        $this->assertStringContainsString('->mutateDataUsing(function (array $data): array', $crmUserResource);
+        $this->assertStringContainsString('->after(function (EditAction $action, CrmUser $record): void', $crmUserResource);
 
         $manageCrmUsersPage = (string) file_get_contents(base_path('Modules/CrmAdministration/app/Filament/Resources/CrmUsers/Pages/ManageCrmUsers.php'));
 
@@ -592,6 +597,20 @@ class CrmSecurityTest extends TestCase
         $this->assertStringContainsString('->slideOver()', $manageCrmUsersPage);
         $this->assertStringContainsString('->modalWidth(Width::SevenExtraLarge)', $manageCrmUsersPage);
         $this->assertStringContainsString('->stickyModalFooter()', $manageCrmUsersPage);
+
+        $adminPanelProvider = (string) file_get_contents(app_path('Providers/Filament/AdminPanelProvider.php'));
+        $filamentCss = (string) file_get_contents(public_path('css/filament/crm-filament.css'));
+
+        $this->assertStringContainsString('crm-filament.css\').\'?v=2026072702', $adminPanelProvider);
+        $this->assertStringContainsString('.fi-fo-checkbox-list-options.crm-scrollable-checkbox-list-options', $filamentCss);
+        $this->assertStringContainsString('overflow-y: auto;', $filamentCss);
+
+        $administrationScript = (string) file_get_contents(base_path('Modules/CrmAdministration/resources/assets/crm-administration.js'));
+
+        $this->assertStringContainsString('function canManageUsers()', $administrationScript);
+        $this->assertStringContainsString('name="password"', $administrationScript);
+        $this->assertStringContainsString('passwordConfirmation', $administrationScript);
+        $this->assertStringContainsString('user.hasAccount', $administrationScript);
     }
 
     public function test_crm_api_controllers_delegate_business_authorization_to_services_or_policies(): void

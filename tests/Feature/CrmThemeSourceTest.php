@@ -71,6 +71,22 @@ class CrmThemeSourceTest extends TestCase
         }
     }
 
+    public function test_active_site_switcher_uses_site_colored_martin_mark(): void
+    {
+        $switcher = (string) file_get_contents(base_path('Modules/CrmCore/resources/assets/crm-active-site.js'));
+        $shell = (string) file_get_contents(resource_path('frontend/crm/styles/shell.css'));
+
+        $this->assertStringContainsString('function martinSiteMark(className)', $switcher);
+        $this->assertStringContainsString('crm-site-mark-primary', $switcher);
+        $this->assertStringContainsString('color-mix(in srgb,var(--site-mark-primary) 50%,#fff)', $switcher);
+        $this->assertStringContainsString('crm-active-site-option-mark', $switcher);
+        $this->assertStringNotContainsString('crm-active-site-option-dot', $switcher);
+        $this->assertStringNotContainsString('crm-active-site-option-icon', $switcher);
+        $this->assertStringNotContainsString('crm-active-site-dot', $switcher);
+        $this->assertStringContainsString('.crm-native-header-actions .crm-active-site-mark', $shell);
+        $this->assertStringNotContainsString('.crm-native-header-actions .crm-active-site-dot', $shell);
+    }
+
     public function test_standalone_blade_views_receive_shared_theme_variables(): void
     {
         $pages = (string) file_get_contents(base_path('Modules/CrmPages/resources/views/pages.blade.php'));
