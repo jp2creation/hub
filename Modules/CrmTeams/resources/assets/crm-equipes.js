@@ -431,7 +431,7 @@
       html.crm-teams-route,
       body.crm-teams-route{overflow-x:hidden}
       html.crm-teams-route main{max-width:100%;min-width:0;overflow-x:hidden}
-      html.crm-teams-route .layout-container.layout-page{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
+      html.crm-teams-route main .layout-container.layout-page{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
       #${rootId}{--teams-primary:rgb(var(--theme-primary));--teams-border:var(--color-surface-200,#e2e8f0);--teams-muted:var(--color-secondary-500,#64748b);--teams-text:var(--color-secondary-900,#0f172a);display:block;min-width:0;color:var(--teams-text)}
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
