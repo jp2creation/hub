@@ -18,9 +18,13 @@ use Modules\CrmCore\Support\CrmReferenceCache;
  * @property bool $active
  * @property string|null $afternoon_end
  * @property string|null $afternoon_start
+ * @property string|null $address
+ * @property string $color
+ * @property string|null $email
  * @property string|null $morning_end
  * @property string|null $morning_start
  * @property string $name
+ * @property string|null $phone
  * @property string|null $slug
  * @property-read object{is_default?: mixed}|null $pivot
  * @property-read Collection<int, CrmVehicle> $vehicles
@@ -45,7 +49,15 @@ class CrmSite extends Model
         'morning_end',
         'afternoon_start',
         'afternoon_end',
+        'address',
+        'phone',
+        'email',
+        'color',
         'deleted_at',
+    ];
+
+    protected $attributes = [
+        'color' => '#95002e',
     ];
 
     protected function casts(): array

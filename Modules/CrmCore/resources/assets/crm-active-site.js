@@ -180,7 +180,9 @@
       '.crm-active-site-label{font-size:.72rem;font-weight:800;line-height:1;text-transform:uppercase;color:var(--color-secondary-500,#64748b);white-space:nowrap}',
       '.crm-active-site-control{position:relative;min-width:0}',
       '.crm-active-site-trigger{display:grid;grid-template-columns:minmax(0,1fr) 1rem;align-items:center;gap:.55rem;width:100%;height:2.2rem;max-width:8rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.55rem;background:var(--color-surface-50,#f8fafc);padding:0 .65rem;font:inherit;font-size:.78rem;font-weight:800;color:var(--color-secondary-900,#0f172a);text-align:left;outline:none;cursor:pointer;box-shadow:0 1px 2px rgb(15 23 42 / .03)}',
+      '.crm-active-site-trigger.has-site-color{border-color:color-mix(in srgb,var(--active-site-color) 72%,transparent);background:var(--active-site-color);color:var(--active-site-contrast,#fff);box-shadow:0 12px 24px color-mix(in srgb,var(--active-site-color) 20%,transparent)}',
       '.crm-active-site-trigger:hover,.crm-active-site-trigger:focus{border-color:rgb(var(--theme-primary) / .55);box-shadow:0 0 0 3px rgb(var(--theme-primary) / .12)}',
+      '.crm-active-site-trigger.has-site-color:hover,.crm-active-site-trigger.has-site-color:focus{border-color:color-mix(in srgb,var(--active-site-color) 78%,#fff);box-shadow:0 0 0 3px color-mix(in srgb,var(--active-site-color) 20%,transparent),0 12px 24px color-mix(in srgb,var(--active-site-color) 20%,transparent)}',
       '.crm-active-site-trigger:disabled{cursor:wait;opacity:.72}',
       '.crm-active-site-current{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
       '.crm-active-site-chevron{width:1rem;height:1rem;transition:transform .18s cubic-bezier(.2,0,0,1)}',
@@ -191,7 +193,9 @@
       '.crm-active-site-option{position:relative;z-index:1;display:grid;width:100%;grid-template-columns:1.85rem minmax(0,1fr);align-items:center;gap:.65rem;border:0;border-radius:.8rem;background:transparent;padding:.7rem .78rem;color:var(--color-secondary-800,#243b53);font:inherit;text-align:left;cursor:pointer}',
       '.crm-active-site-option:hover,.crm-active-site-option:focus-visible{background:rgb(var(--theme-primary) / .08);color:rgb(var(--theme-primary))}',
       '.crm-active-site-option.is-active{background:rgb(var(--theme-primary) / .11);color:rgb(var(--theme-primary))}',
+      '.crm-active-site-option.is-active.has-site-color{background:var(--option-site-color);color:var(--option-site-contrast,#fff)}',
       '.crm-active-site-option-icon{display:grid;width:1.85rem;height:1.85rem;place-items:center;border-radius:.65rem;background:rgb(var(--theme-primary) / .08);color:rgb(var(--theme-primary))}',
+      '.crm-active-site-option.is-active.has-site-color .crm-active-site-option-icon{background:color-mix(in srgb,var(--option-site-contrast,#fff) 16%,transparent);color:var(--option-site-contrast,#fff)}',
       '.crm-active-site-option-icon svg{width:1rem;height:1rem;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}',
       '.crm-active-site-option-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:800}',
       '.crm-active-site-empty{padding:.65rem .75rem;color:var(--color-secondary-500,#64748b);font-size:.84rem;font-weight:700}',
@@ -273,6 +277,9 @@
 
     if (!state.sites.length) {
       button.disabled = true;
+      button.classList.remove('has-site-color');
+      button.style.removeProperty('--active-site-color');
+      button.style.removeProperty('--active-site-contrast');
       current.textContent = state.loading ? 'Chargement...' : 'Aucun site';
       menu.innerHTML = '<div class="crm-active-site-empty">' + escapeHtml(current.textContent) + '</div>';
       setMenuOpen(host, false);
@@ -280,12 +287,27 @@
     }
 
     button.disabled = false;
-    current.textContent = siteLabel(activeSite());
+    var selectedSite = activeSite();
+    var selectedColor = siteColor(selectedSite);
+    current.textContent = siteLabel(selectedSite);
+    button.classList.toggle('has-site-color', Boolean(selectedColor));
+    if (selectedColor) {
+      button.style.setProperty('--active-site-color', selectedColor);
+      button.style.setProperty('--active-site-contrast', contrastColor(selectedColor));
+    } else {
+      button.style.removeProperty('--active-site-color');
+      button.style.removeProperty('--active-site-contrast');
+    }
 
     var options = state.sites.map(function (site) {
       var active = Number(site.id) === Number(state.activeSiteId || state.sites[0].id);
+      var color = siteColor(site);
+      var style = active && color
+        ? ' style="--option-site-color:' + escapeHtml(color) + ';--option-site-contrast:' + escapeHtml(contrastColor(color)) + '"'
+        : '';
+
       return [
-        '<button class="crm-active-site-option' + (active ? ' is-active' : '') + '" type="button" role="option" aria-selected="' + (active ? 'true' : 'false') + '" data-crm-active-site-option="' + String(site.id) + '">',
+        '<button class="crm-active-site-option' + (active ? ' is-active' : '') + (active && color ? ' has-site-color' : '') + '" type="button" role="option" aria-selected="' + (active ? 'true' : 'false') + '" data-crm-active-site-option="' + String(site.id) + '"' + style + '>',
         '<span class="crm-active-site-option-icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + (active ? '<path d="m5 12 4 4 10-10"></path>' : '<path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.4"></circle>') + '</svg></span>',
         '<span class="crm-active-site-option-label">' + escapeHtml(siteLabel(site)) + '</span>',
         '</button>',
@@ -336,6 +358,26 @@
     }
 
     window.open(addvanceUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  function siteColor(site) {
+    var color = String((site && site.color) || '').trim();
+
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : '';
+  }
+
+  function contrastColor(color) {
+    var hex = siteColor({ color: color });
+    if (!hex) {
+      return '#fff';
+    }
+
+    var red = parseInt(hex.slice(1, 3), 16);
+    var green = parseInt(hex.slice(3, 5), 16);
+    var blue = parseInt(hex.slice(5, 7), 16);
+    var brightness = (red * 299 + green * 587 + blue * 114) / 1000;
+
+    return brightness > 150 ? '#172033' : '#fff';
   }
 
   function escapeHtml(value) {

@@ -4,19 +4,23 @@ namespace Modules\CrmAdministration\Filament\Resources\CrmSites;
 
 use App\Filament\Concerns\AuthorizesResourceWithPolicy;
 use App\Models\CrmSite;
+use App\Support\CrmTheme;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -83,6 +87,23 @@ class CrmSiteResource extends Resource
                 Toggle::make('active')
                     ->label('Site actif')
                     ->default(true),
+                TextInput::make('address')
+                    ->label('Adresse')
+                    ->maxLength(255)
+                    ->columnSpanFull(),
+                TextInput::make('phone')
+                    ->label('Telephone')
+                    ->tel()
+                    ->maxLength(40),
+                TextInput::make('email')
+                    ->label('E-mail')
+                    ->email()
+                    ->maxLength(190),
+                ColorPicker::make('color')
+                    ->label('Couleur')
+                    ->default(CrmTheme::primaryHex())
+                    ->hexColor()
+                    ->required(),
                 self::timeField('morning_start', 'Matin debut', '07:30'),
                 self::timeField('morning_end', 'Matin fin', '12:00'),
                 self::timeField('afternoon_start', 'Apres-midi debut', '13:30'),
@@ -98,6 +119,10 @@ class CrmSiteResource extends Resource
                 TextEntry::make('name')->label('Nom'),
                 TextEntry::make('slug')->label('Slug'),
                 IconEntry::make('active')->label('Actif')->boolean(),
+                ColorEntry::make('color')->label('Couleur'),
+                TextEntry::make('address')->label('Adresse')->placeholder('Non renseignee'),
+                TextEntry::make('phone')->label('Telephone')->placeholder('Non renseigne'),
+                TextEntry::make('email')->label('E-mail')->placeholder('Non renseigne'),
                 TextEntry::make('opening_hours')
                     ->label('Horaires')
                     ->state(fn (?CrmSite $record): string => self::hoursLabel($record)),
@@ -121,6 +146,20 @@ class CrmSiteResource extends Resource
                     ->label('Slug')
                     ->searchable()
                     ->toggleable(),
+                ColorColumn::make('color')
+                    ->label('Couleur'),
+                TextColumn::make('phone')
+                    ->label('Telephone')
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('email')
+                    ->label('E-mail')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('address')
+                    ->label('Adresse')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('opening_hours')
                     ->label('Horaires')
                     ->state(fn (?CrmSite $record): string => self::hoursLabel($record)),

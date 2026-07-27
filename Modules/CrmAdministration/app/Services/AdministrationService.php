@@ -11,6 +11,7 @@ use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\CrmUserSiteModulePermission;
 use App\Models\User;
+use App\Support\CrmTheme;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -525,6 +526,9 @@ class AdministrationService
         return DB::transaction(function () use ($actor, $data): array {
             $id = max(0, (int) ($data['id'] ?? 0));
             $name = trim((string) ($data['name'] ?? ''));
+            $address = trim((string) ($data['address'] ?? ''));
+            $phone = trim((string) ($data['phone'] ?? ''));
+            $email = trim((string) ($data['email'] ?? ''));
 
             if ($name === '') {
                 $this->fail('Nom du site obligatoire', 400);
@@ -532,12 +536,22 @@ class AdministrationService
             if (mb_strlen($name) > 120) {
                 $this->fail('Nom du site trop long', 400);
             }
+            if (mb_strlen($address) > 255) {
+                $this->fail('Adresse trop longue', 400);
+            }
+            if (mb_strlen($phone) > 40) {
+                $this->fail('Telephone trop long', 400);
+            }
+            if ($email !== '' && (! filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 190)) {
+                $this->fail('Email invalide', 400);
+            }
 
             $site = $id > 0 ? CrmSite::query()->lockForUpdate()->find($id) : new CrmSite;
             if ($id > 0 && ! $site) {
                 $this->fail('Site introuvable', 404);
             }
 
+            $color = $this->siteColor((string) ($data['color'] ?? $site?->color ?? ''));
             $morningStart = $this->normalizeTime($data, 'morningStart', 'morning_start', $site?->morning_start ?: '07:30');
             $morningEnd = $this->normalizeTime($data, 'morningEnd', 'morning_end', $site?->morning_end ?: '12:00');
             $afternoonStart = $this->normalizeTime($data, 'afternoonStart', 'afternoon_start', $site?->afternoon_start ?: '13:30');
@@ -554,6 +568,10 @@ class AdministrationService
             $site->fill([
                 'name' => $name,
                 'active' => $this->boolean($data['active'] ?? null, true),
+                'address' => $address !== '' ? $address : null,
+                'phone' => $phone !== '' ? $phone : null,
+                'email' => $email !== '' ? $email : null,
+                'color' => $color,
                 'morning_start' => $morningStart,
                 'morning_end' => $morningEnd,
                 'afternoon_start' => $afternoonStart,
@@ -1067,6 +1085,10 @@ class AdministrationService
             'name' => $site->name,
             'slug' => $site->slug,
             'active' => (bool) $site->active,
+            'address' => trim((string) $site->address),
+            'phone' => trim((string) $site->phone),
+            'email' => trim((string) $site->email),
+            'color' => $this->siteColor((string) $site->color),
             'hours' => [
                 'morningStart' => $this->time5($site->morning_start, '07:30'),
                 'morningEnd' => $this->time5($site->morning_end, '12:00'),
@@ -1492,6 +1514,21 @@ class AdministrationService
         $value = trim((string) $value);
 
         return preg_match('/^([0-2][0-9]:[0-5][0-9])/', $value, $matches) ? $matches[1] : $default;
+    }
+
+    private function siteColor(string $value): string
+    {
+        $value = trim($value);
+
+        if ($value === '') {
+            return CrmTheme::primaryHex();
+        }
+
+        if (! preg_match('/^#[0-9a-fA-F]{6}$/', $value)) {
+            $this->fail('Couleur invalide', 400);
+        }
+
+        return strtolower($value);
     }
 
     private function iconKey(string $value): string

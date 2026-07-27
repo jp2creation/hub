@@ -87,9 +87,12 @@
       #${rootId} .admin-row-title span{color:var(--admin-muted);font-size:.72rem;font-weight:850}
       #${rootId} label{display:grid;gap:.28rem;color:var(--admin-muted);font-size:.7rem;font-weight:950;text-transform:uppercase}
       #${rootId} input,#${rootId} select,#${rootId} textarea{width:100%;border:1px solid var(--admin-border);border-radius:.48rem;background:#fff;padding:.62rem .7rem;color:var(--admin-text);font:inherit;font-size:.84rem;font-weight:750;text-transform:none}
+      #${rootId} input[type="color"]{height:2.55rem;padding:.22rem;cursor:pointer}
       #${rootId} textarea{min-height:6.5rem;resize:vertical}
       #${rootId} .admin-check{display:flex;align-items:center;gap:.45rem;color:var(--admin-text);font-size:.84rem;font-weight:850;text-transform:none}
       #${rootId} .admin-check input{width:1rem;height:1rem}
+      #${rootId} .admin-site-heading{display:flex;align-items:center;gap:.55rem;min-width:0}
+      #${rootId} .admin-site-swatch{display:inline-block;width:1rem;height:1rem;flex:0 0 auto;border:1px solid var(--admin-border);border-radius:999px;background:var(--site-color,var(--admin-primary));box-shadow:0 0 0 .18rem color-mix(in srgb,var(--site-color,var(--admin-primary)) 12%,transparent)}
       #${rootId} .admin-actions{display:flex;justify-content:flex-end;gap:.55rem;flex-wrap:wrap}
       #${rootId} .admin-empty,#${rootId} .admin-loading{display:grid;place-items:center;min-height:7rem;border:1px dashed var(--admin-border);border-radius:.55rem;color:var(--admin-muted);font-weight:850;text-align:center;padding:1rem}
       #${rootId} .admin-alert{border:1px solid #fecaca;border-radius:.55rem;background:#fff1f2;padding:.8rem;color:#b91c1c;font-weight:850}
@@ -288,19 +291,27 @@
 
   function renderSiteForm(site) {
     const hours = site.hours || {};
+    const color = validHexColor(site.color) || defaultSiteColor();
 
     return `
       <form class="admin-row" data-site-form>
         <input type="hidden" name="id" value="${esc(site.id || "")}">
-        <div class="admin-row-title"><strong>${esc(site.name || "Nouveau site")}</strong><span>${site.active === false ? "Masqué" : "Actif"}</span></div>
+        <div class="admin-row-title">
+          <span class="admin-site-heading" style="--site-color:${esc(color)}"><i class="admin-site-swatch" aria-hidden="true"></i><strong>${esc(site.name || "Nouveau site")}</strong></span>
+          <span>${site.active === false ? "Masqué" : "Actif"}</span>
+        </div>
         <div class="admin-grid-3">
           <label>Nom <input name="name" value="${esc(site.name || "")}" required></label>
+          <label>Couleur <input name="color" type="color" value="${esc(color)}"></label>
+          <label>Téléphone <input name="phone" type="tel" value="${esc(site.phone || "")}"></label>
+          <label>E-mail <input name="email" type="email" value="${esc(site.email || "")}"></label>
           <label>Matin début <input name="morningStart" type="time" value="${esc(hours.morningStart || "07:30")}"></label>
           <label>Matin fin <input name="morningEnd" type="time" value="${esc(hours.morningEnd || "12:00")}"></label>
           <label>Après-midi début <input name="afternoonStart" type="time" value="${esc(hours.afternoonStart || "13:30")}"></label>
           <label>Après-midi fin <input name="afternoonEnd" type="time" value="${esc(hours.afternoonEnd || "17:30")}"></label>
           <label class="admin-check"><input name="active" type="checkbox"${site.active !== false ? " checked" : ""}> Actif</label>
         </div>
+        <label>Adresse <input name="address" value="${esc(site.address || "")}"></label>
         <div class="admin-actions">
           <button class="admin-button admin-button-primary" type="submit">Enregistrer</button>
           ${site.id ? `<button class="admin-button admin-button-danger" type="button" data-delete-site="${esc(site.id)}">Supprimer</button>` : ""}
@@ -410,7 +421,7 @@
     root.querySelectorAll("[data-delete-site]").forEach((button) => button.addEventListener("click", deleteSite));
     root.querySelectorAll("[data-delete-page]").forEach((button) => button.addEventListener("click", deletePage));
     root.querySelector("[data-new-site]")?.addEventListener("click", () => {
-      state.data.sites = [{ id: "", name: "", active: true, hours: {} }, ...(state.data?.sites || [])];
+      state.data.sites = [{ id: "", name: "", active: true, address: "", phone: "", email: "", color: defaultSiteColor(), hours: {} }, ...(state.data?.sites || [])];
       render();
     });
     root.querySelector("[data-new-page]")?.addEventListener("click", () => {
@@ -469,6 +480,10 @@
       body: {
         id: Number(data.get("id") || 0),
         name: String(data.get("name") || ""),
+        address: String(data.get("address") || ""),
+        phone: String(data.get("phone") || ""),
+        email: String(data.get("email") || ""),
+        color: String(data.get("color") || ""),
         morningStart: String(data.get("morningStart") || "07:30"),
         morningEnd: String(data.get("morningEnd") || "12:00"),
         afternoonStart: String(data.get("afternoonStart") || "13:30"),
@@ -543,6 +558,9 @@
     try {
       await callback();
       await load({ force: true });
+      if (key === "site") {
+        window.CRM_ACTIVE_SITE?.reload?.();
+      }
     } catch (error) {
       alert(error.message || "Enregistrement impossible");
       state.saving = "";
@@ -611,6 +629,18 @@
     }
 
     return ids;
+  }
+
+  function validHexColor(value) {
+    const color = String(value || "").trim();
+
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : "";
+  }
+
+  function defaultSiteColor() {
+    const color = getComputedStyle(document.documentElement).getPropertyValue("--theme-primary-color");
+
+    return validHexColor(color) || "#7f1d3a";
   }
 
   function icon(key) {

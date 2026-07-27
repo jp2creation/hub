@@ -17,7 +17,7 @@ use Modules\CrmCore\Services\CrmImageStorage;
 
 final class CrmReferenceCache
 {
-    public const ACTIVE_SITE_ROWS = 'hub:sites:active:rows:v1';
+    public const ACTIVE_SITE_ROWS = 'hub:sites:active:rows:v2';
 
     public const ACTIVE_SITE_IDS = 'hub:sites:active:ids:v1';
 
@@ -38,7 +38,7 @@ final class CrmReferenceCache
     public const ACTIVE_EQUIPMENT_ITEM_ROWS = 'hub:equipment-items:active:rows:v1';
 
     /**
-     * @return array<int, array{id: int, name: string, slug: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
+     * @return array<int, array{id: int, name: string, slug: string, address: string, phone: string, email: string, color: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
      */
     public static function activeSiteRows(): array
     {
@@ -51,6 +51,10 @@ final class CrmReferenceCache
                     'id' => (int) $site->id,
                     'name' => $site->name,
                     'slug' => $site->slug,
+                    'address' => trim((string) $site->address),
+                    'phone' => trim((string) $site->phone),
+                    'email' => trim((string) $site->email),
+                    'color' => self::siteColor($site),
                     'hours' => self::siteHours($site),
                 ])
                 ->values()
@@ -75,6 +79,13 @@ final class CrmReferenceCache
     public static function activeSiteExists(int $siteId): bool
     {
         return in_array($siteId, self::activeSiteIds(), true);
+    }
+
+    private static function siteColor(CrmSite $site): string
+    {
+        $color = trim((string) $site->color);
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : CrmTheme::primaryHex();
     }
 
     /**

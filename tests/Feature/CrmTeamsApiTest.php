@@ -41,7 +41,7 @@ class CrmTeamsApiTest extends TestCase
             'phone' => '05 56 00 00 00',
         ]);
 
-        $this->actingAs($account)
+        $response = $this->actingAs($account)
             ->getJson('/api/equipes?action=bootstrap')
             ->assertOk()
             ->assertJsonPath('ok', true)
@@ -51,6 +51,14 @@ class CrmTeamsApiTest extends TestCase
             ->assertJsonPath('members.0.firstName', 'Jean')
             ->assertJsonPath('members.1.firstName', 'Marie')
             ->assertJsonMissing(['firstName' => 'Paul']);
+
+        $site = collect($response->json('sites'))->firstWhere('id', $palissy->id);
+
+        $this->assertSame('18 rue Palissy, 64000 Pau', $site['address'] ?? null);
+        $this->assertSame('05 59 11 22 33', $site['phone'] ?? null);
+        $this->assertSame('palissy@example.test', $site['email'] ?? null);
+        $this->assertSame('#2563eb', $site['color'] ?? null);
+        $this->assertSame('08:00', $site['hours']['morningStart'] ?? null);
     }
 
     public function test_user_can_request_an_authorized_site(): void
@@ -115,11 +123,20 @@ class CrmTeamsApiTest extends TestCase
             'name' => 'Palissy',
             'slug' => 'palissy',
             'active' => true,
+            'address' => '18 rue Palissy, 64000 Pau',
+            'phone' => '05 59 11 22 33',
+            'email' => 'palissy@example.test',
+            'color' => '#2563eb',
+            'morning_start' => '08:00:00',
         ]);
         $bordeaux = CrmSite::query()->create([
             'name' => 'Bordeaux',
             'slug' => 'bordeaux',
             'active' => true,
+            'address' => '4 quai de Bordeaux, 33000 Bordeaux',
+            'phone' => '05 56 44 55 66',
+            'email' => 'bordeaux@example.test',
+            'color' => '#16a34a',
         ]);
 
         $module = CrmModule::query()->updateOrCreate(

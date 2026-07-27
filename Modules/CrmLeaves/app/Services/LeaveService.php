@@ -10,6 +10,7 @@ use App\Models\CrmLeaveEntry;
 use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\User;
+use App\Support\CrmTheme;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
@@ -832,7 +833,18 @@ class LeaveService
             'name' => $site->name,
             'slug' => $site->slug,
             'active' => (bool) $site->active,
+            'address' => trim((string) $site->address),
+            'phone' => trim((string) $site->phone),
+            'email' => trim((string) $site->email),
+            'color' => $this->siteColor((string) $site->color),
         ];
+    }
+
+    private function siteColor(string $value): string
+    {
+        $value = trim($value);
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? strtolower($value) : CrmTheme::primaryHex();
     }
 
     private function employeeRow(CrmLeaveEmployee $employee): array

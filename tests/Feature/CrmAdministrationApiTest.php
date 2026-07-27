@@ -450,6 +450,10 @@ class CrmAdministrationApiTest extends TestCase
             ->postJson('/api/administration?action=save_site', [
                 'name' => 'Atelier Nord',
                 'active' => true,
+                'address' => '12 rue des Artisans, 64000 Pau',
+                'phone' => '05 59 00 00 00',
+                'email' => 'atelier-nord@example.test',
+                'color' => '#2563eb',
                 'hours' => [
                     'morningStart' => '08:00',
                     'morningEnd' => '12:15',
@@ -467,7 +471,37 @@ class CrmAdministrationApiTest extends TestCase
             'slug' => 'atelier-nord',
             'morning_start' => '08:00:00',
             'afternoon_end' => '18:00:00',
+            'address' => '12 rue des Artisans, 64000 Pau',
+            'phone' => '05 59 00 00 00',
+            'email' => 'atelier-nord@example.test',
+            'color' => '#2563eb',
         ]);
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $siteId,
+                'address' => '12 rue des Artisans, 64000 Pau',
+                'phone' => '05 59 00 00 00',
+                'email' => 'atelier-nord@example.test',
+                'color' => '#2563eb',
+            ]);
+    }
+
+    public function test_admin_site_color_must_be_hex(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_site', [
+                'name' => 'Atelier Sud',
+                'active' => true,
+                'color' => 'rouge',
+            ])
+            ->assertStatus(400)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('error', 'Couleur invalide');
     }
 
     public function test_admin_can_create_blocked_user_without_rights(): void

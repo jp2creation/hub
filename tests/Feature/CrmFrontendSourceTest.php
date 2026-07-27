@@ -725,6 +725,29 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('/public/modules', $gitignore);
     }
 
+    public function test_site_contact_and_color_are_exposed_in_frontend_modules(): void
+    {
+        $teams = (string) file_get_contents(base_path('Modules/CrmTeams/resources/assets/crm-equipes.js'));
+        $administration = (string) file_get_contents(base_path('Modules/CrmAdministration/resources/assets/crm-administration.js'));
+        $activeSite = (string) file_get_contents(base_path('Modules/CrmCore/resources/assets/crm-active-site.js'));
+
+        $this->assertStringContainsString('function renderSiteInfo(site)', $teams);
+        $this->assertStringContainsString('Informations du site sélectionné', $teams);
+        $this->assertStringContainsString('${siteInfoItem("Adresse", site?.address || "", "mapPin")}', $teams);
+        $this->assertStringContainsString('${siteInfoItem("Téléphone", site?.phone || "", "phone", site?.phone ? `tel:${phoneHref(site.phone)}` : "")}', $teams);
+        $this->assertStringContainsString('style="--site-color:${esc(color)}"', $teams);
+
+        $this->assertStringContainsString('<label>Couleur <input name="color" type="color"', $administration);
+        $this->assertStringContainsString('<label>Téléphone <input name="phone" type="tel"', $administration);
+        $this->assertStringContainsString('<label>Adresse <input name="address"', $administration);
+        $this->assertStringContainsString('window.CRM_ACTIVE_SITE?.reload?.();', $administration);
+
+        $this->assertStringContainsString('.crm-active-site-trigger.has-site-color', $activeSite);
+        $this->assertStringContainsString('button.style.setProperty(\'--active-site-color\', selectedColor);', $activeSite);
+        $this->assertStringContainsString('crm-active-site-option.is-active.has-site-color', $activeSite);
+        $this->assertStringContainsString('function contrastColor(color)', $activeSite);
+    }
+
     public function test_dom_ready_sensitive_crm_modules_boot_even_when_loaded_late(): void
     {
         foreach ([

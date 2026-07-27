@@ -4,6 +4,7 @@ namespace Modules\CrmTeams\Services;
 
 use App\Models\CrmUser;
 use App\Models\User;
+use App\Support\CrmTheme;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Modules\CrmCore\Services\CrmAccessService;
@@ -75,7 +76,7 @@ class TeamService
 
     /**
      * @param  array<int, int>  $siteIds
-     * @return array<int, array{id: int, name: string, slug: string, active: bool, membersCount: int}>
+     * @return array<int, array{id: int, name: string, slug: string, active: bool, membersCount: int, address: string, phone: string, email: string, color: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
      */
     private function siteRows(array $siteIds): array
     {
@@ -99,6 +100,16 @@ class TeamService
                 'slug' => $site['slug'],
                 'active' => true,
                 'membersCount' => (int) ($counts[(int) $site['id']] ?? 0),
+                'address' => $site['address'] ?? '',
+                'phone' => $site['phone'] ?? '',
+                'email' => $site['email'] ?? '',
+                'color' => $site['color'] ?? CrmTheme::primaryHex(),
+                'hours' => $site['hours'] ?? [
+                    'morningStart' => '07:30',
+                    'morningEnd' => '12:00',
+                    'afternoonStart' => '13:30',
+                    'afternoonEnd' => '17:30',
+                ],
             ])
             ->values()
             ->all();
