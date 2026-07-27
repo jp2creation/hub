@@ -4,6 +4,7 @@ namespace Modules\CrmAdministration\Filament\Resources\CrmUsers\Pages;
 
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Enums\Width;
 use Modules\CrmAdministration\Filament\Resources\CrmUsers\CrmUserResource;
 
 class ManageCrmUsers extends ManageRecords
@@ -13,7 +14,11 @@ class ManageCrmUsers extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->slideOver()
+                ->modalWidth(Width::SevenExtraLarge)
+                ->stickyModalHeader()
+                ->stickyModalFooter(),
         ];
     }
 }

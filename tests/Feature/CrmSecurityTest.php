@@ -581,6 +581,17 @@ class CrmSecurityTest extends TestCase
 
         $this->assertStringContainsString("Action::make('createLaravelAccount')", $crmUserResource);
         $this->assertStringContainsString("->authorize('update')", $crmUserResource);
+        $this->assertStringContainsString('EditAction::make()', $crmUserResource);
+        $this->assertStringContainsString('->slideOver()', $crmUserResource);
+        $this->assertStringContainsString('->modalWidth(Width::SevenExtraLarge)', $crmUserResource);
+        $this->assertStringContainsString('->stickyModalFooter()', $crmUserResource);
+
+        $manageCrmUsersPage = (string) file_get_contents(base_path('Modules/CrmAdministration/app/Filament/Resources/CrmUsers/Pages/ManageCrmUsers.php'));
+
+        $this->assertStringContainsString('CreateAction::make()', $manageCrmUsersPage);
+        $this->assertStringContainsString('->slideOver()', $manageCrmUsersPage);
+        $this->assertStringContainsString('->modalWidth(Width::SevenExtraLarge)', $manageCrmUsersPage);
+        $this->assertStringContainsString('->stickyModalFooter()', $manageCrmUsersPage);
     }
 
     public function test_crm_api_controllers_delegate_business_authorization_to_services_or_policies(): void

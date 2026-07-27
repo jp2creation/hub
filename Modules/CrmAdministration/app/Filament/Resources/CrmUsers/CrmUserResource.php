@@ -21,6 +21,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -247,7 +248,11 @@ class CrmUserResource extends Resource
                     })
                     ->successNotificationTitle('Compte Laravel cree et rattache'),
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth(Width::SevenExtraLarge)
+                    ->stickyModalHeader()
+                    ->stickyModalFooter(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
