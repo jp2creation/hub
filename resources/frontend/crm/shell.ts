@@ -1,6 +1,7 @@
 import './styles/template-compat.css';
 import './styles/shell.css';
 import './styles/native-ui.css';
+import { installHubAssistant } from './assistant';
 import { installCrmApiClient } from './api/client';
 import { installCsrfFetch } from './api/csrf';
 import { installCrmShellGlobals, readCrmShellConfig } from './config';
@@ -44,6 +45,7 @@ installMobileEmbedBridge();
 installMobileFallbackNavigation();
 installMartinSolsUi();
 installNativeCrmShell();
+installHubAssistant();
 installCrmModuleHostGuard();
 installCurrentCrmModuleRouteLoader();
 

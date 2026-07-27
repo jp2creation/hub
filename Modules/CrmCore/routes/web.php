@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 use Modules\CrmCore\Http\Controllers\DashboardApiController;
+use Modules\CrmCore\Http\Controllers\HubAssistantController;
 use Modules\CrmCore\Http\Controllers\LegacyCrmPathRedirectController;
 use Modules\CrmCore\Http\Controllers\LegacyTemplateController;
 use Modules\CrmCore\Http\Controllers\MobileAuthController;
@@ -41,6 +42,10 @@ Route::any('/{legacyTemplatePath}', LegacyTemplateController::class)
 
 $crmApiMiddleware = ['throttle:crm-api', 'crm.compress'];
 $crmLoginApiMiddleware = ['throttle:crm-login', 'crm.compress'];
+
+Route::post('/api/hub-assistant/message', HubAssistantController::class)
+    ->middleware([...$crmApiMiddleware, 'auth'])
+    ->name('hub-assistant.message');
 
 Route::match(['GET', 'OPTIONS'], '/api/dashboard', DashboardApiController::class)
     ->middleware([...$crmApiMiddleware, 'hub.mobile_scope:hub:module:dashboard'])

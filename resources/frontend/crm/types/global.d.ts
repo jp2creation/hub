@@ -50,6 +50,7 @@ declare global {
     __martinSolsCrmLegacyTemplateNavigationBridge?: boolean;
     __martinSolsCrmModulesLoaded?: boolean;
     __martinSolsCrmRouteModuleLoaderInstalled?: boolean;
+    __martinSolsHubAssistantInstalled?: boolean;
     __martinSolsUiInstalled?: boolean;
   }
 }
