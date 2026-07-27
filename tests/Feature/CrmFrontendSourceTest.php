@@ -767,14 +767,33 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('function readFileAsDataUrl(file)', $administration);
         $this->assertStringContainsString('window.CRM_ACTIVE_SITE?.reload?.();', $administration);
 
-        $this->assertStringContainsString('.crm-active-site-trigger.has-site-dot .crm-active-site-dot', $activeSite);
+        $this->assertStringContainsString('function martinSiteMark(className)', $activeSite);
         $this->assertStringContainsString('.crm-active-site-control{position:relative;min-width:0;flex:1 1 auto;width:100%}', $activeSite);
         $this->assertStringContainsString('button.style.setProperty(\'--active-site-color\', selectedColor);', $activeSite);
         $this->assertStringContainsString('clamp(10rem,44vw,12rem)', $activeSite);
-        $this->assertStringContainsString('crm-active-site-option-dot', $activeSite);
+        $this->assertStringContainsString('crm-active-site-option-mark', $activeSite);
+        $this->assertStringContainsString('color-mix(in srgb,var(--site-mark-primary) 50%,#fff)', $activeSite);
         $this->assertStringContainsString("'.crm-active-site-option.is-active{background:rgb(var(--theme-primary) / .11);color:rgb(var(--theme-primary))}'", $activeSite);
+        $this->assertStringNotContainsString('crm-active-site-option-dot', $activeSite);
+        $this->assertStringNotContainsString('crm-active-site-option-icon', $activeSite);
+        $this->assertStringNotContainsString('crm-active-site-dot', $activeSite);
         $this->assertStringNotContainsString('.crm-active-site-trigger.has-site-color', $activeSite);
         $this->assertStringNotContainsString('function contrastColor(color)', $activeSite);
+    }
+
+    public function test_reservation_vehicle_selector_uses_compact_hub_mobile_cards(): void
+    {
+        $reservations = (string) file_get_contents(base_path('Modules/CrmReservations/resources/assets/crm-reservations.js'));
+        $nativeUiCss = (string) file_get_contents(resource_path('frontend/crm/styles/native-ui.css'));
+
+        $this->assertStringContainsString('resa-card resa-vehicle-card', $reservations);
+        $this->assertStringContainsString('repeat(auto-fit,minmax(14rem,1fr))', $reservations);
+        $this->assertStringContainsString('resa-product-status', $reservations);
+        $this->assertStringContainsString('#${rootId} .resa-vehicles{grid-template-columns:1fr;gap:.65rem}', $reservations);
+        $this->assertStringContainsString('.resa-vehicles {', $nativeUiCss);
+        $this->assertStringContainsString('grid-template-columns: 1fr !important;', $nativeUiCss);
+        $this->assertStringContainsString('.resa-product-card {', $nativeUiCss);
+        $this->assertStringNotContainsString('class="resa-dot', $reservations);
     }
 
     public function test_dom_ready_sensitive_crm_modules_boot_even_when_loaded_late(): void

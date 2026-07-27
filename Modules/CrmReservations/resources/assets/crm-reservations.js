@@ -368,6 +368,7 @@
       #${rootId} .resa-button-danger{color:#b91c1c}
       #${rootId} .resa-grid{display:grid;gap:.85rem}
       #${rootId} .resa-card{border:1px solid var(--resa-border);border-radius:.6rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05)}
+      #${rootId} .resa-vehicle-card{overflow:hidden}
       #${rootId} .resa-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;border-bottom:1px solid var(--resa-border);padding:.92rem 1rem}
       #${rootId} .resa-card-title{margin:0;color:var(--resa-text);font-size:1rem;font-weight:950}
       #${rootId} .resa-card-subtitle{margin:.18rem 0 0;color:var(--resa-muted);font-size:.78rem;font-weight:750}
@@ -377,16 +378,18 @@
       #${rootId} .resa-planning-header>div{min-width:0}
       #${rootId} .resa-nav-button{width:2.75rem;min-height:2.75rem;padding:0;border-radius:.65rem}
       #${rootId} .resa-nav-button svg{margin:0}
-      #${rootId} .resa-vehicles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}
-      #${rootId} .resa-product-card{overflow:hidden;border:1px solid var(--resa-border);border-radius:.55rem;background:#fff;text-align:left;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.06);transition:transform .15s ease,box-shadow .15s ease}
-      #${rootId} .resa-product-card:hover,#${rootId} .resa-product-card.is-active{transform:translateY(-1px);box-shadow:0 16px 32px rgb(var(--theme-primary) / .13)}
-      #${rootId} .resa-product-image{position:relative;display:grid;place-items:center;aspect-ratio:1.45/1;background:linear-gradient(135deg,#f7e8ee,#f3edf0);color:var(--resa-primary);font-size:1.45rem;font-weight:950;overflow:hidden}
+      #${rootId} .resa-vehicles{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:.85rem}
+      #${rootId} .resa-product-card{position:relative;display:grid;grid-template-columns:minmax(6.2rem,.74fr) minmax(0,1fr);overflow:hidden;min-width:0;min-height:6.35rem;border:1px solid var(--resa-border);border-radius:.55rem;background:#fff;text-align:left;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.05);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+      #${rootId} .resa-product-card:hover,#${rootId} .resa-product-card.is-active{border-color:rgb(var(--theme-primary) / .45);transform:translateY(-1px);box-shadow:0 16px 32px rgba(15,23,42,.08)}
+      #${rootId} .resa-product-card:focus-visible{outline:3px solid rgb(var(--theme-primary) / .18);outline-offset:2px}
+      #${rootId} .resa-product-image{position:relative;display:grid;place-items:center;min-height:100%;background:var(--color-surface-100,#f1f5f9);color:var(--resa-primary);font-size:1.35rem;font-weight:950;overflow:hidden}
       #${rootId} .resa-product-image img{width:100%;height:100%;object-fit:cover}
-      #${rootId} .resa-dot{position:absolute;right:.62rem;top:.62rem;width:.72rem;height:.72rem;border-radius:999px;background:var(--resa-green);box-shadow:0 0 0 3px #fff}
-      #${rootId} .resa-dot.is-busy{background:var(--resa-red)}
-      #${rootId} .resa-product-body{padding:.72rem .78rem}
-      #${rootId} .resa-product-name{display:block;color:var(--resa-text);font-size:.92rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      #${rootId} .resa-product-meta{display:block;margin-top:.25rem;color:var(--resa-muted);font-size:.76rem;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-product-body{display:grid;align-content:center;gap:.28rem;min-width:0;padding:.72rem .82rem}
+      #${rootId} .resa-product-name{display:block;color:var(--resa-text);font-size:.92rem;font-weight:950;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-product-meta{display:block;color:var(--resa-muted);font-size:.74rem;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-product-status{display:inline-flex;width:max-content;max-width:100%;align-items:center;gap:.34rem;border-radius:999px;background:#ecfdf3;padding:.22rem .52rem;color:var(--resa-green);font-size:.68rem;font-weight:950;white-space:nowrap}
+      #${rootId} .resa-product-status:before{width:.42rem;height:.42rem;flex:0 0 auto;border-radius:999px;background:currentColor;content:""}
+      #${rootId} .resa-product-status.is-busy{background:#fef2f2;color:var(--resa-red)}
       #${rootId} .resa-toolbar{display:grid;gap:.75rem}
       #${rootId} .resa-legend{display:flex;align-items:center;justify-content:center;gap:.65rem;flex-wrap:wrap}
       #${rootId} .resa-segment{display:inline-grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--resa-border);border-radius:.55rem;overflow:hidden;background:#fff}
@@ -466,8 +469,8 @@
       .dark #${rootId}{--resa-border:var(--color-surface-700,#334155);--resa-text:#fff;--resa-muted:var(--color-secondary-400,#94a3b8)}
       .dark #${rootId} .resa-card,.dark #${rootId} .resa-button,.dark #${rootId} .resa-product-card,.dark #${rootId} .resa-row,.dark #${rootId} .resa-dialog,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .resa-selection-panel,.dark #${rootId} .resa-view-field,.dark #${rootId} .resa-view-note,.dark #${rootId} .resa-icon-action{background:var(--color-surface-900,#0f172a);border-color:var(--resa-border)}
       .dark #${rootId} .resa-summary,.dark #${rootId} .resa-month-head,.dark #${rootId} .resa-view-vehicle{background:var(--color-surface-800,#1e293b)}
-      @media (max-width:1100px){#${rootId} .resa-vehicles{grid-template-columns:repeat(3,minmax(0,1fr))}}
-      @media (max-width:760px){#${rootId}{gap:.85rem}#${rootId} .resa-top{display:grid;align-items:start}#${rootId} .resa-title h1{font-size:1.55rem}#${rootId} .resa-vehicles{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .resa-product-image{aspect-ratio:1.35/1;font-size:1.15rem}#${rootId} .resa-product-body{padding:.62rem}#${rootId} .resa-top .resa-button,#${rootId} .reservation-fast-actions .resa-button{width:100%}#${rootId} .resa-nav-button{width:2.75rem;min-height:2.75rem}#${rootId} .resa-month-head,#${rootId} .resa-month-cell{padding:.38rem;min-height:3.45rem}#${rootId} .resa-mobile-day-slots{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .reservation-mobile-slot-button{min-height:2.8rem;border-radius:.48rem}#${rootId} .resa-slot-time{font-size:.98rem}#${rootId} .resa-slot-meta{font-size:.64rem}#${rootId} .resa-row{grid-template-columns:1fr}#${rootId} .resa-form-grid{grid-template-columns:1fr}#${rootId} .reservation-fast-actions{grid-template-columns:1fr 1fr}#${rootId} .resa-dialog{max-height:82vh}#${rootId} .resa-view-details{grid-template-columns:1fr 1fr}#${rootId} .resa-view-details .resa-view-field:first-child{grid-column:1/-1}}
+      @media (max-width:1100px){#${rootId} .resa-vehicles{grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}}
+      @media (max-width:760px){#${rootId}{gap:.85rem}#${rootId} .resa-top{display:grid;align-items:start}#${rootId} .resa-title h1{font-size:1.55rem}#${rootId} .resa-card-header,#${rootId} .resa-card-body{padding:.85rem}#${rootId} .resa-vehicles{grid-template-columns:1fr;gap:.65rem}#${rootId} .resa-product-card{grid-template-columns:5.45rem minmax(0,1fr);min-height:5.65rem;border-radius:.58rem}#${rootId} .resa-product-image{font-size:1.05rem}#${rootId} .resa-product-body{padding:.65rem .72rem}#${rootId} .resa-top .resa-button,#${rootId} .reservation-fast-actions .resa-button{width:100%}#${rootId} .resa-nav-button{width:2.75rem;min-height:2.75rem}#${rootId} .resa-month-head,#${rootId} .resa-month-cell{padding:.38rem;min-height:3.45rem}#${rootId} .resa-mobile-day-slots{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .reservation-mobile-slot-button{min-height:2.8rem;border-radius:.48rem}#${rootId} .resa-slot-time{font-size:.98rem}#${rootId} .resa-slot-meta{font-size:.64rem}#${rootId} .resa-row{grid-template-columns:1fr}#${rootId} .resa-form-grid{grid-template-columns:1fr}#${rootId} .reservation-fast-actions{grid-template-columns:1fr 1fr}#${rootId} .resa-dialog{max-height:82vh}#${rootId} .resa-view-details{grid-template-columns:1fr 1fr}#${rootId} .resa-view-details .resa-view-field:first-child{grid-column:1/-1}}
     `;
     document.head.appendChild(style);
   }
@@ -521,7 +524,7 @@
             <p>${esc(site?.name || 'Site actif')} · Planning véhicules</p>
           </div>
       </div>
-      <section class="resa-card">
+      <section class="resa-card resa-vehicle-card">
         <header class="resa-card-header">
           <div>
             <h2 class="resa-card-title">Véhicules du site</h2>
@@ -567,13 +570,11 @@
 
     return `
       <button class="resa-product-card${Number(vehicle.id) === Number(selectedVehicle()?.id) ? ' is-active' : ''}" type="button" data-vehicle-id="${esc(vehicle.id)}">
-        <span class="resa-product-image">
-          ${vehicle.photoUrl ? `<img src="${esc(vehicle.photoUrl)}" alt="${esc(vehicle.name)}" loading="lazy">` : esc(initials || 'V')}
-          <span class="resa-dot${busy ? ' is-busy' : ''}" aria-label="${busy ? 'Réservé' : 'Disponible'}"></span>
-        </span>
+        <span class="resa-product-image">${vehicle.photoUrl ? `<img src="${esc(vehicle.photoUrl)}" alt="${esc(vehicle.name)}" loading="lazy">` : esc(initials || 'V')}</span>
         <span class="resa-product-body">
           <strong class="resa-product-name">${esc(vehicle.name)}</strong>
           <span class="resa-product-meta">${esc(vehicle.description || 'Véhicule du site')}</span>
+          <span class="resa-product-status${busy ? ' is-busy' : ''}">${busy ? 'Réservé' : 'Disponible'}</span>
         </span>
       </button>
     `;
