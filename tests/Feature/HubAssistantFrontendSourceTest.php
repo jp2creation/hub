@@ -21,12 +21,15 @@ class HubAssistantFrontendSourceTest extends TestCase
         $this->assertStringContainsString('répondre à une question courante', $assistant);
         $this->assertStringContainsString('Aide et navigation', $assistant);
         $this->assertStringContainsString('Posez une question ou recherchez une page', $assistant);
+        $this->assertStringContainsString("document.body.classList.toggle('hub-assistant-open', isOpen);", $assistant);
         $this->assertStringContainsString('window.MartinSolsHubAssistant', $assistant);
         $this->assertStringContainsString('data-hub-assistant-open', $nativeShell);
         $this->assertStringContainsString('Assistant HUB</strong><small>Navigation rapide', $nativeShell);
         $this->assertStringNotContainsString('data-hub-assistant-toggle', $assistant);
         $this->assertStringContainsString('.hub-assistant-panel', $styles);
         $this->assertStringContainsString('.hub-assistant-panel[hidden]', $styles);
+        $this->assertStringContainsString('body.hub-assistant-open .hub-assistant-panel', $styles);
+        $this->assertStringContainsString('height: 100dvh;', $styles);
         $this->assertStringContainsString('font-size: 1rem;', $styles);
         $this->assertStringContainsString('font-weight: 650;', $styles);
         $this->assertStringContainsString("Route::post('/api/hub-assistant/message'", $routes);

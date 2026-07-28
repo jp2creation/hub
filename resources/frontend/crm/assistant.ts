@@ -162,6 +162,7 @@ function render(): void {
 
 function setOpen(nextOpen: boolean): void {
   isOpen = nextOpen;
+  document.body.classList.toggle('hub-assistant-open', isOpen);
   render();
 }
 
