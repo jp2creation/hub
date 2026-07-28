@@ -1551,7 +1551,6 @@ body.crm-mobile-app-settings-open {
   font: inherit;
 }
 
-.hub-assistant-toggle,
 .hub-assistant-close,
 .hub-assistant-form button {
   display: inline-grid;
@@ -1559,19 +1558,6 @@ body.crm-mobile-app-settings-open {
   border: 0;
   font: inherit;
   cursor: pointer;
-}
-
-.hub-assistant-toggle {
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: 999px;
-  background: rgb(var(--theme-primary));
-  color: #fff;
-  box-shadow: 0 18px 35px rgb(var(--theme-primary) / 0.28);
-}
-
-.hub-assistant-toggle:hover {
-  background: rgb(var(--theme-primary-dark, var(--theme-primary)));
 }
 
 .hub-assistant-icon {
@@ -1584,15 +1570,10 @@ body.crm-mobile-app-settings-open {
   stroke-width: 2.15;
 }
 
-.hub-assistant-toggle .hub-assistant-icon {
-  width: 1.45rem;
-  height: 1.45rem;
-}
-
 .hub-assistant-panel {
   position: absolute;
   right: 0;
-  bottom: 4.2rem;
+  bottom: 0;
   display: grid;
   width: min(23rem, calc(100vw - 2rem));
   height: min(31rem, calc(100vh - 7rem));
@@ -1785,11 +1766,6 @@ body.crm-mobile-app-settings-open {
     bottom: 0.8rem;
     left: 0.8rem;
     pointer-events: none;
-  }
-
-  .hub-assistant-toggle {
-    justify-self: end;
-    pointer-events: auto;
   }
 
   .hub-assistant-panel {

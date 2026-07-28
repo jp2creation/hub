@@ -119,6 +119,9 @@ function iconForKey(iconKey?: string): string {
     dashboard: iconSvg(
       '<rect x="4" y="4" width="6" height="6" rx="1.5"></rect><rect x="14" y="4" width="6" height="6" rx="1.5"></rect><rect x="4" y="14" width="6" height="6" rx="1.5"></rect><rect x="14" y="14" width="6" height="6" rx="1.5"></rect>',
     ),
+    assistant: iconSvg(
+      '<path d="M12 8V4"></path><rect x="5" y="8" width="14" height="11" rx="3"></rect><path d="M8.5 12h.01M15.5 12h.01M9 16h6"></path>',
+    ),
     fileText: iconSvg(
       '<path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v5h5"></path><path d="M10 13h6M10 17h4"></path>',
     ),
@@ -459,6 +462,10 @@ function headerHtml(profile?: CrmProfile): string {
     '<span><strong>Paramètres</strong><small>Compte utilisateur</small></span>',
     '</a>',
     mobileAppSettingsMenuItemHtml(),
+    '<button class="crm-native-user-menu-item" type="button" data-hub-assistant-open role="menuitem">',
+    `<span class="crm-native-user-menu-icon">${iconForKey('assistant')}</span>`,
+    '<span><strong>Assistant HUB</strong><small>Navigation rapide</small></span>',
+    '</button>',
     '<button class="crm-native-user-menu-item crm-native-user-menu-danger" type="button" data-crm-native-logout role="menuitem">',
     `<span class="crm-native-user-menu-icon">${iconForKey('logout')}</span>`,
     '<span><strong>Se déconnecter</strong><small>Quitter le HUB</small></span>',
@@ -704,6 +711,13 @@ function installEvents(): void {
 
       if (target?.closest('[data-crm-mobile-settings-toggle]')) {
         setUserMenuOpen(false);
+        return;
+      }
+
+      if (target?.closest('[data-hub-assistant-open]')) {
+        event.preventDefault();
+        setUserMenuOpen(false);
+        window.MartinSolsHubAssistant?.open?.();
         return;
       }
 

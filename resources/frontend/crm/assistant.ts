@@ -135,9 +135,6 @@ function render(): void {
   }
 
   hostElement.innerHTML = [
-    `<button class="hub-assistant-toggle" type="button" aria-label="Ouvrir l’assistant HUB" aria-expanded="${isOpen ? 'true' : 'false'}" data-hub-assistant-toggle>`,
-    icon('bot'),
-    '</button>',
     `<section class="hub-assistant-panel${isOpen ? ' is-open' : ''}" role="dialog" aria-label="Assistant du HUB"${isOpen ? '' : ' hidden'}>`,
     '<header class="hub-assistant-header">',
     '<div>',
@@ -202,7 +199,6 @@ async function submitMessage(form: HTMLFormElement): Promise<void> {
 }
 
 function bindElements(): void {
-  hostElement?.querySelector('[data-hub-assistant-toggle]')?.addEventListener('click', () => setOpen(!isOpen));
   hostElement?.querySelector('[data-hub-assistant-close]')?.addEventListener('click', () => setOpen(false));
   hostElement?.querySelector('[data-hub-assistant-form]')?.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -222,6 +218,12 @@ export function installHubAssistant(): void {
   }
 
   window.__martinSolsHubAssistantInstalled = true;
+  window.MartinSolsHubAssistant = {
+    close: () => setOpen(false),
+    open: () => setOpen(true),
+    toggle: () => setOpen(!isOpen),
+  };
+
   hostElement = document.createElement('div');
   hostElement.className = 'hub-assistant';
   hostElement.dataset.hubAssistant = 'true';

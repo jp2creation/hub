@@ -24,6 +24,11 @@ declare global {
       openUserMenu: () => void;
       toggleUserMenu: () => void;
     };
+    MartinSolsHubAssistant?: {
+      close: () => void;
+      open: () => void;
+      toggle: () => void;
+    };
     MartinSolsCrmLogout?: () => void;
     MartinSolsUi?: MartinSolsUi;
     MartinSolsMobileApp?: {

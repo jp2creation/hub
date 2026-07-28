@@ -10,6 +10,7 @@ class HubAssistantFrontendSourceTest extends TestCase
     {
         $shell = (string) file_get_contents(resource_path('frontend/crm/shell.ts'));
         $assistant = (string) file_get_contents(resource_path('frontend/crm/assistant.ts'));
+        $nativeShell = (string) file_get_contents(resource_path('frontend/crm/layout/native-shell.ts'));
         $styles = (string) file_get_contents(resource_path('frontend/crm/styles/shell.css'));
         $routes = (string) file_get_contents(base_path('Modules/CrmCore/routes/web.php'));
 
@@ -17,6 +18,10 @@ class HubAssistantFrontendSourceTest extends TestCase
         $this->assertStringContainsString('installHubAssistant();', $shell);
         $this->assertStringContainsString('/api/hub-assistant/message', $assistant);
         $this->assertStringContainsString('data-hub-assistant-form', $assistant);
+        $this->assertStringContainsString('window.MartinSolsHubAssistant', $assistant);
+        $this->assertStringContainsString('data-hub-assistant-open', $nativeShell);
+        $this->assertStringContainsString('Assistant HUB</strong><small>Navigation rapide', $nativeShell);
+        $this->assertStringNotContainsString('data-hub-assistant-toggle', $assistant);
         $this->assertStringContainsString('.hub-assistant-panel', $styles);
         $this->assertStringContainsString('.hub-assistant-panel[hidden]', $styles);
         $this->assertStringContainsString('font-size: 1rem;', $styles);
