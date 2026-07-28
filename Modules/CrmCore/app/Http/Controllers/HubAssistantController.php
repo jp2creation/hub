@@ -23,7 +23,7 @@ class HubAssistantController extends Controller
 
             $actor = $assistant->actorForUser($user);
 
-            return $this->json($assistant->reply($actor, $request->assistantMessage()));
+            return $this->json($assistant->reply($actor, $request->assistantMessage(), $request->siteId()));
         } catch (HttpExceptionInterface $error) {
             return $this->json(['ok' => false, 'error' => $error->getMessage()], $error->getStatusCode());
         } catch (Throwable $error) {

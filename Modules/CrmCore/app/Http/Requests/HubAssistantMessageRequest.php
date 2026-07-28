@@ -20,6 +20,7 @@ class HubAssistantMessageRequest extends FormRequest
     {
         return [
             'message' => ['required', 'string', 'max:500'],
+            'siteId' => ['nullable', 'integer', 'min:1'],
         ];
     }
 
@@ -32,12 +33,21 @@ class HubAssistantMessageRequest extends FormRequest
             'message.required' => 'Votre message est obligatoire.',
             'message.string' => 'Votre message est invalide.',
             'message.max' => 'Votre message est trop long.',
+            'siteId.integer' => 'Site invalide.',
+            'siteId.min' => 'Site invalide.',
         ];
     }
 
     public function assistantMessage(): string
     {
         return trim((string) $this->validated('message'));
+    }
+
+    public function siteId(): ?int
+    {
+        $siteId = (int) ($this->validated('siteId') ?? 0);
+
+        return $siteId > 0 ? $siteId : null;
     }
 
     protected function failedValidation(Validator $validator): void

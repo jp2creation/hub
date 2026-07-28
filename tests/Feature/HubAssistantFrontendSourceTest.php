@@ -17,6 +17,9 @@ class HubAssistantFrontendSourceTest extends TestCase
         $this->assertStringContainsString("import { installHubAssistant } from './assistant';", $shell);
         $this->assertStringContainsString('installHubAssistant();', $shell);
         $this->assertStringContainsString('/api/hub-assistant/message', $assistant);
+        $this->assertStringContainsString("const activeSiteStorageKey = 'crm:active-site-id';", $assistant);
+        $this->assertStringContainsString('function activeSiteId()', $assistant);
+        $this->assertStringContainsString('siteId ? { message: text, siteId } : { message: text }', $assistant);
         $this->assertStringContainsString('data-hub-assistant-form', $assistant);
         $this->assertStringContainsString('répondre à une question courante', $assistant);
         $this->assertStringContainsString('Aide et navigation', $assistant);

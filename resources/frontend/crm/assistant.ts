@@ -29,6 +29,8 @@ const initialMessages: AssistantMessage[] = [
   },
 ];
 
+const activeSiteStorageKey = 'crm:active-site-id';
+
 let isOpen = false;
 let isLoading = false;
 let messages = [...initialMessages];
@@ -113,6 +115,16 @@ function memberProfile(): { name: string; photoUrl: string } {
     name,
     photoUrl: photo?.dataset.crmImageSrc || photo?.getAttribute('src') || '',
   };
+}
+
+function activeSiteId(): number | null {
+  try {
+    const siteId = Number(window.localStorage?.getItem(activeSiteStorageKey) || 0);
+
+    return Number.isFinite(siteId) && siteId > 0 ? siteId : null;
+  } catch {
+    return null;
+  }
 }
 
 function messageAvatar(message: AssistantMessage): string {
@@ -213,7 +225,11 @@ async function submitMessage(form: HTMLFormElement): Promise<void> {
   render();
 
   try {
-    const response = await crmApi.post<HubAssistantResponse>('/api/hub-assistant/message', { message: text });
+    const siteId = activeSiteId();
+    const response = await crmApi.post<HubAssistantResponse>(
+      '/api/hub-assistant/message',
+      siteId ? { message: text, siteId } : { message: text },
+    );
 
     messages.push({
       label: response.label ?? null,
