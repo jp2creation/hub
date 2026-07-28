@@ -1604,6 +1604,10 @@ body.crm-mobile-app-settings-open {
   box-shadow: 0 22px 55px rgb(15 23 42 / 0.18);
 }
 
+.hub-assistant-panel[hidden] {
+  display: none;
+}
+
 .hub-assistant-header {
   display: flex;
   align-items: flex-start;
