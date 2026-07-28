@@ -48,13 +48,14 @@ function escapeHtml(value: unknown): string {
   });
 }
 
-function icon(name: 'bot' | 'close' | 'send' | 'spark'): string {
+function icon(name: 'bot' | 'close' | 'send' | 'spark' | 'user'): string {
   const paths: Record<typeof name, string> = {
     bot:
       '<path d="M12 8V4"></path><rect x="5" y="8" width="14" height="11" rx="3"></rect><path d="M8.5 12h.01M15.5 12h.01M9 16h6"></path>',
     close: '<path d="M18 6 6 18M6 6l12 12"></path>',
     send: '<path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path>',
     spark: '<path d="m12 3 1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8Z"></path>',
+    user: '<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path><path d="M4 21a8 8 0 0 1 16 0"></path>',
   };
 
   return `<svg class="hub-assistant-icon" viewBox="0 0 24 24" aria-hidden="true">${paths[name]}</svg>`;
@@ -103,12 +104,44 @@ function suggestionLinks(suggestions: HubAssistantSuggestion[] = []): string {
   ].join('');
 }
 
+function memberProfile(): { name: string; photoUrl: string } {
+  const photo = document.querySelector<HTMLImageElement>('[data-crm-native-profile-photo]');
+  const name = document.querySelector<HTMLElement>('[data-crm-native-profile-name]')?.textContent?.trim() || photo?.alt?.trim() || 'Membre';
+
+  return {
+    name,
+    photoUrl: photo?.dataset.crmImageSrc || photo?.getAttribute('src') || '',
+  };
+}
+
+function messageAvatar(message: AssistantMessage): string {
+  if (message.role === 'assistant') {
+    return `<span class="hub-assistant-avatar is-assistant" aria-hidden="true">${icon('bot')}</span>`;
+  }
+
+  const profile = memberProfile();
+
+  if (profile.photoUrl) {
+    return [
+      '<span class="hub-assistant-avatar is-user" aria-hidden="true">',
+      `<img src="${escapeHtml(profile.photoUrl)}" alt="" loading="lazy" onerror="this.closest('.hub-assistant-avatar')?.classList.add('is-fallback');this.remove()">`,
+      `<span class="hub-assistant-avatar-fallback">${icon('user')}</span>`,
+      '</span>',
+    ].join('');
+  }
+
+  return `<span class="hub-assistant-avatar is-user" aria-label="${escapeHtml(profile.name)}">${icon('user')}</span>`;
+}
+
 function renderMessage(message: AssistantMessage): string {
   return [
-    `<article class="hub-assistant-message is-${message.role}">`,
+    `<article class="hub-assistant-message-row is-${message.role}">`,
+    messageAvatar(message),
+    `<div class="hub-assistant-message is-${message.role}">`,
     `<p>${escapeHtml(message.text)}</p>`,
     resultLink(message.url, message.label),
     suggestionLinks(message.suggestions),
+    '</div>',
     '</article>',
   ].join('');
 }
@@ -239,6 +272,12 @@ export function installHubAssistant(): void {
     },
     true,
   );
+
+  window.addEventListener('crm:profile-updated', () => {
+    if (isOpen) {
+      render();
+    }
+  });
 
   render();
 }
