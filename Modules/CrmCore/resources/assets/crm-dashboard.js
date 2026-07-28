@@ -67,14 +67,14 @@
       #${rootId} .dash-stat-icon{display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color,var(--theme-primary-color)) 14%,white);color:var(--stat-color,var(--theme-primary-color))}
       #${rootId} .dash-stat-icon svg,#${rootId} .dash-mini-icon svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .dash-stat span{display:block;color:var(--dash-muted);font-size:.72rem;font-weight:900;text-transform:uppercase}
-      #${rootId} .dash-stat strong{display:block;margin:.2rem 0;color:var(--dash-text);font-size:1.45rem;font-weight:950;line-height:1.05;letter-spacing:0}
+      #${rootId} .dash-stat strong{display:block;margin:.2rem 0;color:var(--dash-text);font-size:1.45rem;font-weight:600;line-height:1.05;letter-spacing:0}
       #${rootId} .dash-stat small{display:block;color:var(--color-secondary-400,#94a3b8);font-size:.72rem;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .dash-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:end;gap:.55rem;min-height:12rem;padding:.2rem .15rem 0}
       #${rootId} .dash-bar{display:grid;align-items:end;gap:.45rem;min-width:0;height:11rem}
       #${rootId} .dash-bar-track{display:flex;align-items:flex-end;justify-content:center;height:9rem;border-radius:.5rem;background:linear-gradient(180deg,#f8fafc,#f1f5f9);overflow:hidden}
       #${rootId} .dash-bar-fill{width:58%;min-height:.35rem;border-radius:.45rem .45rem 0 0;background:var(--dash-primary);box-shadow:0 10px 22px rgb(var(--theme-primary) / .24)}
       #${rootId} .dash-bar-label{text-align:center;color:var(--dash-muted);font-size:.72rem;font-weight:850;white-space:nowrap}
-      #${rootId} .dash-bar-value{text-align:center;color:var(--dash-text);font-size:.8rem;font-weight:950}
+      #${rootId} .dash-bar-value{text-align:center;color:var(--dash-text);font-size:.8rem;font-weight:600}
       #${rootId} .dash-list{display:grid;gap:.55rem}
       #${rootId} .dash-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.8rem;border:1px solid var(--dash-border);border-radius:.5rem;padding:.75rem .8rem;background:#fff}
       #${rootId} .dash-row-main{min-width:0}
@@ -88,12 +88,12 @@
       #${rootId} .dash-alert-icon{display:grid;place-items:center;width:2.35rem;height:2.35rem;border-radius:.5rem;background:color-mix(in srgb,var(--alert-color,var(--theme-primary-color)) 13%,white);color:var(--alert-color,var(--theme-primary-color))}
       #${rootId} .dash-alert strong{display:block;color:var(--dash-text);font-size:.88rem;font-weight:900}
       #${rootId} .dash-alert span{display:block;margin-top:.12rem;color:var(--dash-muted);font-size:.73rem;font-weight:700}
-      #${rootId} .dash-alert-value{color:var(--dash-text);font-size:1.1rem;font-weight:950}
+      #${rootId} .dash-alert-value{color:var(--dash-text);font-size:1.1rem;font-weight:600}
       #${rootId} .dash-empty{display:grid;place-items:center;min-height:7rem;border:1px dashed var(--dash-border);border-radius:.5rem;color:var(--dash-muted);font-size:.82rem;font-weight:800;text-align:center;padding:1rem}
       #${rootId} .dash-notifications{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem}
       #${rootId} .dash-note{border:1px solid var(--dash-border);border-radius:.5rem;padding:.8rem;background:#fff}
       #${rootId} .dash-note span{display:block;color:var(--dash-muted);font-size:.72rem;font-weight:900;text-transform:uppercase}
-      #${rootId} .dash-note strong{display:block;margin-top:.25rem;color:var(--dash-text);font-size:1.35rem;font-weight:950;line-height:1}
+      #${rootId} .dash-note strong{display:block;margin-top:.25rem;color:var(--dash-text);font-size:1.35rem;font-weight:600;line-height:1}
       #${rootId} .dash-loading{border:1px solid var(--dash-border);border-radius:.5rem;background:#fff;padding:1rem;color:var(--dash-muted);font-weight:850}
       .dark #${rootId}{--dash-border:var(--color-surface-700,#334155);--dash-muted:var(--color-secondary-400,#94a3b8);--dash-text:#fff}
       .dark #${rootId} .dash-card,.dark #${rootId} .dash-row,.dark #${rootId} .dash-alert,.dark #${rootId} .dash-note,.dark #${rootId} .dash-button,.dark #${rootId} .dash-loading{background:var(--color-surface-900,#0f172a);border-color:var(--dash-border)}

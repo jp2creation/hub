@@ -256,7 +256,7 @@
       .app-install__badge strong {
         color: currentColor;
         font-size: 1.02rem;
-        font-weight: 950;
+        font-weight: 600;
         line-height: 1;
         letter-spacing: 0;
         white-space: nowrap;

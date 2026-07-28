@@ -33,6 +33,24 @@ class CrmThemeSourceTest extends TestCase
         }
     }
 
+    public function test_frontend_sources_do_not_use_extra_black_font_weight(): void
+    {
+        $files = [
+            ...(glob(base_path('Modules/*/resources/assets/*.js')) ?: []),
+            ...(glob(resource_path('frontend/crm/styles/*.css')) ?: []),
+            base_path('mobile/android/app/src/main/assets/app-settings-override.js'),
+            resource_path('views/auth/login.blade.php'),
+        ];
+
+        $this->assertNotEmpty($files);
+
+        foreach ($files as $file) {
+            $source = (string) file_get_contents($file);
+
+            $this->assertDoesNotMatchRegularExpression('/font-weight\s*:\s*950\b/', $source, $file.' uses font-weight 950');
+        }
+    }
+
     public function test_runtime_php_brand_defaults_use_crm_theme(): void
     {
         $files = [

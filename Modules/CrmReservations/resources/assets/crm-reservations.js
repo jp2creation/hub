@@ -361,7 +361,7 @@
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .resa-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
-      #${rootId} .resa-title h1{margin:0;color:var(--resa-text);font-size:1.8rem;line-height:1.08;font-weight:950;letter-spacing:0}
+      #${rootId} .resa-title h1{margin:0;color:var(--resa-text);font-size:1.8rem;line-height:1.08;font-weight:600;letter-spacing:0}
       #${rootId} .resa-title p{margin:.35rem 0 0;color:var(--resa-muted);font-size:.92rem;font-weight:700}
       #${rootId} .resa-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.58rem .9rem;color:var(--resa-text);font-size:.84rem;font-weight:900;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .resa-button-primary{border-color:transparent;background:var(--resa-primary);color:#fff}
@@ -372,7 +372,7 @@
       #${rootId} .resa-vehicle-card .resa-card-body{background:#fafafa}
       #${rootId} .resa-card-count{background:#f8fafc;color:var(--resa-text)}
       #${rootId} .resa-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;border-bottom:1px solid var(--resa-border);padding:.92rem 1rem}
-      #${rootId} .resa-card-title{margin:0;color:var(--resa-text);font-size:1rem;font-weight:950}
+      #${rootId} .resa-card-title{margin:0;color:var(--resa-text);font-size:1rem;font-weight:600}
       #${rootId} .resa-card-subtitle{margin:.18rem 0 0;color:var(--resa-muted);font-size:.78rem;font-weight:750}
       #${rootId} .resa-card-body{padding:1rem}
       #${rootId} .resa-planning-header{display:grid;grid-template-columns:2.75rem minmax(0,1fr) 2.75rem;align-items:center;text-align:center}
@@ -384,12 +384,12 @@
       #${rootId} .resa-product-card{position:relative;display:grid;grid-template-columns:5.45rem minmax(0,1fr);overflow:hidden;width:100%;min-width:0;min-height:5.55rem;border:1px solid var(--resa-border);border-radius:.55rem;background:#fff;text-align:left;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.05);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
       #${rootId} .resa-product-card:hover,#${rootId} .resa-product-card.is-active{border-color:rgb(var(--theme-primary) / .45);transform:translateY(-1px);box-shadow:0 14px 28px rgba(15,23,42,.08)}
       #${rootId} .resa-product-card:focus-visible{outline:3px solid rgb(var(--theme-primary) / .18);outline-offset:2px}
-      #${rootId} .resa-product-image{position:relative;display:grid;place-items:center;width:100%;min-width:0;min-height:100%;border-right:1px solid var(--resa-border);background:var(--color-surface-100,#f1f5f9);color:var(--resa-primary);font-size:1.08rem;font-weight:950;overflow:hidden}
+      #${rootId} .resa-product-image{position:relative;display:grid;place-items:center;width:100%;min-width:0;min-height:100%;border-right:1px solid var(--resa-border);background:var(--color-surface-100,#f1f5f9);color:var(--resa-primary);font-size:1.08rem;font-weight:600;overflow:hidden}
       #${rootId} .resa-product-image img{width:100%;height:100%;object-fit:cover}
       #${rootId} .resa-product-body{display:grid;align-content:center;gap:.28rem;min-width:0;padding:.66rem .78rem}
-      #${rootId} .resa-product-name{display:block;color:var(--resa-text);font-size:.92rem;font-weight:950;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-product-name{display:block;color:var(--resa-text);font-size:.92rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .resa-product-meta{display:block;color:var(--resa-muted);font-size:.74rem;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      #${rootId} .resa-product-status{display:inline-flex;width:max-content;max-width:100%;align-items:center;gap:.34rem;border-radius:999px;background:#ecfdf3;padding:.22rem .52rem;color:var(--resa-green);font-size:.68rem;font-weight:950;white-space:nowrap}
+      #${rootId} .resa-product-status{display:inline-flex;width:max-content;max-width:100%;align-items:center;gap:.34rem;border-radius:999px;background:#ecfdf3;padding:.22rem .52rem;color:var(--resa-green);font-size:.68rem;font-weight:600;white-space:nowrap}
       #${rootId} .resa-product-status:before{width:.42rem;height:.42rem;flex:0 0 auto;border-radius:999px;background:currentColor;content:""}
       #${rootId} .resa-product-status.is-busy{background:#fef2f2;color:var(--resa-red)}
       #${rootId} .resa-toolbar{display:grid;gap:.75rem}
@@ -400,26 +400,26 @@
       #${rootId} .resa-segment button.is-active{background:var(--resa-primary);color:#fff}
       #${rootId} .resa-day-board{display:grid;gap:.85rem}
       #${rootId} .resa-day-section{display:grid;gap:.55rem}
-      #${rootId} .resa-day-section-title{display:flex;align-items:center;justify-content:space-between;color:var(--resa-text);font-size:.84rem;font-weight:950}
+      #${rootId} .resa-day-section-title{display:flex;align-items:center;justify-content:space-between;color:var(--resa-text);font-size:.84rem;font-weight:600}
       #${rootId} .resa-day-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(6.5rem,1fr));gap:.45rem}
       #${rootId} .resa-mobile-day-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
       #${rootId} .resa-mobile-slot-column{display:grid;gap:.45rem;min-width:0}
       #${rootId} .resa-slot-column-heading{display:grid;place-items:center;min-height:3rem;border-radius:.55rem;background:#f8fafc;color:var(--resa-text);text-align:center}
-      #${rootId} .resa-slot-column-heading strong{font-size:.78rem;font-weight:950}
+      #${rootId} .resa-slot-column-heading strong{font-size:.78rem;font-weight:600}
       #${rootId} .resa-slot-column-heading span{font-size:.72rem;font-weight:900;color:var(--resa-muted)}
       #${rootId} .reservation-mobile-slot-button,#${rootId} .reservation-day-cell-button{display:grid;place-items:center;min-height:3.1rem;border:0;border-radius:.55rem;background:var(--resa-green);color:#fff;padding:.35rem .45rem;text-align:center;cursor:pointer;box-shadow:0 9px 18px rgba(22,163,74,.22)}
       #${rootId} .reservation-mobile-slot-button.is-reserved,#${rootId} .reservation-day-cell-button.is-reserved{background:var(--resa-red);box-shadow:0 9px 18px rgba(220,38,38,.22)}
       #${rootId} .reservation-mobile-slot-button.is-selecting,#${rootId} .reservation-day-cell-button.is-selecting{background:var(--resa-primary);box-shadow:0 9px 18px rgb(var(--theme-primary) / .22)}
-      #${rootId} .resa-slot-time{display:block;font-size:1.02rem;font-weight:950;line-height:1}
+      #${rootId} .resa-slot-time{display:block;font-size:1.02rem;font-weight:600;line-height:1}
       #${rootId} .resa-slot-meta{display:block;margin-top:.18rem;font-size:.68rem;font-weight:850;opacity:.9}
       #${rootId} .resa-selection-panel{border:1px solid color-mix(in srgb,var(--resa-primary) 22%,white);border-radius:.6rem;background:#fff;padding:.9rem;box-shadow:0 12px 28px rgb(var(--theme-primary) / .08)}
-      #${rootId} .resa-selection-panel span{display:block;color:var(--resa-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}
-      #${rootId} .resa-selection-panel strong{display:block;margin:.18rem 0;color:var(--resa-text);font-size:1.15rem;font-weight:950}
+      #${rootId} .resa-selection-panel span{display:block;color:var(--resa-muted);font-size:.72rem;font-weight:600;text-transform:uppercase}
+      #${rootId} .resa-selection-panel strong{display:block;margin:.18rem 0;color:var(--resa-text);font-size:1.15rem;font-weight:600}
       #${rootId} .resa-selection-actions{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.7rem}
       #${rootId} .reservation-fast-actions{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.85rem}
       #${rootId} .resa-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));scroll-margin-top:5.75rem;border:1px solid var(--resa-border);border-radius:.6rem;overflow:hidden}
       #${rootId} .resa-month-head,#${rootId} .resa-month-cell{min-height:4.2rem;border-right:1px solid var(--resa-border);border-bottom:1px solid var(--resa-border);padding:.52rem}
-      #${rootId} .resa-month-head{min-height:auto;background:#f8fafc;color:var(--resa-muted);font-size:.72rem;font-weight:950;text-align:center;text-transform:uppercase}
+      #${rootId} .resa-month-head{min-height:auto;background:#f8fafc;color:var(--resa-muted);font-size:.72rem;font-weight:600;text-align:center;text-transform:uppercase}
       #${rootId} .resa-month-cell:nth-child(7n){border-right:0}
       #${rootId} .resa-month-cell button{display:grid;gap:.25rem;width:100%;height:100%;border:0;background:transparent;color:var(--resa-text);text-align:left;cursor:pointer}
       #${rootId} .resa-month-cell.is-muted{background:#fafafa;color:#94a3b8}
@@ -430,9 +430,9 @@
       #${rootId} .resa-month-dot-day{background:#4f6df5}
       #${rootId} .resa-list{display:grid;gap:.55rem}
       #${rootId} .resa-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;align-items:center;border:1px solid var(--resa-border);border-radius:.5rem;padding:.72rem .8rem;background:#fff}
-      #${rootId} .resa-row strong{display:block;color:var(--resa-text);font-size:.88rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-row strong{display:block;color:var(--resa-text);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .resa-row span{display:block;margin-top:.12rem;color:var(--resa-muted);font-size:.74rem;font-weight:750}
-      #${rootId} .resa-badge{display:inline-flex;align-items:center;border-radius:999px;background:#f7e8ee;padding:.25rem .6rem;color:var(--resa-primary);font-size:.72rem;font-weight:950}
+      #${rootId} .resa-badge{display:inline-flex;align-items:center;border-radius:999px;background:#f7e8ee;padding:.25rem .6rem;color:var(--resa-primary);font-size:.72rem;font-weight:600}
       #${rootId} .resa-empty,#${rootId} .resa-loading{display:grid;place-items:center;min-height:6rem;border:1px dashed var(--resa-border);border-radius:.55rem;color:var(--resa-muted);font-weight:850;text-align:center;padding:1rem}
       #${rootId} .resa-alert{border:1px solid #fecaca;border-radius:.55rem;background:#fff1f2;padding:.8rem;color:#b91c1c;font-weight:850}
       #${rootId} .resa-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:rgba(15,23,42,.52);padding:1rem}
@@ -440,20 +440,20 @@
       #${rootId} .resa-dialog-compact{width:min(100%,28rem)}
       #${rootId} .resa-dialog-header{display:flex;align-items:center;justify-content:space-between;gap:.8rem;border-bottom:1px solid var(--resa-border);padding:1rem}
       #${rootId} .resa-dialog-kicker{margin:.16rem 0 0;color:var(--resa-muted);font-size:.78rem;font-weight:800}
-      #${rootId} .resa-dialog-title{margin:0;color:var(--resa-text);font-size:1.05rem;font-weight:950}
+      #${rootId} .resa-dialog-title{margin:0;color:var(--resa-text);font-size:1.05rem;font-weight:600}
       #${rootId} .resa-close{display:grid;place-items:center;width:2rem;height:2rem;border:1px solid var(--resa-border);border-radius:999px;background:#fff;color:var(--resa-muted);cursor:pointer}
       #${rootId} .resa-view{display:grid;gap:.68rem;padding:.85rem}
       #${rootId} .resa-view-vehicle{display:grid;grid-template-columns:4.2rem minmax(0,1fr);align-items:center;gap:.72rem;border:1px solid var(--resa-border);border-radius:.58rem;background:#f8fafc;padding:.55rem}
-      #${rootId} .resa-view-photo{display:grid;place-items:center;width:4.2rem;aspect-ratio:1;border-radius:.5rem;background:linear-gradient(135deg,#f7e8ee,#f3edf0);color:var(--resa-primary);font-size:1rem;font-weight:950;overflow:hidden}
+      #${rootId} .resa-view-photo{display:grid;place-items:center;width:4.2rem;aspect-ratio:1;border-radius:.5rem;background:linear-gradient(135deg,#f7e8ee,#f3edf0);color:var(--resa-primary);font-size:1rem;font-weight:600;overflow:hidden}
       #${rootId} .resa-view-photo img{width:100%;height:100%;object-fit:cover}
-      #${rootId} .resa-view-vehicle strong{display:block;color:var(--resa-text);font-size:.96rem;font-weight:950;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-view-vehicle strong{display:block;color:var(--resa-text);font-size:.96rem;font-weight:600;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .resa-view-vehicle span{display:block;margin-top:.18rem;color:var(--resa-muted);font-size:.76rem;font-weight:800}
       #${rootId} .resa-view-details{display:grid;grid-template-columns:1.15fr .85fr .85fr;gap:.45rem}
       #${rootId} .resa-view-field{min-width:0;border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.56rem .62rem}
-      #${rootId} .resa-view-field>span{display:block;color:var(--resa-muted);font-size:.64rem;font-weight:950;text-transform:uppercase}
-      #${rootId} .resa-view-field strong{display:block;margin-top:.12rem;color:var(--resa-text);font-size:.84rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-view-field>span{display:block;color:var(--resa-muted);font-size:.64rem;font-weight:600;text-transform:uppercase}
+      #${rootId} .resa-view-field strong{display:block;margin-top:.12rem;color:var(--resa-text);font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .resa-view-note{border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.58rem .65rem}
-      #${rootId} .resa-view-note span{display:block;color:var(--resa-muted);font-size:.64rem;font-weight:950;text-transform:uppercase}
+      #${rootId} .resa-view-note span{display:block;color:var(--resa-muted);font-size:.64rem;font-weight:600;text-transform:uppercase}
       #${rootId} .resa-view-note p{margin:.2rem 0 0;color:var(--resa-text);font-size:.84rem;font-weight:750;line-height:1.35;white-space:pre-wrap}
       #${rootId} .resa-view-actions{display:flex;align-items:center;justify-content:flex-end;gap:.45rem;border-top:1px solid var(--resa-border);padding:.7rem .85rem}
       #${rootId} .resa-icon-action{display:grid;place-items:center;width:2.35rem;height:2.35rem;border:1px solid var(--resa-border);border-radius:.55rem;background:#fff;color:var(--resa-muted);cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
@@ -461,13 +461,13 @@
       #${rootId} .resa-icon-action-danger{color:#b91c1c}
       #${rootId} .resa-form{display:grid;gap:.78rem;padding:1rem}
       #${rootId} .resa-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
-      #${rootId} label{display:grid;gap:.28rem;color:var(--resa-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}
+      #${rootId} label{display:grid;gap:.28rem;color:var(--resa-muted);font-size:.72rem;font-weight:600;text-transform:uppercase}
       #${rootId} input,#${rootId} select,#${rootId} textarea{width:100%;border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.65rem .72rem;color:var(--resa-text);font:inherit;font-size:.86rem;font-weight:750;text-transform:none}
       #${rootId} textarea{min-height:5.6rem;resize:vertical}
       #${rootId} .resa-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;border:1px solid var(--resa-border);border-radius:.55rem;background:#f8fafc;padding:.6rem}
       #${rootId} .resa-summary-item:first-child{grid-column:1/-1}
-      #${rootId} .resa-summary-item span{display:block;color:var(--resa-muted);font-size:.66rem;font-weight:950;text-transform:uppercase}
-      #${rootId} .resa-summary-item strong{display:block;margin-top:.12rem;color:var(--resa-text);font-size:.85rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-summary-item span{display:block;color:var(--resa-muted);font-size:.66rem;font-weight:600;text-transform:uppercase}
+      #${rootId} .resa-summary-item strong{display:block;margin-top:.12rem;color:var(--resa-text);font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       .dark #${rootId}{--resa-border:var(--color-surface-700,#334155);--resa-text:#fff;--resa-muted:var(--color-secondary-400,#94a3b8)}
       .dark #${rootId} .resa-card,.dark #${rootId} .resa-button,.dark #${rootId} .resa-product-card,.dark #${rootId} .resa-row,.dark #${rootId} .resa-dialog,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .resa-selection-panel,.dark #${rootId} .resa-view-field,.dark #${rootId} .resa-view-note,.dark #${rootId} .resa-icon-action{background:var(--color-surface-900,#0f172a);border-color:var(--resa-border)}
       .dark #${rootId} .resa-summary,.dark #${rootId} .resa-month-head,.dark #${rootId} .resa-view-vehicle{background:var(--color-surface-800,#1e293b)}

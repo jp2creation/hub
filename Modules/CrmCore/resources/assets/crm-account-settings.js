@@ -292,7 +292,7 @@
         margin: 0;
         color: var(--color-secondary-900, #0f172a);
         font-size: clamp(1.6rem, 2vw, 2rem);
-        font-weight: 950;
+        font-weight: 600;
         line-height: 1.05;
         letter-spacing: 0;
       }
@@ -382,7 +382,7 @@
         margin: .25rem 0;
         color: var(--color-secondary-900, #0f172a);
         font-size: 1rem;
-        font-weight: 950;
+        font-weight: 600;
         line-height: 1.1;
         letter-spacing: 0;
         text-overflow: ellipsis;
@@ -455,7 +455,7 @@
         overflow-wrap: anywhere;
         color: var(--color-secondary-900, #0f172a);
         font-size: 1.02rem;
-        font-weight: 950;
+        font-weight: 600;
         line-height: 1.12;
         letter-spacing: 0;
       }
@@ -578,7 +578,7 @@
         margin: 0;
         color: var(--color-secondary-900, #0f172a);
         font-size: 1.02rem;
-        font-weight: 950;
+        font-weight: 600;
         letter-spacing: 0;
       }
 
@@ -688,7 +688,7 @@
       .crm-account-photo-copy strong {
         color: var(--color-secondary-900, #0f172a);
         font-size: .82rem;
-        font-weight: 950;
+        font-weight: 600;
       }
 
       .crm-account-photo-copy span {

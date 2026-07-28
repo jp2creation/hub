@@ -145,7 +145,7 @@ body.crm-native-shell-active {
   background: transparent;
   color: currentColor;
   font-size: 0.68rem;
-  font-weight: 950;
+  font-weight: 600;
 }
 
 .crm-native-nav-icon svg {
@@ -501,7 +501,7 @@ html.crm-ui-module-ready .crm-native-content > * {
   margin: 0;
   color: rgb(var(--theme-primary));
   font-size: 2.5rem;
-  font-weight: 950;
+  font-weight: 600;
   letter-spacing: 0;
 }
 
@@ -1062,7 +1062,7 @@ body.crm-mobile-fallback-nav-browser .crm-mobile-fallback-panel-header {
   background: rgb(248 250 252);
   color: rgb(var(--theme-primary));
   font-size: 12px;
-  font-weight: 950;
+  font-weight: 600;
 }
 
 .crm-mobile-fallback-link.is-active .crm-mobile-fallback-initials {
@@ -1156,7 +1156,7 @@ body.crm-mobile-app-settings-open {
   margin: 0;
   color: rgb(29 53 79);
   font-size: 1.5rem;
-  font-weight: 950;
+  font-weight: 600;
   letter-spacing: 0;
   line-height: 1.12;
 }
@@ -1222,7 +1222,7 @@ body.crm-mobile-app-settings-open {
   padding: 14px 18px 4px;
   color: rgb(109 127 145);
   font-size: 0.75rem;
-  font-weight: 950;
+  font-weight: 600;
   line-height: 1;
   text-transform: uppercase;
 }
@@ -1243,7 +1243,7 @@ body.crm-mobile-app-settings-open {
 .crm-mobile-app-settings-card-heading h3 {
   color: rgb(29 53 79);
   font-size: 1.02rem;
-  font-weight: 950;
+  font-weight: 600;
   line-height: 1.2;
 }
 
@@ -1884,7 +1884,7 @@ body.crm-mobile-app-settings-open {
   body.hub-assistant-open .hub-assistant-header h2 {
     margin-top: 0.24rem;
     font-size: 1.5rem;
-    font-weight: 950;
+    font-weight: 600;
     line-height: 1.12;
   }
 

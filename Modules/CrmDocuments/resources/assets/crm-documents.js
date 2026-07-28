@@ -642,8 +642,8 @@
       #crm-documents-module svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #crm-documents-module .doc-page{display:grid;gap:1rem;min-width:0}
       #crm-documents-module .doc-header{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
-      #crm-documents-module .doc-title span{display:block;color:var(--doc-primary);font-size:.72rem;font-weight:950;text-transform:uppercase;letter-spacing:.04em}
-      #crm-documents-module .doc-title h1{margin:.15rem 0 0;color:var(--doc-text);font-size:1.85rem;line-height:1.05;font-weight:950;letter-spacing:0}
+      #crm-documents-module .doc-title span{display:block;color:var(--doc-primary);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+      #crm-documents-module .doc-title h1{margin:.15rem 0 0;color:var(--doc-text);font-size:1.85rem;line-height:1.05;font-weight:600;letter-spacing:0}
       #crm-documents-module .doc-title p{margin:.3rem 0 0;color:var(--doc-muted);font-size:.88rem;font-weight:750}
       #crm-documents-module .doc-actions{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:flex-end}
       #crm-documents-module .doc-button{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-height:2.45rem;border:1px solid var(--doc-border);border-radius:.5rem;background:#fff;padding:.55rem .9rem;color:var(--doc-text);font-size:.84rem;font-weight:900;text-decoration:none;box-shadow:0 10px 22px rgba(15,23,42,.05);cursor:pointer}
@@ -654,21 +654,21 @@
       #crm-documents-module .doc-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}
       #crm-documents-module .doc-stat{display:grid;grid-template-columns:2.55rem minmax(0,1fr);gap:.75rem;align-items:center;border:1px solid var(--doc-border);border-radius:.5rem;background:#fff;padding:.85rem;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #crm-documents-module .doc-stat-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color) 14%,white);color:var(--stat-color)}
-      #crm-documents-module .doc-stat small{display:block;color:var(--doc-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}
-      #crm-documents-module .doc-stat strong{display:block;margin:.15rem 0 0;color:var(--doc-text);font-size:1.25rem;font-weight:950;line-height:1.05}
+      #crm-documents-module .doc-stat small{display:block;color:var(--doc-muted);font-size:.72rem;font-weight:600;text-transform:uppercase}
+      #crm-documents-module .doc-stat strong{display:block;margin:.15rem 0 0;color:var(--doc-text);font-size:1.25rem;font-weight:600;line-height:1.05}
       #crm-documents-module .doc-toolbar{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(14rem,.8fr);gap:.75rem;border:1px solid var(--doc-border);border-radius:.5rem;background:#fff;padding:.85rem;box-shadow:0 12px 28px rgba(15,23,42,.04)}
       #crm-documents-module label{display:grid;gap:.35rem;color:var(--doc-muted);font-size:.76rem;font-weight:900}
       #crm-documents-module input,#crm-documents-module select,#crm-documents-module textarea{width:100%;min-height:2.55rem;border:1px solid var(--doc-border);border-radius:.5rem;background:#fff;padding:.55rem .7rem;color:var(--doc-text);font:inherit;font-size:.9rem;font-weight:750}
       #crm-documents-module textarea{resize:vertical}
       #crm-documents-module .doc-card{border:1px solid var(--doc-border);border-radius:.5rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05);overflow:hidden}
       #crm-documents-module .doc-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--doc-border);padding:.95rem 1rem}
-      #crm-documents-module .doc-card-head h2{margin:0;color:var(--doc-text);font-size:1rem;font-weight:950;letter-spacing:0}
+      #crm-documents-module .doc-card-head h2{margin:0;color:var(--doc-text);font-size:1rem;font-weight:600;letter-spacing:0}
       #crm-documents-module .doc-card-head p{margin:.2rem 0 0;color:var(--doc-muted);font-size:.78rem;font-weight:750}
       #crm-documents-module .doc-folder-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;padding:1rem}
       #crm-documents-module .doc-folder{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.5rem;border:1px solid var(--doc-border);border-radius:.5rem;background:#fff;padding:.65rem}
       #crm-documents-module .doc-folder-main{display:grid;grid-template-columns:2.3rem minmax(0,1fr);align-items:center;gap:.65rem;border:0;background:transparent;padding:0;text-align:left;cursor:pointer}
       #crm-documents-module .doc-folder-icon{display:grid;place-items:center;width:2.3rem;height:2.3rem;border-radius:.5rem;background:#eef2ff;color:#2563eb}
-      #crm-documents-module .doc-folder strong{display:block;color:var(--doc-text);font-size:.88rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #crm-documents-module .doc-folder strong{display:block;color:var(--doc-text);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #crm-documents-module .doc-folder small{display:block;margin-top:.1rem;color:var(--doc-muted);font-size:.72rem;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #crm-documents-module .doc-folder-actions,#crm-documents-module .doc-row-actions{display:inline-flex;align-items:center;justify-content:flex-end;gap:.35rem}
       #crm-documents-module .doc-folder-actions button,#crm-documents-module .doc-row-actions button,#crm-documents-module .doc-row-actions a{display:grid;place-items:center;width:2rem;height:2rem;border:1px solid var(--doc-border);border-radius:.45rem;background:#fff;color:var(--doc-text);cursor:pointer;text-decoration:none}
@@ -676,9 +676,9 @@
       #crm-documents-module .doc-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:.8rem;border-bottom:1px solid var(--doc-border);padding:.75rem 1rem}
       #crm-documents-module .doc-row:last-child{border-bottom:0}
       #crm-documents-module .doc-row-main{display:grid;grid-template-columns:3.25rem minmax(0,1fr);align-items:center;gap:.75rem;min-width:0;text-decoration:none;color:inherit}
-      #crm-documents-module .doc-kind{display:grid;place-items:center;min-height:2.25rem;border-radius:.45rem;background:color-mix(in srgb,var(--doc-primary) 12%,white);color:var(--doc-primary);font-size:.72rem;font-weight:950}
+      #crm-documents-module .doc-kind{display:grid;place-items:center;min-height:2.25rem;border-radius:.45rem;background:color-mix(in srgb,var(--doc-primary) 12%,white);color:var(--doc-primary);font-size:.72rem;font-weight:600}
       #crm-documents-module .doc-row-text{min-width:0}
-      #crm-documents-module .doc-row-text strong{display:block;color:var(--doc-text);font-size:.93rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #crm-documents-module .doc-row-text strong{display:block;color:var(--doc-text);font-size:.93rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #crm-documents-module .doc-row-text small,#crm-documents-module .doc-row-text em{display:block;margin-top:.12rem;color:var(--doc-muted);font-size:.76rem;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:normal}
       #crm-documents-module .doc-badge{display:inline-flex;align-items:center;min-height:1.65rem;border-radius:999px;background:#f1f5f9;padding:.25rem .6rem;color:var(--doc-muted);font-size:.7rem;font-weight:900;white-space:nowrap}
       #crm-documents-module .doc-empty,.doc-loading{display:grid;place-items:center;min-height:9rem;border:1px dashed var(--doc-border);border-radius:.5rem;color:var(--doc-muted);font-size:.88rem;font-weight:850;text-align:center;padding:1rem}
@@ -686,7 +686,7 @@
       #crm-documents-module .doc-modal{width:min(34rem,100%);max-height:92vh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;border-radius:.75rem;background:#fff;box-shadow:0 25px 80px rgba(15,23,42,.28);overflow:hidden}
       #crm-documents-module .doc-modal header,#crm-documents-module .doc-modal footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--doc-border);padding:1rem}
       #crm-documents-module .doc-modal footer{border-top:1px solid var(--doc-border);border-bottom:0;justify-content:flex-end}
-      #crm-documents-module .doc-modal h2{margin:0;color:var(--doc-text);font-size:1.1rem;font-weight:950;letter-spacing:0}
+      #crm-documents-module .doc-modal h2{margin:0;color:var(--doc-text);font-size:1.1rem;font-weight:600;letter-spacing:0}
       #crm-documents-module .doc-modal p{margin:.15rem 0 0;color:var(--doc-muted);font-size:.78rem;font-weight:750}
       #crm-documents-module .doc-modal header > button{border:1px solid var(--doc-border);border-radius:.45rem;background:#fff;padding:.45rem .65rem;color:var(--doc-muted);font-weight:850;cursor:pointer}
       #crm-documents-module .doc-modal-body{display:grid;gap:.8rem;overflow:auto;padding:1rem}

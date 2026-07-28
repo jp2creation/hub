@@ -2068,12 +2068,12 @@
       #crm-cash-control-module .cash-quick-actions{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem}
       #crm-cash-control-module .cash-quick-actions-buttons{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem}
       #crm-cash-control-module .cash-entry-check{display:flex;align-items:center;justify-content:space-between;gap:.75rem;border-bottom:1px solid var(--color-surface-200,#e2e8f0);padding:.8rem 1rem;font-size:.82rem;font-weight:850}
-      #crm-cash-control-module .cash-entry-check strong{font-size:.9rem;font-weight:950}
+      #crm-cash-control-module .cash-entry-check strong{font-size:.9rem;font-weight:600}
       #crm-cash-control-module .cash-entry-check span{color:var(--color-secondary-600,#475569)}
       #crm-cash-control-module .cash-entry-check.is-ok{background:#f0fdf4;color:#15803d}
       #crm-cash-control-module .cash-entry-check.is-error{background:#fef2f2;color:#b91c1c}
       #crm-cash-control-module .cash-entry-check.is-waiting{background:var(--color-surface-50,#f8fafc);color:var(--color-secondary-600,#475569)}
-      #crm-cash-control-module .cash-check-badge{display:inline-flex;align-items:center;gap:.35rem;border-radius:999px;padding:.26rem .5rem;font-size:.72rem;font-weight:950;white-space:nowrap}
+      #crm-cash-control-module .cash-check-badge{display:inline-flex;align-items:center;gap:.35rem;border-radius:999px;padding:.26rem .5rem;font-size:.72rem;font-weight:600;white-space:nowrap}
       #crm-cash-control-module .cash-check-badge small{font-size:.68rem;font-weight:850;opacity:.82}
       #crm-cash-control-module .cash-check-badge.is-ok{background:#dcfce7;color:#15803d}
       #crm-cash-control-module .cash-check-badge.is-error{background:#fee2e2;color:#b91c1c}
@@ -2134,8 +2134,8 @@
       #crm-cash-control-module .cash-bank-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;padding:0 1rem 1rem}
       #crm-cash-control-module .cash-check-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.55rem;padding:1rem}
       #crm-cash-control-module .cash-check{display:grid;gap:.18rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;padding:.58rem .65rem;min-width:0}
-      #crm-cash-control-module .cash-check span{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:950;text-transform:uppercase}
-      #crm-cash-control-module .cash-check strong{font-size:.92rem;font-weight:950}
+      #crm-cash-control-module .cash-check span{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:600;text-transform:uppercase}
+      #crm-cash-control-module .cash-check strong{font-size:.92rem;font-weight:600}
       #crm-cash-control-module .cash-check small{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #crm-cash-control-module .cash-check.is-ok{border-color:#bbf7d0;background:#f0fdf4}
       #crm-cash-control-module .cash-check.is-ok strong{color:#15803d}

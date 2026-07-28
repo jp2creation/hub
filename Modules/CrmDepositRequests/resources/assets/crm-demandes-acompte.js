@@ -411,8 +411,8 @@
       #crm-deposit-requests-module *{box-sizing:border-box}
       #crm-deposit-requests-module .deposit-page{display:grid;gap:1rem;min-width:0}
       #crm-deposit-requests-module .deposit-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
-      #crm-deposit-requests-module .deposit-eyebrow{display:block;color:rgb(var(--theme-primary));font-size:.72rem;font-weight:950;text-transform:uppercase;letter-spacing:.04em}
-      #crm-deposit-requests-module h1,#crm-deposit-requests-module h2{margin:0;color:var(--color-secondary-900,#0f172a);font-weight:950;letter-spacing:0;line-height:1.12}
+      #crm-deposit-requests-module .deposit-eyebrow{display:block;color:rgb(var(--theme-primary));font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+      #crm-deposit-requests-module h1,#crm-deposit-requests-module h2{margin:0;color:var(--color-secondary-900,#0f172a);font-weight:600;letter-spacing:0;line-height:1.12}
       #crm-deposit-requests-module h1{margin-top:.12rem;font-size:1.85rem}
       #crm-deposit-requests-module h2{font-size:1.1rem}
       #crm-deposit-requests-module p{margin:.25rem 0 0;color:var(--color-secondary-500,#64748b);font-size:.86rem;font-weight:750}
@@ -431,8 +431,8 @@
       #crm-deposit-requests-module .deposit-summary-pending{--deposit-tone:#f59e0b}
       #crm-deposit-requests-module .deposit-summary-validated{--deposit-tone:#16a34a}
       #crm-deposit-requests-module .deposit-summary-total{--deposit-tone:rgb(var(--theme-primary))}
-      #crm-deposit-requests-module .deposit-summary-card small{display:block;color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:950;text-transform:uppercase}
-      #crm-deposit-requests-module .deposit-summary-card strong{display:block;margin:.15rem 0;color:var(--color-secondary-900,#0f172a);font-size:1.25rem;font-weight:950;line-height:1.05}
+      #crm-deposit-requests-module .deposit-summary-card small{display:block;color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:600;text-transform:uppercase}
+      #crm-deposit-requests-module .deposit-summary-card strong{display:block;margin:.15rem 0;color:var(--color-secondary-900,#0f172a);font-size:1.25rem;font-weight:600;line-height:1.05}
       #crm-deposit-requests-module .deposit-summary-card em{display:block;color:var(--color-secondary-400,#94a3b8);font-size:.72rem;font-style:normal;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #crm-deposit-requests-module .deposit-toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(10rem,.35fr) minmax(8rem,.25fr);gap:.75rem;padding:.9rem;border-bottom:1px solid var(--color-surface-200,#e2e8f0)}
       #crm-deposit-requests-module label{display:grid;gap:.35rem;min-width:0;color:var(--color-secondary-500,#64748b);font-size:.76rem;font-weight:900}
@@ -442,12 +442,12 @@
       #crm-deposit-requests-module .deposit-table-wrap{max-width:100%;overflow:auto;-webkit-overflow-scrolling:touch}
       #crm-deposit-requests-module .deposit-table{width:100%;border-collapse:collapse;min-width:min(70rem,calc(100vw - 2rem))}
       #crm-deposit-requests-module th,#crm-deposit-requests-module td{border-bottom:1px solid var(--color-surface-200,#e2e8f0);padding:.72rem .8rem;text-align:left;font-size:.82rem;vertical-align:middle}
-      #crm-deposit-requests-module th{background:var(--color-surface-50,#f8fafc);color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:950;text-transform:uppercase}
+      #crm-deposit-requests-module th{background:var(--color-surface-50,#f8fafc);color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:600;text-transform:uppercase}
       #crm-deposit-requests-module td{color:var(--color-secondary-800,#1e293b);font-weight:750}
       #crm-deposit-requests-module td small{display:block;margin-top:.1rem;color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:750}
-      #crm-deposit-requests-module .deposit-doc{font-weight:950;color:var(--color-secondary-900,#0f172a)}
-      #crm-deposit-requests-module .deposit-amount{font-weight:950;color:var(--color-secondary-900,#0f172a);white-space:nowrap}
-      #crm-deposit-requests-module .deposit-status{display:inline-flex;align-items:center;gap:.35rem;border-radius:999px;padding:.25rem .58rem;font-size:.72rem;font-weight:950;white-space:nowrap}
+      #crm-deposit-requests-module .deposit-doc{font-weight:600;color:var(--color-secondary-900,#0f172a)}
+      #crm-deposit-requests-module .deposit-amount{font-weight:600;color:var(--color-secondary-900,#0f172a);white-space:nowrap}
+      #crm-deposit-requests-module .deposit-status{display:inline-flex;align-items:center;gap:.35rem;border-radius:999px;padding:.25rem .58rem;font-size:.72rem;font-weight:600;white-space:nowrap}
       #crm-deposit-requests-module .deposit-status.is-pending{background:#fef3c7;color:#92400e}
       #crm-deposit-requests-module .deposit-status.is-valid{background:#dcfce7;color:#166534}
       #crm-deposit-requests-module .deposit-muted{color:var(--color-secondary-400,#94a3b8);font-size:.78rem;font-weight:800}

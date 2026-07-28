@@ -871,8 +871,8 @@
       #${rootId} .tour-icon{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .tour-page{display:grid;gap:1rem}
       #${rootId} .tour-header{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
-      #${rootId} .tour-title span{display:block;color:var(--tour-primary);font-size:.72rem;font-weight:950;text-transform:uppercase;letter-spacing:.04em}
-      #${rootId} .tour-title h1{margin:.15rem 0 0;color:var(--tour-text);font-size:1.85rem;line-height:1.05;font-weight:950;letter-spacing:0}
+      #${rootId} .tour-title span{display:block;color:var(--tour-primary);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+      #${rootId} .tour-title h1{margin:.15rem 0 0;color:var(--tour-text);font-size:1.85rem;line-height:1.05;font-weight:600;letter-spacing:0}
       #${rootId} .tour-title p{margin:.32rem 0 0;color:var(--tour-muted);font-size:.9rem;font-weight:750}
       #${rootId} .tour-actions,#${rootId} .tour-detail-actions,#${rootId} .tour-modal-actions{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:flex-end}
       #${rootId} .tour-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--tour-border);border-radius:.5rem;background:#fff;padding:.55rem .85rem;color:var(--tour-text);font-size:.83rem;font-weight:900;text-decoration:none;box-shadow:0 10px 22px rgba(15,23,42,.04);cursor:pointer}
@@ -881,8 +881,8 @@
       #${rootId} .tour-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}
       #${rootId} .tour-stat{display:grid;grid-template-columns:2.55rem minmax(0,1fr);align-items:center;gap:.75rem;border:1px solid var(--tour-border);border-radius:.5rem;background:#fff;padding:.85rem;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #${rootId} .tour-stat-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color) 14%,white);color:var(--stat-color)}
-      #${rootId} .tour-stat span,#${rootId} .tour-report small{display:block;color:var(--tour-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}
-      #${rootId} .tour-stat strong{display:block;margin:.15rem 0;color:var(--tour-text);font-size:1.35rem;font-weight:950;line-height:1.05}
+      #${rootId} .tour-stat span,#${rootId} .tour-report small{display:block;color:var(--tour-muted);font-size:.72rem;font-weight:600;text-transform:uppercase}
+      #${rootId} .tour-stat strong{display:block;margin:.15rem 0;color:var(--tour-text);font-size:1.35rem;font-weight:600;line-height:1.05}
       #${rootId} .tour-stat small{display:block;color:var(--color-secondary-400,#94a3b8);font-size:.72rem;font-weight:750}
       #${rootId} .tour-toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem;border:1px solid var(--tour-border);border-radius:.5rem;background:#fff;padding:.85rem;box-shadow:0 12px 28px rgba(15,23,42,.04)}
       #${rootId} label{display:grid;gap:.32rem;color:var(--tour-muted);font-size:.75rem;font-weight:900}
@@ -892,17 +892,17 @@
       #${rootId} .tour-left{display:grid;gap:1rem;min-width:0}
       #${rootId} .tour-card{border:1px solid var(--tour-border);border-radius:.5rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05);overflow:hidden}
       #${rootId} .tour-card-head,#${rootId} .tour-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--tour-border);padding:.95rem 1rem}
-      #${rootId} .tour-card-head h2,#${rootId} .tour-detail-head h2{margin:0;color:var(--tour-text);font-size:1rem;font-weight:950;letter-spacing:0}
+      #${rootId} .tour-card-head h2,#${rootId} .tour-detail-head h2{margin:0;color:var(--tour-text);font-size:1rem;font-weight:600;letter-spacing:0}
       #${rootId} .tour-card-head p,#${rootId} .tour-detail-head p{margin:.2rem 0 0;color:var(--tour-muted);font-size:.78rem;font-weight:750}
       #${rootId} .tour-month-nav{display:flex;gap:.35rem;align-items:center}
       #${rootId} .tour-month-nav button{min-height:2.25rem;border:1px solid var(--tour-border);border-radius:.5rem;background:#fff;padding:.45rem .65rem;color:var(--tour-text);font-weight:900;cursor:pointer}
       #${rootId} .tour-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:0}
-      #${rootId} .tour-weekday{padding:.65rem .45rem;border-bottom:1px solid var(--tour-border);color:var(--tour-muted);font-size:.72rem;font-weight:950;text-align:center}
+      #${rootId} .tour-weekday{padding:.65rem .45rem;border-bottom:1px solid var(--tour-border);color:var(--tour-muted);font-size:.72rem;font-weight:600;text-align:center}
       #${rootId} .tour-day{display:grid;align-content:start;gap:.3rem;min-height:7rem;border:0;border-right:1px solid var(--tour-border);border-bottom:1px solid var(--tour-border);background:#fff;padding:.55rem;text-align:left;cursor:pointer}
       #${rootId} .tour-day:nth-child(7n+7){border-right:0}
       #${rootId} .tour-day.is-muted{background:#f8fafc;color:#94a3b8}
       #${rootId} .tour-day.is-selected{box-shadow:inset 0 0 0 2px var(--tour-primary)}
-      #${rootId} .tour-day-number{display:grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:999px;font-weight:950}
+      #${rootId} .tour-day-number{display:grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:999px;font-weight:600}
       #${rootId} .tour-day.is-selected .tour-day-number{background:var(--tour-primary);color:#fff}
       #${rootId} .tour-day-list{display:grid;gap:.25rem;min-width:0}
       #${rootId} .tour-day-pill{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-radius:.35rem;background:#f1f5f9;padding:.18rem .35rem;color:var(--tour-text);font-size:.7rem;font-weight:850}
@@ -911,17 +911,17 @@
       #${rootId} .tour-row{display:grid;grid-template-columns:3.5rem minmax(0,1fr) auto;align-items:center;gap:.75rem;border:1px solid var(--tour-border);border-radius:.5rem;background:#fff;padding:.65rem;text-align:left;cursor:pointer}
       #${rootId} .tour-row.is-active{border-color:var(--tour-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--tour-primary) 12%,transparent)}
       #${rootId} .tour-row-date{display:grid;place-items:center;border-radius:.5rem;background:#f8fafc;min-height:3rem}
-      #${rootId} .tour-row-date strong{font-size:1.15rem;font-weight:950}
+      #${rootId} .tour-row-date strong{font-size:1.15rem;font-weight:600}
       #${rootId} .tour-row-date span{color:var(--tour-muted);font-size:.68rem;font-weight:900;text-transform:uppercase}
       #${rootId} .tour-row-main{min-width:0}
-      #${rootId} .tour-row-main strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:950}
+      #${rootId} .tour-row-main strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:600}
       #${rootId} .tour-row-main span{display:block;margin-top:.15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tour-muted);font-size:.76rem;font-weight:750}
-      #${rootId} .tour-badge{display:inline-flex;align-items:center;justify-content:center;min-height:1.75rem;border-radius:999px;background:#f1f5f9;padding:.22rem .62rem;color:var(--tour-text);font-size:.72rem;font-weight:950;white-space:nowrap}
+      #${rootId} .tour-badge{display:inline-flex;align-items:center;justify-content:center;min-height:1.75rem;border-radius:999px;background:#f1f5f9;padding:.22rem .62rem;color:var(--tour-text);font-size:.72rem;font-weight:600;white-space:nowrap}
       #${rootId} .tour-status-completed,.visit-status-done{background:#dcfce7;color:#166534}
       #${rootId} .tour-status-in_progress{background:#dbeafe;color:#1d4ed8}
       #${rootId} .tour-status-canceled,.visit-status-canceled,.visit-status-missed{background:#fee2e2;color:#991b1b}
       #${rootId} .tour-detail{display:grid;gap:1rem;min-width:0}
-      #${rootId} .tour-eyebrow{display:block;color:var(--tour-primary);font-size:.72rem;font-weight:950;text-transform:uppercase}
+      #${rootId} .tour-eyebrow{display:block;color:var(--tour-primary);font-size:.72rem;font-weight:600;text-transform:uppercase}
       #${rootId} .tour-objective{display:grid;gap:.3rem;border-bottom:1px solid var(--tour-border);padding:.8rem 1rem;color:var(--tour-muted);font-size:.82rem;font-weight:750}
       #${rootId} .tour-objective strong{color:var(--tour-text)}
       #${rootId} .tour-progress{height:.45rem;background:#f1f5f9}
@@ -929,9 +929,9 @@
       #${rootId} .tour-detail-actions{padding:1rem;justify-content:flex-start}
       #${rootId} .visit-table-wrap{max-width:100%;overflow:auto;-webkit-overflow-scrolling:touch}
       #${rootId} .visit-table{width:100%;min-width:min(78rem,calc(100vw - 2rem));border-collapse:collapse}
-      #${rootId} .visit-table th{background:#f8fafc;color:var(--tour-muted);font-size:.72rem;font-weight:950;text-align:left;text-transform:uppercase;padding:.82rem .9rem;white-space:nowrap}
+      #${rootId} .visit-table th{background:#f8fafc;color:var(--tour-muted);font-size:.72rem;font-weight:600;text-align:left;text-transform:uppercase;padding:.82rem .9rem;white-space:nowrap}
       #${rootId} .visit-table td{border-top:1px solid var(--tour-border);padding:.78rem .9rem;color:var(--tour-text);font-size:.82rem;font-weight:760;vertical-align:top}
-      #${rootId} .visit-table td strong{display:block;color:var(--tour-text);font-size:.84rem;font-weight:950;line-height:1.25}
+      #${rootId} .visit-table td strong{display:block;color:var(--tour-text);font-size:.84rem;font-weight:600;line-height:1.25}
       #${rootId} .visit-table td small{display:block;margin-top:.16rem;color:var(--tour-muted);font-size:.72rem;font-weight:760;line-height:1.25}
       #${rootId} .visit-client-name{font-size:.9rem!important}
       #${rootId} .visit-chip{display:inline-flex;align-items:center;min-height:1.65rem;border-radius:999px;background:#f8fafc;padding:.18rem .55rem;color:var(--tour-muted);font-size:.72rem;font-weight:900;white-space:nowrap}
@@ -940,7 +940,7 @@
       #${rootId} .visit-actions button{display:grid;place-items:center;width:2rem;height:2rem;border:1px solid var(--tour-border);border-radius:.45rem;background:#fff;color:var(--tour-text);cursor:pointer}
       #${rootId} .tour-report{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;padding:1rem}
       #${rootId} .tour-report>div{border:1px solid var(--tour-border);border-radius:.5rem;background:#f8fafc;padding:.75rem}
-      #${rootId} .tour-report strong{display:block;margin-top:.2rem;font-size:1rem;font-weight:950}
+      #${rootId} .tour-report strong{display:block;margin-top:.2rem;font-size:1rem;font-weight:600}
       #${rootId} .tour-report p{margin:.25rem 0 0;color:#334155;font-weight:740}
       #${rootId} .tour-report-wide{grid-column:1/-1}
       #${rootId} .tour-empty,.tour-loading{margin:1rem;border:1px dashed var(--tour-border);border-radius:.5rem;padding:1rem;color:var(--tour-muted);font-weight:850;text-align:center}
@@ -952,7 +952,7 @@
       #${rootId} .tour-modal-backdrop{position:fixed;inset:0;z-index:1100;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.58);padding:1rem}
       #${rootId} .tour-modal{width:min(820px,100%);max-height:92vh;overflow:auto;border-radius:.75rem;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.28)}
       #${rootId} .tour-modal>header{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--tour-border);background:#fff;padding:1rem}
-      #${rootId} .tour-modal h2{margin:0;font-size:1.2rem;font-weight:950}
+      #${rootId} .tour-modal h2{margin:0;font-size:1.2rem;font-weight:600}
       #${rootId} .tour-modal p{margin:.2rem 0 0;color:var(--tour-muted);font-size:.8rem;font-weight:760}
       #${rootId} .tour-modal-close{display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--tour-border);border-radius:.5rem;background:#fff;padding:.45rem .65rem;color:var(--tour-text);font-weight:900;cursor:pointer}
       #${rootId} .tour-form{display:grid;gap:1rem;padding:1rem}
