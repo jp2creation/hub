@@ -21,7 +21,7 @@ class TeamService
     {
         $actor = CrmUser::query()
             ->with(['modules:id,slug,active', 'permissions:id,name,label', 'sites:id'])
-            ->where('user_id', $user->id)
+            ->forAccount($user)
             ->where('active', true)
             ->first();
 
@@ -212,8 +212,7 @@ class TeamService
 
         $accountIdsByMemberId = CrmUser::query()
             ->whereIn('id', $memberIds)
-            ->whereNotNull('user_id')
-            ->pluck('user_id', 'id')
+            ->pluck('id', 'id')
             ->map(fn ($accountId): int => (int) $accountId)
             ->all();
 

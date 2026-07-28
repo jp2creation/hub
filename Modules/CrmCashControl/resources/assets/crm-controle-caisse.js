@@ -1446,7 +1446,7 @@
             .badge{display:inline-flex;border-radius:999px;background:#f1f5f9;color:#334155;padding:5px 9px;font-size:12px;font-weight:800}
             .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
             .card{border:1px solid #e2e8f0;border-radius:8px;padding:10px;background:#f8fafc}
-            .card span{display:block;color:#64748b;font-size:10px;font-weight:900;text-transform:uppercase}
+            .card span{display:block;color:#64748b;font-size:10px;font-weight:600;text-transform:uppercase}
             .card strong{display:block;margin-top:4px;font-size:15px}
             table{width:100%;border-collapse:collapse;margin-top:8px;page-break-inside:auto}
             th,td{border:1px solid #e2e8f0;padding:7px 8px;text-align:left;font-size:11px;vertical-align:top}
@@ -2042,8 +2042,8 @@
       #crm-cash-control-module .cash-page{display:grid;gap:1rem}
       #crm-cash-control-module .cash-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
       #crm-cash-control-module h1,#crm-cash-control-module h2{margin:0;color:var(--color-secondary-900,#0f172a);letter-spacing:0;line-height:1.15}
-      #crm-cash-control-module h1{font-size:1.55rem;font-weight:900}
-      #crm-cash-control-module h2{font-size:1rem;font-weight:900}
+      #crm-cash-control-module h1{font-size:1.55rem;font-weight:600}
+      #crm-cash-control-module h2{font-size:1rem;font-weight:600}
       #crm-cash-control-module p{margin:.25rem 0 0;color:var(--color-secondary-500,#64748b);font-size:.86rem;font-weight:700}
       #crm-cash-control-module .cash-create{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem}
       #crm-cash-control-module .cash-card,#crm-cash-control-module .cash-summary-item,#crm-cash-control-module .cash-dashboard-card{border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05)}
@@ -2084,8 +2084,8 @@
       #crm-cash-control-module .cash-dashboard-card{display:grid;grid-template-columns:2.55rem minmax(0,1fr);align-items:center;gap:.75rem;min-width:0;padding:.9rem}
       #crm-cash-control-module .cash-dashboard-card-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.55rem;background:color-mix(in srgb,var(--cash-card-color,var(--theme-primary-color)) 14%,white);color:var(--cash-card-color,var(--theme-primary-color))}
       #crm-cash-control-module .cash-dashboard-icon{width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-      #crm-cash-control-module .cash-dashboard-card span,#crm-cash-control-module .cash-summary-item span{display:block;color:var(--color-secondary-500,#64748b);font-size:.73rem;font-weight:900;text-transform:uppercase}
-      #crm-cash-control-module .cash-dashboard-card strong,#crm-cash-control-module .cash-summary-item strong{display:block;margin:.25rem 0;color:var(--color-secondary-900,#0f172a);font-size:1.25rem;font-weight:900;line-height:1.1;letter-spacing:0}
+      #crm-cash-control-module .cash-dashboard-card span,#crm-cash-control-module .cash-summary-item span{display:block;color:var(--color-secondary-500,#64748b);font-size:.73rem;font-weight:600;text-transform:uppercase}
+      #crm-cash-control-module .cash-dashboard-card strong,#crm-cash-control-module .cash-summary-item strong{display:block;margin:.25rem 0;color:var(--color-secondary-900,#0f172a);font-size:1.25rem;font-weight:600;line-height:1.1;letter-spacing:0}
       #crm-cash-control-module .cash-dashboard-card small,#crm-cash-control-module .cash-summary-item small{display:block;color:var(--color-secondary-400,#94a3b8);font-size:.72rem;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #crm-cash-control-module .cash-dashboard-section{overflow:hidden}
       #crm-cash-control-module .cash-list{overflow:hidden}
@@ -2117,20 +2117,20 @@
       #crm-cash-control-module .cash-form-buttons .cash-button{flex:1}
       #crm-cash-control-module .cash-total-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.5rem;padding:1rem 1rem 0}
       #crm-cash-control-module .cash-total-strip span{display:grid;gap:.15rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:var(--color-surface-50,#f8fafc);padding:.55rem .65rem;min-width:0}
-      #crm-cash-control-module .cash-total-strip small{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:900;text-transform:uppercase}
-      #crm-cash-control-module .cash-total-strip strong{color:var(--color-secondary-900,#0f172a);font-size:.9rem;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      #crm-cash-control-module .cash-total-strip small{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:600;text-transform:uppercase}
+      #crm-cash-control-module .cash-total-strip strong{color:var(--color-secondary-900,#0f172a);font-size:.9rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #crm-cash-control-module .cash-count{overflow:hidden}
       #crm-cash-control-module .cash-count-summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.5rem;padding:1rem 1rem 0}
       #crm-cash-control-module .cash-count-summary span{display:grid;gap:.15rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:var(--color-surface-50,#f8fafc);padding:.55rem .65rem;min-width:0}
-      #crm-cash-control-module .cash-count-summary small{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:900;text-transform:uppercase}
-      #crm-cash-control-module .cash-count-summary strong{color:var(--color-secondary-900,#0f172a);font-size:.9rem;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      #crm-cash-control-module .cash-count-summary small{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:600;text-transform:uppercase}
+      #crm-cash-control-module .cash-count-summary strong{color:var(--color-secondary-900,#0f172a);font-size:.9rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #crm-cash-control-module .cash-count-table{display:grid;gap:.35rem;padding:1rem}
       #crm-cash-control-module .cash-count-head,#crm-cash-control-module .cash-count-row{display:grid;grid-template-columns:minmax(7rem,1fr) 5.5rem 5.5rem 6.5rem;gap:.45rem;align-items:center}
-      #crm-cash-control-module .cash-count-head span{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:900;text-transform:uppercase}
+      #crm-cash-control-module .cash-count-head span{color:var(--color-secondary-500,#64748b);font-size:.68rem;font-weight:600;text-transform:uppercase}
       #crm-cash-control-module .cash-count-row{border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;padding:.4rem}
-      #crm-cash-control-module .cash-count-row strong{display:block;color:var(--color-secondary-800,#1e293b);font-size:.78rem;font-weight:900}
+      #crm-cash-control-module .cash-count-row strong{display:block;color:var(--color-secondary-800,#1e293b);font-size:.78rem;font-weight:600}
       #crm-cash-control-module .cash-count-row input{min-height:2.1rem;text-align:center;padding:.35rem .4rem}
-      #crm-cash-control-module .cash-count-row > span{justify-self:end;color:var(--color-secondary-900,#0f172a);font-size:.78rem;font-weight:900}
+      #crm-cash-control-module .cash-count-row > span{justify-self:end;color:var(--color-secondary-900,#0f172a);font-size:.78rem;font-weight:600}
       #crm-cash-control-module .cash-bank-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;padding:0 1rem 1rem}
       #crm-cash-control-module .cash-check-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.55rem;padding:1rem}
       #crm-cash-control-module .cash-check{display:grid;gap:.18rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;padding:.58rem .65rem;min-width:0}
@@ -2143,10 +2143,10 @@
       #crm-cash-control-module .cash-check.is-error strong{color:#b91c1c}
       #crm-cash-control-module .cash-check.is-waiting{background:var(--color-surface-50,#f8fafc)}
       #crm-cash-control-module .cash-manual-totals{margin:0 1rem;border:1px dashed var(--color-surface-300,#cbd5e1);border-radius:.5rem;background:var(--color-surface-50,#f8fafc)}
-      #crm-cash-control-module .cash-manual-totals summary{cursor:pointer;padding:.75rem .8rem;color:var(--color-secondary-600,#475569);font-size:.82rem;font-weight:900}
+      #crm-cash-control-module .cash-manual-totals summary{cursor:pointer;padding:.75rem .8rem;color:var(--color-secondary-600,#475569);font-size:.82rem;font-weight:600}
       #crm-cash-control-module .cash-manual-totals .cash-grid{padding:.2rem .8rem .8rem}
       #crm-cash-control-module .cash-field{display:grid;gap:.35rem;min-width:0}
-      #crm-cash-control-module .cash-field span{color:var(--color-secondary-600,#475569);font-size:.76rem;font-weight:900}
+      #crm-cash-control-module .cash-field span{color:var(--color-secondary-600,#475569);font-size:.76rem;font-weight:600}
       #crm-cash-control-module .cash-field.is-valid input{border-color:#22c55e;background:#f0fdf4}
       #crm-cash-control-module .cash-field.is-invalid input{border-color:#ef4444;background:#fef2f2}
       #crm-cash-control-module .cash-field-full{padding:0 1rem}
@@ -2162,9 +2162,9 @@
       #crm-cash-control-module .cash-table{width:100%;border-collapse:collapse;min-width:52rem}
       #crm-cash-control-module .cash-receipt-table{min-width:64rem}
       #crm-cash-control-module th,#crm-cash-control-module td{border-bottom:1px solid var(--color-surface-200,#e2e8f0);padding:.72rem .8rem;text-align:left;font-size:.82rem;vertical-align:middle}
-      #crm-cash-control-module th{background:var(--color-surface-50,#f8fafc);color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:900;text-transform:uppercase}
+      #crm-cash-control-module th{background:var(--color-surface-50,#f8fafc);color:var(--color-secondary-500,#64748b);font-size:.72rem;font-weight:600;text-transform:uppercase}
       #crm-cash-control-module td{color:var(--color-secondary-800,#1e293b);font-weight:750}
-      #crm-cash-control-module td a{color:rgb(var(--theme-primary));font-weight:900;text-decoration:none}
+      #crm-cash-control-module td a{color:rgb(var(--theme-primary));font-weight:600;text-decoration:none}
       #crm-cash-control-module .cash-row-actions{display:flex;justify-content:flex-end;gap:.4rem}
       #crm-cash-control-module .cash-row-ok td:first-child{box-shadow:inset 3px 0 #16a34a}
       #crm-cash-control-module .cash-row-error td:first-child{box-shadow:inset 3px 0 #dc2626}
@@ -2172,7 +2172,7 @@
       #crm-cash-control-module .cash-positive{color:#15803d}
       #crm-cash-control-module .cash-muted{color:var(--color-secondary-400,#94a3b8);text-align:center}
       #crm-cash-control-module .cash-mini-button.is-danger:hover{border-color:#fecaca;color:#b91c1c;background:#fff7f7}
-      #crm-cash-control-module .cash-status-pill{display:inline-flex;align-items:center;border-radius:999px;background:color-mix(in srgb,var(--cash-pill,#64748b) 12%,white);color:var(--cash-pill,#64748b);padding:.25rem .48rem;font-size:.72rem;font-weight:900}
+      #crm-cash-control-module .cash-status-pill{display:inline-flex;align-items:center;border-radius:999px;background:color-mix(in srgb,var(--cash-pill,#64748b) 12%,white);color:var(--cash-pill,#64748b);padding:.25rem .48rem;font-size:.72rem;font-weight:600}
       #crm-cash-control-module .cash-modal-backdrop{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(15,23,42,.45);padding:1rem}
       #crm-cash-control-module .cash-modal{width:min(100%,34rem);max-height:min(90vh,44rem);overflow:auto;border-radius:.75rem;background:#fff;box-shadow:0 24px 80px rgba(15,23,42,.25)}
       #crm-cash-control-module .cash-modal-wide{width:min(100%,56rem)}

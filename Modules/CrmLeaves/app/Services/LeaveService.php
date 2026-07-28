@@ -48,7 +48,7 @@ class LeaveService
     {
         $actor = CrmUser::query()
             ->with(['modules:id,slug,active', 'permissions:id,name,label', 'sites:id'])
-            ->where('user_id', $user->id)
+            ->forAccount($user)
             ->where('active', true)
             ->first();
 

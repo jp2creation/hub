@@ -58,7 +58,8 @@ class CrmAccountSettingsTest extends TestCase
             ->assertJsonPath('profile.displayName', 'Jean-Philippe Martin')
             ->assertJsonPath('profile.bio', 'Administrateur HUB Martin Sols');
 
-        $this->assertDatabaseHas('crm_users', [
+        $this->assertDatabaseHas('users', [
+            'id' => $account->id,
             'first_name' => 'Jean-Philippe',
             'last_name' => 'Martin',
             'email' => 'peinture.pau@martinsols.com',
@@ -96,8 +97,8 @@ class CrmAccountSettingsTest extends TestCase
             ->assertOk()
             ->assertHeader('X-Content-Type-Options', 'nosniff');
 
-        $this->assertDatabaseHas('crm_users', [
-            'user_id' => $account->id,
+        $this->assertDatabaseHas('users', [
+            'id' => $account->id,
             'photo_url' => $photoUrl,
         ]);
     }

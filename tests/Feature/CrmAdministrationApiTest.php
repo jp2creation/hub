@@ -82,7 +82,7 @@ class CrmAdministrationApiTest extends TestCase
         $this->assertStringStartsWith('/uploads/assets/uploads/profiles/', $profile['photoUrl']);
         $this->assertStringEndsWith('.webp', $profile['photoUrl']);
 
-        $this->assertDatabaseHas('crm_users', [
+        $this->assertDatabaseHas('users', [
             'id' => $crmUser->id,
             'name' => 'Jean-Philippe Martin',
             'first_name' => 'Jean-Philippe',
@@ -134,7 +134,7 @@ class CrmAdministrationApiTest extends TestCase
             ->assertJsonPath('profile.bio', 'Equipe Palissy')
             ->assertJsonPath('profile.canEditIdentity', false);
 
-        $this->assertDatabaseHas('crm_users', [
+        $this->assertDatabaseHas('users', [
             'id' => $crmUser->id,
             'name' => 'Marie Durand',
             'first_name' => 'Marie',
@@ -571,7 +571,7 @@ class CrmAdministrationApiTest extends TestCase
             ->assertJsonPath('ok', true)
             ->json('id');
 
-        $this->assertDatabaseHas('crm_users', [
+        $this->assertDatabaseHas('users', [
             'id' => $userId,
             'name' => 'Compte bloque',
             'role' => 'blocked',

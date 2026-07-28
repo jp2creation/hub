@@ -579,17 +579,17 @@ class CrmSecurityTest extends TestCase
 
         $crmUserResource = (string) file_get_contents(base_path('Modules/CrmAdministration/app/Filament/Resources/CrmUsers/CrmUserResource.php'));
 
-        $this->assertStringContainsString("Action::make('createLaravelAccount')", $crmUserResource);
-        $this->assertStringContainsString("->authorize('update')", $crmUserResource);
+        $this->assertStringNotContainsString("Action::make('createLaravelAccount')", $crmUserResource);
         $this->assertStringContainsString('EditAction::make()', $crmUserResource);
         $this->assertStringContainsString('->slideOver()', $crmUserResource);
         $this->assertStringContainsString('->modalWidth(Width::SevenExtraLarge)', $crmUserResource);
         $this->assertStringContainsString('->stickyModalFooter()', $crmUserResource);
         $this->assertSame(3, substr_count($crmUserResource, 'crm-scrollable-checkbox-list-options'));
+        $this->assertStringContainsString("Select::make('roles')", $crmUserResource);
+        $this->assertStringContainsString("->relationship('roles', 'name')", $crmUserResource);
         $this->assertStringContainsString("TextInput::make('password')", $crmUserResource);
-        $this->assertStringContainsString('AdminAccountService::class', $crmUserResource);
+        $this->assertStringContainsString("->required(fn (string \$operation): bool => \$operation === 'create')", $crmUserResource);
         $this->assertStringContainsString('->mutateDataUsing(function (array $data): array', $crmUserResource);
-        $this->assertStringContainsString('->after(function (EditAction $action, CrmUser $record): void', $crmUserResource);
 
         $manageCrmUsersPage = (string) file_get_contents(base_path('Modules/CrmAdministration/app/Filament/Resources/CrmUsers/Pages/ManageCrmUsers.php'));
 
@@ -610,7 +610,7 @@ class CrmSecurityTest extends TestCase
         $this->assertStringContainsString('function canManageUsers()', $administrationScript);
         $this->assertStringContainsString('name="password"', $administrationScript);
         $this->assertStringContainsString('passwordConfirmation', $administrationScript);
-        $this->assertStringContainsString('user.hasAccount', $administrationScript);
+        $this->assertStringNotContainsString('Compte Laravel non rattaché', $administrationScript);
     }
 
     public function test_crm_api_controllers_delegate_business_authorization_to_services_or_policies(): void

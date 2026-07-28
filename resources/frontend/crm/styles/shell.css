@@ -1029,7 +1029,7 @@ body.crm-mobile-fallback-nav-browser .crm-mobile-fallback-panel-header {
   padding: 0 10px;
   color: rgb(100 116 139);
   font-size: 12px;
-  font-weight: 900;
+  font-weight:600;
   text-transform: uppercase;
   letter-spacing: 0;
 }
@@ -1297,7 +1297,7 @@ body.crm-mobile-app-settings-open {
   background: rgb(241 245 249);
   color: rgb(93 114 135);
   font-size: 0.72rem;
-  font-weight: 900;
+  font-weight:600;
   line-height: 1;
   white-space: nowrap;
 }
@@ -1323,7 +1323,7 @@ body.crm-mobile-app-settings-open {
   color: #fff;
   font: inherit;
   font-size: 0.76rem;
-  font-weight: 900;
+  font-weight:600;
   white-space: nowrap;
 }
 
@@ -1361,7 +1361,7 @@ body.crm-mobile-app-settings-open {
 .crm-mobile-app-settings-methods strong {
   color: rgb(29 53 79);
   font-size: 0.85rem;
-  font-weight: 900;
+  font-weight:600;
   line-height: 1.2;
 }
 
@@ -1408,7 +1408,7 @@ body.crm-mobile-app-settings-open {
   white-space: nowrap;
   color: rgb(29 53 79);
   font-size: 0.98rem;
-  font-weight: 900;
+  font-weight:600;
   line-height: 1.2;
 }
 

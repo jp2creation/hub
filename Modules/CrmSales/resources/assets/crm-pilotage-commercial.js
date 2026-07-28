@@ -505,9 +505,9 @@
       #crm-sales-module{--sales-primary:rgb(var(--theme-primary));--sales-ink:#1d334a;--sales-muted:#718197;--sales-line:#e6ebf2;--sales-soft:#f8fafc;display:block}
       #crm-sales-module .sales-page{display:grid;gap:1rem;color:var(--sales-ink);font-family:var(--font-sans,Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)}
       #crm-sales-module .sales-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
-      #crm-sales-module .sales-eyebrow{display:block;margin-bottom:.35rem;color:var(--sales-primary);font-size:.72rem;font-weight:900;text-transform:uppercase}
-      #crm-sales-module h1{margin:0;font-size:1.8rem;line-height:1.1;font-weight:900;letter-spacing:0}
-      #crm-sales-module h2{margin:0;font-size:1rem;line-height:1.2;font-weight:900;letter-spacing:0}
+      #crm-sales-module .sales-eyebrow{display:block;margin-bottom:.35rem;color:var(--sales-primary);font-size:.72rem;font-weight:600;text-transform:uppercase}
+      #crm-sales-module h1{margin:0;font-size:1.8rem;line-height:1.1;font-weight:600;letter-spacing:0}
+      #crm-sales-module h2{margin:0;font-size:1rem;line-height:1.2;font-weight:600;letter-spacing:0}
       #crm-sales-module p{margin:.35rem 0 0;color:var(--sales-muted);font-size:.92rem;font-weight:650}
       #crm-sales-module .sales-actions{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:flex-end}
       #crm-sales-module .sales-button{min-height:2.35rem;border:1px solid var(--sales-line);border-radius:.5rem;background:#fff;color:var(--sales-ink);display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.55rem .85rem;font-size:.82rem;font-weight:850;box-shadow:0 10px 24px rgba(29,51,74,.05);cursor:pointer}
@@ -516,12 +516,12 @@
       #crm-sales-module .sales-card{border:1px solid var(--sales-line);border-radius:.75rem;background:#fff;box-shadow:0 18px 44px rgba(29,51,74,.07)}
       #crm-sales-module .sales-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;padding:.8rem}
       #crm-sales-module label{display:grid;gap:.35rem;min-width:0}
-      #crm-sales-module label span{font-size:.72rem;font-weight:900;text-transform:uppercase;color:#7b8a9c}
+      #crm-sales-module label span{font-size:.72rem;font-weight:600;text-transform:uppercase;color:#7b8a9c}
       #crm-sales-module input,#crm-sales-module select,#crm-sales-module textarea{width:100%;min-width:0;border:1px solid var(--sales-line);border-radius:.55rem;background:#fff;color:var(--sales-ink);font:inherit;font-weight:760;padding:.72rem .8rem;outline:none}
       #crm-sales-module input:focus,#crm-sales-module select:focus,#crm-sales-module textarea:focus{border-color:rgb(var(--theme-primary) / .65);box-shadow:0 0 0 3px rgb(var(--theme-primary) / .12)}
       #crm-sales-module .sales-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem}
       #crm-sales-module .sales-stat{border:1px solid var(--sales-line);border-radius:.75rem;background:#fff;padding:.95rem;box-shadow:0 18px 44px rgba(29,51,74,.07);min-height:6.7rem}
-      #crm-sales-module .sales-stat span{display:block;color:#7b8a9c;font-size:.72rem;font-weight:900;text-transform:uppercase}
+      #crm-sales-module .sales-stat span{display:block;color:#7b8a9c;font-size:.72rem;font-weight:600;text-transform:uppercase}
       #crm-sales-module .sales-stat strong{display:block;margin-top:.25rem;font-size:1.45rem;line-height:1.05;font-weight:600;letter-spacing:0}
       #crm-sales-module .sales-stat small{display:block;margin-top:.45rem;color:var(--sales-muted);font-size:.72rem;font-weight:750}
       #crm-sales-module .sales-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.85rem}
@@ -544,7 +544,7 @@
       #crm-sales-module .sales-objective span,#crm-sales-module .sales-objective small{color:var(--sales-muted);font-weight:800}
       #crm-sales-module .sales-commission{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.75rem;border:1px solid var(--sales-line);border-radius:.65rem;background:#fff}
       #crm-sales-module .sales-commission-side{display:grid;justify-items:end;gap:.45rem}
-      #crm-sales-module .sales-commission button{border:0;border-radius:.5rem;background:var(--sales-primary);color:#fff;font-weight:900;padding:.5rem .75rem;cursor:pointer}
+      #crm-sales-module .sales-commission button{border:0;border-radius:.5rem;background:var(--sales-primary);color:#fff;font-weight:600;padding:.5rem .75rem;cursor:pointer}
       #crm-sales-module .sales-status{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.25rem .55rem;background:#eef2f7;color:#516174;font-style:normal;font-size:.72rem;font-weight:600}
       #crm-sales-module .sales-status.is-paid,#crm-sales-module .sales-status.is-acquired{background:#dcfce7;color:#15803d}
       #crm-sales-module .sales-status.is-pending{background:#fef3c7;color:#a16207}

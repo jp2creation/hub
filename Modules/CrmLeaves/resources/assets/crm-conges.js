@@ -1100,7 +1100,7 @@
             .pdf-period { margin:0; color:#254236; font-size:10px; font-weight:800; text-align:center; }
             .pdf-period strong { color:#16695c; }
             .pdf-sheet { overflow:hidden; border:1px solid #dfe7e1; border-radius:5px; background:#fff; }
-            .pdf-month-band { margin-left:58mm; background:#16695c; color:#fff; padding:4px 6px; font-size:11px; font-weight:900; text-align:center; text-transform:lowercase; }
+            .pdf-month-band { margin-left:58mm; background:#16695c; color:#fff; padding:4px 6px; font-size:11px; font-weight:600; text-align:center; text-transform:lowercase; }
             .pdf-planning-table { width:100%; table-layout:fixed; border-collapse:collapse; }
             .pdf-col-employee { width:44mm; }
             .pdf-col-total { width:14mm; }
@@ -1109,8 +1109,8 @@
             .pdf-planning-table td { border:1px solid #e6ebe7; padding:0; text-align:center; vertical-align:middle; }
             .pdf-employee-head { background:#fff8ed; color:#254236; font-size:8px; font-weight:600; text-align:left; text-transform:uppercase; }
             .pdf-total-head { background:#eaf2ef; color:#254236; font-size:8px; font-weight:600; text-transform:uppercase; }
-            .pdf-weekday-head { height:13px; background:#f8fafc; color:#64748b; font-size:6.4px; font-weight:900; text-transform:lowercase; }
-            .pdf-day-head { height:15px; background:#fff; color:#172033; font-size:8px; font-weight:900; }
+            .pdf-weekday-head { height:13px; background:#f8fafc; color:#64748b; font-size:6.4px; font-weight:600; text-transform:lowercase; }
+            .pdf-day-head { height:15px; background:#fff; color:#172033; font-size:8px; font-weight:600; }
             .pdf-weekday-head.is-weekend,
             .pdf-day-head.is-weekend,
             .pdf-date-cell.is-weekend { background:#f6f7f8; color:#94a3b8; }
@@ -1122,7 +1122,7 @@
             .pdf-absence-chip + .pdf-absence-chip { margin-top:1px; }
             .pdf-absence-chip small { font-size:5.5px; font-weight:600; opacity:.85; }
             .pdf-absence-chip.is-pending { border-style:dashed; background:#fff; }
-            .pdf-more { display:block; color:#64748b; font-size:6px; font-weight:900; line-height:1; }
+            .pdf-more { display:block; color:#64748b; font-size:6px; font-weight:600; line-height:1; }
             .pdf-legend { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; color:#334155; font-size:8px; font-weight:800; }
             .pdf-legend strong { margin-right:2px; color:#172033; font-size:8px; text-transform:uppercase; }
             .pdf-legend span { display:inline-flex; align-items:center; gap:4px; }
@@ -1520,7 +1520,7 @@
       #crm-leaves-module .leaves-page { display:grid; gap:1.5rem; }
       #crm-leaves-module .leaves-header { display:flex; flex-direction:column; gap:1rem; }
       #crm-leaves-module .leaves-kicker { color:rgb(var(--theme-primary)); font-size:.72rem; font-weight:800; text-transform:uppercase; }
-      #crm-leaves-module .leaves-title { margin:.25rem 0 0; color:var(--color-secondary-900,#0f172a); font-size:2rem; font-weight:900; line-height:1.12; letter-spacing:0; }
+      #crm-leaves-module .leaves-title { margin:.25rem 0 0; color:var(--color-secondary-900,#0f172a); font-size:2rem; font-weight:600; line-height:1.12; letter-spacing:0; }
       #crm-leaves-module .leaves-subtitle { margin:.35rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.92rem; }
       #crm-leaves-module .leaves-header-actions { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
       #crm-leaves-module .leave-hero { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:1rem; background:linear-gradient(135deg,#fff 0%,#fff7fb 48%,#f8fafc 100%); padding:1.2rem; box-shadow:0 18px 45px rgba(15,23,42,.06); }
@@ -1533,7 +1533,7 @@
       #crm-leaves-module .leave-view-tab span { display:block; margin-top:.18rem; overflow:hidden; color:inherit; font-size:.7rem; font-weight:750; opacity:.72; text-overflow:ellipsis; white-space:nowrap; }
       #crm-leaves-module .leave-filter-card { display:grid; grid-template-columns:minmax(14rem,1.5fr) repeat(3,minmax(9rem,1fr)) auto; align-items:end; gap:.7rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:1rem; background:#fff; padding:.85rem; box-shadow:0 12px 32px rgba(15,23,42,.05); }
       #crm-leaves-module .leave-filter-card label { display:grid; gap:.32rem; min-width:0; }
-      #crm-leaves-module .leave-filter-card label span { color:var(--color-secondary-500,#64748b); font-size:.68rem; font-weight:900; text-transform:uppercase; }
+      #crm-leaves-module .leave-filter-card label span { color:var(--color-secondary-500,#64748b); font-size:.68rem; font-weight:600; text-transform:uppercase; }
       #crm-leaves-module .leave-filter-card select,
       #crm-leaves-module .leave-search-field input { min-height:2.6rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.8rem; background:#f8fafc; color:var(--color-secondary-900,#0f172a); padding:.55rem .7rem; font-size:.84rem; font-weight:780; outline:none; }
       #crm-leaves-module .leave-filter-card select:focus,
@@ -1556,8 +1556,8 @@
       #crm-leaves-module .leave-type-row { display:grid; grid-template-columns:.7rem minmax(0,1fr) auto; align-items:center; gap:.5rem; min-height:2.35rem; border:1px solid transparent; border-radius:.75rem; background:#f8fafc; color:var(--color-secondary-800,#1e293b); padding:.5rem .55rem; text-align:left; }
       #crm-leaves-module .leave-type-row:hover { border-color:color-mix(in srgb,var(--type-color,#38bdf8) 50%,#e2e8f0); background:color-mix(in srgb,var(--type-color,#38bdf8) 8%,white); }
       #crm-leaves-module .leave-type-row span { width:.62rem; height:.62rem; border-radius:999px; background:var(--type-color,#38bdf8); }
-      #crm-leaves-module .leave-type-row strong { min-width:0; overflow:hidden; font-size:.8rem; font-weight:900; text-overflow:ellipsis; white-space:nowrap; }
-      #crm-leaves-module .leave-type-row em { color:var(--color-secondary-500,#64748b); font-size:.72rem; font-style:normal; font-weight:900; white-space:nowrap; }
+      #crm-leaves-module .leave-type-row strong { min-width:0; overflow:hidden; font-size:.8rem; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
+      #crm-leaves-module .leave-type-row em { color:var(--color-secondary-500,#64748b); font-size:.72rem; font-style:normal; font-weight:600; white-space:nowrap; }
       #crm-leaves-module .leaves-button { display:inline-flex; min-height:2.35rem; align-items:center; justify-content:center; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.55rem; background:#fff; color:var(--color-secondary-700,#334155); padding:.55rem .75rem; font-size:.84rem; font-weight:800; line-height:1; text-decoration:none; }
       #crm-leaves-module .leaves-button:hover { color:rgb(var(--theme-primary)); border-color:rgb(var(--theme-primary) / .45); background:rgb(var(--theme-primary) / .04); }
       #crm-leaves-module .leaves-button-primary { border-color:rgb(var(--theme-primary)); background:rgb(var(--theme-primary)); color:#fff; }
@@ -1571,7 +1571,7 @@
       #crm-leaves-module .leave-summary-card { display:grid; grid-template-columns:2.55rem minmax(0,1fr); align-items:center; gap:.75rem; min-width:0; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.75rem; background:#fff; padding:.9rem; }
       #crm-leaves-module .leave-summary-icon { display:grid; place-items:center; width:2.55rem; height:2.55rem; border-radius:.55rem; background:color-mix(in srgb,var(--leave-summary-color,var(--theme-primary-color)) 14%,white); color:var(--leave-summary-color,var(--theme-primary-color)); }
       #crm-leaves-module .leave-summary-icon-svg { width:1.1rem; height:1.1rem; fill:none; stroke:currentColor; stroke-width:2.15; stroke-linecap:round; stroke-linejoin:round; }
-      #crm-leaves-module .leave-summary-card small { display:block; color:var(--color-secondary-500,#64748b); font-size:.73rem; font-weight:900; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      #crm-leaves-module .leave-summary-card small { display:block; color:var(--color-secondary-500,#64748b); font-size:.73rem; font-weight:600; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       #crm-leaves-module .leave-summary-card strong { display:block; margin:.18rem 0; color:var(--color-secondary-900,#0f172a); font-size:1.2rem; font-weight:600; line-height:1.08; letter-spacing:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
       #crm-leaves-module .leave-summary-card em { display:block; color:var(--color-secondary-400,#94a3b8); font-size:.72rem; font-style:normal; font-weight:750; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       #crm-leaves-module .leave-workflow-card { overflow:hidden; }
@@ -1581,9 +1581,9 @@
       #crm-leaves-module .leave-request-main { display:grid; min-width:0; grid-template-columns:.9rem minmax(0,1fr) auto; align-items:center; gap:.55rem; border:0; background:transparent; color:inherit; padding:.15rem; text-align:left; }
       #crm-leaves-module .leave-request-dot { width:.72rem; height:.72rem; border-radius:999px; background:var(--request-color,var(--theme-primary-color)); box-shadow:0 0 0 .22rem color-mix(in srgb,var(--request-color,var(--theme-primary-color)) 14%,white); }
       #crm-leaves-module .leave-request-text { display:block; min-width:0; }
-      #crm-leaves-module .leave-request-text strong { display:block; overflow:hidden; color:var(--color-secondary-900,#0f172a); font-size:.86rem; font-weight:900; text-overflow:ellipsis; white-space:nowrap; }
+      #crm-leaves-module .leave-request-text strong { display:block; overflow:hidden; color:var(--color-secondary-900,#0f172a); font-size:.86rem; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
       #crm-leaves-module .leave-request-text small { display:block; margin-top:.12rem; overflow:hidden; color:var(--color-secondary-500,#64748b); font-size:.73rem; font-weight:750; text-overflow:ellipsis; white-space:nowrap; }
-      #crm-leaves-module .leave-status-pill { display:inline-flex; min-height:1.65rem; align-items:center; justify-content:center; border-radius:999px; background:var(--color-surface-100,#f1f5f9); color:var(--color-secondary-600,#475569); padding:.25rem .55rem; font-size:.7rem; font-weight:900; white-space:nowrap; }
+      #crm-leaves-module .leave-status-pill { display:inline-flex; min-height:1.65rem; align-items:center; justify-content:center; border-radius:999px; background:var(--color-surface-100,#f1f5f9); color:var(--color-secondary-600,#475569); padding:.25rem .55rem; font-size:.7rem; font-weight:600; white-space:nowrap; }
       #crm-leaves-module .leave-status-pill.is-approved { background:#dcfce7; color:#166534; }
       #crm-leaves-module .leave-status-pill.is-pending { background:#fff7ed; color:#c2410c; }
       #crm-leaves-module .leave-status-pill.is-planned { background:#eff6ff; color:#1d4ed8; }
@@ -1604,8 +1604,8 @@
       #crm-leaves-module .pdf-planning-table td { border:1px solid #e6ebe7; padding:0; text-align:center; vertical-align:middle; }
       #crm-leaves-module .pdf-employee-head,
       #crm-leaves-module .pdf-total-head { background:#fff8ed; color:#254236; font-size:.62rem; font-weight:600; text-transform:uppercase; }
-      #crm-leaves-module .pdf-weekday-head { height:1.35rem; background:#f8fafc; color:#64748b; font-size:.58rem; font-weight:900; text-transform:lowercase; }
-      #crm-leaves-module .pdf-day-head { height:1.5rem; background:#fff; color:#172033; font-size:.7rem; font-weight:900; }
+      #crm-leaves-module .pdf-weekday-head { height:1.35rem; background:#f8fafc; color:#64748b; font-size:.58rem; font-weight:600; text-transform:lowercase; }
+      #crm-leaves-module .pdf-day-head { height:1.5rem; background:#fff; color:#172033; font-size:.7rem; font-weight:600; }
       #crm-leaves-module .pdf-weekday-head.is-weekend,
       #crm-leaves-module .pdf-day-head.is-weekend,
       #crm-leaves-module .pdf-date-cell.is-weekend { background:#f6f7f8; color:#94a3b8; }
@@ -1617,7 +1617,7 @@
       #crm-leaves-module .pdf-absence-chip + .pdf-absence-chip { margin-top:.08rem; }
       #crm-leaves-module .pdf-absence-chip small { font-size:.48rem; font-weight:600; opacity:.85; }
       #crm-leaves-module .pdf-absence-chip.is-pending { border-style:dashed; background:#fff; }
-      #crm-leaves-module .pdf-more { display:block; color:#64748b; font-size:.52rem; font-weight:900; line-height:1; }
+      #crm-leaves-module .pdf-more { display:block; color:#64748b; font-size:.52rem; font-weight:600; line-height:1; }
       #crm-leaves-module .pdf-legend { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem .7rem; border-top:1px solid var(--color-surface-200,#e2e8f0); padding:.8rem 1rem; color:#334155; font-size:.74rem; font-weight:800; }
       #crm-leaves-module .pdf-legend strong { margin-right:.1rem; color:#172033; font-size:.72rem; text-transform:uppercase; }
       #crm-leaves-module .pdf-legend span { display:inline-flex; align-items:center; gap:.32rem; }
@@ -1691,19 +1691,19 @@
       #crm-leaves-module .leave-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; border-bottom:1px solid var(--color-surface-200,#e2e8f0); padding:1rem; }
       #crm-leaves-module .leave-card-title { margin:0; color:var(--color-secondary-900,#0f172a); font-size:1rem; font-weight:850; line-height:1.2; letter-spacing:0; }
       #crm-leaves-module .leave-card-subtitle { margin:.25rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.8rem; font-weight:650; }
-      #crm-leaves-module .leave-add-day { flex:0 0 auto; border:1px solid rgb(var(--theme-primary)); border-radius:.55rem; background:rgb(var(--theme-primary)); color:#fff; padding:.55rem .75rem; font-size:.78rem; font-weight:900; }
+      #crm-leaves-module .leave-add-day { flex:0 0 auto; border:1px solid rgb(var(--theme-primary)); border-radius:.55rem; background:rgb(var(--theme-primary)); color:#fff; padding:.55rem .75rem; font-size:.78rem; font-weight:600; }
       #crm-leaves-module .leave-day-list { display:grid; gap:.55rem; padding:1rem; }
       #crm-leaves-module .leave-day-row { display:grid; grid-template-columns:1rem minmax(0,1fr) auto; align-items:center; gap:.55rem; min-height:2.5rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.55rem; background:#fff; padding:.55rem .65rem; color:var(--color-secondary-900,#0f172a); text-align:left; }
       #crm-leaves-module .leave-day-row:hover { border-color:rgb(var(--theme-primary) / .45); background:rgb(var(--theme-primary) / .04); }
       #crm-leaves-module .leave-day-dot { width:.72rem; height:.72rem; border-radius:999px; background:var(--day-color); }
       #crm-leaves-module .leave-day-name { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.86rem; font-weight:850; }
       #crm-leaves-module .leave-day-meta { display:block; margin-top:.12rem; color:var(--color-secondary-500,#64748b); font-size:.72rem; font-weight:700; }
-      #crm-leaves-module .leave-day-edit { color:rgb(var(--theme-primary)); font-size:.72rem; font-weight:900; }
+      #crm-leaves-module .leave-day-edit { color:rgb(var(--theme-primary)); font-size:.72rem; font-weight:600; }
       #crm-leaves-module .leave-day-empty { border:1px dashed var(--color-surface-300,#cbd5e1); border-radius:.55rem; padding:1rem; color:var(--color-secondary-500,#64748b); font-size:.85rem; font-weight:700; text-align:center; }
       #crm-leaves-module .leave-users-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; border-bottom:1px solid var(--color-surface-200,#e2e8f0); padding:1rem; }
       #crm-leaves-module .leave-users-title { margin:0; color:var(--color-secondary-900,#0f172a); font-size:1rem; font-weight:850; line-height:1.2; letter-spacing:0; }
       #crm-leaves-module .leave-users-site { margin:.25rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.8rem; font-weight:650; }
-      #crm-leaves-module .leave-users-count { display:inline-flex; align-items:center; border-radius:999px; background:rgb(var(--theme-primary) / .08); color:rgb(var(--theme-primary)); padding:.25rem .55rem; font-size:.72rem; font-weight:900; }
+      #crm-leaves-module .leave-users-count { display:inline-flex; align-items:center; border-radius:999px; background:rgb(var(--theme-primary) / .08); color:rgb(var(--theme-primary)); padding:.25rem .55rem; font-size:.72rem; font-weight:600; }
       #crm-leaves-module .leave-users-grid { display:grid; grid-template-columns:1fr; gap:.55rem; padding:1rem; }
       #crm-leaves-module .leave-user-row { display:grid; grid-template-columns:1rem minmax(0,1fr) auto; align-items:center; gap:.5rem; min-height:2.35rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.55rem; background:#fff; padding:.48rem .6rem; color:var(--color-secondary-900,#0f172a); text-align:left; }
       #crm-leaves-module .leave-user-row:hover, #crm-leaves-module .leave-user-row.is-active { border-color:rgb(var(--theme-primary) / .45); background:rgb(var(--theme-primary) / .05); }
@@ -1742,10 +1742,10 @@
       #crm-leaves-module .leaves-export-member-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem; max-height:18rem; overflow:auto; padding:.1rem; }
       #crm-leaves-module .leaves-export-member { display:grid; grid-template-columns:1rem minmax(0,1fr); align-items:center; gap:.55rem; min-width:0; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.75rem; background:#fff; padding:.65rem; }
       #crm-leaves-module .leaves-export-member input { width:1rem; min-height:1rem; accent-color:rgb(var(--theme-primary)); }
-      #crm-leaves-module .leaves-export-member strong { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--color-secondary-900,#0f172a); font-size:.82rem; font-weight:900; }
+      #crm-leaves-module .leaves-export-member strong { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--color-secondary-900,#0f172a); font-size:.82rem; font-weight:600; }
       #crm-leaves-module .leaves-export-member small { display:block; margin-top:.12rem; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--color-secondary-500,#64748b); font-size:.68rem; font-weight:750; }
       #crm-leaves-module .leave-person-card { display:flex; min-height:2.8rem; align-items:center; gap:.65rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.75rem; background:var(--color-surface-50,#f8fafc); padding:.7rem .8rem; }
-      #crm-leaves-module .leave-person-card strong { min-width:0; flex:1 1 auto; overflow:hidden; color:var(--color-secondary-900,#0f172a); font-size:.88rem; font-weight:900; text-overflow:ellipsis; white-space:nowrap; }
+      #crm-leaves-module .leave-person-card strong { min-width:0; flex:1 1 auto; overflow:hidden; color:var(--color-secondary-900,#0f172a); font-size:.88rem; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
       #crm-leaves-module label { color:#475569; font-size:.76rem; font-weight:800; }
       #crm-leaves-module input, #crm-leaves-module select, #crm-leaves-module textarea { min-height:2.4rem; width:100%; border:1px solid #cbd5e1; border-radius:.55rem; background:#fff; color:#0f172a; padding:.5rem .65rem; font-size:.85rem; }
       #crm-leaves-module input:disabled, #crm-leaves-module select:disabled, #crm-leaves-module textarea:disabled { background:var(--color-surface-50,#f8fafc); color:var(--color-secondary-500,#64748b); }
@@ -1809,7 +1809,7 @@
       #crm-leaves-module .leave-month-title {
         color:var(--color-secondary-900,#0f172a);
         font-size:1.55rem;
-        font-weight:900;
+        font-weight:600;
         line-height:1.1;
         text-align:center;
       }
@@ -1845,7 +1845,7 @@
         background:var(--color-surface-50,#f8fafc);
         color:var(--color-secondary-500,#64748b);
         font-size:.86rem;
-        font-weight:900;
+        font-weight:600;
       }
       #crm-leaves-module .leave-tab.is-active {
         background:rgb(var(--theme-primary));
@@ -2367,7 +2367,7 @@
         background:transparent;
         color:#4b5563;
         font-size:1.1rem;
-        font-weight:900;
+        font-weight:600;
       }
       #crm-leaves-module .leave-year-nav button:hover {
         background:var(--leave-panel);
@@ -2402,7 +2402,7 @@
         margin:.25rem 0 0;
         color:#172033;
         font-size:1.25rem;
-        font-weight:900;
+        font-weight:600;
         line-height:1.1;
         letter-spacing:0;
       }
@@ -2427,7 +2427,7 @@
         overflow:hidden;
         color:var(--color-secondary-500,#64748b);
         font-size:.73rem;
-        font-weight:900;
+        font-weight:600;
         text-overflow:ellipsis;
         text-transform:uppercase;
         white-space:nowrap;
@@ -2695,7 +2695,7 @@
       #crm-leaves-module .leave-settings-type strong {
         color:#172033;
         font-size:.88rem;
-        font-weight:900;
+        font-weight:600;
         line-height:1.2;
       }
       #crm-leaves-module .leave-settings-type small {
@@ -2808,7 +2808,7 @@
         margin:0;
         color:var(--leave-ink);
         font-size:1.8rem;
-        font-weight:900;
+        font-weight:600;
         line-height:1.1;
         letter-spacing:0;
       }
@@ -2839,7 +2839,7 @@
         color:var(--color-secondary-700,#334155);
         padding:.55rem .82rem;
         font-size:.8rem;
-        font-weight:900;
+        font-weight:600;
         line-height:1;
         white-space:nowrap;
         box-shadow:0 10px 24px rgba(15,23,42,.04);
@@ -3030,7 +3030,7 @@
         overflow:hidden;
         color:var(--color-secondary-500,#64748b);
         font-size:.72rem;
-        font-weight:900;
+        font-weight:600;
         text-overflow:ellipsis;
         text-transform:uppercase;
         white-space:nowrap;

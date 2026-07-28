@@ -316,7 +316,7 @@
         box-shadow: 0 12px 28px rgba(15, 23, 42, .05);
         color: var(--color-secondary-700, #334155);
         font-size: .76rem;
-        font-weight: 900;
+        font-weight:600;
         padding: .45rem .8rem;
         white-space: nowrap;
       }
@@ -368,7 +368,7 @@
         overflow: hidden;
         color: var(--color-secondary-500, #64748b);
         font-size: .68rem;
-        font-weight: 900;
+        font-weight:600;
         line-height: 1.15;
         text-overflow: ellipsis;
         text-transform: uppercase;
@@ -483,7 +483,7 @@
         color: var(--theme-primary-color);
         background: rgb(var(--theme-primary) / .08);
         font-size: .72rem;
-        font-weight: 900;
+        font-weight:600;
       }
 
       .crm-account-role::before {
@@ -542,7 +542,7 @@
 
       .crm-account-section-item strong {
         font-size: .78rem;
-        font-weight: 900;
+        font-weight:600;
       }
 
       .crm-account-section-item small {
@@ -618,7 +618,7 @@
       .crm-account-field label {
         color: var(--color-secondary-700, #334155);
         font-size: .76rem;
-        font-weight: 900;
+        font-weight:600;
       }
 
       .crm-account-field input,

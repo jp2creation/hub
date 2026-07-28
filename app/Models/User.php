@@ -35,8 +35,23 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
+        'phone',
+        'bio',
+        'photo_url',
+        'role',
+        'active',
         'password',
+    ];
+
+    /**
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'role' => 'user',
+        'active' => true,
     ];
 
     /**
@@ -67,7 +82,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function crmUser(): HasOne
     {
-        return $this->hasOne(CrmUser::class, 'user_id');
+        return $this->hasOne(CrmUser::class, 'id', 'id');
     }
 
     /**
@@ -79,6 +94,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return [
             'email_verified_at' => 'datetime',
+            'active' => 'boolean',
             'password' => 'hashed',
         ];
     }

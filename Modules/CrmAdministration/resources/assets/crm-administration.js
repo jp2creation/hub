@@ -76,14 +76,14 @@
       #${rootId} .admin-title h1{margin:0;color:var(--admin-text);font-size:1.8rem;line-height:1.08;font-weight:600;letter-spacing:0}
       #${rootId} .admin-title p{margin:.35rem 0 0;color:var(--admin-muted);font-size:.92rem;font-weight:700}
       #${rootId} .admin-tabs{display:flex;gap:.45rem;flex-wrap:wrap}
-      #${rootId} .admin-tab{border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;padding:.55rem .82rem;color:var(--admin-text);font-size:.8rem;font-weight:900;cursor:pointer}
+      #${rootId} .admin-tab{border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;padding:.55rem .82rem;color:var(--admin-text);font-size:.8rem;font-weight:600;cursor:pointer}
       #${rootId} .admin-tab.is-active{border-color:transparent;background:var(--admin-primary);color:#fff}
       #${rootId} .admin-card{border:1px solid var(--admin-border);border-radius:.6rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #${rootId} .admin-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;border-bottom:1px solid var(--admin-border);padding:.92rem 1rem}
       #${rootId} .admin-card-title{margin:0;color:var(--admin-text);font-size:1rem;font-weight:600}
       #${rootId} .admin-card-subtitle{margin:.18rem 0 0;color:var(--admin-muted);font-size:.78rem;font-weight:750}
       #${rootId} .admin-card-body{display:grid;gap:.85rem;padding:1rem}
-      #${rootId} .admin-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.35rem;border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;padding:.55rem .85rem;color:var(--admin-text);font-size:.82rem;font-weight:900;cursor:pointer;text-decoration:none}
+      #${rootId} .admin-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.35rem;border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;padding:.55rem .85rem;color:var(--admin-text);font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none}
       #${rootId} .admin-button-primary{border-color:transparent;background:var(--admin-primary);color:#fff}
       #${rootId} .admin-button-danger{color:#b91c1c}
       #${rootId} .admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
@@ -101,7 +101,7 @@
       #${rootId} .admin-site-heading{display:flex;align-items:center;gap:.55rem;min-width:0}
       #${rootId} .admin-site-swatch{display:inline-block;width:1rem;height:1rem;flex:0 0 auto;border:1px solid var(--admin-border);border-radius:999px;background:var(--site-color,var(--admin-primary));box-shadow:0 0 0 .18rem color-mix(in srgb,var(--site-color,var(--admin-primary)) 12%,transparent)}
       #${rootId} .admin-site-photo{display:grid;grid-template-columns:6.2rem minmax(0,1fr);align-items:center;gap:.8rem;border:1px solid var(--admin-border);border-radius:.55rem;background:#f8fafc;padding:.7rem}
-      #${rootId} .admin-site-photo-preview{display:grid;place-items:center;width:6.2rem;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;color:var(--admin-muted);font-size:.72rem;font-weight:900;text-align:center}
+      #${rootId} .admin-site-photo-preview{display:grid;place-items:center;width:6.2rem;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;color:var(--admin-muted);font-size:.72rem;font-weight:600;text-align:center}
       #${rootId} .admin-site-photo-preview img{width:100%;height:100%;object-fit:cover}
       #${rootId} .admin-site-photo-content{display:grid;gap:.18rem;min-width:0}
       #${rootId} .admin-site-photo-content strong{color:var(--admin-text);font-size:.9rem;font-weight:600}
@@ -423,7 +423,7 @@
         <div class="admin-row-title"><strong>${esc(user.name)}</strong><span>${esc(user.role)}</span></div>
         <div class="admin-grid-3">
           <label>Nom <input name="name" value="${esc(user.name)}" required></label>
-          <label>Email <input name="email" type="email" value="${esc(user.email)}"></label>
+          <label>Email <input name="email" type="email" value="${esc(user.email)}" required></label>
           <label>Téléphone <input name="phone" value="${esc(user.phone || "")}"></label>
           <label>Rôle
             <select name="role">
@@ -445,10 +445,6 @@
 
   function renderUserPasswordFields(user) {
     if (!canManageUsers()) return "";
-
-    if (!user.hasAccount) {
-      return `<p class="admin-help">Compte Laravel non rattaché : créez le compte avant de définir un mot de passe.</p>`;
-    }
 
     return `
       <div class="admin-password-panel">

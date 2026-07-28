@@ -154,7 +154,7 @@ class AdministrationService
     {
         $actor = CrmUser::query()
             ->with(['modules:id,slug,active', 'permissions:id,name,label,sort_order', 'sites:id'])
-            ->where('user_id', $user->id)
+            ->forAccount($user)
             ->where('active', true)
             ->first();
 
@@ -195,7 +195,11 @@ class AdministrationService
             $this->fail('Prenom ou nom trop long', 400);
         }
 
-        if ($email !== '' && (! filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 190)) {
+        if ($email === '') {
+            $this->fail('Adresse e-mail obligatoire', 400);
+        }
+
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 190) {
             $this->fail('Adresse e-mail invalide', 400);
         }
 
@@ -206,9 +210,7 @@ class AdministrationService
         if ($email !== '') {
             $emailQuery = User::query()->where('email', $email);
 
-            if ($actor->user_id) {
-                $emailQuery->whereKeyNot($actor->user_id);
-            }
+            $emailQuery->whereKeyNot($actor->id);
 
             if ($emailQuery->exists()) {
                 $this->fail('Adresse e-mail deja utilisee', 400);
@@ -240,23 +242,6 @@ class AdministrationService
 
         $actor->forceFill($updates)->save();
 
-        $account = $actor->account()->first();
-        if ($account) {
-            $accountUpdates = [];
-
-            if ($canEditIdentity && $account->name !== $displayName) {
-                $accountUpdates['name'] = $displayName;
-            }
-
-            if ($email !== '' && $account->email !== $email) {
-                $accountUpdates['email'] = $email;
-            }
-
-            if ($accountUpdates !== []) {
-                $account->forceFill($accountUpdates)->save();
-            }
-        }
-
         $this->log($actor, 'modification profil', $email);
 
         return ['ok' => true, 'profile' => $this->profilePayload($actor->refresh())];
@@ -270,9 +255,9 @@ class AdministrationService
             $this->fail('Session invalide', 400);
         }
 
-        $accountId = (int) $actor->user_id;
+        $accountId = (int) $actor->id;
         if ($accountId <= 0) {
-            $this->fail('Compte Laravel introuvable', 404);
+            $this->fail('Utilisateur introuvable', 404);
         }
 
         $table = $this->sessionTable();
@@ -342,7 +327,7 @@ class AdministrationService
             ->orderBy('title')
             ->get();
         $users = CrmUser::query()
-            ->with(['account:id', 'sites:id', 'modules:id', 'permissions:id,name', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id'])
+            ->with(['sites:id', 'modules:id', 'permissions:id,name', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id'])
             ->orderByDesc('active')
             ->orderBy('name')
             ->get();
@@ -744,6 +729,18 @@ class AdministrationService
                 $this->fail('Utilisateur introuvable', 404);
             }
 
+            if ($email !== '') {
+                $emailQuery = User::query()->where('email', $email);
+
+                if ($user->exists) {
+                    $emailQuery->whereKeyNot($user->id);
+                }
+
+                if ($emailQuery->exists()) {
+                    $this->fail('Adresse e-mail deja utilisee', 400);
+                }
+            }
+
             $password = $this->requestedPassword($data);
             if ($password !== null && ! $this->hasPermission($actor, 'platform.manage_users')) {
                 $this->fail('Droit administration insuffisant', 403);
@@ -764,8 +761,8 @@ class AdministrationService
                 $updates['last_name'] = $lastName !== '' ? $lastName : null;
             }
 
-            if ($hasEmail) {
-                $updates['email'] = $email !== '' ? $email : null;
+            if ($hasEmail && $email !== '') {
+                $updates['email'] = $email;
             }
 
             if ($hasPhone) {
@@ -778,7 +775,7 @@ class AdministrationService
             $user->modules()->sync($moduleIds);
             $user->permissions()->sync($permissionIds);
             $this->syncAccessRules($user, $accessRules);
-            $passwordUpdated = $this->updateLinkedAccountPassword($user, $data, $password);
+            $passwordUpdated = $this->updateUserPassword($user, $data, $password);
             CrmReferenceCache::forgetUsers();
 
             $this->log($actor, $id > 0 ? 'modification utilisateur' : 'creation utilisateur', $name);
@@ -801,7 +798,7 @@ class AdministrationService
         return $password !== '' ? $password : null;
     }
 
-    private function updateLinkedAccountPassword(CrmUser $user, array $data, ?string $password): bool
+    private function updateUserPassword(CrmUser $user, array $data, ?string $password): bool
     {
         if ($password === null) {
             return false;
@@ -818,20 +815,7 @@ class AdministrationService
             $this->fail('Mot de passe trop faible', 400);
         }
 
-        $accountId = (int) ($user->user_id ?? 0);
-        if ($accountId <= 0) {
-            $this->fail('Compte Laravel introuvable', 404);
-        }
-
-        $account = User::query()
-            ->lockForUpdate()
-            ->find($accountId);
-
-        if (! $account) {
-            $this->fail('Compte Laravel introuvable', 404);
-        }
-
-        $account->forceFill([
+        $user->forceFill([
             'password' => $password,
         ])->save();
 
@@ -1244,7 +1228,7 @@ class AdministrationService
 
     private function userRow(CrmUser $user): array
     {
-        $user->loadMissing(['account:id', 'sites:id', 'modules:id', 'permissions:id,name,sort_order', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id']);
+        $user->loadMissing(['sites:id', 'modules:id', 'permissions:id,name,sort_order', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id']);
         $siteIds = $user->sites->pluck('id')->map(fn ($id): int => (int) $id)->sort()->values()->all();
 
         return [
@@ -1256,7 +1240,7 @@ class AdministrationService
             'phone' => $user->phone,
             'role' => $user->role,
             'active' => (bool) $user->active,
-            'hasAccount' => filled($user->user_id) && $user->account !== null,
+            'hasAccount' => true,
             'primarySiteId' => $this->primarySiteId($user, $siteIds),
             'siteIds' => $siteIds,
             'moduleIds' => $user->modules->pluck('id')->map(fn ($id): int => (int) $id)->sort()->values()->all(),
@@ -1363,7 +1347,7 @@ class AdministrationService
 
     private function connectedDevices(CrmUser $user): array
     {
-        $accountId = (int) $user->user_id;
+        $accountId = (int) $user->id;
         if ($accountId <= 0) {
             return [];
         }

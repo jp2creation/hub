@@ -363,7 +363,7 @@
       #${rootId} .resa-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
       #${rootId} .resa-title h1{margin:0;color:var(--resa-text);font-size:1.8rem;line-height:1.08;font-weight:600;letter-spacing:0}
       #${rootId} .resa-title p{margin:.35rem 0 0;color:var(--resa-muted);font-size:.92rem;font-weight:700}
-      #${rootId} .resa-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.58rem .9rem;color:var(--resa-text);font-size:.84rem;font-weight:900;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
+      #${rootId} .resa-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.58rem .9rem;color:var(--resa-text);font-size:.84rem;font-weight:600;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .resa-button-primary{border-color:transparent;background:var(--resa-primary);color:#fff}
       #${rootId} .resa-button-danger{color:#b91c1c}
       #${rootId} .resa-grid{display:grid;gap:.85rem}
@@ -395,7 +395,7 @@
       #${rootId} .resa-toolbar{display:grid;gap:.75rem}
       #${rootId} .resa-legend{display:flex;align-items:center;justify-content:center;gap:.65rem;flex-wrap:wrap}
       #${rootId} .resa-segment{display:inline-grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--resa-border);border-radius:.55rem;overflow:hidden;background:#fff}
-      #${rootId} .resa-segment button{border:0;border-right:1px solid var(--resa-border);background:transparent;padding:.55rem .85rem;color:var(--resa-text);font-size:.78rem;font-weight:900;cursor:pointer}
+      #${rootId} .resa-segment button{border:0;border-right:1px solid var(--resa-border);background:transparent;padding:.55rem .85rem;color:var(--resa-text);font-size:.78rem;font-weight:600;cursor:pointer}
       #${rootId} .resa-segment button:last-child{border-right:0}
       #${rootId} .resa-segment button.is-active{background:var(--resa-primary);color:#fff}
       #${rootId} .resa-day-board{display:grid;gap:.85rem}
@@ -406,7 +406,7 @@
       #${rootId} .resa-mobile-slot-column{display:grid;gap:.45rem;min-width:0}
       #${rootId} .resa-slot-column-heading{display:grid;place-items:center;min-height:3rem;border-radius:.55rem;background:#f8fafc;color:var(--resa-text);text-align:center}
       #${rootId} .resa-slot-column-heading strong{font-size:.78rem;font-weight:600}
-      #${rootId} .resa-slot-column-heading span{font-size:.72rem;font-weight:900;color:var(--resa-muted)}
+      #${rootId} .resa-slot-column-heading span{font-size:.72rem;font-weight:600;color:var(--resa-muted)}
       #${rootId} .reservation-mobile-slot-button,#${rootId} .reservation-day-cell-button{display:grid;place-items:center;min-height:3.1rem;border:0;border-radius:.55rem;background:var(--resa-green);color:#fff;padding:.35rem .45rem;text-align:center;cursor:pointer;box-shadow:0 9px 18px rgba(22,163,74,.22)}
       #${rootId} .reservation-mobile-slot-button.is-reserved,#${rootId} .reservation-day-cell-button.is-reserved{background:var(--resa-red);box-shadow:0 9px 18px rgba(220,38,38,.22)}
       #${rootId} .reservation-mobile-slot-button.is-selecting,#${rootId} .reservation-day-cell-button.is-selecting{background:var(--resa-primary);box-shadow:0 9px 18px rgb(var(--theme-primary) / .22)}

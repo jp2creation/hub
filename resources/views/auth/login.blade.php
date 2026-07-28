@@ -133,7 +133,7 @@
 
       .app-install__badge span:first-child > span {
         font-size: 1.44rem;
-        font-weight: 900;
+        font-weight:600;
         line-height: 1;
       }
 

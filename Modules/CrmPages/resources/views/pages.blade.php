@@ -162,7 +162,7 @@
         background: #f1f5f9;
         color: #475569;
         font-size: .65rem;
-        font-weight: 900;
+        font-weight:600;
       }
 
       .crm-pages-nav-link.is-active .crm-pages-nav-icon {
@@ -287,7 +287,7 @@
         background: rgb(var(--theme-primary));
         color: #fff;
         font-size: .84rem;
-        font-weight: 900;
+        font-weight:600;
       }
 
       .crm-pages-content {

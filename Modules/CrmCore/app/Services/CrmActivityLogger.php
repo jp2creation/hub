@@ -40,7 +40,7 @@ class CrmActivityLogger
         return array_filter([
             'actor' => [
                 'crmUserId' => (int) $actor->id,
-                'accountId' => $actor->user_id ? (int) $actor->user_id : null,
+                'accountId' => (int) $actor->id,
                 'role' => $actor->role,
             ],
             'request' => [

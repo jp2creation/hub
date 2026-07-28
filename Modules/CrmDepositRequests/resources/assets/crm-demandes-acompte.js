@@ -435,7 +435,7 @@
       #crm-deposit-requests-module .deposit-summary-card strong{display:block;margin:.15rem 0;color:var(--color-secondary-900,#0f172a);font-size:1.25rem;font-weight:600;line-height:1.05}
       #crm-deposit-requests-module .deposit-summary-card em{display:block;color:var(--color-secondary-400,#94a3b8);font-size:.72rem;font-style:normal;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       #crm-deposit-requests-module .deposit-toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(10rem,.35fr) minmax(8rem,.25fr);gap:.75rem;padding:.9rem;border-bottom:1px solid var(--color-surface-200,#e2e8f0)}
-      #crm-deposit-requests-module label{display:grid;gap:.35rem;min-width:0;color:var(--color-secondary-500,#64748b);font-size:.76rem;font-weight:900}
+      #crm-deposit-requests-module label{display:grid;gap:.35rem;min-width:0;color:var(--color-secondary-500,#64748b);font-size:.76rem;font-weight:600}
       #crm-deposit-requests-module input,#crm-deposit-requests-module select,#crm-deposit-requests-module textarea{width:100%;min-height:2.45rem;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;padding:.55rem .7rem;color:var(--color-secondary-900,#0f172a);font:inherit;font-size:.86rem;font-weight:750;outline:none}
       #crm-deposit-requests-module textarea{min-height:5.4rem;resize:vertical}
       #crm-deposit-requests-module input:focus,#crm-deposit-requests-module select:focus,#crm-deposit-requests-module textarea:focus{border-color:rgb(var(--theme-primary) / .55);box-shadow:0 0 0 3px rgb(var(--theme-primary) / .12)}

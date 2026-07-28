@@ -209,7 +209,7 @@
       #${rootId} .rent-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
       #${rootId} .rent-title h1{margin:0;color:var(--rent-text);font-size:1.8rem;line-height:1.08;font-weight:600;letter-spacing:0}
       #${rootId} .rent-title p{margin:.35rem 0 0;color:var(--rent-muted);font-size:.92rem;font-weight:700}
-      #${rootId} .rent-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--rent-border);border-radius:.5rem;background:#fff;padding:.58rem .9rem;color:var(--rent-text);font-size:.84rem;font-weight:900;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
+      #${rootId} .rent-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--rent-border);border-radius:.5rem;background:#fff;padding:.58rem .9rem;color:var(--rent-text);font-size:.84rem;font-weight:600;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .rent-button-primary{border-color:transparent;background:var(--rent-primary);color:#fff}
       #${rootId} .rent-button-danger{color:#b91c1c}
       #${rootId} .rent-card{border:1px solid var(--rent-border);border-radius:1rem;background:#fff;box-shadow:0 16px 42px rgba(15,23,42,.055)}
@@ -233,12 +233,12 @@
       #${rootId} .rent-dot{position:absolute;right:.62rem;top:.62rem;width:.72rem;height:.72rem;border-radius:999px;background:var(--rent-green);box-shadow:0 0 0 3px #fff}
       #${rootId} .rent-dot.is-busy{background:var(--rent-red)}
       #${rootId} .rent-product-body{display:flex;min-height:3.9rem;flex:1;flex-direction:column;gap:.35rem;padding:.65rem .75rem .7rem}
-      #${rootId} .rent-product-name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;color:var(--rent-text);font-size:.9rem;font-weight:900;line-height:1.2}
-      #${rootId} .rent-product-meta{display:flex;justify-content:flex-end;margin-top:auto;color:var(--rent-primary);font-size:.7rem;font-weight:900}
+      #${rootId} .rent-product-name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;color:var(--rent-text);font-size:.9rem;font-weight:600;line-height:1.2}
+      #${rootId} .rent-product-meta{display:flex;justify-content:flex-end;margin-top:auto;color:var(--rent-primary);font-size:.7rem;font-weight:600}
       #${rootId} .rent-toolbar{display:grid;gap:.75rem}
       #${rootId} .rent-legend{display:flex;align-items:center;justify-content:center;gap:.65rem;flex-wrap:wrap}
       #${rootId} .rent-segment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.25rem;border:1px solid var(--rent-border);border-radius:.8rem;background:var(--rent-soft);padding:.22rem}
-      #${rootId} .rent-segment button{min-width:0;border:0;border-radius:.58rem;background:transparent;padding:.55rem .85rem;color:var(--rent-muted);font-size:.78rem;font-weight:900;cursor:pointer}
+      #${rootId} .rent-segment button{min-width:0;border:0;border-radius:.58rem;background:transparent;padding:.55rem .85rem;color:var(--rent-muted);font-size:.78rem;font-weight:600;cursor:pointer}
       #${rootId} .rent-segment button.is-active{background:var(--rent-primary);color:#fff;box-shadow:0 8px 16px rgb(var(--theme-primary) / .18)}
       #${rootId} select,#${rootId} input,#${rootId} textarea{width:100%;border:1px solid var(--rent-border);border-radius:.5rem;background:#fff;padding:.65rem .72rem;color:var(--rent-text);font:inherit;font-size:.86rem;font-weight:750}
       #${rootId} textarea{min-height:5.6rem;resize:vertical}

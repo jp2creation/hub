@@ -311,7 +311,7 @@ class MobileAuthService
     {
         return CrmUser::query()
             ->with(['account:id,email,name', 'modules:id,slug,name,active,route_path,sort_order', 'permissions:id,name', 'sites:id,name,slug'])
-            ->where('user_id', $user->id)
+            ->forAccount($user)
             ->where('active', true)
             ->first();
     }
