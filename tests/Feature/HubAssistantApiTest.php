@@ -46,6 +46,77 @@ class HubAssistantApiTest extends TestCase
             ->assertJsonPath('label', 'Ouvrir Congés & Absences');
     }
 
+    public function test_it_replies_politely_to_a_greeting(): void
+    {
+        [$account] = $this->createHubUser('admin');
+        $this->createModule('dashboard', 'Tableau de bord', '/');
+        $this->createModule('equipes', 'Équipe', '/equipes');
+
+        $this->actingAs($account)
+            ->postJson('/api/hub-assistant/message', ['message' => 'Bonjour'])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('url', null)
+            ->assertJsonFragment([
+                'message' => 'Bonjour. Je peux vous aider à trouver une page, comprendre où faire une action courante ou vous guider dans le HUB. Dites-moi par exemple : congés, équipe, véhicule, profil, caisse ou administration.',
+            ]);
+    }
+
+    public function test_it_guides_common_leave_questions_with_accessible_link(): void
+    {
+        [$account] = $this->createHubUser('admin');
+        $this->createModule('dashboard', 'Tableau de bord', '/');
+        $this->createModule('conges', 'Congés & Absences', '/conges');
+
+        $this->actingAs($account)
+            ->postJson('/api/hub-assistant/message', ['message' => 'comment poser des vacances ?'])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('url', '/conges')
+            ->assertJsonPath('label', 'Ouvrir Congés & Absences')
+            ->assertJsonFragment([
+                'message' => 'Pour les congés et absences, ouvrez Congés & Absences. Vous y trouverez votre calendrier, vos soldes et les demandes. Pour créer une demande, utilisez le bouton + Demander une absence.',
+            ]);
+    }
+
+    public function test_it_does_not_suggest_inaccessible_guided_topics(): void
+    {
+        [$account, $crmUser] = $this->createHubUser();
+        $dashboard = $this->createModule('dashboard', 'Tableau de bord', '/');
+        $leaves = $this->createModule('conges', 'Congés & Absences', '/conges');
+
+        $crmUser->modules()->sync([$dashboard->id]);
+
+        $response = $this->actingAs($account)
+            ->postJson('/api/hub-assistant/message', ['message' => 'comment poser des congés ?'])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('url', null)
+            ->assertJsonFragment([
+                'message' => 'Je comprends la demande, mais je ne vois pas ce module dans vos accès actuels. Voici les raccourcis disponibles avec votre compte.',
+            ])
+            ->json();
+
+        $urls = collect($response['suggestions'] ?? [])->pluck('url')->all();
+
+        $this->assertNotContains($leaves->route_path, $urls);
+    }
+
+    public function test_it_explains_how_to_log_out(): void
+    {
+        [$account] = $this->createHubUser('admin');
+        $this->createModule('dashboard', 'Tableau de bord', '/');
+
+        $this->actingAs($account)
+            ->postJson('/api/hub-assistant/message', ['message' => 'comment me déconnecter ?'])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('url', null)
+            ->assertJsonFragment([
+                'message' => 'Pour vous déconnecter, ouvrez le menu utilisateur en haut à droite puis cliquez sur Se déconnecter.',
+            ]);
+    }
+
     public function test_regular_user_does_not_receive_inaccessible_module(): void
     {
         [$account, $crmUser] = $this->createHubUser();

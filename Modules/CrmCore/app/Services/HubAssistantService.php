@@ -52,6 +52,12 @@ class HubAssistantService
             ];
         }
 
+        $guidedReply = $this->guidedReply($message, $destinations);
+
+        if ($guidedReply !== null) {
+            return $guidedReply;
+        }
+
         $ranked = $this->rankDestinations($message, $destinations);
 
         if ($ranked === []) {
@@ -250,6 +256,220 @@ class HubAssistantService
             ])
             ->values()
             ->all();
+    }
+
+    /**
+     * @param  array<int, array{label: string, url: string, keywords: array<int, string>, external: bool}>  $destinations
+     * @return array{
+     *     ok: true,
+     *     message: string,
+     *     url: string|null,
+     *     label: string|null,
+     *     suggestions: array<int, array{label: string, url: string, external: bool}>
+     * }|null
+     */
+    private function guidedReply(string $message, array $destinations): ?array
+    {
+        $query = $this->normalize($message);
+        $tokens = $this->tokens($query, removeStopWords: false);
+
+        if ($query === '' || $tokens === []) {
+            return null;
+        }
+
+        if ($this->isPoliteGreeting($tokens)) {
+            return [
+                'ok' => true,
+                'message' => 'Bonjour. Je peux vous aider à trouver une page, comprendre où faire une action courante ou vous guider dans le HUB. Dites-moi par exemple : congés, équipe, véhicule, profil, caisse ou administration.',
+                'url' => null,
+                'label' => null,
+                'suggestions' => $this->suggestions($destinations, 4),
+            ];
+        }
+
+        if ($this->isThankYou($tokens)) {
+            return [
+                'ok' => true,
+                'message' => 'Avec plaisir. Je reste disponible si vous cherchez une page, une action à faire dans le HUB ou un raccourci utile.',
+                'url' => null,
+                'label' => null,
+                'suggestions' => $this->suggestions($destinations, 4),
+            ];
+        }
+
+        if ($this->matchesAny($query, ['aide', 'aider', 'tu peux', 'vous pouvez', 'comment ca marche', 'que faire', 'quoi faire', 'question courante', 'questions courantes'])) {
+            return [
+                'ok' => true,
+                'message' => 'Je peux répondre aux demandes courantes du HUB : trouver une page, expliquer où poser un congé, où consulter les coordonnées d’une équipe, où réserver un véhicule, où vérifier la caisse, où gérer le profil ou où aller pour l’administration.',
+                'url' => null,
+                'label' => null,
+                'suggestions' => $this->suggestions($destinations, 4),
+            ];
+        }
+
+        if ($this->matchesAny($query, ['deconnexion', 'déconnexion', 'deconnecter', 'déconnecter', 'logout', 'sortir'])) {
+            return [
+                'ok' => true,
+                'message' => 'Pour vous déconnecter, ouvrez le menu utilisateur en haut à droite puis cliquez sur Se déconnecter.',
+                'url' => null,
+                'label' => null,
+                'suggestions' => $this->suggestions($destinations, 4),
+            ];
+        }
+
+        foreach ($this->commonTopics() as $topic) {
+            if (! $this->matchesAny($query, $topic['triggers'])) {
+                continue;
+            }
+
+            $destination = $this->firstDestinationMatching($destinations, $topic['destinations']);
+
+            if (! $destination) {
+                return [
+                    'ok' => true,
+                    'message' => 'Je comprends la demande, mais je ne vois pas ce module dans vos accès actuels. Voici les raccourcis disponibles avec votre compte.',
+                    'url' => null,
+                    'label' => null,
+                    'suggestions' => $this->suggestions($destinations, 4),
+                ];
+            }
+
+            return [
+                'ok' => true,
+                'message' => $topic['message'],
+                'url' => $destination['url'],
+                'label' => 'Ouvrir '.$destination['label'],
+                'suggestions' => $this->suggestions(
+                    array_values(array_filter(
+                        $destinations,
+                        fn (array $availableDestination): bool => $availableDestination['url'] !== $destination['url']
+                    )),
+                    3,
+                ),
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array<int, array{
+     *     triggers: array<int, string>,
+     *     destinations: array<int, string>,
+     *     message: string
+     * }>
+     */
+    private function commonTopics(): array
+    {
+        return [
+            [
+                'triggers' => ['conge', 'conges', 'absence', 'absences', 'vacance', 'vacances', 'solde conge', 'poser conge', 'demander absence'],
+                'destinations' => ['conges', 'absence', 'vacance'],
+                'message' => 'Pour les congés et absences, ouvrez Congés & Absences. Vous y trouverez votre calendrier, vos soldes et les demandes. Pour créer une demande, utilisez le bouton + Demander une absence.',
+            ],
+            [
+                'triggers' => ['equipe', 'membre', 'membres', 'adresse site', 'telephone site', 'coordonnees site', 'annuaire', 'qui travaille'],
+                'destinations' => ['equipe', 'membres', 'annuaire', 'site'],
+                'message' => 'Pour les informations d’équipe, ouvrez Équipe. Le site sélectionné dans la barre du haut permet de voir les membres, les coordonnées du site, l’adresse, le téléphone, l’e-mail et les horaires.',
+            ],
+            [
+                'triggers' => ['vehicule', 'vehicules', 'camion', 'sprinter', 'reservation vehicule', 'planning vehicule'],
+                'destinations' => ['reservation', 'vehicule', 'camion', 'sprinter'],
+                'message' => 'Pour les véhicules, ouvrez Réservations véhicules. Vous pourrez choisir un véhicule du site et consulter son planning.',
+            ],
+            [
+                'triggers' => ['materiel', 'location', 'outil', 'outillage', 'machine', 'disponible'],
+                'destinations' => ['location', 'materiel', 'outil', 'outillage'],
+                'message' => 'Pour le matériel, ouvrez Location matériel. C’est l’endroit prévu pour consulter le stock, les disponibilités et créer une location.',
+            ],
+            [
+                'triggers' => ['profil', 'compte', 'photo', 'email', 'e mail', 'telephone', 'mot de passe', 'coordonnees', 'preferences'],
+                'destinations' => ['parametres', 'profil', 'compte', 'mot de passe'],
+                'message' => 'Pour votre profil, ouvrez Paramètres du compte. Vous pouvez y gérer les informations affichées dans le HUB, la photo, l’e-mail, le téléphone et les préférences disponibles.',
+            ],
+            [
+                'triggers' => ['caisse', 'controle caisse', 'ticket', 'ecart caisse', 'anomalie caisse'],
+                'destinations' => ['controle', 'caisse', 'ticket'],
+                'message' => 'Pour la caisse, ouvrez Contrôle caisse. Vous y trouverez les contrôles, les écarts éventuels et les éléments à vérifier.',
+            ],
+            [
+                'triggers' => ['cheque', 'cheques', 'remise cheque', 'remise cheques', 'banque', 'depot cheque'],
+                'destinations' => ['remise', 'cheque', 'banque'],
+                'message' => 'Pour les chèques, ouvrez Remise de chèques. Vous pourrez consulter les remises existantes et créer une nouvelle remise si vos droits le permettent.',
+            ],
+            [
+                'triggers' => ['acompte', 'demande acompte', 'avance client', 'paiement client'],
+                'destinations' => ['acompte', 'demande', 'paiement'],
+                'message' => 'Pour les acomptes, ouvrez Demande d’acompte. C’est le module prévu pour suivre ou créer les demandes liées aux paiements clients.',
+            ],
+            [
+                'triggers' => ['admin', 'administration', 'utilisateur', 'utilisateurs', 'site', 'sites', 'permission', 'permissions', 'module', 'modules', 'role', 'roles'],
+                'destinations' => ['administration', 'utilisateurs', 'sites', 'permissions', 'modules'],
+                'message' => 'Pour l’administration, ouvrez Administration. Vous y gérez les utilisateurs HUB, les sites, les modules, les menus, les rôles et les permissions selon vos droits.',
+            ],
+        ];
+    }
+
+    /**
+     * @param  array<int, string>  $tokens
+     */
+    private function isPoliteGreeting(array $tokens): bool
+    {
+        $greetings = ['bonjour', 'bonsoir', 'salut', 'coucou', 'hello', 'hey'];
+        $politeWords = ['bonjour', 'bonsoir', 'salut', 'coucou', 'hello', 'hey', 'ca', 'va', 'svp', 'stp'];
+
+        return collect($tokens)->intersect($greetings)->isNotEmpty()
+            && collect($tokens)->diff($politeWords)->isEmpty();
+    }
+
+    /**
+     * @param  array<int, string>  $tokens
+     */
+    private function isThankYou(array $tokens): bool
+    {
+        $thankYouWords = ['merci', 'parfait', 'super', 'ok'];
+        $politeWords = ['merci', 'parfait', 'super', 'ok', 'beaucoup', 'bien'];
+
+        return collect($tokens)->intersect($thankYouWords)->isNotEmpty()
+            && collect($tokens)->diff($politeWords)->isEmpty();
+    }
+
+    /**
+     * @param  array<int, string>  $needles
+     */
+    private function matchesAny(string $query, array $needles): bool
+    {
+        foreach ($needles as $needle) {
+            $normalizedNeedle = $this->normalize($needle);
+
+            if ($normalizedNeedle !== '' && str_contains($query, $normalizedNeedle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  array<int, array{label: string, url: string, keywords: array<int, string>, external: bool}>  $destinations
+     * @param  array<int, string>  $needles
+     * @return array{label: string, url: string, keywords: array<int, string>, external: bool}|null
+     */
+    private function firstDestinationMatching(array $destinations, array $needles): ?array
+    {
+        foreach ($destinations as $destination) {
+            $haystack = $this->normalize(implode(' ', [
+                $destination['label'],
+                $destination['url'],
+                ...$destination['keywords'],
+            ]));
+
+            if ($this->matchesAny($haystack, $needles)) {
+                return $destination;
+            }
+        }
+
+        return null;
     }
 
     /**

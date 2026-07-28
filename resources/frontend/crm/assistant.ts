@@ -25,7 +25,7 @@ type AssistantMessage = {
 const initialMessages: AssistantMessage[] = [
   {
     role: 'assistant',
-    text: 'Bonjour. Quelle page recherchez-vous ?',
+    text: 'Bonjour. Je peux vous aider à trouver une page, répondre à une question courante ou vous guider dans le HUB.',
   },
 ];
 
@@ -139,14 +139,14 @@ function render(): void {
     '<header class="hub-assistant-header">',
     '<div>',
     '<span class="hub-assistant-kicker">Assistant HUB</span>',
-    '<h2>Navigation rapide</h2>',
+    '<h2>Aide et navigation</h2>',
     '</div>',
     `<button class="hub-assistant-close" type="button" aria-label="Fermer" data-hub-assistant-close>${icon('close')}</button>`,
     '</header>',
     `<div class="hub-assistant-messages" data-hub-assistant-messages>${messages.map(renderMessage).join('')}</div>`,
     '<form class="hub-assistant-form" data-hub-assistant-form>',
     '<label class="hub-assistant-sr-only" for="hub-assistant-input">Message</label>',
-    `<input id="hub-assistant-input" name="message" type="text" autocomplete="off" placeholder="Rechercher une page" maxlength="500" data-hub-assistant-input${isLoading ? ' disabled' : ''}>`,
+    `<input id="hub-assistant-input" name="message" type="text" autocomplete="off" placeholder="Posez une question ou recherchez une page" maxlength="500" data-hub-assistant-input${isLoading ? ' disabled' : ''}>`,
     `<button type="submit" aria-label="Envoyer"${isLoading ? ' disabled' : ''}>${isLoading ? icon('spark') : icon('send')}</button>`,
     '</form>',
     '</section>',

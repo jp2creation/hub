@@ -18,6 +18,9 @@ class HubAssistantFrontendSourceTest extends TestCase
         $this->assertStringContainsString('installHubAssistant();', $shell);
         $this->assertStringContainsString('/api/hub-assistant/message', $assistant);
         $this->assertStringContainsString('data-hub-assistant-form', $assistant);
+        $this->assertStringContainsString('répondre à une question courante', $assistant);
+        $this->assertStringContainsString('Aide et navigation', $assistant);
+        $this->assertStringContainsString('Posez une question ou recherchez une page', $assistant);
         $this->assertStringContainsString('window.MartinSolsHubAssistant', $assistant);
         $this->assertStringContainsString('data-hub-assistant-open', $nativeShell);
         $this->assertStringContainsString('Assistant HUB</strong><small>Navigation rapide', $nativeShell);
