@@ -48,8 +48,9 @@ function escapeHtml(value: unknown): string {
   });
 }
 
-function icon(name: 'bot' | 'close' | 'send' | 'spark' | 'user'): string {
+function icon(name: 'back' | 'bot' | 'close' | 'send' | 'spark' | 'user'): string {
   const paths: Record<typeof name, string> = {
+    back: '<path d="m15 18-6-6 6-6"></path>',
     bot:
       '<path d="M12 8V4"></path><rect x="5" y="8" width="14" height="11" rx="3"></rect><path d="M8.5 12h.01M15.5 12h.01M9 16h6"></path>',
     close: '<path d="M18 6 6 18M6 6l12 12"></path>',
@@ -174,7 +175,7 @@ function render(): void {
     '<span class="hub-assistant-kicker">Assistant HUB</span>',
     '<h2>Aide et navigation</h2>',
     '</div>',
-    `<button class="hub-assistant-close" type="button" aria-label="Fermer" data-hub-assistant-close>${icon('close')}</button>`,
+    `<button class="hub-assistant-close" type="button" aria-label="Fermer" data-hub-assistant-close><span class="hub-assistant-close-desktop">${icon('close')}</span><span class="hub-assistant-close-mobile">${icon('back')}<span>Retour</span></span></button>`,
     '</header>',
     `<div class="hub-assistant-messages" data-hub-assistant-messages>${messages.map(renderMessage).join('')}</div>`,
     '<form class="hub-assistant-form" data-hub-assistant-form>',

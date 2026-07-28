@@ -24,6 +24,9 @@ class HubAssistantFrontendSourceTest extends TestCase
         $this->assertStringContainsString('data-crm-native-profile-photo', $assistant);
         $this->assertStringContainsString('hub-assistant-avatar is-assistant', $assistant);
         $this->assertStringContainsString('hub-assistant-avatar is-user', $assistant);
+        $this->assertStringContainsString('hub-assistant-close-desktop', $assistant);
+        $this->assertStringContainsString('hub-assistant-close-mobile', $assistant);
+        $this->assertStringContainsString('<span>Retour</span>', $assistant);
         $this->assertStringContainsString("document.body.classList.toggle('hub-assistant-open', isOpen);", $assistant);
         $this->assertStringContainsString('window.MartinSolsHubAssistant', $assistant);
         $this->assertStringContainsString('data-hub-assistant-open', $nativeShell);
@@ -33,6 +36,8 @@ class HubAssistantFrontendSourceTest extends TestCase
         $this->assertStringContainsString('.hub-assistant-panel[hidden]', $styles);
         $this->assertStringContainsString('.hub-assistant-message-row', $styles);
         $this->assertStringContainsString('.hub-assistant-avatar', $styles);
+        $this->assertStringContainsString('.hub-assistant-close-mobile', $styles);
+        $this->assertStringContainsString('body.hub-assistant-open .hub-assistant-close-desktop', $styles);
         $this->assertStringContainsString('body.hub-assistant-open .hub-assistant-panel', $styles);
         $this->assertStringContainsString('height: 100dvh;', $styles);
         $this->assertStringContainsString('font-size: 1rem;', $styles);

@@ -1625,6 +1625,17 @@ body.crm-mobile-app-settings-open {
   color: rgb(76 99 125);
 }
 
+.hub-assistant-close-desktop,
+.hub-assistant-close-mobile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hub-assistant-close-mobile {
+  display: none;
+}
+
 .hub-assistant-close:hover {
   background: rgb(241 245 249);
   color: rgb(29 53 79);
@@ -1874,10 +1885,28 @@ body.crm-mobile-app-settings-open {
   }
 
   body.hub-assistant-open .hub-assistant-close {
-    width: 2.35rem;
-    height: 2.35rem;
+    display: inline-flex;
+    width: auto;
+    height: 2rem;
     background: #fff;
-    box-shadow: 0 8px 22px rgb(15 23 42 / 0.06);
+    color: rgb(var(--theme-primary));
+    font-size: 1rem;
+    font-weight: 850;
+    box-shadow: none;
+  }
+
+  body.hub-assistant-open .hub-assistant-close-desktop {
+    display: none;
+  }
+
+  body.hub-assistant-open .hub-assistant-close-mobile {
+    display: inline-flex;
+    gap: 0.35rem;
+  }
+
+  body.hub-assistant-open .hub-assistant-close-mobile .hub-assistant-icon {
+    width: 1.18rem;
+    height: 1.18rem;
   }
 
   body.hub-assistant-open .hub-assistant-messages {
