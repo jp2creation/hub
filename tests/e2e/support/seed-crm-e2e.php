@@ -101,6 +101,7 @@ $fixture = DB::transaction(function () use ($password): array {
         ['equipment_rentals.manage_items', 'Location materiel', 190],
         ['conges.view', 'Congés & Absences', 200],
         ['conges.manage', 'Congés & Absences', 210],
+        ['conges.manage_types', 'Congés & Absences', 215],
         ['sales.view', 'Pilotage commercial', 220],
         ['teams.view', 'Equipe', 230],
         ['controle_caisse.view', 'Controle caisse', 240],

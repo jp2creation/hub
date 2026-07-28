@@ -7,7 +7,7 @@ use Modules\CrmLeaves\Http\Controllers\LeaveApiController;
 $crmApiMiddleware = ['throttle:crm-api', 'crm.compress'];
 
 Route::view('/conges', 'crm')
-    ->middleware(['auth', 'hub.module:conges,conges.view,conges.manage'])
+    ->middleware(['auth', 'hub.module:conges,conges.view,conges.manage,conges.manage_types'])
     ->name('crm.conges');
 
 Route::match(['GET', 'POST', 'OPTIONS'], '/api/conges', LeaveApiController::class)

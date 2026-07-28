@@ -23,6 +23,7 @@
     wallStartDate: formatDate(new Date()),
     wallMode: 'month',
     modal: null,
+    typeModal: null,
     exportModal: null,
   };
 
@@ -124,7 +125,7 @@
 
   function typeMeta(type) {
     return (
-      (state.data?.types || []).find((item) => item.value === type) || {
+      leaveTypes().find((item) => item.value === type) || {
         value: 'conge',
         label: 'Conge',
         color: '#facc15',
@@ -180,6 +181,10 @@
     return Boolean(state.data?.user?.canManageSettings || canManage());
   }
 
+  function canManageTypes() {
+    return Boolean(state.data?.user?.canManageTypes || canManageSettings());
+  }
+
   function canCreateRequest() {
     return state.data?.user?.canCreateRequest !== false;
   }
@@ -190,6 +195,30 @@
 
   function employeePhoto(employee) {
     return String(employee?.photoUrl || employee?.photo_url || '').trim();
+  }
+
+  function leaveTypes() {
+    return state.data?.types || [];
+  }
+
+  function updateLeaveTypes(types) {
+    if (!Array.isArray(types) || !state.data) return;
+
+    state.data.types = types;
+    const values = new Set(types.map((type) => String(type.value)));
+    if (state.filters.type !== 'all' && !values.has(state.filters.type)) {
+      state.filters.type = 'all';
+    }
+  }
+
+  function selectableLeaveTypes(currentValue = '') {
+    return leaveTypes().filter((type) => type.active || type.value === currentValue);
+  }
+
+  function leaveTypesForHistory() {
+    const usedTypes = new Set((state.data?.leaves || []).filter((leave) => leave.status !== 'refused').map((leave) => leave.type));
+
+    return leaveTypes().filter((type) => type.active || usedTypes.has(type.value));
   }
 
   function employeeAvatar(employee, className = 'leave-person-avatar', fallbackName = '') {
@@ -424,6 +453,23 @@
       readonly: existingLeave && !canEditLeave(leave),
       canDelete: existingLeave && canDeleteLeave(leave),
       canReview: existingLeave && canManage() && ['pending', 'planned'].includes(leave?.status),
+    };
+    render();
+  }
+
+  function openTypeModal(type) {
+    if (!canManageTypes()) return;
+
+    state.typeModal = {
+      id: type?.id || '',
+      label: type?.label || '',
+      color: normalizeColor(type?.color, '#38bdf8'),
+      active: type?.active !== false,
+      requiresBalance: Boolean(type?.requiresBalance),
+      requiresApproval: type?.requiresApproval !== false,
+      sendReminders: type?.sendReminders !== false,
+      isSystem: Boolean(type?.isSystem),
+      usageCount: Number(type?.usageCount || 0),
     };
     render();
   }
@@ -802,7 +848,7 @@
 
   function renderExportLegend(leaves) {
     const activeTypes = new Set(leaves.filter((leave) => leave.status !== 'refused').map((leave) => leave.type));
-    const types = (state.data?.types || []).filter((type) => activeTypes.has(type.value) || !activeTypes.size);
+    const types = leaveTypes().filter((type) => activeTypes.has(type.value) || (!activeTypes.size && type.active));
 
     return `
       <section class="pdf-legend">
@@ -1305,7 +1351,7 @@
           <span>Type</span>
           <select data-filter-type>
             <option value="all" ${state.filters.type === 'all' ? 'selected' : ''}>Tous les types</option>
-            ${(state.data?.types || [])
+            ${leaveTypesForHistory()
               .map(
                 (type) =>
                   `<option value="${esc(type.value)}" ${state.filters.type === type.value ? 'selected' : ''}>${esc(type.label)}</option>`,
@@ -1352,7 +1398,7 @@
           <span>Type</span>
           <select data-filter-type>
             <option value="all" ${state.filters.type === 'all' ? 'selected' : ''}>Tous les types</option>
-            ${(state.data?.types || [])
+            ${leaveTypesForHistory()
               .map(
                 (type) =>
                   `<option value="${esc(type.value)}" ${state.filters.type === type.value ? 'selected' : ''}>${esc(type.label)}</option>`,
@@ -1383,7 +1429,7 @@
       <aside class="leave-side-panel leave-absences-sidebar">
         <section class="leave-type-card leave-sidebar-card">
           <h3>Absences par type</h3>
-          ${(state.data?.types || [])
+          ${leaveTypesForHistory()
             .map((type) => {
               const total = typeTotal(type.value, employee?.id || null);
               return `
@@ -2585,6 +2631,9 @@
         width:100%;
         border-collapse:collapse;
       }
+      #crm-leaves-module .leave-settings-table {
+        min-width:58rem;
+      }
       #crm-leaves-module .leave-balance-table th,
       #crm-leaves-module .leave-balance-table td,
       #crm-leaves-module .leave-settings-table th,
@@ -2637,6 +2686,55 @@
         border:2px solid color-mix(in srgb,var(--type-color) 70%,#fff);
         border-radius:999px;
         background:color-mix(in srgb,var(--type-color) 20%,#fff);
+      }
+      #crm-leaves-module .leave-settings-type {
+        display:grid;
+        gap:.16rem;
+        min-width:0;
+      }
+      #crm-leaves-module .leave-settings-type strong {
+        color:#172033;
+        font-size:.88rem;
+        font-weight:900;
+        line-height:1.2;
+      }
+      #crm-leaves-module .leave-settings-type small {
+        color:#8a97aa;
+        font-size:.72rem;
+        font-weight:780;
+        line-height:1.25;
+      }
+      #crm-leaves-module .leave-type-state {
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        min-height:1.65rem;
+        border-radius:999px;
+        padding:.16rem .58rem;
+        font-size:.72rem;
+        font-weight:860;
+      }
+      #crm-leaves-module .leave-type-state.is-visible {
+        background:#dcfce7;
+        color:#15803d;
+      }
+      #crm-leaves-module .leave-type-state.is-hidden {
+        background:#f1f5f9;
+        color:#64748b;
+      }
+      #crm-leaves-module .leave-settings-actions {
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:flex-end;
+        gap:.42rem;
+      }
+      #crm-leaves-module .leave-danger-button:not(:disabled) {
+        border-color:rgba(190,18,60,.24);
+        background:#fff5f7;
+        color:#be123c;
+      }
+      #crm-leaves-module .leaves-type-modal {
+        max-width:34rem;
       }
       .layout-container.layout-page:has(#crm-leaves-module),
       .layout-page:has(#crm-leaves-module){width:100%;max-width:100%;min-width:0;overflow-x:hidden}
@@ -3915,20 +4013,27 @@
 
   function renderSettingsPanel() {
     const query = state.filters.query.trim().toLowerCase();
-    const types = (state.data?.types || []).filter((type) => !query || String(type.label || '').toLowerCase().includes(query));
+    const types = leaveTypes().filter((type) => {
+      if (!query) return true;
+
+      return [type.label, type.value, type.active ? 'visible' : 'masque']
+        .join(' ')
+        .toLowerCase()
+        .includes(query);
+    });
 
     return `
       <section class="leave-card leave-settings-board">
         <div class="leave-settings-head">
           <div>
             <h2>Types d'absence</h2>
-            <p>Créez, configurez et choisissez une couleur pour les différents types d'absences.</p>
+            <p>Modifiez les libellés, couleurs et règles. Masquez un type pour le retirer des nouveaux choix sans perdre l'historique.</p>
           </div>
-          <button type="button" class="leaves-button leaves-button-primary">+ Nouveau type</button>
+          ${canManageTypes() ? '<button type="button" class="leaves-button leaves-button-primary" data-add-type>+ Nouveau type</button>' : ''}
         </div>
         <div class="leave-search-field leave-settings-search">
           <span aria-hidden="true">⌕</span>
-          <input type="search" data-filter-query value="${esc(state.filters.query)}" placeholder="Rechercher">
+          <input type="search" data-filter-query value="${esc(state.filters.query)}" placeholder="Rechercher un type">
         </div>
         <div class="leave-settings-table-wrap">
           <table class="leave-settings-table">
@@ -3938,24 +4043,44 @@
                 <th>Couleur</th>
                 <th>Solde à consommer</th>
                 <th>Approbation requise</th>
-                <th>Envoyer des rappels</th>
+                <th>Rappels</th>
+                <th>Statut</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              ${types
-                .map((type) => {
-                  const total = typeTotal(type.value);
-                  return `
+              ${
+                types.length
+                  ? types
+                      .map((type) => {
+                        const total = Number(type.usageCount || 0);
+                        const canDelete = canManageTypes() && Boolean(type.canDelete);
+                        return `
                     <tr>
-                      <td>${esc(type.label)}</td>
+                      <td>
+                        <span class="leave-settings-type">
+                          <strong>${esc(type.label)}</strong>
+                          <small>${esc(type.value)}${total ? ` - ${esc(total)} utilisation(s)` : ''}</small>
+                        </span>
+                      </td>
                       <td><span class="leave-color-swatch" style="--type-color:${esc(normalizeColor(type.color, '#38bdf8'))}"></span></td>
-                      <td>${total > 0 ? 'Oui' : 'Non'}</td>
-                      <td>${type.value === 'conge' || type.value === 'absence' ? 'Oui' : 'Non'}</td>
-                      <td>${type.value === 'conge' || type.value === 'absence' ? 'Oui' : 'Non'}</td>
+                      <td>${type.requiresBalance ? 'Oui' : 'Non'}</td>
+                      <td>${type.requiresApproval ? 'Oui' : 'Non'}</td>
+                      <td>${type.sendReminders ? 'Oui' : 'Non'}</td>
+                      <td><span class="leave-type-state ${type.active ? 'is-visible' : 'is-hidden'}">${type.active ? 'Visible' : 'Masqué'}</span></td>
+                      <td>
+                        <div class="leave-settings-actions">
+                          <button type="button" class="leaves-button leaves-button-small" data-edit-type="${esc(type.id)}" ${canManageTypes() ? '' : 'disabled'}>Modifier</button>
+                          <button type="button" class="leaves-button leaves-button-small" data-toggle-type="${esc(type.id)}" data-next-active="${type.active ? 'false' : 'true'}" ${canManageTypes() ? '' : 'disabled'}>${type.active ? 'Cacher' : 'Afficher'}</button>
+                          <button type="button" class="leaves-button leaves-button-small leave-danger-button" data-delete-type="${esc(type.id)}" ${canDelete ? '' : 'disabled'} title="${canDelete ? 'Supprimer ce type' : 'Masquez ce type s’il est système ou déjà utilisé'}">Supprimer</button>
+                        </div>
+                      </td>
                     </tr>
                   `;
-                })
-                .join('')}
+                      })
+                      .join('')
+                  : '<tr><td colspan="7"><div class="leave-day-empty">Aucun type ne correspond à la recherche.</div></td></tr>'
+              }
             </tbody>
           </table>
         </div>
@@ -4182,11 +4307,67 @@
             ${employeeField}
             <div class="leaves-field"><label>Début</label><input type="date" name="startDate" value="${esc(form.startDate)}" required ${disabled}></div>
             <div class="leaves-field"><label>Fin</label><input type="date" name="endDate" value="${esc(form.endDate)}" required ${disabled}></div>
-            <div class="leaves-field"><label>Type</label><select name="type" ${disabled}>${(state.data?.types || []).map((type) => `<option value="${esc(type.value)}" ${form.type === type.value ? 'selected' : ''}>${esc(type.label)}</option>`).join('')}</select></div>
+            <div class="leaves-field"><label>Type</label><select name="type" ${disabled}>${selectableLeaveTypes(form.type).map((type) => `<option value="${esc(type.value)}" ${form.type === type.value ? 'selected' : ''}>${esc(type.label)}${type.active ? '' : ' (masqué)'}</option>`).join('')}</select></div>
             <div class="leaves-field"><label>Journée</label><select name="period" ${disabled}>${(state.data?.periods || []).map((period) => `<option value="${esc(period.value)}" ${form.period === period.value ? 'selected' : ''}>${esc(period.label)}</option>`).join('')}</select></div>
             ${statusField}
             <div class="leaves-field leaves-field-full"><label>Notes</label><textarea name="notes" ${disabled}>${esc(form.notes || '')}</textarea></div>
             <div class="leaves-actions leaves-field-full">${reviewActions}${saveAction}${deleteAction}</div>
+          </form>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderTypeModal() {
+    if (!state.typeModal) return '';
+
+    const form = state.typeModal;
+    const title = form.id ? 'Modifier le type' : 'Nouveau type';
+    const subtitle = form.id
+      ? form.isSystem
+        ? 'Type système : modifiable et masquable, mais protégé de la suppression.'
+        : `${form.usageCount || 0} utilisation(s) dans le planning.`
+      : 'Ajoutez un type disponible dans les prochaines demandes.';
+
+    return `
+      <div class="leaves-modal-backdrop" data-type-modal-backdrop>
+        <div class="leaves-modal leaves-type-modal">
+          <div class="leaves-modal-head">
+            <div>
+              <strong>${esc(title)}</strong>
+              <p>${esc(subtitle)}</p>
+            </div>
+            <button type="button" class="leaves-button" data-close-type-modal>Fermer</button>
+          </div>
+          <form class="leaves-form-grid" data-type-form>
+            <input type="hidden" name="id" value="${esc(form.id || '')}">
+            <div class="leaves-field leaves-field-full">
+              <label>Nom</label>
+              <input type="text" name="label" value="${esc(form.label)}" required maxlength="80" placeholder="Ex. Congé exceptionnel">
+            </div>
+            <div class="leaves-field">
+              <label>Couleur</label>
+              <input type="color" name="color" value="${esc(normalizeColor(form.color, '#38bdf8'))}">
+            </div>
+            <label class="leaves-check">
+              <input type="checkbox" name="active" value="1" ${form.active ? 'checked' : ''}>
+              <span>Visible dans les nouveaux choix</span>
+            </label>
+            <label class="leaves-check leaves-field-full">
+              <input type="checkbox" name="requiresBalance" value="1" ${form.requiresBalance ? 'checked' : ''}>
+              <span>Consomme un solde</span>
+            </label>
+            <label class="leaves-check leaves-field-full">
+              <input type="checkbox" name="requiresApproval" value="1" ${form.requiresApproval ? 'checked' : ''}>
+              <span>Demande une validation</span>
+            </label>
+            <label class="leaves-check leaves-field-full">
+              <input type="checkbox" name="sendReminders" value="1" ${form.sendReminders ? 'checked' : ''}>
+              <span>Envoyer des rappels</span>
+            </label>
+            <div class="leaves-actions leaves-field-full">
+              <button type="submit" class="leaves-button leaves-button-primary">Enregistrer</button>
+            </div>
           </form>
         </div>
       </div>
@@ -4287,6 +4468,7 @@
           </main>
         </div>
         ${renderModal()}
+        ${renderTypeModal()}
         ${renderExportModal()}
       </div>
     `;
@@ -4298,6 +4480,40 @@
     root.querySelector('[data-export-pdf]')?.addEventListener('click', exportPdf);
     root.querySelectorAll('[data-add-request]').forEach((button) =>
       button.addEventListener('click', () => openModal(null)),
+    );
+    root.querySelector('[data-add-type]')?.addEventListener('click', () => openTypeModal(null));
+    root.querySelectorAll('[data-edit-type]').forEach((button) =>
+      button.addEventListener('click', () => {
+        const type = leaveTypes().find((item) => Number(item.id) === Number(button.dataset.editType));
+        if (type) openTypeModal(type);
+      }),
+    );
+    root.querySelectorAll('[data-toggle-type]').forEach((button) =>
+      button.addEventListener('click', async () => {
+        try {
+          const data = await request('toggle_type_visibility', {
+            id: Number(button.dataset.toggleType),
+            active: button.dataset.nextActive === 'true',
+          });
+          updateLeaveTypes(data.types);
+          render();
+        } catch (error) {
+          alert(error instanceof Error ? error.message : 'Modification impossible');
+        }
+      }),
+    );
+    root.querySelectorAll('[data-delete-type]').forEach((button) =>
+      button.addEventListener('click', async () => {
+        if (!confirm("Supprimer ce type d'absence ?")) return;
+
+        try {
+          const data = await request('delete_type', { id: Number(button.dataset.deleteType) });
+          updateLeaveTypes(data.types);
+          render();
+        } catch (error) {
+          alert(error instanceof Error ? error.message : 'Suppression impossible');
+        }
+      }),
     );
     root.querySelectorAll('[data-view]').forEach((button) =>
       button.addEventListener('click', () => {
@@ -4440,6 +4656,16 @@
         render();
       }
     });
+    root.querySelector('[data-close-type-modal]')?.addEventListener('click', () => {
+      state.typeModal = null;
+      render();
+    });
+    root.querySelector('[data-type-modal-backdrop]')?.addEventListener('click', (event) => {
+      if (event.target === event.currentTarget) {
+        state.typeModal = null;
+        render();
+      }
+    });
     root.querySelector('[data-close-export-modal]')?.addEventListener('click', () => {
       state.exportModal = null;
       render();
@@ -4487,6 +4713,28 @@
     root.querySelector('[data-export-form] input[name="toDate"]')?.addEventListener('change', (event) => {
       if (!state.exportModal) return;
       state.exportModal.toDate = event.currentTarget.value;
+    });
+    root.querySelector('[data-type-form]')?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = Object.fromEntries(new FormData(event.currentTarget).entries());
+      const payload = {
+        id: form.id ? Number(form.id) : undefined,
+        label: String(form.label || ''),
+        color: String(form.color || '#38bdf8'),
+        active: Boolean(form.active),
+        requiresBalance: Boolean(form.requiresBalance),
+        requiresApproval: Boolean(form.requiresApproval),
+        sendReminders: Boolean(form.sendReminders),
+      };
+
+      try {
+        const data = await request('save_type', payload);
+        updateLeaveTypes(data.types);
+        state.typeModal = null;
+        render();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : 'Enregistrement impossible');
+      }
     });
     root.querySelector('[data-leave-form]')?.addEventListener('submit', async (event) => {
       event.preventDefault();

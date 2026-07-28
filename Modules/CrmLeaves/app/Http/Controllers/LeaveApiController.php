@@ -44,6 +44,9 @@ class LeaveApiController extends Controller
                 'approve_leave' => $this->json($leaves->approveLeave($actor, $body)),
                 'refuse_leave' => $this->json($leaves->refuseLeave($actor, $body)),
                 'delete_leave' => $this->json($leaves->deleteLeave($actor, $body)),
+                'save_type' => $this->json($leaves->saveLeaveType($actor, $body)),
+                'toggle_type_visibility' => $this->json($leaves->toggleLeaveTypeVisibility($actor, $body)),
+                'delete_type' => $this->json($leaves->deleteLeaveType($actor, $body)),
                 default => $this->json(['ok' => false, 'error' => 'Action inconnue'], 404),
             };
         } catch (LeaveApiException $error) {

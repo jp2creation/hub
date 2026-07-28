@@ -398,14 +398,14 @@ paths:
           $ref: '#/components/responses/Forbidden'
     post:
       tags: [Conges]
-      summary: Creer, modifier ou supprimer un conge.
+      summary: Creer, modifier ou supprimer un conge ou un type d'absence.
       parameters:
         - in: query
           name: action
           required: true
           schema:
             type: string
-            enum: [save_leave, delete_leave]
+            enum: [save_leave, delete_leave, approve_leave, refuse_leave, export_options, export_pdf, save_type, toggle_type_visibility, delete_type]
       requestBody:
         $ref: '#/components/requestBodies/CrmJsonPayload'
       responses:

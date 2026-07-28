@@ -692,6 +692,19 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringNotContainsString('leave-balance-grid', $balancePanelSource);
         $this->assertStringContainsString('leave-type-card leave-sidebar-card', $balancePanelSource);
         $this->assertStringContainsString('Absences par type', $balancePanelSource);
+        $this->assertStringContainsString("views.push({ key: 'settings', label: 'Gestion' });", $asset);
+        $this->assertStringContainsString('data-add-type', $asset);
+        $this->assertStringContainsString('data-edit-type', $asset);
+        $this->assertStringContainsString('data-toggle-type', $asset);
+        $this->assertStringContainsString('data-delete-type', $asset);
+        $this->assertStringContainsString('data-type-form', $asset);
+        $this->assertStringContainsString('${renderTypeModal()}', $asset);
+        $this->assertStringContainsString("request('save_type'", $asset);
+        $this->assertStringContainsString("request('toggle_type_visibility'", $asset);
+        $this->assertStringContainsString("request('delete_type'", $asset);
+        $this->assertStringContainsString('selectableLeaveTypes(form.type)', $asset);
+        $this->assertStringContainsString('leave-type-state', $asset);
+        $this->assertStringContainsString('.leaves-type-modal', $asset);
 
         foreach ([
             '#fffdfa',

@@ -39,12 +39,15 @@ class CrmLeaveApiTest extends TestCase
             ->assertJsonPath('user.canViewBalances', true)
             ->assertJsonPath('user.canViewReports', true)
             ->assertJsonPath('user.canManageSettings', true)
+            ->assertJsonPath('user.canManageTypes', true)
             ->assertJsonPath('user.siteIds.0', $site->id)
             ->assertJsonPath('selectedSiteId', $site->id)
             ->assertJsonPath('employees.0.crmUserId', $crmUser->id)
             ->assertJsonPath('employees.0.name', $crmUser->name)
             ->assertJsonPath('employees.0.photoUrl', '/assets/logo/logomark.png')
             ->assertJsonPath('types.0.label', 'Congé')
+            ->assertJsonPath('types.0.active', true)
+            ->assertJsonPath('types.0.requiresBalance', true)
             ->assertJsonPath('periods.2.label', 'Après-midi');
     }
 
@@ -61,6 +64,7 @@ class CrmLeaveApiTest extends TestCase
             ->assertJsonPath('user.canViewRequests', true)
             ->assertJsonPath('user.canViewReports', false)
             ->assertJsonPath('user.canManageSettings', false)
+            ->assertJsonPath('user.canManageTypes', false)
             ->assertJsonPath('user.canCreateRequest', true);
     }
 
@@ -114,6 +118,129 @@ class CrmLeaveApiTest extends TestCase
             ->assertStatus(404)
             ->assertJsonPath('ok', false)
             ->assertJsonPath('error', 'Action inconnue');
+    }
+
+    public function test_manager_can_create_update_hide_and_delete_unused_leave_type(): void
+    {
+        [$account, , $site] = $this->createCrmUser(canManage: true);
+
+        $created = $this->actingAs($account)
+            ->postJson('/api/conges?action=save_type&siteId='.$site->id, [
+                'label' => 'Congé exceptionnel',
+                'color' => '#123abc',
+                'active' => true,
+                'requiresBalance' => false,
+                'requiresApproval' => true,
+                'sendReminders' => false,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('type.label', 'Congé exceptionnel')
+            ->assertJsonPath('type.color', '#123abc')
+            ->assertJsonPath('type.active', true)
+            ->assertJsonPath('type.requiresBalance', false)
+            ->assertJsonPath('type.sendReminders', false);
+
+        $typeId = (int) $created->json('type.id');
+        $typeValue = (string) $created->json('type.value');
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=save_type&siteId='.$site->id, [
+                'id' => $typeId,
+                'label' => 'Exceptionnel',
+                'color' => '#abcdef',
+                'active' => true,
+                'requiresBalance' => true,
+                'requiresApproval' => false,
+                'sendReminders' => false,
+            ])
+            ->assertOk()
+            ->assertJsonPath('type.label', 'Exceptionnel')
+            ->assertJsonPath('type.value', $typeValue)
+            ->assertJsonPath('type.requiresBalance', true)
+            ->assertJsonPath('type.requiresApproval', false);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=toggle_type_visibility&siteId='.$site->id, [
+                'id' => $typeId,
+                'active' => false,
+            ])
+            ->assertOk()
+            ->assertJsonPath('type.active', false);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=delete_type&siteId='.$site->id, ['id' => $typeId])
+            ->assertOk()
+            ->assertJsonPath('deleted', true);
+
+        $this->assertDatabaseMissing('crm_leave_types', ['id' => $typeId]);
+    }
+
+    public function test_leave_type_management_requires_permission(): void
+    {
+        [$account, , $site] = $this->createCrmUser(canManage: false);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=save_type&siteId='.$site->id, [
+                'label' => 'Interdit',
+                'active' => true,
+            ])
+            ->assertStatus(403)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('error', 'Droit insuffisant : conges.manage_types');
+    }
+
+    public function test_used_leave_type_can_be_hidden_but_not_deleted(): void
+    {
+        [$account, , $site, $employee] = $this->createCrmUser(canManage: true);
+
+        $created = $this->actingAs($account)
+            ->postJson('/api/conges?action=save_type&siteId='.$site->id, [
+                'label' => 'Récupération',
+                'color' => '#14b8a6',
+                'active' => true,
+            ])
+            ->assertOk();
+
+        $typeId = (int) $created->json('type.id');
+        $typeValue = (string) $created->json('type.value');
+
+        CrmLeaveEntry::query()->create([
+            'employee_id' => $employee->id,
+            'start_date' => '2026-08-05',
+            'end_date' => '2026-08-05',
+            'type' => $typeValue,
+            'period' => 'full',
+            'duration_days' => 1,
+            'status' => 'approved',
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=delete_type&siteId='.$site->id, ['id' => $typeId])
+            ->assertStatus(409)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('code', 'leave_type_not_deletable');
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=toggle_type_visibility&siteId='.$site->id, [
+                'id' => $typeId,
+                'active' => false,
+            ])
+            ->assertOk()
+            ->assertJsonPath('type.active', false);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=save_leave&siteId='.$site->id, [
+                'employeeId' => $employee->id,
+                'startDate' => '2026-08-06',
+                'endDate' => '2026-08-06',
+                'type' => $typeValue,
+                'period' => 'full',
+                'status' => 'approved',
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('code', 'leave_type_hidden');
     }
 
     public function test_authorized_user_can_download_leave_pdf_for_selected_members(): void
@@ -632,10 +759,15 @@ class CrmLeaveApiTest extends TestCase
             ['label' => 'Gérer les congés et absences', 'group_label' => 'Congés & Absences', 'sort_order' => 186],
         );
 
+        $manageTypes = CrmPermission::query()->updateOrCreate(
+            ['name' => 'conges.manage_types'],
+            ['label' => "Gérer les types d'absence", 'group_label' => 'Congés & Absences', 'sort_order' => 187],
+        );
+
         $crmUser->sites()->syncWithoutDetaching([$site->id => ['is_default' => true]]);
         $crmUser->modules()->syncWithoutDetaching([$module->id]);
         $crmUser->permissions()->syncWithoutDetaching(
-            $canManage ? [$view->id, $manage->id] : [$view->id],
+            $canManage ? [$view->id, $manage->id, $manageTypes->id] : [$view->id],
         );
 
         return [$account, $crmUser, $site, $employee];

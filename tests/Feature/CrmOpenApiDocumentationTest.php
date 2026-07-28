@@ -59,6 +59,9 @@ class CrmOpenApiDocumentationTest extends TestCase
             'validate_request',
             'save_leave',
             'delete_leave',
+            'save_type',
+            'toggle_type_visibility',
+            'delete_type',
             'save_remittance',
             'detect_check_ocr',
         ] as $action) {
