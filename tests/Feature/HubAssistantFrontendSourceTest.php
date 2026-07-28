@@ -41,6 +41,10 @@ class HubAssistantFrontendSourceTest extends TestCase
         $this->assertStringContainsString('.hub-assistant-avatar', $styles);
         $this->assertStringContainsString('.hub-assistant-close-mobile', $styles);
         $this->assertStringContainsString('body.hub-assistant-open .hub-assistant-close-desktop', $styles);
+        $this->assertStringContainsString('body.hub-assistant-open .hub-assistant-close:hover', $styles);
+        $this->assertStringContainsString('justify-self: start;', $styles);
+        $this->assertStringContainsString('order: -1;', $styles);
+        $this->assertStringContainsString('background: transparent;', $styles);
         $this->assertStringContainsString('body.hub-assistant-open .hub-assistant-panel', $styles);
         $this->assertStringContainsString('height: 100dvh;', $styles);
         $this->assertStringContainsString('font-size: 1rem;', $styles);
