@@ -1614,15 +1614,15 @@ body.crm-mobile-app-settings-open {
   justify-content: space-between;
   gap: 1rem;
   border-bottom: 1px solid rgb(226 232 240);
-  padding: 1rem 1rem 0.95rem;
+  padding: 0.95rem 1rem 0.9rem;
 }
 
 .hub-assistant-kicker {
   display: block;
   color: rgb(var(--theme-primary));
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0.035em;
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -1630,9 +1630,9 @@ body.crm-mobile-app-settings-open {
 .hub-assistant-header h2 {
   margin: 0.18rem 0 0;
   color: rgb(29 53 79);
-  font-size: 1.08rem;
-  font-weight: 900;
-  line-height: 1.18;
+  font-size: 1rem;
+  font-weight: 760;
+  line-height: 1.24;
 }
 
 .hub-assistant-close {
@@ -1652,10 +1652,10 @@ body.crm-mobile-app-settings-open {
 .hub-assistant-messages {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.65rem;
   min-height: 0;
   overflow: auto;
-  padding: 1rem;
+  padding: 0.95rem;
   background: rgb(250 250 250);
 }
 
@@ -1664,7 +1664,7 @@ body.crm-mobile-app-settings-open {
   border: 1px solid rgb(226 232 240);
   border-radius: 8px;
   background: #fff;
-  padding: 0.74rem 0.82rem;
+  padding: 0.68rem 0.76rem;
   box-shadow: 0 8px 18px rgb(15 23 42 / 0.045);
 }
 
@@ -1677,9 +1677,9 @@ body.crm-mobile-app-settings-open {
 
 .hub-assistant-message p {
   margin: 0;
-  font-size: 0.88rem;
-  font-weight: 720;
-  line-height: 1.36;
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.38;
 }
 
 .hub-assistant-result {
@@ -1687,14 +1687,14 @@ body.crm-mobile-app-settings-open {
   align-items: center;
   justify-content: space-between;
   gap: 0.7rem;
-  min-height: 2.25rem;
+  min-height: 2.15rem;
   margin-top: 0.72rem;
   border-radius: 8px;
   background: rgb(var(--theme-primary));
-  padding: 0.55rem 0.7rem;
+  padding: 0.52rem 0.68rem;
   color: #fff;
-  font-size: 0.84rem;
-  font-weight: 900;
+  font-size: 0.82rem;
+  font-weight: 760;
   line-height: 1.2;
   text-decoration: none;
 }
@@ -1712,8 +1712,8 @@ body.crm-mobile-app-settings-open {
   background: rgb(248 250 252);
   padding: 0.38rem 0.58rem;
   color: rgb(76 99 125);
-  font-size: 0.76rem;
-  font-weight: 850;
+  font-size: 0.74rem;
+  font-weight: 700;
   line-height: 1.15;
   text-decoration: none;
 }
@@ -1741,8 +1741,8 @@ body.crm-mobile-app-settings-open {
   padding: 0.6rem 0.72rem;
   color: rgb(29 53 79);
   font: inherit;
-  font-size: 0.88rem;
-  font-weight: 750;
+  font-size: 0.84rem;
+  font-weight: 650;
   line-height: 1.3;
   outline: 0;
 }

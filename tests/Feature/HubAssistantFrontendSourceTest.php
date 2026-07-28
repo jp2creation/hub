@@ -19,6 +19,8 @@ class HubAssistantFrontendSourceTest extends TestCase
         $this->assertStringContainsString('data-hub-assistant-form', $assistant);
         $this->assertStringContainsString('.hub-assistant-panel', $styles);
         $this->assertStringContainsString('.hub-assistant-panel[hidden]', $styles);
+        $this->assertStringContainsString('font-size: 1rem;', $styles);
+        $this->assertStringContainsString('font-weight: 650;', $styles);
         $this->assertStringContainsString("Route::post('/api/hub-assistant/message'", $routes);
     }
 }
