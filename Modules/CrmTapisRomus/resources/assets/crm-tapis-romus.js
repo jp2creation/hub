@@ -35,7 +35,7 @@
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .tapis-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
       #${rootId} .tapis-title h1{margin:0;color:var(--tapis-text);font-size:1.8rem;line-height:1.08;font-weight:600;letter-spacing:0}
-      #${rootId} .tapis-title p{margin:.35rem 0 0;color:var(--tapis-muted);font-size:.92rem;font-weight:700}
+      #${rootId} .tapis-title p{margin:.35rem 0 0;color:var(--tapis-muted);font-size:.92rem;font-weight:400}
       #${rootId} .tapis-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:1rem;align-items:start}
       #${rootId} .tapis-card{border:1px solid var(--tapis-border);border-radius:.6rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #${rootId} .tapis-card-header{border-bottom:1px solid var(--tapis-border);padding:.95rem 1rem}

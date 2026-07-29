@@ -211,7 +211,7 @@
       '.crm-active-site-option:hover,.crm-active-site-option:focus-visible{background:rgb(var(--theme-primary) / .08);color:rgb(var(--theme-primary))}',
       '.crm-active-site-option.is-active{background:rgb(var(--theme-primary) / .11);color:rgb(var(--theme-primary))}',
       '.crm-active-site-option-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem;font-weight:800}',
-      '.crm-active-site-empty{padding:.65rem .75rem;color:var(--color-secondary-500,#64748b);font-size:.84rem;font-weight:700}',
+      '.crm-active-site-empty{padding:.65rem .75rem;color:var(--color-secondary-500,#64748b);font-size:.84rem;font-weight:400}',
       '.dark .crm-active-site-trigger,.dark .crm-active-site-menu{border-color:var(--color-surface-700,#334155);background:var(--color-surface-800,#1e293b);color:#fff}',
       '.dark .crm-active-site-menu:before{border-color:var(--color-surface-700,#334155);background:var(--color-surface-800,#1e293b)}',
       '@media (max-width:767px){.crm-active-site-label{display:none}.crm-active-site-switcher{flex:0 1 clamp(10rem,44vw,12rem);max-width:clamp(10rem,44vw,12rem)}.crm-active-site-trigger{max-width:none;grid-template-columns:.92rem minmax(0,1fr) .8rem;gap:.3rem;padding:0 .45rem}.crm-active-site-mark{width:.92rem;height:.92rem}.crm-active-site-chevron{width:.8rem;height:.8rem}}',

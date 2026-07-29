@@ -581,6 +581,52 @@ class CrmAdministrationApiTest extends TestCase
         $this->assertDatabaseHas('crm_user_sites', ['user_id' => $userId, 'site_id' => $siteId]);
     }
 
+    public function test_admin_can_keep_multiple_user_sites_with_selected_primary_site(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk();
+
+        $siteIds = CrmSite::query()
+            ->orderBy('id')
+            ->limit(2)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+        $target = CrmUser::query()->create([
+            'name' => 'Membre multisite',
+            'email' => 'membre.multisite@example.test',
+            'role' => 'user',
+            'active' => true,
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_user', [
+                'id' => $target->id,
+                'name' => 'Membre multisite',
+                'email' => 'membre.multisite@example.test',
+                'role' => 'responsable',
+                'active' => true,
+                'primarySiteId' => $siteIds[1],
+                'siteIds' => $siteIds,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseHas('crm_user_sites', [
+            'user_id' => $target->id,
+            'site_id' => $siteIds[0],
+            'is_default' => false,
+        ]);
+        $this->assertDatabaseHas('crm_user_sites', [
+            'user_id' => $target->id,
+            'site_id' => $siteIds[1],
+            'is_default' => true,
+        ]);
+    }
+
     public function test_admin_can_change_linked_member_password_from_hub_administration(): void
     {
         [$account] = $this->createAdminUser();

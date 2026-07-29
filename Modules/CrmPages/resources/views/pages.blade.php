@@ -142,7 +142,7 @@
         color: #334155;
         padding: .55rem .75rem;
         font-size: .9rem;
-        font-weight: 700;
+        font-weight: 400;
         text-decoration: none;
       }
 
@@ -186,7 +186,7 @@
         padding: .55rem .25rem;
         font: inherit;
         font-size: .9rem;
-        font-weight: 700;
+        font-weight: 400;
         cursor: pointer;
       }
 

@@ -208,7 +208,7 @@ body.ms-ui-modal-open {
 .crm-native-user-menu-item strong {
   color: inherit;
   font-size: 0.86rem;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.2;
 }
 
@@ -303,7 +303,7 @@ body.ms-ui-modal-open {
 .crm-native-content :is(h1.module-title, h1.page-title) {
   color: var(--ms-ui-text) !important;
   font-size: clamp(1.5rem, 1.3rem + 0.65vw, 2rem) !important;
-  font-weight: 700 !important;
+  font-weight: 400 !important;
   letter-spacing: -0.025em !important;
   line-height: 1.25 !important;
 }
@@ -685,7 +685,7 @@ body.ms-ui-modal-open {
   background: linear-gradient(135deg, #f9eef2, #f3edf0);
   color: rgb(var(--theme-primary));
   font-size: 1.3rem;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .ms-ui-product-image img,

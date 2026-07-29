@@ -141,7 +141,7 @@
         margin: 0;
         color: var(--muted);
         font-size: 0.76rem;
-        font-weight: 700;
+        font-weight: 400;
         line-height: 1.35;
       }
 
@@ -363,7 +363,7 @@
         width: fit-content;
         color: var(--muted);
         font-size: 0.94rem;
-        font-weight: 700;
+        font-weight: 400;
       }
 
       .remember input {
@@ -380,7 +380,7 @@
         background: #fef2f2;
         color: #991b1b;
         font-size: 0.92rem;
-        font-weight: 700;
+        font-weight: 400;
       }
 
       button {

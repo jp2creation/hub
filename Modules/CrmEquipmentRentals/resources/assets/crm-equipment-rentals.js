@@ -208,7 +208,7 @@
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .rent-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
       #${rootId} .rent-title h1{margin:0;color:var(--rent-text);font-size:1.8rem;line-height:1.08;font-weight:600;letter-spacing:0}
-      #${rootId} .rent-title p{margin:.35rem 0 0;color:var(--rent-muted);font-size:.92rem;font-weight:700}
+      #${rootId} .rent-title p{margin:.35rem 0 0;color:var(--rent-muted);font-size:.92rem;font-weight:400}
       #${rootId} .rent-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--rent-border);border-radius:.5rem;background:#fff;padding:.58rem .9rem;color:var(--rent-text);font-size:.84rem;font-weight:600;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .rent-button-primary{border-color:transparent;background:var(--rent-primary);color:#fff}
       #${rootId} .rent-button-danger{color:#b91c1c}

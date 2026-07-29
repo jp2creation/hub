@@ -444,7 +444,7 @@ function renderHtml(captured, capturedMobile) {
       border-bottom: 1px dashed #e2e8f0;
       padding-bottom: 1.5mm;
       color: ${ink};
-      font-weight: 700;
+      font-weight: 400;
     }
     .intro-grid {
       display: grid;

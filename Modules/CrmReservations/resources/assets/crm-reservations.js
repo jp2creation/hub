@@ -362,7 +362,7 @@
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .resa-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
       #${rootId} .resa-title h1{margin:0;color:var(--resa-text);font-size:1.8rem;line-height:1.08;font-weight:600;letter-spacing:0}
-      #${rootId} .resa-title p{margin:.35rem 0 0;color:var(--resa-muted);font-size:.92rem;font-weight:700}
+      #${rootId} .resa-title p{margin:.35rem 0 0;color:var(--resa-muted);font-size:.92rem;font-weight:400}
       #${rootId} .resa-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.58rem .9rem;color:var(--resa-text);font-size:.84rem;font-weight:600;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .resa-button-primary{border-color:transparent;background:var(--resa-primary);color:#fff}
       #${rootId} .resa-button-danger{color:#b91c1c}

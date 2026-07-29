@@ -509,7 +509,7 @@ html.crm-ui-module-ready .crm-native-content > * {
   margin: 0;
   color: rgb(93 114 135);
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .crm-native-button {
@@ -1762,7 +1762,7 @@ body.crm-mobile-app-settings-open {
   padding: 0.38rem 0.58rem;
   color: rgb(76 99 125);
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.15;
   text-decoration: none;
 }

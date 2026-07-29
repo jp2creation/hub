@@ -342,7 +342,7 @@
   .text-gradient,
   .text-accent-brand {
     color: rgb(var(--theme-primary));
-    font-weight: 700;
+    font-weight: 400;
   }
 
   .bg-gradient-theme {

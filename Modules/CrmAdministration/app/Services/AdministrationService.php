@@ -704,7 +704,7 @@ class AdministrationService
             }
 
             $primarySiteId = max(0, (int) ($data['primarySiteId'] ?? $data['primary_site_id'] ?? $data['siteId'] ?? $data['site_id'] ?? 0));
-            $siteIds = $this->validIds($primarySiteId > 0 ? [$primarySiteId] : ($data['siteIds'] ?? []), CrmSite::class);
+            $siteIds = $this->requestedSiteIds($data, $primarySiteId);
             $moduleIds = $this->validIds($data['moduleIds'] ?? [], CrmModule::class);
             $permissionIds = $this->validIds($data['permissionIds'] ?? [], CrmPermission::class);
             $accessRules = $this->accessRulesFromPayload($data['accessRules'] ?? []);
@@ -1529,6 +1529,36 @@ class AdministrationService
         }
 
         $user->sites()->sync($sync);
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function requestedSiteIds(array $data, int $primarySiteId): array
+    {
+        $requestedSiteIds = is_array($data['siteIds'] ?? null)
+            ? array_map('intval', $data['siteIds'])
+            : [];
+
+        if ($primarySiteId > 0) {
+            array_unshift($requestedSiteIds, $primarySiteId);
+        }
+
+        $requestedSiteIds = array_values(array_unique(array_filter(
+            $requestedSiteIds,
+            fn (int $siteId): bool => $siteId > 0,
+        )));
+
+        if ($requestedSiteIds === []) {
+            return [];
+        }
+
+        $validSiteIds = array_fill_keys($this->validIds($requestedSiteIds, CrmSite::class), true);
+
+        return array_values(array_filter(
+            $requestedSiteIds,
+            fn (int $siteId): bool => isset($validSiteIds[$siteId]),
+        ));
     }
 
     /**

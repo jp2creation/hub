@@ -88,7 +88,7 @@ html.fi {
 
 .fi-sidebar-group-label {
     font-size: .7rem;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0;
     text-transform: uppercase;
 }
@@ -149,7 +149,7 @@ html.fi {
 .fi-section-header-heading,
 .fi-wi-stats-overview-stat-value {
     color: var(--crm-ink) !important;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0;
 }
 
@@ -203,7 +203,7 @@ html.fi {
 .fi-ta-header-cell-label {
     color: #4c637d !important;
     font-size: .76rem;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0;
     text-transform: uppercase;
 }
@@ -238,7 +238,7 @@ html.fi {
 
 .fi-btn {
     border-radius: var(--crm-radius) !important;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0;
     box-shadow: none;
 }
@@ -294,7 +294,7 @@ html.fi {
 
 .fi-badge {
     border-radius: 999px !important;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0;
 }
 
@@ -339,7 +339,7 @@ html.fi {
 
 .fi-link {
     color: var(--crm-primary-display) !important;
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .fi-dropdown-list-item:hover,

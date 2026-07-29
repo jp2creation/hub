@@ -1096,7 +1096,7 @@
             .pdf-logo { max-width:35mm; max-height:14mm; object-fit:contain; }
             .pdf-brand-fallback { display:block; color:var(--theme-primary-color); font-size:15px; font-weight:600; line-height:1; text-transform:uppercase; }
             h1 { margin:0; color:#1f2937; font-family:Georgia, 'Times New Roman', serif; font-size:25px; font-weight:800; line-height:1.05; text-align:left; }
-            .pdf-meta { text-align:right; color:#64748b; font-size:8px; font-weight:700; line-height:1.35; }
+            .pdf-meta { text-align:right; color:#64748b; font-size:8px; font-weight:400; line-height:1.35; }
             .pdf-period { margin:0; color:#254236; font-size:10px; font-weight:800; text-align:center; }
             .pdf-period strong { color:#16695c; }
             .pdf-sheet { overflow:hidden; border:1px solid #dfe7e1; border-radius:5px; background:#fff; }
@@ -1661,7 +1661,7 @@
       #crm-leaves-module .leave-month-nav { display:flex; flex-direction:column; gap:.9rem; border-bottom:1px solid var(--color-surface-200,#e2e8f0); padding:1rem; }
       #crm-leaves-module .leave-month-left { display:flex; align-items:center; gap:.6rem; }
       #crm-leaves-module .leave-month-title { margin:0; color:var(--color-secondary-900,#0f172a); font-size:1.15rem; font-weight:850; line-height:1.15; letter-spacing:0; }
-      #crm-leaves-module .leave-month-subtitle { margin:.15rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.76rem; font-weight:700; }
+      #crm-leaves-module .leave-month-subtitle { margin:.15rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.76rem; font-weight:400; }
       #crm-leaves-module .leave-nav-button { display:grid; place-items:center; width:2.2rem; height:2.2rem; border:1px solid var(--color-surface-200,#e2e8f0); border-radius:.55rem; background:#fff; color:var(--color-secondary-600,#475569); font-size:1.2rem; line-height:1; font-weight:850; }
       #crm-leaves-module .leave-nav-button:hover { border-color:rgb(var(--theme-primary) / .45); color:rgb(var(--theme-primary)); background:rgb(var(--theme-primary) / .04); }
       #crm-leaves-module .leave-weekdays { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); background:var(--color-surface-50,#f8fafc); border-bottom:1px solid var(--color-surface-200,#e2e8f0); }
@@ -1697,9 +1697,9 @@
       #crm-leaves-module .leave-day-row:hover { border-color:rgb(var(--theme-primary) / .45); background:rgb(var(--theme-primary) / .04); }
       #crm-leaves-module .leave-day-dot { width:.72rem; height:.72rem; border-radius:999px; background:var(--day-color); }
       #crm-leaves-module .leave-day-name { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.86rem; font-weight:850; }
-      #crm-leaves-module .leave-day-meta { display:block; margin-top:.12rem; color:var(--color-secondary-500,#64748b); font-size:.72rem; font-weight:700; }
+      #crm-leaves-module .leave-day-meta { display:block; margin-top:.12rem; color:var(--color-secondary-500,#64748b); font-size:.72rem; font-weight:400; }
       #crm-leaves-module .leave-day-edit { color:rgb(var(--theme-primary)); font-size:.72rem; font-weight:600; }
-      #crm-leaves-module .leave-day-empty { border:1px dashed var(--color-surface-300,#cbd5e1); border-radius:.55rem; padding:1rem; color:var(--color-secondary-500,#64748b); font-size:.85rem; font-weight:700; text-align:center; }
+      #crm-leaves-module .leave-day-empty { border:1px dashed var(--color-surface-300,#cbd5e1); border-radius:.55rem; padding:1rem; color:var(--color-secondary-500,#64748b); font-size:.85rem; font-weight:400; text-align:center; }
       #crm-leaves-module .leave-users-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; border-bottom:1px solid var(--color-surface-200,#e2e8f0); padding:1rem; }
       #crm-leaves-module .leave-users-title { margin:0; color:var(--color-secondary-900,#0f172a); font-size:1rem; font-weight:850; line-height:1.2; letter-spacing:0; }
       #crm-leaves-module .leave-users-site { margin:.25rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.8rem; font-weight:650; }
@@ -1729,7 +1729,7 @@
       #crm-leaves-module .leaves-modal-backdrop { position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,.48); padding:1rem; }
       #crm-leaves-module .leaves-modal { width:min(42rem,100%); max-height:calc(100vh - 2rem); overflow:auto; border-radius:.75rem; background:#fff; padding:1rem; box-shadow:0 24px 80px rgba(15,23,42,.24); }
       #crm-leaves-module .leaves-modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:.85rem; }
-      #crm-leaves-module .leaves-modal-head p { margin:.2rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.78rem; font-weight:700; }
+      #crm-leaves-module .leaves-modal-head p { margin:.2rem 0 0; color:var(--color-secondary-500,#64748b); font-size:.78rem; font-weight:400; }
       #crm-leaves-module .leaves-export-modal { width:min(40rem,100%); }
       #crm-leaves-module .leaves-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
       #crm-leaves-module .leaves-field { display:grid; gap:.32rem; }
@@ -1817,7 +1817,7 @@
         margin:.25rem 0 0;
         color:var(--color-secondary-500,#64748b);
         font-size:.86rem;
-        font-weight:700;
+        font-weight:400;
         text-align:center;
         overflow:hidden;
         text-overflow:ellipsis;

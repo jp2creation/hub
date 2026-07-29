@@ -749,6 +749,39 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('/public/modules', $gitignore);
     }
 
+    public function test_hub_administration_uses_integrated_ergonomic_shell(): void
+    {
+        $administration = (string) file_get_contents(base_path('Modules/CrmAdministration/resources/assets/crm-administration.js'));
+
+        $this->assertStringContainsString('Administration HUB', $administration);
+        $this->assertStringContainsString('["overview", "Vue d\'ensemble", "Pilotage", "dashboard"]', $administration);
+        $this->assertStringContainsString('class="admin-workspace"', $administration);
+        $this->assertStringContainsString('class="admin-stats"', $administration);
+        $this->assertStringContainsString('function renderOverview()', $administration);
+        $this->assertStringContainsString('function renderListRow', $administration);
+        $this->assertStringContainsString('admin-list-card', $administration);
+        $this->assertStringContainsString('color-mix(in srgb,var(--admin-pill-color', $administration);
+        $this->assertStringContainsString('function renderModal()', $administration);
+        $this->assertStringContainsString('data-edit-type="user-roles"', $administration);
+        $this->assertStringContainsString('data-user-roles-form', $administration);
+        $this->assertStringContainsString('data-apply-role-profile', $administration);
+        $this->assertStringContainsString('data-user-filter-reset', $administration);
+        $this->assertStringContainsString('data-user-filter="siteId"', $administration);
+        $this->assertStringContainsString('data-user-filter="role"', $administration);
+        $this->assertStringContainsString('function filterUsers', $administration);
+        $this->assertStringContainsString('data-edit-type', $administration);
+        $this->assertStringContainsString('admin-modal-wide', $administration);
+        $this->assertStringContainsString('data-menu-group-form', $administration);
+        $this->assertStringContainsString('data-menu-item-form', $administration);
+        $this->assertStringContainsString('data-menu-drag-row', $administration);
+        $this->assertStringContainsString('data-menu-drag-list', $administration);
+        $this->assertStringContainsString('function reorderMenu', $administration);
+        $this->assertStringContainsString('function saveMenuOrder', $administration);
+        $this->assertStringContainsString('is-drop-before', $administration);
+        $this->assertStringContainsString('data-admin-search', $administration);
+        $this->assertStringContainsString('url.pathname = next === "overview" ? "/administration" : `/administration/${next}`;', $administration);
+    }
+
     public function test_site_contact_and_color_are_exposed_in_frontend_modules(): void
     {
         $teams = (string) file_get_contents(base_path('Modules/CrmTeams/resources/assets/crm-equipes.js'));

@@ -2450,7 +2450,7 @@
             table{width:100%;border-collapse:collapse;margin-top:18px}
             th,td{border-bottom:1px solid #e2e8f0;padding:10px;text-align:left;font-size:13px}
             th{background:#f8fafc;color:#475569;text-transform:uppercase;font-size:11px}
-            .amount{text-align:right;font-weight:700}
+            .amount{text-align:right;font-weight:400}
             footer{margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
             footer div{height:80px;border:1px dashed #cbd5e1;border-radius:8px;padding:12px;color:#64748b}
             @media print{body{margin:18mm}.no-print{display:none}}

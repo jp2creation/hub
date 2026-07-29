@@ -1442,7 +1442,7 @@
             header{display:flex;justify-content:space-between;gap:16px;border-bottom:3px solid var(--theme-primary-color);padding-bottom:14px;margin-bottom:18px}
             h1{margin:0;font-size:24px;line-height:1.15}
             h2{margin:22px 0 10px;font-size:16px}
-            p{margin:4px 0;color:#475569;font-size:12px;font-weight:700}
+            p{margin:4px 0;color:#475569;font-size:12px;font-weight:400}
             .badge{display:inline-flex;border-radius:999px;background:#f1f5f9;color:#334155;padding:5px 9px;font-size:12px;font-weight:800}
             .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
             .card{border:1px solid #e2e8f0;border-radius:8px;padding:10px;background:#f8fafc}
@@ -2044,7 +2044,7 @@
       #crm-cash-control-module h1,#crm-cash-control-module h2{margin:0;color:var(--color-secondary-900,#0f172a);letter-spacing:0;line-height:1.15}
       #crm-cash-control-module h1{font-size:1.55rem;font-weight:600}
       #crm-cash-control-module h2{font-size:1rem;font-weight:600}
-      #crm-cash-control-module p{margin:.25rem 0 0;color:var(--color-secondary-500,#64748b);font-size:.86rem;font-weight:700}
+      #crm-cash-control-module p{margin:.25rem 0 0;color:var(--color-secondary-500,#64748b);font-size:.86rem;font-weight:400}
       #crm-cash-control-module .cash-create{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem}
       #crm-cash-control-module .cash-card,#crm-cash-control-module .cash-summary-item,#crm-cash-control-module .cash-dashboard-card{border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #crm-cash-control-module .cash-pad{padding:1rem}
@@ -2052,7 +2052,7 @@
       #crm-cash-control-module .cash-notice{border:1px solid #fecaca;border-radius:.5rem;background:#fef2f2;color:#991b1b;padding:.8rem;font-size:.86rem;font-weight:800}
       #crm-cash-control-module .cash-empty{display:grid;gap:.45rem;justify-items:start;padding:1.1rem}
       #crm-cash-control-module .cash-empty strong{font-size:1rem}
-      #crm-cash-control-module .cash-empty span{color:var(--color-secondary-500,#64748b);font-size:.86rem;font-weight:700}
+      #crm-cash-control-module .cash-empty span{color:var(--color-secondary-500,#64748b);font-size:.86rem;font-weight:400}
       #crm-cash-control-module .cash-button,#crm-cash-control-module .cash-mini-button{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--color-surface-200,#e2e8f0);border-radius:.5rem;background:#fff;color:var(--color-secondary-700,#334155);font-weight:850;text-decoration:none;white-space:nowrap}
       #crm-cash-control-module .cash-button{min-height:2.4rem;padding:.55rem .8rem;font-size:.84rem}
       #crm-cash-control-module .cash-mini-button{min-height:2rem;padding:.4rem .55rem;font-size:.74rem}
