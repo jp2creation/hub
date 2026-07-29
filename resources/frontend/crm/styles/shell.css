@@ -6,6 +6,7 @@
   --crm-template-radius: var(--radius, 0.625rem);
   --crm-template-duration: var(--duration-normal, 200ms);
   --crm-template-ease: cubic-bezier(0.2, 0, 0, 1);
+  --crm-martin-yellow: #f7b711;
 }
 
 .crm-native-shell {
@@ -289,6 +290,17 @@ body.crm-native-shell-active {
 .crm-native-nav-subitem .crm-native-nav-icon svg {
   width: 1rem;
   height: 1rem;
+}
+
+.crm-native-nav-subitems .crm-native-nav-link.crm-native-nav-subitem.is-active,
+.crm-native-nav-subitems .crm-native-nav-branch.is-active {
+  background: var(--crm-martin-yellow);
+  color: #fff;
+}
+
+.crm-native-nav-subitems .crm-native-nav-link.crm-native-nav-subitem.is-active .crm-native-nav-icon,
+.crm-native-nav-subitems .crm-native-nav-branch.is-active .crm-native-nav-icon {
+  color: #fff;
 }
 
 .crm-native-logout {

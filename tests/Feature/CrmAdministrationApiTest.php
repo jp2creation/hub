@@ -471,6 +471,39 @@ class CrmAdministrationApiTest extends TestCase
         ]);
     }
 
+    public function test_profile_navigation_keeps_admin_page_visible_when_moved_to_top_level(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk();
+
+        CrmMenuItem::query()
+            ->where('item_key', 'admin:users')
+            ->update([
+                'group_key' => 'internal',
+                'parent_item_key' => null,
+                'active' => true,
+                'sort_order' => 10,
+            ]);
+
+        $profile = $this->actingAs($account)
+            ->getJson('/api/administration?action=profile')
+            ->assertOk()
+            ->json('profile');
+
+        $adminUsersItem = collect($profile['navigation']['menuItems'])
+            ->firstWhere('itemKey', 'admin:users');
+        $administrationGroup = collect($profile['navigation']['menuGroups'])
+            ->firstWhere('menuKey', 'internal');
+
+        $this->assertNotNull($adminUsersItem);
+        $this->assertSame('internal', $adminUsersItem['groupKey'] ?? null);
+        $this->assertNull($adminUsersItem['parentItemKey'] ?? null);
+        $this->assertSame('Administration', $administrationGroup['title'] ?? null);
+    }
+
     public function test_user_without_platform_permission_cannot_read_bootstrap(): void
     {
         $account = User::factory()->create();

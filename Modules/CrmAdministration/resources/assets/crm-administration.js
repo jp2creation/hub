@@ -1851,6 +1851,9 @@
       if (key === "site") {
         window.CRM_ACTIVE_SITE?.reload?.();
       }
+      if (key === "menu") {
+        window.dispatchEvent(new CustomEvent("crm:navigation-refresh"));
+      }
     } catch (error) {
       alert(error.message || "Enregistrement impossible");
       state.saving = "";

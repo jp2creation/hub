@@ -26,6 +26,14 @@ class AdministrationService
 {
     private const DEFAULT_PROFILE_PHOTO = '/assets/logo/logomark.png';
 
+    private const ADMIN_NAVIGATION_PERMISSIONS = [
+        'admin:users' => ['platform.manage_users', 'platform.manage_roles'],
+        'admin:sites' => ['platform.manage_sites'],
+        'admin:modules' => ['platform.manage_modules'],
+        'admin:menu' => ['platform.manage_modules'],
+        'admin:pages' => ['pages.manage'],
+    ];
+
     public function __construct(
         private readonly CrmActivityLogger $activity,
         private readonly CrmAccessService $access,
@@ -96,6 +104,8 @@ class AdministrationService
             foreach ($this->staticMenuItemSeed() as $item) {
                 $this->ensureMenuItem($item);
             }
+
+            $this->normalizeStaticAdminMenuLabels();
 
             CrmModule::query()
                 ->orderBy('sort_order')
@@ -967,6 +977,14 @@ class AdministrationService
         $menuItem->saveQuietly();
     }
 
+    private function normalizeStaticAdminMenuLabels(): void
+    {
+        CrmMenuItem::query()
+            ->where('item_key', 'admin:menu')
+            ->where('label', 'Menu gauche')
+            ->update(['label' => 'Navigation']);
+    }
+
     private function deleteObsoleteMenuEntries(): void
     {
         $prefixes = ['dashboard:', 'app:', 'feature:', 'auth:', 'page:', 'form:', 'table:', 'chart:'];
@@ -1334,8 +1352,9 @@ class AdministrationService
     private function profileNavigationPayload(CrmUser $user): array
     {
         $moduleIds = $this->access->moduleIds($user);
+        $adminItemKeys = $this->adminNavigationItemKeys($user);
 
-        if ($moduleIds === []) {
+        if ($moduleIds === [] && $adminItemKeys === []) {
             return [
                 'modules' => [],
                 'menuGroups' => [],
@@ -1343,31 +1362,47 @@ class AdministrationService
             ];
         }
 
-        $modules = CrmModule::query()
-            ->active()
-            ->whereIn('id', $moduleIds)
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get();
+        $modules = $moduleIds === []
+            ? collect()
+            : CrmModule::query()
+                ->active()
+                ->whereIn('id', $moduleIds)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get();
 
-        $itemKeys = $modules
+        $directItemKeys = $modules
             ->map(fn (CrmModule $module): string => 'module:'.$module->slug)
+            ->merge($adminItemKeys)
+            ->unique()
             ->values()
             ->all();
 
-        $menuItems = CrmMenuItem::query()
+        $activeMenuItems = CrmMenuItem::query()
             ->where('active', true)
-            ->where(function ($query) use ($itemKeys): void {
-                $query
-                    ->whereIn('item_key', $itemKeys)
-                    ->orWhereIn('parent_item_key', $itemKeys);
-            })
             ->orderBy('group_key')
             ->orderByRaw('parent_item_key is not null')
             ->orderBy('parent_item_key')
             ->orderBy('sort_order')
             ->orderBy('label')
             ->get();
+
+        $parentItemKeys = $activeMenuItems
+            ->filter(fn (CrmMenuItem $item): bool => in_array($item->item_key, $directItemKeys, true))
+            ->pluck('parent_item_key')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $visibleItemKeys = collect([...$directItemKeys, ...$parentItemKeys])
+            ->unique()
+            ->values()
+            ->all();
+
+        $menuItems = $activeMenuItems
+            ->filter(fn (CrmMenuItem $item): bool => in_array($item->item_key, $visibleItemKeys, true))
+            ->values();
 
         $menuGroups = CrmMenuGroup::query()
             ->where('active', true)
@@ -1381,6 +1416,21 @@ class AdministrationService
             'menuGroups' => $menuGroups->map(fn (CrmMenuGroup $group): array => $this->menuGroupRow($group))->values()->all(),
             'menuItems' => $menuItems->map(fn (CrmMenuItem $item): array => $this->menuItemRow($item))->values()->all(),
         ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function adminNavigationItemKeys(CrmUser $user): array
+    {
+        $permissionNames = $this->access->permissionNames($user);
+
+        return collect(self::ADMIN_NAVIGATION_PERMISSIONS)
+            ->filter(fn (array $requiredPermissions): bool => $user->role === 'admin'
+                || count(array_intersect($requiredPermissions, $permissionNames)) > 0)
+            ->keys()
+            ->values()
+            ->all();
     }
 
     private function connectedDevices(CrmUser $user): array

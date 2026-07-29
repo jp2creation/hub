@@ -668,8 +668,8 @@ function renderNativeShell(): void {
   document.documentElement.classList.add('crm-known-module-route');
 }
 
-async function loadProfile(): Promise<void> {
-  if (profileLoaded || isLegacyTemplateRoute()) {
+async function loadProfile(options: { force?: boolean } = {}): Promise<void> {
+  if ((profileLoaded && !options.force) || isLegacyTemplateRoute()) {
     return;
   }
 
@@ -893,10 +893,20 @@ function installEvents(): void {
     setUserMenuOpen(false);
   });
 
+  window.addEventListener('crm:navigation-refresh', () => {
+    void loadProfile({ force: true });
+  });
+
   window.addEventListener('crm:profile-updated', (event) => {
     const profile = event instanceof CustomEvent ? (event.detail?.profile as CrmProfile | undefined) : undefined;
 
     if (profile) {
+      if (profile.navigation) {
+        window.CRM_NAV_FALLBACK = profile.navigation;
+        updateNavigationMarkup();
+        updateActiveLinks();
+      }
+
       hydrateProfile(profile);
     }
   });

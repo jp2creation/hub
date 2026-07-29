@@ -98,6 +98,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('data-crm-native-nav-branch', $nativeShell);
         $this->assertStringContainsString('crm-native-nav-branch-link', $nativeShell);
         $this->assertStringContainsString('crm-native-nav-branch-toggle', $nativeShell);
+        $this->assertStringContainsString('crm:navigation-refresh', $nativeShell);
+        $this->assertStringContainsString('loadProfile({ force: true })', $nativeShell);
         $this->assertStringContainsString("item.itemKey.startsWith('admin:')", $nativeShell);
         $this->assertStringContainsString('!parentItemKey(item)', $nativeShell);
         $this->assertStringNotContainsString("itemKey: 'admin:overview'", $nativeShell);
@@ -159,6 +161,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString("window.matchMedia('(max-width: 767.98px)')", $mobileFallback);
         $this->assertStringContainsString('--color-secondary-50: #fafafa;', $templateVariablesCss);
         $this->assertStringContainsString('background: var(--color-secondary-50, #fafafa);', $shellCss);
+        $this->assertStringContainsString('--crm-martin-yellow: #f7b711;', $shellCss);
+        $this->assertStringContainsString('.crm-native-nav-subitems .crm-native-nav-link.crm-native-nav-subitem.is-active', $shellCss);
         $this->assertStringContainsString('--ms-ui-soft: var(--color-secondary-50, #fafafa);', $nativeUiCss);
         $this->assertStringContainsString('--crm-bg: #fafafa;', $filamentCss);
         $this->assertStringNotContainsString('#eff2f5', $templateVariablesCss.$shellCss.$nativeUiCss.$filamentCss);
@@ -799,6 +803,7 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('function reorderMenuGroup', $administration);
         $this->assertStringContainsString('function reorderMenuItem', $administration);
         $this->assertStringContainsString('function saveMenuOrder', $administration);
+        $this->assertStringContainsString('crm:navigation-refresh', $administration);
         $this->assertStringContainsString('is-drop-before', $administration);
         $this->assertStringContainsString('data-admin-search', $administration);
         $this->assertStringContainsString('url.pathname = next === "overview" ? "/administration" : `/administration/${next}`;', $administration);
