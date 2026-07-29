@@ -25,7 +25,7 @@
       ["users", "Utilisateurs", "Accès et droits", "users"],
       ["sites", "Sites", "Coordonnées", "category"],
       ["modules", "Modules", "Visibilité", "package"],
-      ["menu", "Menu gauche", "Navigation", "settings"],
+      ["menu", "Navigation", "Sections et pages", "settings"],
       ["pages", "Pages HUB", "Contenus", "article"],
     ];
   }
@@ -121,20 +121,7 @@
       #${rootId} .admin-stat span:not(.admin-stat-icon){display:block;overflow:hidden;color:var(--admin-muted);font-size:.72rem;font-weight:600;text-transform:uppercase;text-overflow:ellipsis;white-space:nowrap}
       #${rootId} .admin-stat strong{display:block;overflow:hidden;color:var(--admin-text);font-size:1.35rem;font-weight:600;line-height:1.05;text-overflow:ellipsis;white-space:nowrap}
       #${rootId} .admin-stat small{display:block;margin-top:.2rem;overflow:hidden;color:#94a3b8;font-size:.74rem;font-weight:400;text-overflow:ellipsis;white-space:nowrap}
-      #${rootId} .admin-workspace{display:grid;grid-template-columns:16.5rem minmax(0,1fr);align-items:start;gap:1rem}
-      #${rootId} .admin-sidebar{position:sticky;top:1rem;display:grid;gap:.75rem}
-      #${rootId} .admin-nav-card{border:1px solid var(--admin-border);border-radius:.6rem;background:#fff;padding:.55rem;box-shadow:0 12px 28px rgba(15,23,42,.045)}
-      #${rootId} .admin-nav-title{padding:.5rem .62rem;color:var(--admin-muted);font-size:.68rem;font-weight:600;text-transform:uppercase}
-      #${rootId} .admin-tabs{display:grid;gap:.28rem}
-      #${rootId} .admin-tab{display:grid;grid-template-columns:2rem minmax(0,1fr) auto;align-items:center;gap:.58rem;width:100%;border:0;border-radius:.52rem;background:transparent;padding:.55rem .62rem;color:var(--admin-text);font:inherit;text-align:left;cursor:pointer}
-      #${rootId} .admin-tab:hover{background:var(--admin-primary-soft)}
-      #${rootId} .admin-tab.is-active{background:var(--admin-primary);color:#fff;box-shadow:0 12px 24px rgb(var(--theme-primary) / .18)}
-      #${rootId} .admin-tab-icon{display:grid;place-items:center;width:2rem;height:2rem;border-radius:.5rem;background:#f1f5f9;color:var(--admin-primary)}
-      #${rootId} .admin-tab.is-active .admin-tab-icon{background:rgba(255,255,255,.18);color:#fff}
-      #${rootId} .admin-tab strong{display:block;overflow:hidden;font-size:.86rem;font-weight:600;line-height:1.12;text-overflow:ellipsis;white-space:nowrap}
-      #${rootId} .admin-tab small{display:block;margin-top:.12rem;overflow:hidden;color:inherit;font-size:.67rem;font-weight:400;opacity:.68;text-overflow:ellipsis;white-space:nowrap}
-      #${rootId} .admin-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:1.65rem;height:1.45rem;border-radius:999px;background:#f1f5f9;color:var(--admin-muted);font-size:.7rem;font-weight:600}
-      #${rootId} .admin-tab.is-active .admin-tab-count{background:rgba(255,255,255,.18);color:#fff}
+      #${rootId} .admin-workspace{display:grid;gap:1rem;min-width:0}
       #${rootId} .admin-main{display:grid;gap:1rem;min-width:0}
       #${rootId} .admin-toolbar{display:flex;align-items:center;justify-content:space-between;gap:.8rem;border:1px solid var(--admin-border);border-radius:.6rem;background:#fff;padding:.75rem;box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .admin-toolbar-copy{min-width:0}
@@ -194,7 +181,19 @@
       #${rootId} .admin-actions{display:flex;justify-content:flex-end;gap:.55rem;flex-wrap:wrap}
       #${rootId} .admin-empty,#${rootId} .admin-loading{display:grid;place-items:center;min-height:7rem;border:1px dashed var(--admin-border);border-radius:.55rem;color:var(--admin-muted);font-weight:400;text-align:center;padding:1rem}
       #${rootId} .admin-alert{border:1px solid #fecaca;border-radius:.55rem;background:#fff1f2;padding:.8rem;color:#b91c1c;font-weight:400}
-      #${rootId} .admin-menu-groups{display:grid;grid-template-columns:minmax(16rem,.7fr) minmax(0,1.3fr);gap:.85rem}
+      #${rootId} .admin-menu-tree-card{overflow:hidden}
+      #${rootId} .admin-menu-tree{display:block}
+      #${rootId} .admin-menu-tree-row{--menu-indent:0rem;position:relative;display:grid;grid-template-columns:1.8rem 2.35rem minmax(0,1fr) auto;align-items:center;gap:.7rem;border:0;border-bottom:1px solid var(--admin-border);background:#fff;padding:.72rem .9rem .72rem calc(.9rem + var(--menu-indent));min-width:0}
+      #${rootId} .admin-menu-tree-row:last-child{border-bottom:0}
+      #${rootId} .admin-menu-tree-row:hover{background:var(--admin-soft)}
+      #${rootId} .admin-menu-tree-row.is-dragging{opacity:.48;background:var(--admin-soft)}
+      #${rootId} .admin-menu-tree-row.is-drop-before{box-shadow:inset 0 2px 0 var(--admin-primary)}
+      #${rootId} .admin-menu-tree-row.is-drop-after{box-shadow:inset 0 -2px 0 var(--admin-primary)}
+      #${rootId} .admin-menu-tree-row-item,#${rootId} .admin-menu-tree-row-subitem{background:#fafafa}
+      #${rootId} .admin-menu-tree-row-item::before,#${rootId} .admin-menu-tree-row-subitem::before{content:"";position:absolute;left:calc(.9rem + var(--menu-indent) - 1.15rem);top:50%;width:1rem;border-top:1px solid var(--admin-border)}
+      #${rootId} .admin-menu-tree-row-item .admin-list-icon,#${rootId} .admin-menu-tree-row-subitem .admin-list-icon{width:2.05rem;height:2.05rem;background:#fff;color:var(--admin-muted);box-shadow:inset 0 0 0 1px var(--admin-border)}
+      #${rootId} .admin-menu-tree-row-group .admin-list-title{font-size:.95rem}
+      #${rootId} .admin-menu-tree-row-item .admin-list-title,#${rootId} .admin-menu-tree-row-subitem .admin-list-title{font-size:.89rem}
       #${rootId} .admin-icon-preview{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:.45rem;background:#f7e8ee;color:var(--admin-primary)}
       #${rootId} .admin-list{display:block}
       #${rootId} .admin-list-row{display:grid;grid-template-columns:2.55rem minmax(0,1fr) auto;align-items:center;gap:.72rem;border:0;border-bottom:1px solid var(--admin-border);background:#fff;padding:.72rem .9rem;min-width:0}
@@ -248,12 +247,12 @@
       #${rootId} .admin-overview-copy > span{display:block;margin-top:.12rem;color:var(--admin-muted);font-size:.72rem;font-weight:400}
       #${rootId} .admin-list-meta{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap}
       .dark #${rootId}{--admin-border:var(--color-surface-700,#334155);--admin-text:#fff;--admin-muted:var(--color-secondary-400,#94a3b8);--admin-soft:var(--color-surface-800,#1e293b)}
-      .dark #${rootId} .admin-card,.dark #${rootId} .admin-row,.dark #${rootId} .admin-button,.dark #${rootId} .admin-icon-button,.dark #${rootId} .admin-filter-card,.dark #${rootId} .admin-filter-all,.dark #${rootId} .admin-nav-card,.dark #${rootId} .admin-toolbar,.dark #${rootId} .admin-stat,.dark #${rootId} .admin-list-row,.dark #${rootId} .admin-modal,.dark #${rootId} .admin-overview-link,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .admin-site-photo,.dark #${rootId} .admin-site-photo-preview,.dark #${rootId} .admin-password-panel{background:var(--color-surface-900,#0f172a);border-color:var(--admin-border)}
+      .dark #${rootId} .admin-card,.dark #${rootId} .admin-row,.dark #${rootId} .admin-button,.dark #${rootId} .admin-icon-button,.dark #${rootId} .admin-filter-card,.dark #${rootId} .admin-filter-all,.dark #${rootId} .admin-toolbar,.dark #${rootId} .admin-stat,.dark #${rootId} .admin-list-row,.dark #${rootId} .admin-menu-tree-row,.dark #${rootId} .admin-menu-tree-row-item .admin-list-icon,.dark #${rootId} .admin-modal,.dark #${rootId} .admin-overview-link,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .admin-site-photo,.dark #${rootId} .admin-site-photo-preview,.dark #${rootId} .admin-password-panel{background:var(--color-surface-900,#0f172a);border-color:var(--admin-border)}
       .dark #${rootId} .admin-modal-body{background:var(--color-surface-800,#1e293b)}
-      @media (max-width:1100px){#${rootId} .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-workspace{grid-template-columns:1fr}#${rootId} .admin-sidebar{position:static}#${rootId} .admin-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
-      @media (max-width:900px){#${rootId} .admin-menu-groups,#${rootId} .admin-grid,#${rootId} .admin-grid-3,#${rootId} .admin-overview-grid,#${rootId} .admin-access-layout{grid-template-columns:1fr}}
-      @media (max-width:700px){#${rootId} .admin-top,#${rootId} .admin-toolbar,#${rootId} .admin-filter-card{display:grid}#${rootId} .admin-title h1{font-size:1.55rem}#${rootId} .admin-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-actions{display:grid;grid-template-columns:1fr 1fr}#${rootId} .admin-search,#${rootId} .admin-filter-control{min-width:0;width:100%;max-width:none}#${rootId} .admin-filter-count{margin-left:0}#${rootId} .admin-list-row{grid-template-columns:2.5rem minmax(0,1fr);align-items:start}#${rootId} .admin-list-row.is-draggable{grid-template-columns:1.8rem 2.5rem minmax(0,1fr)}#${rootId} .admin-list-side{grid-column:1 / -1;justify-content:space-between}}
-      @media (max-width:520px){#${rootId} .admin-stats,#${rootId} .admin-tabs{grid-template-columns:1fr}#${rootId} .admin-site-photo{grid-template-columns:1fr}#${rootId} .admin-site-photo-preview{width:100%;max-width:14rem}#${rootId} .admin-actions{grid-template-columns:1fr}}
+      @media (max-width:1100px){#${rootId} .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+      @media (max-width:900px){#${rootId} .admin-grid,#${rootId} .admin-grid-3,#${rootId} .admin-overview-grid,#${rootId} .admin-access-layout{grid-template-columns:1fr}}
+      @media (max-width:700px){#${rootId} .admin-top,#${rootId} .admin-toolbar,#${rootId} .admin-filter-card{display:grid}#${rootId} .admin-title h1{font-size:1.55rem}#${rootId} .admin-actions{display:grid;grid-template-columns:1fr 1fr}#${rootId} .admin-search,#${rootId} .admin-filter-control{min-width:0;width:100%;max-width:none}#${rootId} .admin-filter-count{margin-left:0}#${rootId} .admin-list-row{grid-template-columns:2.5rem minmax(0,1fr);align-items:start}#${rootId} .admin-list-row.is-draggable,#${rootId} .admin-menu-tree-row{grid-template-columns:1.8rem 2.5rem minmax(0,1fr)}#${rootId} .admin-list-side{grid-column:1 / -1;justify-content:space-between}#${rootId} .admin-menu-tree-row .admin-list-side{padding-left:calc(4.1rem + var(--menu-indent))}}
+      @media (max-width:520px){#${rootId} .admin-stats{grid-template-columns:1fr}#${rootId} .admin-site-photo{grid-template-columns:1fr}#${rootId} .admin-site-photo-preview{width:100%;max-width:14rem}#${rootId} .admin-actions{grid-template-columns:1fr}}
     `;
     document.head.appendChild(style);
   }
@@ -309,12 +308,6 @@
         </div>
         ${renderStats()}
         <div class="admin-workspace">
-          <aside class="admin-sidebar">
-            <section class="admin-nav-card">
-              <div class="admin-nav-title">Administration</div>
-              ${renderTabs()}
-            </section>
-          </aside>
           <div class="admin-main">
             ${renderToolbar()}
             ${renderPanel()}
@@ -323,16 +316,6 @@
         ${renderModal()}
       </section>
     `;
-  }
-
-  function renderTabs() {
-    return `<nav class="admin-tabs">${adminSections().map(([key, label, detail, iconKey]) => `
-      <button class="admin-tab${state.tab === key ? " is-active" : ""}" type="button" data-tab="${key}">
-        <span class="admin-tab-icon">${icon(iconKey)}</span>
-        <span><strong>${esc(label)}</strong><small>${esc(detail)}</small></span>
-        <span class="admin-tab-count">${esc(sectionCount(key))}</span>
-      </button>
-    `).join("")}</nav>`;
   }
 
   function renderStats() {
@@ -394,19 +377,6 @@
     return renderMenu();
   }
 
-  function sectionCount(key) {
-    const data = state.data || {};
-
-    if (key === "overview") return "Hub";
-    if (key === "users") return (data.users || []).length;
-    if (key === "sites") return (data.sites || []).length;
-    if (key === "modules") return (data.modules || []).length;
-    if (key === "menu") return (data.menuItems || []).length;
-    if (key === "pages") return (data.pages || []).length;
-
-    return "";
-  }
-
   function toolbarDescription(key, fallback) {
     const descriptions = {
       overview: "Vue synthétique de l'administration et accès rapides.",
@@ -458,7 +428,7 @@
             ${overviewLink("users", "Gérer les utilisateurs", "Créer, activer, attribuer les sites et droits", "users")}
             ${overviewLink("sites", "Gérer les sites", "Adresse, téléphone, horaires, couleur et photo", "category")}
             ${overviewLink("modules", "Gérer les modules", "Routes, badges et visibilité dans le HUB", "package")}
-            ${overviewLink("menu", "Organiser le menu", "Groupes, libellés, icônes et ordre d’affichage", "settings")}
+            ${overviewLink("menu", "Organiser la navigation", "Sections, pages, sous-pages, icônes et ordre d’affichage", "settings")}
           </div>
         </div>
         <div class="admin-card">
@@ -571,38 +541,143 @@
   function menuGroupTitle(groupKey) {
     const group = (state.data?.menuGroups || []).find((item) => item.menuKey === groupKey);
 
-    return group?.title || groupKey || "Groupe";
+    return group?.title || groupKey || "Section";
+  }
+
+  function sortMenuRecords(records, labelKey) {
+    return [...records].sort((first, second) => {
+      const order = Number(first?.sortOrder || 0) - Number(second?.sortOrder || 0);
+      if (order !== 0) return order;
+
+      return String(first?.[labelKey] || "").localeCompare(String(second?.[labelKey] || ""), "fr");
+    });
+  }
+
+  function menuItemParentKey(item) {
+    return String(item?.parentItemKey || "");
+  }
+
+  function menuItemsForGroup(groupKey, parentItemKey = "") {
+    return sortMenuRecords(
+      (state.data?.menuItems || []).filter((item) => item.groupKey === groupKey && menuItemParentKey(item) === parentItemKey),
+      "label",
+    );
+  }
+
+  function menuChildItems(parentItemKey) {
+    return sortMenuRecords(
+      (state.data?.menuItems || []).filter((item) => menuItemParentKey(item) === parentItemKey),
+      "label",
+    );
+  }
+
+  function menuParentOptions(currentItemKey) {
+    return sortMenuRecords(
+      (state.data?.menuItems || []).filter((item) => item.itemKey !== currentItemKey && !menuItemParentKey(item)),
+      "label",
+    );
+  }
+
+  function renderMenuTreeRow({ rowType, type, id, title, subtitle, iconKey, meta = "", depth = 0, dragType = "", dragId = "", parentGroupKey = "", parentItemKey = "" }) {
+    const indent = `${Math.max(0, Number(depth) || 0) * 2.35}rem`;
+    const draggable = dragType && dragId;
+    const dragAttrs = draggable
+      ? ` draggable="true" data-menu-drag-row data-menu-drag-type="${esc(dragType)}" data-menu-drag-id="${esc(dragId)}" data-menu-parent-group="${esc(parentGroupKey)}" data-menu-parent-item="${esc(parentItemKey)}"`
+      : "";
+    const dragHandle = draggable ? `<span class="admin-drag-handle" title="Glisser pour changer l'ordre">${icon("grip")}</span>` : "";
+
+    return `
+      <article class="admin-menu-tree-row admin-menu-tree-row-${esc(rowType)}${draggable ? " is-draggable" : ""}" style="--menu-indent:${esc(indent)}"${dragAttrs}>
+        ${dragHandle}
+        <span class="admin-list-icon">${icon(iconKey || "category")}</span>
+        <span class="admin-list-main">
+          <strong class="admin-list-title">${esc(title)}</strong>
+          <span class="admin-list-subtitle">${esc(subtitle || "Aucune information complémentaire")}</span>
+        </span>
+        <span class="admin-list-side">
+          ${meta}
+          <button class="admin-icon-button" type="button" data-edit-type="${esc(type)}" data-edit-id="${esc(id)}" aria-label="Modifier ${esc(title)}" title="Modifier">${icon("edit")}</button>
+        </span>
+      </article>
+    `;
   }
 
   function renderMenu() {
-    const groups = state.data?.menuGroups || [];
-    const items = state.data?.menuItems || [];
-    const groupRows = groups.map((group) => renderListRow({
-      type: "menu-group",
-      id: group.menuKey,
-      title: group.title,
-      subtitle: `${group.menuKey} · ordre ${group.sortOrder}`,
-      iconKey: "settings",
-      meta: statusPill(group.active !== false, "Visible", "Masqué"),
-      dragType: "menu-group",
-      dragId: group.menuKey,
-    }));
-    const itemRows = items.map((item) => renderListRow({
-      type: "menu-item",
-      id: item.itemKey,
-      title: item.label,
-      subtitle: `${menuGroupTitle(item.groupKey)} · ${item.itemKey}`,
-      iconKey: item.iconKey || "category",
-      meta: `${statusPill(item.active !== false, "Visible", "Masqué")}<span class="admin-pill">ordre ${esc(item.sortOrder)}</span>`,
-      dragType: "menu-item",
-      dragId: item.itemKey,
-    }));
+    const groups = sortMenuRecords(state.data?.menuGroups || [], "title");
+    const groupKeys = new Set(groups.map((group) => group.menuKey));
+    const rows = [];
+
+    groups.forEach((group) => {
+      const children = menuItemsForGroup(group.menuKey);
+
+      rows.push(renderMenuTreeRow({
+        rowType: "group",
+        type: "menu-group",
+        id: group.menuKey,
+        title: group.title,
+        subtitle: `${group.menuKey} · ${children.length} page(s)`,
+        iconKey: "settings",
+        meta: statusPill(group.active !== false, "Visible", "Masqué"),
+          dragType: "menu-group",
+          dragId: group.menuKey,
+          parentGroupKey: group.menuKey,
+      }));
+
+      const appendItemRows = (item, depth = 1) => {
+        const subItems = menuChildItems(item.itemKey);
+
+        rows.push(renderMenuTreeRow({
+          rowType: depth > 1 ? "subitem" : "item",
+          type: "menu-item",
+          id: item.itemKey,
+          title: item.label,
+          subtitle: menuItemParentKey(item) ? `${menuGroupTitle(item.groupKey)} · sous-page de ${menuItemParentKey(item)}` : item.itemKey,
+          iconKey: item.iconKey || "category",
+          meta: `${statusPill(item.active !== false, "Visible", "Masqué")}${subItems.length ? `<span class="admin-pill">${esc(subItems.length)} sous-page(s)</span>` : ""}<span class="admin-pill">ordre ${esc(item.sortOrder)}</span>`,
+          depth,
+          dragType: "menu-item",
+          dragId: item.itemKey,
+          parentGroupKey: item.groupKey,
+          parentItemKey: menuItemParentKey(item),
+        }));
+
+        subItems.forEach((subItem) => appendItemRows(subItem, depth + 1));
+      };
+
+      children.forEach((item) => appendItemRows(item));
+    });
+
+    sortMenuRecords((state.data?.menuItems || []).filter((item) => !groupKeys.has(item.groupKey) && !menuItemParentKey(item)), "label").forEach((item) => {
+      rows.push(renderMenuTreeRow({
+        rowType: "item",
+        type: "menu-item",
+        id: item.itemKey,
+        title: item.label,
+        subtitle: `Sans section · ${item.itemKey}`,
+        iconKey: item.iconKey || "category",
+        meta: `${statusPill(item.active !== false, "Visible", "Masqué")}<span class="admin-pill">ordre ${esc(item.sortOrder)}</span>`,
+        dragType: "menu-item",
+        dragId: item.itemKey,
+        parentGroupKey: item.groupKey,
+      }));
+    });
 
     return `
-      <div class="admin-menu-groups">
-        ${renderListCard("Groupes du menu", "Liste des rubriques affichées dans la barre latérale.", "", groupRows, "Aucun groupe de menu trouvé.", { dragType: "menu-group" })}
-        ${renderListCard("Liens du menu", "Liste des liens, icônes et positions du menu.", "", itemRows, "Aucun lien de menu trouvé.", { dragType: "menu-item" })}
-      </div>
+      <section class="admin-card admin-list-card admin-menu-tree-card">
+        <header class="admin-card-header">
+          <div>
+            <h2 class="admin-card-title">Structure de la navigation</h2>
+            <p class="admin-card-subtitle">Glissez les sections, pages et sous-pages pour organiser la navigation du HUB.</p>
+          </div>
+          <span class="admin-list-meta">
+            <span class="admin-pill">${esc(groups.length)} sections</span>
+            <span class="admin-pill">${esc(state.data?.menuItems?.length || 0)} pages</span>
+          </span>
+        </header>
+        <div class="admin-card-body">
+          ${rows.length ? `<div class="admin-list admin-menu-tree" data-menu-drag-list="menu-tree">${rows.join("")}</div>` : emptyState("Aucun élément de menu trouvé.")}
+        </div>
+      </section>
     `;
   }
 
@@ -624,14 +699,22 @@
   }
 
   function renderMenuItemForm(item, groups) {
+    const parentOptions = menuParentOptions(item.itemKey);
+
     return `
       <form class="admin-row admin-edit-form" data-menu-item-form data-menu-item="${esc(item.itemKey)}">
         <div class="admin-row-title"><strong>${esc(item.label)}</strong><span class="admin-icon-preview">${icon(item.iconKey)}</span></div>
         <div class="admin-grid-3">
           <label>Nom <input name="label" value="${esc(item.label)}"></label>
-          <label>Groupe
+          <label>Section
             <select name="groupKey">
               ${groups.map((group) => `<option value="${esc(group.menuKey)}"${group.menuKey === item.groupKey ? " selected" : ""}>${esc(group.title)}</option>`).join("")}
+            </select>
+          </label>
+          <label>Page parente
+            <select name="parentItemKey">
+              <option value="">Niveau principal</option>
+              ${parentOptions.map((parent) => `<option value="${esc(parent.itemKey)}"${parent.itemKey === item.parentItemKey ? " selected" : ""}>${esc(parent.label)} · ${esc(menuGroupTitle(parent.groupKey))}</option>`).join("")}
             </select>
           </label>
           <label>Icône
@@ -1113,11 +1196,11 @@
     }
 
     if (type === "menu-group") {
-      return { title: "Modifier le groupe", subtitle: record.title, body: renderMenuGroupForm(record) };
+      return { title: "Modifier la section", subtitle: record.title, body: renderMenuGroupForm(record) };
     }
 
     if (type === "menu-item") {
-      return { title: "Modifier le lien", subtitle: record.label, body: renderMenuItemForm(record, state.data?.menuGroups || []) };
+      return { title: "Modifier la page", subtitle: record.label, body: renderMenuItemForm(record, state.data?.menuGroups || []) };
     }
 
     return null;
@@ -1254,6 +1337,7 @@
     currentMenuDrag = {
       type: row.dataset.menuDragType,
       id: row.dataset.menuDragId,
+      parentGroupKey: row.dataset.menuParentGroup || "",
     };
     row.classList.add("is-dragging");
     event.dataTransfer.effectAllowed = "move";
@@ -1282,7 +1366,7 @@
     const drag = currentMenuDrag;
     clearMenuDropMarkers(true);
     currentMenuDrag = null;
-    reorderMenu(drag.type, drag.id, row.dataset.menuDragId, position);
+    reorderMenu(drag.type, drag.id, row.dataset.menuDragType, row.dataset.menuDragId, position);
   }
 
   function endMenuDrag() {
@@ -1292,17 +1376,14 @@
 
   function canDropMenuDrag(row) {
     if (!currentMenuDrag) return false;
-    if (row.dataset.menuDragType !== currentMenuDrag.type) return false;
-    if (row.dataset.menuDragId === currentMenuDrag.id) return false;
+    const targetType = row.dataset.menuDragType;
+    const targetId = row.dataset.menuDragId;
 
-    if (currentMenuDrag.type === "menu-item") {
-      const moving = findMenuRecord("menu-item", currentMenuDrag.id);
-      const target = findMenuRecord("menu-item", row.dataset.menuDragId);
+    if (targetType === currentMenuDrag.type && targetId === currentMenuDrag.id) return false;
+    if (currentMenuDrag.type === "menu-group") return targetType === "menu-group";
+    if (currentMenuDrag.type === "menu-item") return targetType === "menu-item" || targetType === "menu-group";
 
-      return moving?.groupKey && moving.groupKey === target?.groupKey;
-    }
-
-    return true;
+    return false;
   }
 
   function menuDropPosition(event, row) {
@@ -1356,26 +1437,84 @@
     render();
   }
 
-  async function reorderMenu(type, sourceId, targetId, position) {
-    const collectionKey = type === "menu-group" ? "menuGroups" : "menuItems";
-    const idKey = type === "menu-group" ? "menuKey" : "itemKey";
-    const records = state.data?.[collectionKey] || [];
+  async function reorderMenu(type, sourceId, targetType, targetId, position) {
+    const changed = type === "menu-group"
+      ? reorderMenuGroup(sourceId, targetType, targetId, position)
+      : type === "menu-item"
+        ? reorderMenuItem(sourceId, targetType, targetId, position)
+        : false;
+
+    if (!changed) return;
+
+    await saveMenuOrder();
+  }
+
+  function reorderMenuGroup(sourceId, targetType, targetId, position) {
+    if (targetType !== "menu-group") return false;
+
+    const records = state.data?.menuGroups || [];
+    const idKey = "menuKey";
     const ordered = [...records];
     const fromIndex = ordered.findIndex((record) => String(record?.[idKey]) === String(sourceId));
     const moving = ordered[fromIndex];
     const target = ordered.find((record) => String(record?.[idKey]) === String(targetId));
 
-    if (fromIndex < 0 || !moving || !target) return;
-    if (type === "menu-item" && moving.groupKey !== target.groupKey) return;
+    if (fromIndex < 0 || !moving || !target) return false;
 
     ordered.splice(fromIndex, 1);
     let toIndex = ordered.findIndex((record) => String(record?.[idKey]) === String(targetId));
-    if (toIndex < 0) return;
+    if (toIndex < 0) return false;
     if (position === "after") toIndex += 1;
     ordered.splice(toIndex, 0, moving);
 
-    state.data[collectionKey] = type === "menu-group" ? renumberMenuGroups(ordered) : renumberMenuItems(ordered);
-    await saveMenuOrder();
+    state.data.menuGroups = renumberMenuGroups(ordered);
+
+    return true;
+  }
+
+  function reorderMenuItem(sourceId, targetType, targetId, position) {
+    const records = state.data?.menuItems || [];
+    const moving = records.find((record) => String(record?.itemKey) === String(sourceId));
+    const target = targetType === "menu-item"
+      ? records.find((record) => String(record?.itemKey) === String(targetId))
+      : findMenuRecord("menu-group", targetId);
+
+    if (!moving || !target) return false;
+
+    const targetGroupKey = targetType === "menu-item" ? target.groupKey : target.menuKey;
+    if (!targetGroupKey) return false;
+
+    const targetParentItemKey = targetType === "menu-item" ? menuItemParentKey(target) : "";
+    if (targetParentItemKey && menuChildItems(sourceId).length > 0) return false;
+
+    const groupedItems = sortMenuRecords(records.filter((item) => item.groupKey === targetGroupKey && menuItemParentKey(item) === targetParentItemKey && String(item.itemKey) !== String(sourceId)), "label");
+    let insertIndex = targetType === "menu-group"
+      ? (position === "before" ? 0 : groupedItems.length)
+      : groupedItems.findIndex((item) => String(item.itemKey) === String(targetId));
+
+    if (insertIndex < 0) return false;
+    if (targetType === "menu-item" && position === "after") insertIndex += 1;
+
+    groupedItems.splice(insertIndex, 0, { ...moving, groupKey: targetGroupKey, parentItemKey: targetParentItemKey });
+
+    const ordered = [];
+    const handledItems = new Set(groupedItems.map((item) => item.itemKey));
+    const knownGroups = new Set();
+    sortMenuRecords(state.data?.menuGroups || [], "title").forEach((group) => {
+      knownGroups.add(group.menuKey);
+
+      ordered.push(...sortMenuRecords(records.filter((item) => item.groupKey === group.menuKey && String(item.itemKey) !== String(sourceId) && !handledItems.has(item.itemKey)), "label"));
+    });
+
+    sortMenuRecords(records.filter((item) => !knownGroups.has(item.groupKey) && item.groupKey !== targetGroupKey && String(item.itemKey) !== String(sourceId)), "label").forEach((item) => {
+      ordered.push(item);
+    });
+
+    ordered.push(...groupedItems);
+
+    state.data.menuItems = renumberMenuItems(ordered.map((item) => menuItemParentKey(item) === sourceId ? { ...item, groupKey: targetGroupKey } : item));
+
+    return true;
   }
 
   function renumberMenuGroups(groups) {
@@ -1389,7 +1528,7 @@
     const counters = {};
 
     return items.map((item) => {
-      const groupKey = item.groupKey || "";
+      const groupKey = `${item.groupKey || ""}:${menuItemParentKey(item)}`;
       counters[groupKey] = (counters[groupKey] || 0) + 1;
 
       return {
@@ -1435,6 +1574,7 @@
       itemKey,
       label: form.querySelector('[name="label"]').value,
       groupKey: form.querySelector('[name="groupKey"]').value,
+      parentItemKey: form.querySelector('[name="parentItemKey"]').value,
       iconKey: form.querySelector('[name="iconKey"]').value,
       sortOrder: Number(form.querySelector('[name="sortOrder"]').value || 100),
       active: form.querySelector('[name="active"]').checked,
@@ -1462,6 +1602,7 @@
         itemKey: item.itemKey,
         label: item.label,
         groupKey: item.groupKey,
+        parentItemKey: item.parentItemKey || "",
         iconKey: item.iconKey,
         sortOrder: Number(item.sortOrder || 100),
         active: item.active !== false,

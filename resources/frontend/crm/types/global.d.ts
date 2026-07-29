@@ -104,6 +104,7 @@ export type CrmMenuItem = {
   iconKey: string;
   itemKey: string;
   label: string;
+  parentItemKey?: string | null;
   sortOrder: number;
 };
 

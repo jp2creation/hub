@@ -37,11 +37,11 @@ class CrmMenuItemResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Administration HUB';
 
-    protected static ?string $navigationLabel = 'Liens de menu';
+    protected static ?string $navigationLabel = 'Pages de navigation';
 
-    protected static ?string $modelLabel = 'lien de menu';
+    protected static ?string $modelLabel = 'page de navigation';
 
-    protected static ?string $pluralModelLabel = 'liens de menu';
+    protected static ?string $pluralModelLabel = 'pages de navigation';
 
     protected static ?int $navigationSort = 40;
 
@@ -81,11 +81,24 @@ class CrmMenuItemResource extends Resource
                     ->maxLength(120)
                     ->disabledOn('edit'),
                 Select::make('group_key')
-                    ->label('Groupe')
+                    ->label('Section')
                     ->relationship('group', 'title')
                     ->searchable()
                     ->preload()
                     ->required(),
+                Select::make('parent_item_key')
+                    ->label('Page parente')
+                    ->options(fn (?CrmMenuItem $record): array => CrmMenuItem::query()
+                        ->whereNull('parent_item_key')
+                        ->when(
+                            $record?->item_key,
+                            fn (Builder $query, string $itemKey): Builder => $query->where('item_key', '!=', $itemKey),
+                        )
+                        ->orderBy('label')
+                        ->pluck('label', 'item_key')
+                        ->all())
+                    ->searchable()
+                    ->preload(),
                 TextInput::make('label')
                     ->label('Titre affiche')
                     ->required()
@@ -113,7 +126,8 @@ class CrmMenuItemResource extends Resource
             ->components([
                 TextEntry::make('label')->label('Titre'),
                 TextEntry::make('item_key')->label('Cle'),
-                TextEntry::make('group.title')->label('Groupe'),
+                TextEntry::make('group.title')->label('Section'),
+                TextEntry::make('parent.label')->label('Page parente')->placeholder('Niveau principal'),
                 TextEntry::make('icon_key')->label('Icone'),
                 TextEntry::make('sort_order')->label('Ordre'),
                 IconEntry::make('active')->label('Visible')->boolean(),
@@ -124,15 +138,19 @@ class CrmMenuItemResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('group:menu_key,title'))
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['group:menu_key,title', 'parent:item_key,label']))
             ->columns([
                 TextColumn::make('label')
                     ->label('Titre')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('group.title')
-                    ->label('Groupe')
+                    ->label('Section')
                     ->sortable(),
+                TextColumn::make('parent.label')
+                    ->label('Page parente')
+                    ->placeholder('Niveau principal')
+                    ->toggleable(),
                 TextColumn::make('icon_key')
                     ->label('Icone')
                     ->badge()
@@ -150,7 +168,7 @@ class CrmMenuItemResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('group')
-                    ->label('Groupe')
+                    ->label('Section')
                     ->relationship('group', 'title')
                     ->searchable()
                     ->preload(),

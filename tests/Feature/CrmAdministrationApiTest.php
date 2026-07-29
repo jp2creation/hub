@@ -57,11 +57,14 @@ class CrmAdministrationApiTest extends TestCase
             ->firstWhere('itemKey', 'module:reservations');
         $leavesItem = collect($readProfile['navigation']['menuItems'])
             ->firstWhere('itemKey', 'module:conges');
+        $adminUsersItem = collect($readProfile['navigation']['menuItems'])
+            ->firstWhere('itemKey', 'admin:users');
         $documentsGroup = collect($readProfile['navigation']['menuGroups'])
             ->firstWhere('menuKey', 'documents');
 
         $this->assertSame('truck', $reservationItem['iconKey'] ?? null);
         $this->assertSame('Congés & Absences', $leavesItem['label'] ?? null);
+        $this->assertSame('module:administration', $adminUsersItem['parentItemKey'] ?? null);
         $this->assertSame('Documents', $documentsGroup['title'] ?? null);
 
         $profile = $this->actingAs($account)
@@ -427,6 +430,45 @@ class CrmAdministrationApiTest extends TestCase
                 'label' => 'Absences équipe',
                 'active' => false,
             ]);
+    }
+
+    public function test_admin_can_assign_menu_item_as_sub_link(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $bootstrap = $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json();
+
+        $adminUsersItem = collect($bootstrap['menuItems'])
+            ->firstWhere('itemKey', 'admin:users');
+
+        $this->assertNotNull($adminUsersItem);
+        $this->assertSame('module:administration', $adminUsersItem['parentItemKey'] ?? null);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_menu_settings', [
+                'items' => [[
+                    'itemKey' => 'admin:users',
+                    'groupKey' => 'internal',
+                    'parentItemKey' => 'module:administration',
+                    'iconKey' => 'users',
+                    'label' => 'Utilisateurs HUB',
+                    'active' => true,
+                    'sortOrder' => 15,
+                ]],
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseHas('crm_menu_items', [
+            'item_key' => 'admin:users',
+            'group_key' => 'internal',
+            'parent_item_key' => 'module:administration',
+            'label' => 'Utilisateurs HUB',
+            'sort_order' => 15,
+        ]);
     }
 
     public function test_user_without_platform_permission_cannot_read_bootstrap(): void

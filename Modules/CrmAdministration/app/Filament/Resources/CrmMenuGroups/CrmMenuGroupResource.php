@@ -34,11 +34,11 @@ class CrmMenuGroupResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Administration HUB';
 
-    protected static ?string $navigationLabel = 'Groupes de menu';
+    protected static ?string $navigationLabel = 'Sections de navigation';
 
-    protected static ?string $modelLabel = 'groupe de menu';
+    protected static ?string $modelLabel = 'section de navigation';
 
-    protected static ?string $pluralModelLabel = 'groupes de menu';
+    protected static ?string $pluralModelLabel = 'sections de navigation';
 
     protected static ?int $navigationSort = 30;
 
@@ -75,7 +75,7 @@ class CrmMenuGroupResource extends Resource
                 TextEntry::make('menu_key')->label('Cle'),
                 TextEntry::make('sort_order')->label('Ordre'),
                 IconEntry::make('active')->label('Visible')->boolean(),
-                TextEntry::make('items_count')->label('Liens')->counts('items'),
+                TextEntry::make('items_count')->label('Pages')->counts('items'),
             ])
             ->columns(2);
     }
@@ -96,7 +96,7 @@ class CrmMenuGroupResource extends Resource
                     ->boolean()
                     ->sortable(),
                 TextColumn::make('items_count')
-                    ->label('Liens')
+                    ->label('Pages')
                     ->counts('items')
                     ->sortable(),
                 TextColumn::make('sort_order')

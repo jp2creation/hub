@@ -388,7 +388,14 @@ class MobileAuthService
 
         $items = CrmMenuItem::query()
             ->where('active', true)
-            ->whereIn('item_key', $itemKeys)
+            ->where(function ($query) use ($itemKeys): void {
+                $query
+                    ->whereIn('item_key', $itemKeys)
+                    ->orWhereIn('parent_item_key', $itemKeys);
+            })
+            ->orderBy('group_key')
+            ->orderByRaw('parent_item_key is not null')
+            ->orderBy('parent_item_key')
             ->orderBy('sort_order')
             ->orderBy('label')
             ->get();
@@ -403,20 +410,29 @@ class MobileAuthService
                     'title' => $group?->title ?: Str::headline($groupKey),
                     'items' => $groupItems
                         ->map(function (CrmMenuItem $item) use ($modulesBySlug): ?array {
-                            $slug = Str::after($item->item_key, 'module:');
-                            $module = $modulesBySlug->get($slug);
+                            $slug = Str::startsWith($item->item_key, 'module:')
+                                ? Str::after($item->item_key, 'module:')
+                                : $item->item_key;
+                            $module = Str::startsWith($item->item_key, 'module:') ? $modulesBySlug->get($slug) : null;
+                            $routePath = $module ? ($module['routePath'] ?: '/'.$slug) : null;
 
-                            if (! $module) {
+                            if (Str::startsWith($item->item_key, 'admin:')) {
+                                $section = Str::after($item->item_key, 'admin:');
+                                $routePath = $section === 'overview' ? '/administration' : '/administration/'.$section;
+                            }
+
+                            if (! $routePath) {
                                 return null;
                             }
 
                             return [
                                 'key' => $item->item_key,
                                 'groupKey' => $item->group_key,
+                                'parentItemKey' => $item->parent_item_key,
                                 'iconKey' => $item->icon_key,
                                 'label' => $item->label,
                                 'slug' => $slug,
-                                'routePath' => $module['routePath'] ?: '/'.$slug,
+                                'routePath' => $routePath,
                                 'sortOrder' => (int) $item->sort_order,
                             ];
                         })

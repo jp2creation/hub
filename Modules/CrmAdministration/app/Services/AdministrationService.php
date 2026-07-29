@@ -314,6 +314,8 @@ class AdministrationService
             ->get();
         $menuItems = CrmMenuItem::query()
             ->orderBy('group_key')
+            ->orderByRaw('parent_item_key is not null')
+            ->orderBy('parent_item_key')
             ->orderBy('sort_order')
             ->orderBy('label')
             ->get();
@@ -365,10 +367,10 @@ class AdministrationService
 
                 $title = trim((string) ($groupData['title'] ?? ''));
                 if ($title === '') {
-                    $this->fail('Titre de groupe obligatoire', 400);
+                    $this->fail('Titre de section obligatoire', 400);
                 }
                 if (mb_strlen($title) > 120) {
-                    $this->fail('Titre de groupe trop long', 400);
+                    $this->fail('Titre de section trop long', 400);
                 }
 
                 CrmMenuGroup::query()
@@ -389,7 +391,28 @@ class AdministrationService
 
                 $groupKey = trim((string) ($itemData['groupKey'] ?? $itemData['group_key'] ?? ''));
                 if (! isset($groupKeys[$groupKey])) {
-                    $this->fail('Groupe de menu invalide', 400);
+                    $this->fail('Section de navigation invalide', 400);
+                }
+
+                $parentItemKey = trim((string) ($itemData['parentItemKey'] ?? $itemData['parent_item_key'] ?? ''));
+                if ($parentItemKey !== '') {
+                    if ($parentItemKey === $itemKey || ! isset($itemKeys[$parentItemKey])) {
+                        $this->fail('Page parente invalide', 400);
+                    }
+
+                    if (CrmMenuItem::query()->where('parent_item_key', $itemKey)->exists()) {
+                        $this->fail('Une page avec sous-pages ne peut pas devenir sous-page', 400);
+                    }
+
+                    $parent = CrmMenuItem::query()
+                        ->where('item_key', $parentItemKey)
+                        ->first(['item_key', 'group_key', 'parent_item_key']);
+
+                    if (! $parent || filled($parent->parent_item_key)) {
+                        $this->fail('Page parente invalide', 400);
+                    }
+
+                    $groupKey = $parent->group_key;
                 }
 
                 $iconKey = trim((string) ($itemData['iconKey'] ?? $itemData['icon_key'] ?? ''));
@@ -399,16 +422,17 @@ class AdministrationService
 
                 $label = trim((string) ($itemData['label'] ?? ''));
                 if ($label === '') {
-                    $this->fail('Titre de lien obligatoire', 400);
+                    $this->fail('Titre de page obligatoire', 400);
                 }
                 if (mb_strlen($label) > 160) {
-                    $this->fail('Titre de lien trop long', 400);
+                    $this->fail('Titre de page trop long', 400);
                 }
 
                 CrmMenuItem::query()
                     ->where('item_key', $itemKey)
                     ->update([
                         'group_key' => $groupKey,
+                        'parent_item_key' => $parentItemKey !== '' ? $parentItemKey : null,
                         'icon_key' => $iconKey,
                         'label' => $label,
                         'active' => $this->boolean($itemData['active'] ?? null, true),
@@ -419,7 +443,7 @@ class AdministrationService
         });
 
         CrmReferenceCache::forgetModules();
-        $this->log($actor, 'modification menu', 'configuration menu lateral');
+        $this->log($actor, 'modification navigation', 'configuration navigation laterale');
 
         return ['ok' => true];
     }
@@ -929,11 +953,12 @@ class AdministrationService
 
     private function ensureMenuItem(array $item): void
     {
-        [$itemKey, $groupKey, $label, $iconKey, $sortOrder] = $item;
+        [$itemKey, $groupKey, $label, $iconKey, $sortOrder, $parentItemKey] = array_pad($item, 6, null);
 
         $menuItem = CrmMenuItem::query()->firstOrNew(['item_key' => $itemKey]);
         $menuItem->fill([
             'group_key' => $menuItem->exists ? $menuItem->group_key : $groupKey,
+            'parent_item_key' => $menuItem->exists ? $menuItem->parent_item_key : $parentItemKey,
             'icon_key' => $menuItem->icon_key ?: $iconKey,
             'label' => $menuItem->exists ? $menuItem->label : $label,
             'active' => $menuItem->exists ? $menuItem->active : true,
@@ -1117,7 +1142,13 @@ class AdministrationService
 
     private function staticMenuItemSeed(): array
     {
-        return [];
+        return [
+            ['admin:users', 'internal', 'Utilisateurs', 'users', 10, 'module:administration'],
+            ['admin:sites', 'internal', 'Sites', 'category', 20, 'module:administration'],
+            ['admin:modules', 'internal', 'Modules', 'package', 30, 'module:administration'],
+            ['admin:menu', 'internal', 'Navigation', 'settings', 40, 'module:administration'],
+            ['admin:pages', 'internal', 'Pages HUB', 'article', 50, 'module:administration'],
+        ];
     }
 
     private function actorRow(CrmUser $actor): array
@@ -1192,6 +1223,7 @@ class AdministrationService
             'id' => $item->id,
             'itemKey' => $item->item_key,
             'groupKey' => $item->group_key,
+            'parentItemKey' => $item->parent_item_key,
             'iconKey' => $item->icon_key ?? '',
             'label' => $item->label,
             'active' => (bool) $item->active,
@@ -1325,8 +1357,14 @@ class AdministrationService
 
         $menuItems = CrmMenuItem::query()
             ->where('active', true)
-            ->whereIn('item_key', $itemKeys)
+            ->where(function ($query) use ($itemKeys): void {
+                $query
+                    ->whereIn('item_key', $itemKeys)
+                    ->orWhereIn('parent_item_key', $itemKeys);
+            })
             ->orderBy('group_key')
+            ->orderByRaw('parent_item_key is not null')
+            ->orderBy('parent_item_key')
             ->orderBy('sort_order')
             ->orderBy('label')
             ->get();
