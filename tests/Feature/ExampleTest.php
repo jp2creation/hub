@@ -31,6 +31,10 @@ class ExampleTest extends TestCase
             ->assertDontSee('Connexion HUB');
 
         $html = (string) $response->getContent();
+        $this->assertFileExists(public_path('hub-ms.svg'));
+        $this->assertStringContainsString('brand-hub-signature', $html);
+        $this->assertStringContainsString('hub-ms.svg', $html);
+
         $previousLibxmlState = libxml_use_internal_errors(true);
         $document = new \DOMDocument;
         $document->loadHTML($html);

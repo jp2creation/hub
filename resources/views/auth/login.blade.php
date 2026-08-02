@@ -43,13 +43,25 @@
         place-items: center;
         padding: 24px;
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(243, 246, 250, 0.96)),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.98) 46%, rgba(243, 246, 250, 0.98)),
           var(--page);
         color: var(--ink);
         font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(115deg, rgb(var(--theme-primary) / 0.055), transparent 38%),
+          linear-gradient(245deg, rgb(var(--theme-accent) / 0.09), transparent 42%);
+      }
+
       main {
+        position: relative;
+        z-index: 1;
         width: min(100%, 460px);
         display: grid;
         gap: 14px;
@@ -57,26 +69,46 @@
 
       .login-card {
         display: grid;
-        gap: 24px;
-        padding: 30px;
+        gap: 22px;
+        padding: 28px;
         border: 1px solid rgba(220, 226, 234, 0.96);
-        border-radius: 14px;
-        background: var(--surface);
-        box-shadow: 0 22px 58px rgba(16, 32, 51, 0.1);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 18px 44px rgba(16, 32, 51, 0.08);
       }
 
       .brand {
         display: grid;
         justify-items: center;
-        gap: 14px;
+        gap: 12px;
         text-align: center;
       }
 
-      .brand img {
+      .brand-main-logo {
         display: block;
         width: min(250px, 72vw);
         height: auto;
         max-height: 96px;
+        object-fit: contain;
+      }
+
+      .brand-hub-signature {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 6px 10px;
+        border: 1px solid rgba(220, 226, 234, 0.96);
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 8px 20px rgba(16, 32, 51, 0.05);
+      }
+
+      .brand-hub-signature img {
+        display: block;
+        width: 70px;
+        height: auto;
+        max-height: 20px;
         object-fit: contain;
       }
 
@@ -425,9 +457,19 @@
           gap: 10px;
         }
 
-        .brand img {
+        .brand-main-logo {
           width: min(190px, 60vw);
           max-height: 74px;
+        }
+
+        .brand-hub-signature {
+          min-height: 30px;
+          padding: 5px 9px;
+        }
+
+        .brand-hub-signature img {
+          width: 60px;
+          max-height: 17px;
         }
 
         form {
@@ -485,7 +527,10 @@
     <main>
       <section class="login-card" aria-label="Connexion Martin Sols">
         <div class="brand">
-          <img src="{{ asset('martin-sols-logo.png') }}" alt="Martin Sols" />
+          <img class="brand-main-logo" src="{{ asset('martin-sols-logo.png') }}" alt="Martin Sols" />
+          <span class="brand-hub-signature" aria-label="HUB Martin Sols">
+            <img src="{{ asset('hub-ms.svg') }}" alt="HUB" />
+          </span>
         </div>
 
         <form method="post" action="{{ route('login') }}" autocomplete="on" data-login-form>

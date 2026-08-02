@@ -806,7 +806,13 @@ class CrmFrontendSourceTest extends TestCase
     {
         $administration = (string) file_get_contents(base_path('Modules/CrmAdministration/resources/assets/crm-administration.js'));
 
-        $this->assertStringContainsString('Administration HUB', $administration);
+        $this->assertFileExists(base_path('Modules/CrmAdministration/resources/assets/logo-hub.svg'));
+        $this->assertFileDoesNotExist(base_path('Modules/CrmAdministration/resources/assets/logo-hub.png'));
+        $this->assertStringContainsString('import hubLogoUrl from "./logo-hub.svg";', $administration);
+        $this->assertStringContainsString('class="admin-title-logo"', $administration);
+        $this->assertStringContainsString('alt="HUB"', $administration);
+        $this->assertStringNotContainsString('Administration HUB', $administration);
+        $this->assertStringContainsString('font-size:1.8rem;line-height:1.1;font-weight:600', $administration);
         $this->assertStringContainsString('["overview", "Vue d\'ensemble", "Pilotage", "dashboard"]', $administration);
         $this->assertStringContainsString('class="admin-workspace"', $administration);
         $this->assertStringNotContainsString('class="admin-sidebar"', $administration);
@@ -968,7 +974,14 @@ class CrmFrontendSourceTest extends TestCase
     {
         $dashboard = (string) file_get_contents(base_path('Modules/CrmCore/resources/assets/crm-dashboard.js'));
 
+        $this->assertFileExists(base_path('Modules/CrmAdministration/resources/assets/logo-hub.svg'));
+        $this->assertStringContainsString('import hubLogoUrl from "../../../CrmAdministration/resources/assets/logo-hub.svg";', $dashboard);
+        $this->assertStringContainsString('Tableau de bord</span><img class="dash-title-logo"', $dashboard);
+        $this->assertStringNotContainsString('Tableau de bord du', $dashboard);
+        $this->assertStringContainsString('class="dash-title-logo"', $dashboard);
+        $this->assertStringContainsString('alt="HUB"', $dashboard);
         $this->assertStringContainsString('@media (max-width:720px)', $dashboard);
+        $this->assertStringContainsString('.dash-title-logo{height:1.38rem;max-width:4.2rem}', $dashboard);
         $this->assertStringContainsString('.dash-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}', $dashboard);
         $this->assertStringContainsString('.dash-stat{grid-template-columns:2.2rem minmax(0,1fr);gap:.55rem;padding:.72rem}', $dashboard);
         $this->assertStringContainsString('.dash-stats .dash-empty{grid-column:1/-1}', $dashboard);

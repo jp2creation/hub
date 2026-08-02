@@ -1,3 +1,5 @@
+import hubLogoUrl from "../../../CrmAdministration/resources/assets/logo-hub.svg";
+
 (function () {
   const rootId = "crm-dashboard-module";
   const styleId = "crm-dashboard-style";
@@ -81,7 +83,8 @@
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.1rem;height:1.1rem;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
       #${rootId} .dash-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
-      #${rootId} .dash-title h1{margin:0;color:var(--dash-text);font-size:1.8rem;line-height:1.1;font-weight:600;letter-spacing:0}
+      #${rootId} .dash-title h1{display:flex;align-items:center;gap:.48rem;flex-wrap:wrap;margin:0;color:var(--dash-text);font-size:1.8rem;line-height:1.1;font-weight:600;letter-spacing:0}
+      #${rootId} .dash-title-logo{display:block;width:auto;height:1.62rem;max-width:min(4.9rem,42vw);object-fit:contain}
       #${rootId} .dash-title p{margin:.35rem 0 0;color:var(--dash-muted);font-size:.92rem;font-weight:650}
       #${rootId} .dash-actions{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:flex-end}
       #${rootId} .dash-button{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:2.35rem;border:1px solid var(--dash-border);border-radius:.5rem;background:#fff;padding:.55rem .85rem;color:var(--dash-text);font:inherit;font-size:.82rem;font-weight:850;text-decoration:none;box-shadow:0 10px 24px rgba(15,23,42,.04);cursor:pointer}
@@ -176,7 +179,7 @@
       @media (prefers-reduced-motion:reduce){#${rootId} .dash-modal{animation:none}}
       @media (max-width:1180px){#${rootId} .dash-stats,#${rootId} .dash-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .dash-main,#${rootId} .dash-bottom{grid-template-columns:1fr}}
       @media (max-width:1024px){#${rootId} .dash-modal-backdrop{background:#f8fafc}#${rootId} .dash-modal{inset:0;width:100vw;min-width:0;max-width:none;height:100dvh;border:0;border-radius:0;box-shadow:none}#${rootId} .dash-modal-header{position:sticky;top:0;z-index:3;grid-template-columns:1fr;gap:.75rem;border-bottom:0;background:#f8fafc;padding:1.05rem 1rem .85rem}#${rootId} .dash-modal-back-button{display:inline-flex;justify-content:flex-start;gap:.4rem;width:auto;min-width:0;height:auto;border:0;background:transparent;padding:.1rem 0;color:var(--dash-primary);font-size:.98rem;font-weight:600}#${rootId} .dash-modal-back-button svg{width:1.25rem;height:1.25rem}#${rootId} .dash-modal-close-button{display:none}#${rootId} .dash-modal-title{font-size:1.55rem;line-height:1.05}#${rootId} .dash-modal-subtitle{font-size:.82rem}#${rootId} .dash-modal-body{background:#f8fafc;padding:0 1rem calc(5.35rem + env(safe-area-inset-bottom))}#${rootId} .dash-modal-actions{position:fixed;right:auto;bottom:calc(.65rem + env(safe-area-inset-bottom));left:50%;display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:calc(100vw - 2rem);transform:translateX(-50%);margin:0;border:1px solid var(--dash-border);border-radius:.75rem;background:rgba(255,255,255,.96);padding:.45rem;box-shadow:0 -16px 34px rgba(15,23,42,.08)}#${rootId} .dash-modal-actions .dash-button{flex:0 1 auto;min-width:5.45rem;max-width:8.75rem;overflow:hidden;padding-inline:.72rem;text-overflow:ellipsis}}
-      @media (max-width:720px){#${rootId}{gap:.85rem}#${rootId} .dash-top{align-items:stretch;flex-direction:column}#${rootId} .dash-actions{justify-content:stretch}#${rootId} .dash-button{flex:1}#${rootId} .dash-title h1{font-size:1.55rem}#${rootId} .dash-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .dash-stat{grid-template-columns:2.2rem minmax(0,1fr);gap:.55rem;padding:.72rem}#${rootId} .dash-stat-icon{width:2.2rem;height:2.2rem}#${rootId} .dash-stat-icon svg{width:1rem;height:1rem}#${rootId} .dash-stat span{font-size:.66rem}#${rootId} .dash-stat strong{font-size:1.2rem}#${rootId} .dash-stat small{font-size:.66rem}#${rootId} .dash-quick-header{align-items:flex-start;flex-direction:row}#${rootId} .dash-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .dash-quick-card{grid-template-columns:minmax(0,1fr);min-height:7.25rem;gap:.55rem;padding:.72rem}#${rootId} .dash-quick-icon{width:2.35rem;height:2.35rem}#${rootId} .dash-quick-icon svg{width:1.08rem;height:1.08rem}#${rootId} .dash-quick-title{font-size:.78rem}#${rootId} .dash-quick-detail{margin-top:.24rem;font-size:.65rem;line-height:1.25}#${rootId} .dash-quick-arrow{display:none}#${rootId} .dash-quick-customize{flex:0 0 2.35rem;width:2.35rem;min-width:2.35rem;height:2.35rem;min-height:2.35rem;padding:0;gap:0}#${rootId} .dash-quick-customize span{display:none}#${rootId} .dash-card-header,#${rootId} .dash-card-body{padding:.85rem}#${rootId} .dash-chart{gap:.35rem}#${rootId} .dash-notifications{grid-template-columns:1fr}#${rootId} .dash-row{grid-template-columns:1fr}#${rootId} .dash-badge{justify-self:start}#${rootId} .dash-alert{grid-template-columns:2.35rem minmax(0,1fr)}#${rootId} .dash-alert-value{grid-column:2}}
+      @media (max-width:720px){#${rootId}{gap:.85rem}#${rootId} .dash-top{align-items:stretch;flex-direction:column}#${rootId} .dash-actions{justify-content:stretch}#${rootId} .dash-button{flex:1}#${rootId} .dash-title h1{font-size:1.55rem}#${rootId} .dash-title-logo{height:1.38rem;max-width:4.2rem}#${rootId} .dash-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .dash-stat{grid-template-columns:2.2rem minmax(0,1fr);gap:.55rem;padding:.72rem}#${rootId} .dash-stat-icon{width:2.2rem;height:2.2rem}#${rootId} .dash-stat-icon svg{width:1rem;height:1rem}#${rootId} .dash-stat span{font-size:.66rem}#${rootId} .dash-stat strong{font-size:1.2rem}#${rootId} .dash-stat small{font-size:.66rem}#${rootId} .dash-quick-header{align-items:flex-start;flex-direction:row}#${rootId} .dash-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .dash-quick-card{grid-template-columns:minmax(0,1fr);min-height:7.25rem;gap:.55rem;padding:.72rem}#${rootId} .dash-quick-icon{width:2.35rem;height:2.35rem}#${rootId} .dash-quick-icon svg{width:1.08rem;height:1.08rem}#${rootId} .dash-quick-title{font-size:.78rem}#${rootId} .dash-quick-detail{margin-top:.24rem;font-size:.65rem;line-height:1.25}#${rootId} .dash-quick-arrow{display:none}#${rootId} .dash-quick-customize{flex:0 0 2.35rem;width:2.35rem;min-width:2.35rem;height:2.35rem;min-height:2.35rem;padding:0;gap:0}#${rootId} .dash-quick-customize span{display:none}#${rootId} .dash-card-header,#${rootId} .dash-card-body{padding:.85rem}#${rootId} .dash-chart{gap:.35rem}#${rootId} .dash-notifications{grid-template-columns:1fr}#${rootId} .dash-row{grid-template-columns:1fr}#${rootId} .dash-badge{justify-self:start}#${rootId} .dash-alert{grid-template-columns:2.35rem minmax(0,1fr)}#${rootId} .dash-alert-value{grid-column:2}}
     `;
     document.head.appendChild(style);
   }
@@ -268,7 +271,7 @@
     return `
       <div class="dash-top">
         <div class="dash-title">
-          <h1>Tableau de bord</h1>
+          <h1><span>Tableau de bord</span><img class="dash-title-logo" src="${hubLogoUrl}" alt="HUB" loading="lazy"></h1>
           <p>Vue d'ensemble du HUB Martin Sols.</p>
         </div>
       </div>
@@ -290,7 +293,7 @@
     return `
       <div class="dash-top">
         <div class="dash-title">
-          <h1>Tableau de bord</h1>
+          <h1><span>Tableau de bord</span><img class="dash-title-logo" src="${hubLogoUrl}" alt="HUB" loading="lazy"></h1>
           <p>${esc(site ? site.name : "Tous les sites")} · Synthèse du jour</p>
         </div>
       </div>
