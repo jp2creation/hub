@@ -35,6 +35,9 @@ class DashboardApiController extends Controller
 
             return match ($action) {
                 'overview', 'bootstrap' => $this->json($dashboard->overview($actor, $request->siteId($request->body()))),
+                'save_quick_access' => $request->isMethod('POST')
+                    ? $this->json($dashboard->saveQuickAccess($actor, $request->body()))
+                    : $this->json(['ok' => false, 'error' => 'Méthode invalide'], 405),
                 default => $this->json(['ok' => false, 'error' => 'Action inconnue'], 404),
             };
         } catch (HttpExceptionInterface $error) {

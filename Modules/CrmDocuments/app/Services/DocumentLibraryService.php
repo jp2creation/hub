@@ -592,7 +592,7 @@ class DocumentLibraryService
         return CrmSite::query()
             ->active()
             ->whereIn('id', $siteIds)
-            ->orderBy('name')
+            ->orderedForHub()
             ->get(['id', 'name'])
             ->map(fn (CrmSite $site): array => [
                 'id' => (int) $site->id,

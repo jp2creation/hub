@@ -380,11 +380,11 @@
       (form.showInMenu !== false ? 'checked' : '') +
       '> Visible dans le menu</label>' +
       '</div>' +
-      '<button class="crm-button crm-button-primary" type="submit" ' +
+      '<div class="crm-modal-actions"><button class="crm-button crm-button-primary" type="submit" ' +
       (state.saving ? 'disabled' : '') +
       '>' +
       (state.saving ? 'Enregistrement...' : 'Enregistrer') +
-      '</button>' +
+      '</button></div>' +
       '</form>' +
       '</section>' +
       '</div>'

@@ -103,6 +103,15 @@ class CrmReservationUiAssetTest extends TestCase
         $this->assertStringContainsString('renderReservationDetailsModal', $reservationAsset);
         $this->assertStringContainsString('renderReservationFormModal', $reservationAsset);
         $this->assertStringContainsString('resa-dialog-compact', $reservationAsset);
+        $this->assertStringContainsString('resa-dialog-reservation-detail', $reservationAsset);
+        $this->assertStringContainsString('resa-view-vehicle-copy', $reservationAsset);
+        $this->assertStringContainsString('resa-view-line-icon', $reservationAsset);
+        $this->assertStringContainsString('resa-view-field-icon', $reservationAsset);
+        $this->assertStringContainsString('resa-view-note is-wide', $reservationAsset);
+        $this->assertStringContainsString('renderReservationViewField("calendar", "Date"', $reservationAsset);
+        $this->assertStringContainsString('renderReservationViewField("clock", "Début"', $reservationAsset);
+        $this->assertStringContainsString('renderReservationViewField("user", "Réservé par"', $reservationAsset);
+        $this->assertStringContainsString('renderReservationViewNote', $reservationAsset);
         $this->assertStringContainsString('resa-view-photo', $reservationAsset);
         $this->assertStringContainsString('resa-view-actions', $reservationAsset);
         $this->assertStringContainsString('resa-icon-action', $reservationAsset);

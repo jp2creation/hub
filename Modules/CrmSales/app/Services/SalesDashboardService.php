@@ -370,7 +370,7 @@ class SalesDashboardService
         return CrmSite::query()
             ->active()
             ->whereIn('id', $this->siteIds($actor))
-            ->orderBy('name')
+            ->orderedForHub()
             ->get(['id', 'name', 'slug']);
     }
 

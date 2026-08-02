@@ -31,7 +31,6 @@ class AdministrationService
         'admin:sites' => ['platform.manage_sites'],
         'admin:modules' => ['platform.manage_modules'],
         'admin:menu' => ['platform.manage_modules'],
-        'admin:pages' => ['pages.manage'],
     ];
 
     public function __construct(
@@ -127,15 +126,6 @@ class AdministrationService
                                 'group_key' => $this->defaultModuleMenuGroup($module->slug),
                                 'label' => $module->name,
                                 'active' => (bool) $module->active,
-                                'sort_order' => (int) $module->sort_order,
-                            ]);
-                    }
-
-                    if ($module->slug === 'conges') {
-                        CrmMenuItem::query()
-                            ->where('item_key', 'module:conges')
-                            ->update([
-                                'group_key' => 'apps',
                                 'sort_order' => (int) $module->sort_order,
                             ]);
                     }
@@ -311,7 +301,7 @@ class AdministrationService
 
         $sites = CrmSite::query()
             ->orderByDesc('active')
-            ->orderBy('name')
+            ->orderedForHub()
             ->get();
         $modules = CrmModule::query()
             ->orderByDesc('active')
@@ -458,6 +448,43 @@ class AdministrationService
         return ['ok' => true];
     }
 
+    public function deleteMenuItem(CrmUser $actor, array $data): array
+    {
+        $this->requireAny($actor, ['platform.manage_modules']);
+
+        $itemKey = trim((string) ($data['itemKey'] ?? $data['item_key'] ?? ''));
+        if ($itemKey === '') {
+            $this->fail('Lien de menu obligatoire', 400);
+        }
+
+        $deletedItemKeys = DB::transaction(function () use ($itemKey): array {
+            $item = CrmMenuItem::query()
+                ->lockForUpdate()
+                ->where('item_key', $itemKey)
+                ->first();
+
+            if (! $item) {
+                $this->fail('Lien de menu introuvable', 404);
+            }
+
+            $itemKeys = $this->menuItemKeysIncludingDescendants($item->item_key);
+
+            CrmMenuItem::query()
+                ->whereIn('item_key', $itemKeys)
+                ->delete();
+
+            return $itemKeys;
+        });
+
+        CrmReferenceCache::forgetModules();
+        $this->log($actor, 'suppression navigation', implode(', ', $deletedItemKeys));
+
+        return [
+            'ok' => true,
+            'deletedItemKeys' => $deletedItemKeys,
+        ];
+    }
+
     public function pagesBootstrap(CrmUser $actor): array
     {
         $this->requireAny($actor, ['pages.manage', 'platform.manage_modules']);
@@ -575,6 +602,7 @@ class AdministrationService
             }
 
             $color = $this->siteColor((string) ($data['color'] ?? $site?->color ?? ''));
+            $sortOrder = (int) ($data['sortOrder'] ?? $data['sort_order'] ?? 0);
             $morningStart = $this->normalizeTime($data, 'morningStart', 'morning_start', $site?->morning_start ?: '07:30');
             $morningEnd = $this->normalizeTime($data, 'morningEnd', 'morning_end', $site?->morning_end ?: '12:00');
             $afternoonStart = $this->normalizeTime($data, 'afternoonStart', 'afternoon_start', $site?->afternoon_start ?: '13:30');
@@ -605,6 +633,7 @@ class AdministrationService
             $site->fill([
                 'name' => $name,
                 'active' => $this->boolean($data['active'] ?? null, true),
+                'sort_order' => $sortOrder > 0 ? $sortOrder : $this->nextSiteSortOrder($site),
                 'address' => $address !== '' ? $address : null,
                 'phone' => $phone !== '' ? $phone : null,
                 'email' => $email !== '' ? $email : null,
@@ -620,6 +649,55 @@ class AdministrationService
 
             return ['ok' => true, 'id' => $site->id];
         });
+    }
+
+    public function reorderSites(CrmUser $actor, array $data): array
+    {
+        $this->requireAny($actor, ['platform.manage_sites', 'platform.manage_modules']);
+
+        $sites = is_array($data['sites'] ?? null) ? $data['sites'] : [];
+        if ($sites === []) {
+            $this->fail('Ordre des sites vide', 400);
+        }
+
+        DB::transaction(function () use ($actor, $sites): void {
+            $ids = [];
+            foreach ($sites as $site) {
+                $id = (int) ($site['id'] ?? $site['siteId'] ?? $site['site_id'] ?? 0);
+                if ($id <= 0 || in_array($id, $ids, true)) {
+                    $this->fail('Ordre des sites invalide', 400);
+                }
+
+                $ids[] = $id;
+            }
+
+            $knownIds = CrmSite::query()
+                ->whereIn('id', $ids)
+                ->pluck('id')
+                ->mapWithKeys(fn ($id): array => [(int) $id => true])
+                ->all();
+
+            foreach ($ids as $id) {
+                if (! isset($knownIds[$id])) {
+                    $this->fail('Site introuvable dans l ordre', 404);
+                }
+            }
+
+            foreach (array_values($ids) as $index => $id) {
+                CrmSite::query()
+                    ->whereKey($id)
+                    ->update([
+                        'sort_order' => ($index + 1) * 10,
+                        'updated_at' => now(),
+                    ]);
+            }
+
+            CrmReferenceCache::forgetSites();
+            CrmReferenceCache::forgetUsers();
+            $this->log($actor, 'reorganisation sites', count($ids).' site(s)');
+        });
+
+        return ['ok' => true];
     }
 
     public function deleteSite(CrmUser $actor, array $data): array
@@ -752,7 +830,7 @@ class AdministrationService
             if ($siteIds === []) {
                 $firstSiteId = CrmSite::query()
                     ->where('active', true)
-                    ->orderBy('id')
+                    ->orderedForHub()
                     ->value('id');
 
                 $siteIds = $firstSiteId ? [(int) $firstSiteId] : [];
@@ -859,7 +937,7 @@ class AdministrationService
     private function ensureDefaultSites(): array
     {
         $existing = CrmSite::query()
-            ->orderBy('id')
+            ->orderedForHub()
             ->get(['id', 'name']);
 
         if ($existing->isNotEmpty()) {
@@ -867,10 +945,11 @@ class AdministrationService
         }
 
         $siteIds = [];
-        foreach (['Palissy', 'Bordeaux', 'Pessac', 'Glotin', 'Pastel'] as $name) {
+        foreach (['Palissy', 'Bordeaux', 'Pessac', 'Glotin', 'Pastel'] as $index => $name) {
             $site = CrmSite::query()->create([
                 'name' => $name,
                 'active' => true,
+                'sort_order' => ($index + 1) * 10,
                 'morning_start' => '07:30:00',
                 'morning_end' => '12:00:00',
                 'afternoon_start' => '13:30:00',
@@ -965,7 +1044,11 @@ class AdministrationService
     {
         [$itemKey, $groupKey, $label, $iconKey, $sortOrder, $parentItemKey] = array_pad($item, 6, null);
 
-        $menuItem = CrmMenuItem::query()->firstOrNew(['item_key' => $itemKey]);
+        $menuItem = CrmMenuItem::withTrashed()->firstOrNew(['item_key' => $itemKey]);
+        if ($menuItem->exists && $menuItem->trashed()) {
+            return;
+        }
+
         $menuItem->fill([
             'group_key' => $menuItem->exists ? $menuItem->group_key : $groupKey,
             'parent_item_key' => $menuItem->exists ? $menuItem->parent_item_key : $parentItemKey,
@@ -980,6 +1063,11 @@ class AdministrationService
     private function normalizeStaticAdminMenuLabels(): void
     {
         CrmMenuItem::query()
+            ->where('item_key', 'module:administration')
+            ->whereIn('label', ['Tableau de bord', 'Vue d\'ensemble'])
+            ->update(['label' => 'Administration']);
+
+        CrmMenuItem::query()
             ->where('item_key', 'admin:menu')
             ->where('label', 'Menu gauche')
             ->update(['label' => 'Navigation']);
@@ -989,13 +1077,13 @@ class AdministrationService
     {
         $prefixes = ['dashboard:', 'app:', 'feature:', 'auth:', 'page:', 'form:', 'table:', 'chart:'];
 
-        CrmMenuItem::query()
+        CrmMenuItem::withTrashed()
             ->where(function ($query) use ($prefixes): void {
                 foreach ($prefixes as $prefix) {
                     $query->orWhere('item_key', 'like', $prefix.'%');
                 }
             })
-            ->delete();
+            ->forceDelete();
 
         CrmMenuGroup::query()
             ->whereIn('menu_key', ['dashboards', 'authentication', 'forms', 'tables', 'charts'])
@@ -1036,6 +1124,32 @@ class AdministrationService
                     ->where('active', true)
                     ->exists(),
             ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function menuItemKeysIncludingDescendants(string $itemKey): array
+    {
+        $itemKeys = [$itemKey];
+        $pendingItemKeys = [$itemKey];
+
+        while ($pendingItemKeys !== []) {
+            $children = CrmMenuItem::query()
+                ->whereIn('parent_item_key', $pendingItemKeys)
+                ->pluck('item_key')
+                ->all();
+            $children = array_values(array_diff($children, $itemKeys));
+
+            if ($children === []) {
+                break;
+            }
+
+            $itemKeys = array_values(array_unique([...$itemKeys, ...$children]));
+            $pendingItemKeys = $children;
+        }
+
+        return $itemKeys;
     }
 
     private function permissionSeed(): array
@@ -1094,21 +1208,21 @@ class AdministrationService
                 'label' => 'Employe',
                 'description' => 'Reservation et location sur les sites rattaches, suppression de ses propres demandes.',
                 'permissions' => ['reservations.view', 'reservations.create', 'reservations.update_own', 'reservations.delete_own', 'equipment_rentals.view', 'equipment_rentals.create', 'equipment_rentals.update_own', 'equipment_rentals.delete_own', 'conges.view', 'teams.view', 'sales_tours.view', 'sales_tours.create', 'sales_tours.report', 'sales.view', 'controle_caisse.view', 'deposit_requests.view', 'deposit_requests.create'],
-                'moduleSlugs' => ['dashboard', 'reservations', 'locations-materiel', 'equipes', 'tournees-representants', 'pilotage-commercial', 'conges', 'controle-caisse', 'demandes-acompte', 'addvance'],
+                'moduleSlugs' => ['dashboard', 'reservations', 'locations-materiel', 'equipes', 'tournees-representants', 'pilotage-commercial', 'conges', 'controle-caisse', 'demandes-acompte'],
             ],
             [
                 'key' => 'responsable',
                 'label' => 'Responsable site',
                 'description' => 'Gestion des reservations, vehicules et locations materiel des sites rattaches.',
                 'permissions' => ['reservations.view', 'reservations.create', 'reservations.update_own', 'reservations.update_any', 'reservations.delete_own', 'reservations.delete_any', 'reservations.manage_vehicles', 'equipment_rentals.view', 'equipment_rentals.create', 'equipment_rentals.update_own', 'equipment_rentals.update_any', 'equipment_rentals.delete_own', 'equipment_rentals.delete_any', 'equipment_rentals.manage_items', 'conges.view', 'conges.manage', 'conges.manage_types', 'teams.view', 'sales_tours.view', 'sales_tours.create', 'sales_tours.report', 'sales_tours.manage', 'sales.view', 'sales.sync', 'sales.manage', 'sales.commissions', 'controle_caisse.view', 'controle_caisse.manage', 'deposit_requests.view', 'deposit_requests.create', 'deposit_requests.manage', 'check_remittances.view', 'check_remittances.manage'],
-                'moduleSlugs' => ['dashboard', 'reservations', 'locations-materiel', 'equipes', 'tournees-representants', 'pilotage-commercial', 'conges', 'controle-caisse', 'demandes-acompte', 'remise-cheques', 'addvance'],
+                'moduleSlugs' => ['dashboard', 'reservations', 'locations-materiel', 'equipes', 'tournees-representants', 'pilotage-commercial', 'conges', 'controle-caisse', 'demandes-acompte', 'remise-cheques'],
             ],
             [
                 'key' => 'admin',
                 'label' => 'Administrateur',
                 'description' => 'Acces global aux sites, modules, utilisateurs, roles et permissions.',
                 'permissions' => array_map(fn (array $permission): string => $permission[0], $this->permissionSeed()),
-                'moduleSlugs' => ['dashboard', 'reservations', 'locations-materiel', 'equipes', 'tournees-representants', 'pilotage-commercial', 'pages-crm', 'administration', 'conges', 'controle-caisse', 'demandes-acompte', 'remise-cheques', 'addvance', 'documents-promo', 'documents-fiches-techniques', 'documents-procedures', 'tapis-romus'],
+                'moduleSlugs' => ['dashboard', 'reservations', 'locations-materiel', 'equipes', 'tournees-representants', 'pilotage-commercial', 'administration', 'conges', 'controle-caisse', 'demandes-acompte', 'remise-cheques', 'documents-promo', 'documents-fiches-techniques', 'documents-procedures', 'tapis-romus'],
             ],
             [
                 'key' => 'blocked',
@@ -1130,12 +1244,12 @@ class AdministrationService
             ['Congés & Absences', 'conges', 'Planning et gestion des congés, absences et arrêts', '/conges', 17, true],
             ['Rapport de visite', 'tournees-representants', 'Planning, visites clients et rapports de visite', '/rapport-visite', 18, true],
             ['Pilotage commercial', 'pilotage-commercial', 'Objectifs, chiffre d affaires, factures et commissions commerciales', '/pilotage-commercial', 19, true],
-            ['Pages HUB', 'pages-crm', 'Pages internes modifiables depuis le HUB', '/pages-crm', 18, true],
+            ['Pages HUB', 'pages-crm', 'Pages internes modifiables depuis le HUB', '/pages-crm', 18, false],
             ['Administration', 'administration', 'Gestion des sites, modules, utilisateurs et rôles', '/administration', 20, true],
             ['Contrôle caisse', 'controle-caisse', 'Contrôle journalier de caisse, reports, écarts et justificatifs', '/controle-caisse', 25, true],
             ['Demande d\'acompte', 'demandes-acompte', 'Demandes d\'acompte et validation par la comptabilité', '/demandes-acompte', 26, true],
             ['Remise de chèques', 'remise-cheques', 'Remises de chèques, photos, contrôle des montants et impression PDF', '/remise-cheques', 27, true],
-            ['Addvance', 'addvance', 'Accès externe Addvance Solutions', 'https://martinsols.addvancesolutions.fr', 28, true],
+            ['Addvance', 'addvance', 'Accès externe Addvance Solutions', 'https://martinsols.addvancesolutions.fr', 28, false],
             ['Promo', 'documents-promo', 'Documents commerciaux et promotions.', '/documents/promo', 241, true],
             ['Fiches techniques', 'documents-fiches-techniques', 'Fiches techniques produits et materiel.', '/documents/fiches-techniques', 242, true],
             ['Procédures', 'documents-procedures', 'Procédures internes du HUB.', '/documents/procedures', 243, true],
@@ -1165,7 +1279,6 @@ class AdministrationService
             ['admin:sites', 'internal', 'Sites', 'category', 20, 'module:administration'],
             ['admin:modules', 'internal', 'Modules', 'package', 30, 'module:administration'],
             ['admin:menu', 'internal', 'Navigation', 'settings', 40, 'module:administration'],
-            ['admin:pages', 'internal', 'Pages HUB', 'article', 50, 'module:administration'],
         ];
     }
 
@@ -1195,6 +1308,7 @@ class AdministrationService
             'name' => $site->name,
             'slug' => $site->slug,
             'active' => (bool) $site->active,
+            'sortOrder' => (int) $site->sort_order,
             'address' => trim((string) $site->address),
             'phone' => trim((string) $site->phone),
             'email' => trim((string) $site->email),
@@ -1695,6 +1809,16 @@ class AdministrationService
         $value = trim((string) $value);
 
         return preg_match('/^([0-2][0-9]:[0-5][0-9])/', $value, $matches) ? $matches[1] : $default;
+    }
+
+    private function nextSiteSortOrder(?CrmSite $site): int
+    {
+        $currentSortOrder = (int) ($site?->sort_order ?? 0);
+        if ($site?->exists && $currentSortOrder > 0) {
+            return $currentSortOrder;
+        }
+
+        return ((int) CrmSite::query()->max('sort_order')) + 10;
     }
 
     private function siteColor(string $value): string

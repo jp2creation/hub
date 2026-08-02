@@ -597,13 +597,13 @@
       #${rootId} .teams-table-wrap{max-width:100%;overflow:auto;-webkit-overflow-scrolling:touch}
       #${rootId} .teams-table{width:100%;min-width:50rem;border-collapse:collapse}
       #${rootId} .teams-table th{background:#f8fafc;color:var(--teams-muted);font-size:.72rem;font-weight:600;text-align:left;text-transform:uppercase;padding:.82rem 1rem;white-space:nowrap}
-      #${rootId} .teams-table td{border-top:1px solid var(--teams-border);padding:.8rem 1rem;color:var(--teams-text);font-size:.88rem;font-weight:750;vertical-align:middle}
+      #${rootId} .teams-table td{border-top:1px solid var(--teams-border);padding:.58rem 1rem;color:var(--teams-text);font-size:.88rem;font-weight:750;vertical-align:middle}
       #${rootId} .teams-mobile-list{display:none;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr))}
-      #${rootId} .teams-member{display:grid;grid-template-columns:2.6rem minmax(0,1fr);align-items:center;gap:.72rem;min-width:0}
+      #${rootId} .teams-member{display:grid;grid-template-columns:1.5rem minmax(0,1fr);align-items:center;gap:.5rem;min-width:0}
       #${rootId} .teams-member strong{display:block;color:var(--teams-text);font-size:.92rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .teams-member small{display:block;margin-top:.1rem;color:var(--teams-muted);font-size:.72rem;font-weight:800}
       #${rootId} .teams-person-card{display:grid;gap:.75rem;border-top:1px solid var(--teams-border);padding:.9rem 1rem}
-      #${rootId} .teams-person-main{display:grid;grid-template-columns:2.8rem minmax(0,1fr);align-items:center;gap:.75rem}
+      #${rootId} .teams-person-main{display:grid;grid-template-columns:2.35rem minmax(0,1fr);align-items:center;gap:.65rem}
       #${rootId} .teams-person-identity{min-width:0}
       #${rootId} .teams-person-identity strong{display:block;color:var(--teams-text);font-size:1rem;font-weight:600;line-height:1.15}
       #${rootId} .teams-person-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.28rem}
@@ -615,7 +615,7 @@
       #${rootId} .teams-presence i{display:block;width:.48rem;height:.48rem;border-radius:999px;background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 14%,transparent)}
       #${rootId} .teams-presence.is-online{background:rgba(22,163,74,.1);color:#16a34a}
       #${rootId} .teams-presence.is-offline{background:#f1f5f9;color:#64748b}
-      #${rootId} .teams-avatar{position:relative;display:grid;place-items:center;width:2.6rem;height:2.6rem;overflow:hidden;border-radius:999px;background:color-mix(in srgb,var(--teams-primary) 12%,white);color:var(--teams-primary);font-size:.78rem;font-weight:600}
+      #${rootId} .teams-avatar{position:relative;display:grid;place-items:center;width:1.5rem;height:1.5rem;overflow:hidden;border-radius:999px;background:color-mix(in srgb,var(--teams-primary) 12%,white);color:var(--teams-primary);font-size:.55rem;font-weight:600}
       #${rootId} .teams-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       #${rootId} .teams-avatar b{position:relative;z-index:1}
       #${rootId} .teams-avatar img + b{display:none}

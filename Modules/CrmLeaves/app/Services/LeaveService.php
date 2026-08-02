@@ -139,7 +139,7 @@ class LeaveService
         $sites = CrmSite::query()
             ->active()
             ->whereIn('id', $siteIds)
-            ->orderBy('id')
+            ->orderedForHub()
             ->get()
             ->keyBy('id');
 
@@ -195,7 +195,7 @@ class LeaveService
         $sites = CrmSite::query()
             ->active()
             ->whereIn('id', $siteIds)
-            ->orderBy('id')
+            ->orderedForHub()
             ->pluck('name')
             ->map(fn ($name): string => (string) $name)
             ->all();
@@ -809,7 +809,7 @@ class LeaveService
         return CrmSite::query()
             ->active()
             ->whereIn('id', $this->siteIds($actor))
-            ->orderBy('id')
+            ->orderedForHub()
             ->get();
     }
 

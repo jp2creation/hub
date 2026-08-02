@@ -35,7 +35,7 @@ class RefreshDashboardMetricsCommand extends Command
         $sites = CrmSite::query()
             ->active()
             ->when($siteId > 0, fn ($query) => $query->whereKey($siteId))
-            ->orderBy('id')
+            ->orderedForHub()
             ->get(['id', 'name']);
 
         if ($siteId > 0 && $sites->isEmpty()) {

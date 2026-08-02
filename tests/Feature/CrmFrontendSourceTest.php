@@ -84,6 +84,7 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('<img class="crm-native-mobile-brand-mark" src="${esc(logoMarkUrl())}" alt="Martin Sols">', $nativeShell);
         $this->assertStringContainsString('<img class="crm-native-mobile-brand-full" src="${esc(logoUrl())}" alt="Martin Sols">', $nativeShell);
         $this->assertStringContainsString('martin-sols-hub-sidebar-collapsed', $nativeShell);
+        $this->assertStringContainsString('martin-sols-hub-nav-groups-collapsed', $nativeShell);
         $this->assertStringContainsString('crm-native-sidebar-collapsed', $nativeShell);
         $this->assertStringContainsString('Déployer le menu', $nativeShell);
         $this->assertStringContainsString('Rabattre le menu', $nativeShell);
@@ -93,6 +94,16 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('profile.navigation', $nativeShell);
         $this->assertStringContainsString('window.CRM_NAV_FALLBACK = profile.navigation', $nativeShell);
         $this->assertStringContainsString('data-crm-native-submenu-toggle', $nativeShell);
+        $this->assertStringContainsString('data-crm-native-nav-group-toggle', $nativeShell);
+        $this->assertStringContainsString('data-crm-native-nav-group', $nativeShell);
+        $this->assertStringContainsString('data-crm-native-nav-group="${esc(groupKey)}"', $nativeShell);
+        $this->assertStringContainsString('function syncActiveNavigationGroups', $nativeShell);
+        $this->assertStringContainsString('function readCollapsedNavigationGroups', $nativeShell);
+        $this->assertStringContainsString('function setNavigationGroupOpen', $nativeShell);
+        $this->assertStringContainsString('const collapsed = collapsedGroups.has(groupKey)', $nativeShell);
+        $this->assertStringContainsString('setNavigationGroupOpen(group, open)', $nativeShell);
+        $this->assertStringContainsString('storeCurrentNavigationGroupState()', $nativeShell);
+        $this->assertStringContainsString('document.querySelectorAll<HTMLElement>(\'[data-crm-native-nav-group]\')', $nativeShell);
         $this->assertStringContainsString('function childrenByParentItem', $nativeShell);
         $this->assertStringContainsString('function menuItemWithChildrenHtml', $nativeShell);
         $this->assertStringContainsString('data-crm-native-nav-branch', $nativeShell);
@@ -113,8 +124,12 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('Boolean(window.MartinSolsNativeApp)', $nativeShell);
         $this->assertStringContainsString('href="/">Tableau de bord</a>', $nativeShell);
         $this->assertStringContainsString('crm-native-brand" href="/"', $nativeShell);
-        $this->assertStringContainsString("new Set(['home', 'apps', 'accounting', 'internal'])", $nativeShell);
-        $this->assertStringContainsString("commercial: 'dashboard'", $nativeShell);
+        $this->assertStringContainsString('const active = isNavigationItemActive(parentPath);', $nativeShell);
+        $this->assertStringContainsString('const childActive = children.some((child: CrmMenuItem) => menuItemTreeIsActive(child, routes, childrenByParent));', $nativeShell);
+        $this->assertStringContainsString('const open = active || childActive;', $nativeShell);
+        $this->assertStringContainsString('const active = isNavigationItemActive(link.getAttribute(\'href\') || \'#\');', $nativeShell);
+        $this->assertStringNotContainsString('crm-native-nav-group-nested', $nativeShell);
+        $this->assertStringNotContainsString('function isSubmenuGroup', $nativeShell);
         $this->assertStringContainsString('isLegacyTemplateRoute()', $legacyTemplate);
         $this->assertStringContainsString('return false;', $legacyTemplate);
         $this->assertStringNotContainsString('appendModuleScript', $legacyTemplate);
@@ -163,6 +178,10 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('background: var(--color-secondary-50, #fafafa);', $shellCss);
         $this->assertStringContainsString('--crm-martin-yellow: #f7b711;', $shellCss);
         $this->assertStringContainsString('.crm-native-nav-subitems .crm-native-nav-link.crm-native-nav-subitem.is-active', $shellCss);
+        $this->assertStringContainsString('color: var(--crm-martin-yellow);', $shellCss);
+        $this->assertStringContainsString('.crm-native-nav-group.is-collapsed .crm-native-nav-group-body', $shellCss);
+        $this->assertStringContainsString('body.crm-native-sidebar-collapsed .crm-native-nav-group-body', $shellCss);
+        $this->assertStringContainsString('.crm-native-nav-section-chevron', $shellCss);
         $this->assertStringContainsString('--ms-ui-soft: var(--color-secondary-50, #fafafa);', $nativeUiCss);
         $this->assertStringContainsString('--crm-bg: #fafafa;', $filamentCss);
         $this->assertStringNotContainsString('#eff2f5', $templateVariablesCss.$shellCss.$nativeUiCss.$filamentCss);
@@ -597,9 +616,30 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('.ms-ui-product-card', $nativeUiCss);
         $this->assertStringContainsString('.resa-product-card', $nativeUiCss);
         $this->assertStringContainsString('.rent-product-card', $nativeUiCss);
+        $this->assertStringContainsString('.crm-native-content .rent-product-card.has-no-visible-price .rent-product-image img', $nativeUiCss);
+        $this->assertStringContainsString('height: 12.35rem !important;', $nativeUiCss);
+        $this->assertStringContainsString('border-bottom: 1px solid rgb(226 232 240) !important;', $nativeUiCss);
+        $this->assertStringContainsString('.crm-native-content .rent-product-card.has-no-visible-price.is-rent-photo-portrait .rent-product-image', $nativeUiCss);
+        $this->assertStringContainsString('height: 13.2rem !important;', $nativeUiCss);
+        $this->assertStringContainsString('height: clamp(10.85rem, 50vw, 12.2rem) !important;', $nativeUiCss);
+        $this->assertStringContainsString('height: clamp(11.75rem, 55vw, 13.15rem) !important;', $nativeUiCss);
+        $this->assertStringContainsString('padding: 0 !important;', $nativeUiCss);
         $this->assertStringContainsString('.ms-ui-segment', $nativeUiCss);
         $this->assertStringContainsString('.resa-dialog', $nativeUiCss);
         $this->assertStringContainsString('.rent-dialog', $nativeUiCss);
+        $this->assertStringContainsString('Unified HUB module dialogs', $nativeUiCss);
+        $this->assertStringContainsString('.check-modal-backdrop', $nativeUiCss);
+        $this->assertStringContainsString('.deposit-modal-backdrop', $nativeUiCss);
+        $this->assertStringContainsString('.leaves-modal-backdrop', $nativeUiCss);
+        $this->assertStringContainsString('.cash-modal-backdrop', $nativeUiCss);
+        $this->assertStringContainsString('.doc-modal-backdrop', $nativeUiCss);
+        $this->assertStringContainsString('.crm-modal-backdrop', $nativeUiCss);
+        $this->assertStringContainsString('.tour-modal-backdrop', $nativeUiCss);
+        $this->assertStringContainsString('.sales-modal-backdrop', $nativeUiCss);
+        $this->assertStringContainsString('content: "\\2190  Retour";', $nativeUiCss);
+        $this->assertStringContainsString('bottom: calc(0.65rem + env(safe-area-inset-bottom)) !important;', $nativeUiCss);
+        $this->assertStringContainsString('width: min(35rem, calc(100vw - 1rem)) !important;', $nativeUiCss);
+        $this->assertStringContainsString('.crm-modal-actions', $nativeUiCss);
     }
 
     public function test_static_assets_keep_only_brand_and_pwa_files(): void
@@ -778,8 +818,52 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('admin-list-card', $administration);
         $this->assertStringContainsString('color-mix(in srgb,var(--admin-pill-color', $administration);
         $this->assertStringContainsString('function renderModal()', $administration);
+        $this->assertStringContainsString('adminDrawerIn', $administration);
+        $this->assertStringContainsString('admin-modal-back-button', $administration);
+        $this->assertStringContainsString('admin-modal-close-button', $administration);
+        $this->assertStringContainsString('width:min(35rem,66.666vw)', $administration);
+        $this->assertStringContainsString('66.666vw', $administration);
+        $this->assertStringContainsString('@media (max-width:1024px)', $administration);
+        $this->assertStringContainsString('Retour</span>', $administration);
         $this->assertStringContainsString('data-edit-type="user-roles"', $administration);
         $this->assertStringContainsString('data-user-roles-form', $administration);
+        $this->assertStringContainsString('admin-site-form', $administration);
+        $this->assertStringContainsString('admin-form-section', $administration);
+        $this->assertStringContainsString('Identité du site', $administration);
+        $this->assertStringContainsString('admin-site-identity-grid', $administration);
+        $this->assertStringContainsString('admin-site-color-field input{width:2.45rem;height:2.45rem', $administration);
+        $this->assertStringContainsString('Coordonnées', $administration);
+        $this->assertStringContainsString('Horaires du site', $administration);
+        $this->assertStringContainsString('admin-site-hours-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))', $administration);
+        $this->assertStringContainsString('admin-site-hours-grid{grid-template-columns:repeat(2,minmax(0,1fr))', $administration);
+        $this->assertStringContainsString('admin-site-form-footer', $administration);
+        $this->assertStringContainsString('data-delete-menu-item', $administration);
+        $this->assertStringContainsString('function deleteMenuItem', $administration);
+        $this->assertStringContainsString('delete_menu_item', $administration);
+        $this->assertStringContainsString('Supprimer ce lien du menu', $administration);
+        $this->assertStringContainsString('admin-modal-body > form{box-sizing:border-box;min-height:100%}', $administration);
+        $this->assertStringContainsString('admin-actions,#${rootId} .admin-site-form-footer,#${rootId} .admin-role-actions{position:fixed;right:auto;bottom:calc(.65rem + env(safe-area-inset-bottom));left:50%', $administration);
+        $this->assertStringContainsString('width:max-content;max-width:calc(100vw - 2rem);transform:translateX(-50%)', $administration);
+        $this->assertStringContainsString('min-width:5.45rem;max-width:8.75rem', $administration);
+        $this->assertStringContainsString('admin-role-wizard', $administration);
+        $this->assertStringContainsString('admin-modal-role', $administration);
+        $this->assertStringContainsString('Profil et accès rapides', $administration);
+        $this->assertStringContainsString('Profil de départ', $administration);
+        $this->assertStringContainsString('Niveau de droits rapide', $administration);
+        $this->assertStringContainsString('Permissions rapides', $administration);
+        $this->assertStringContainsString('Choisir vite les accès', $administration);
+        $this->assertStringContainsString('Sites autorisés', $administration);
+        $this->assertStringContainsString('Ajustements avancés', $administration);
+        $this->assertStringContainsString('Modules activés automatiquement', $administration);
+        $this->assertStringContainsString('admin-role-primary-grid', $administration);
+        $this->assertStringContainsString('admin-role-flow', $administration);
+        $this->assertStringContainsString('admin-role-panel-head', $administration);
+        $this->assertStringContainsString('admin-role-advanced-layout', $administration);
+        $this->assertStringContainsString('Récapitulatif du rôle', $administration);
+        $this->assertStringContainsString('data-module-access-level', $administration);
+        $this->assertStringContainsString('data-role-preset', $administration);
+        $this->assertStringContainsString('function applyRolePreset', $administration);
+        $this->assertStringContainsString('function setModuleAccessLevel', $administration);
         $this->assertStringContainsString('data-apply-role-profile', $administration);
         $this->assertStringContainsString('data-user-filter-reset', $administration);
         $this->assertStringContainsString('data-user-filter="siteId"', $administration);
@@ -802,7 +886,10 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('function reorderMenu', $administration);
         $this->assertStringContainsString('function reorderMenuGroup', $administration);
         $this->assertStringContainsString('function reorderMenuItem', $administration);
+        $this->assertStringContainsString('function reorderSites', $administration);
         $this->assertStringContainsString('function saveMenuOrder', $administration);
+        $this->assertStringContainsString('request("reorder_sites"', $administration);
+        $this->assertStringContainsString('Glissez les sites pour choisir leur ordre', $administration);
         $this->assertStringContainsString('crm:navigation-refresh', $administration);
         $this->assertStringContainsString('is-drop-before', $administration);
         $this->assertStringContainsString('data-admin-search', $administration);
@@ -826,11 +913,14 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('.teams-site-info.has-site-photo::before', $teams);
         $this->assertStringContainsString('mask-image:linear-gradient(90deg,#000 0%,#000 54%,transparent 100%)', $teams);
         $this->assertStringContainsString('window.addEventListener(activeSiteEvent', $teams);
+        $this->assertStringContainsString('.teams-table td{border-top:1px solid var(--teams-border);padding:.58rem 1rem', $teams);
+        $this->assertStringContainsString('.teams-member{display:grid;grid-template-columns:1.5rem minmax(0,1fr)', $teams);
+        $this->assertStringContainsString('.teams-avatar{position:relative;display:grid;place-items:center;width:1.5rem;height:1.5rem', $teams);
         $this->assertStringNotContainsString('class="teams-sites"', $teams);
         $this->assertStringNotContainsString('data-site-id', $teams);
         $this->assertStringNotContainsString('function renderSiteButton', $teams);
 
-        $this->assertStringContainsString('<label>Couleur <input name="color" type="color"', $administration);
+        $this->assertStringContainsString('<label class="admin-site-color-field">Couleur <input name="color" type="color"', $administration);
         $this->assertStringContainsString('<label>Téléphone <input name="phone" type="tel"', $administration);
         $this->assertStringContainsString('<label>Adresse <input name="address"', $administration);
         $this->assertStringContainsString('function renderSitePhoto(site)', $administration);
@@ -872,6 +962,59 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('grid-template-columns: 1fr !important;', $nativeUiCss);
         $this->assertStringContainsString('.resa-product-card {', $nativeUiCss);
         $this->assertStringNotContainsString('class="resa-dot', $reservations);
+    }
+
+    public function test_dashboard_top_cards_use_two_columns_on_mobile(): void
+    {
+        $dashboard = (string) file_get_contents(base_path('Modules/CrmCore/resources/assets/crm-dashboard.js'));
+
+        $this->assertStringContainsString('@media (max-width:720px)', $dashboard);
+        $this->assertStringContainsString('.dash-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}', $dashboard);
+        $this->assertStringContainsString('.dash-stat{grid-template-columns:2.2rem minmax(0,1fr);gap:.55rem;padding:.72rem}', $dashboard);
+        $this->assertStringContainsString('.dash-stats .dash-empty{grid-column:1/-1}', $dashboard);
+    }
+
+    public function test_dashboard_integrates_quick_access_module_cards(): void
+    {
+        $dashboard = (string) file_get_contents(base_path('Modules/CrmCore/resources/assets/crm-dashboard.js'));
+
+        $this->assertStringContainsString('${renderQuickAccess(data)}', $dashboard);
+        $this->assertStringContainsString('function renderQuickAccess(data)', $dashboard);
+        $this->assertStringContainsString('Accès rapide', $dashboard);
+        $this->assertStringContainsString('dash-card dash-quick', $dashboard);
+        $this->assertStringContainsString('dash-quick-grid', $dashboard);
+        $this->assertStringContainsString('dash-quick-card', $dashboard);
+        $this->assertStringContainsString('Personnaliser', $dashboard);
+        $this->assertStringContainsString('aria-label="Personnaliser les accès rapides"', $dashboard);
+        $this->assertStringContainsString('<span>Personnaliser</span>', $dashboard);
+        $this->assertStringContainsString('data-quick-customize', $dashboard);
+        $this->assertStringContainsString('${renderQuickAccessModal(data)}', $dashboard);
+        $this->assertStringContainsString('function renderQuickAccessModal(data)', $dashboard);
+        $this->assertStringContainsString('dash-modal-backdrop', $dashboard);
+        $this->assertStringContainsString('dash-modal-back-button', $dashboard);
+        $this->assertStringContainsString('dash-quick-settings-list', $dashboard);
+        $this->assertStringContainsString('data-quick-enabled', $dashboard);
+        $this->assertStringContainsString('data-quick-drag-row', $dashboard);
+        $this->assertStringContainsString('function moveQuickAccessDraft(fromSlug, toSlug)', $dashboard);
+        $this->assertStringContainsString('function saveQuickAccess()', $dashboard);
+        $this->assertStringContainsString('save_quick_access', $dashboard);
+        $this->assertStringContainsString('module.slug !== "dashboard"', $dashboard);
+        $this->assertStringContainsString('function moduleQuickMeta(module)', $dashboard);
+        $this->assertStringContainsString('Réservations véhicules', $dashboard);
+        $this->assertStringContainsString('Location matériel', $dashboard);
+        $this->assertStringNotContainsString('<div class="dash-actions">', $dashboard);
+        $this->assertStringNotContainsString('href="/locations-materiel">${icon("plus")}Location matériel', $dashboard);
+        $this->assertStringNotContainsString('href="/controle-caisse">${icon("receipt")}Contrôle caisse', $dashboard);
+        $this->assertStringContainsString('target="_blank" rel="noopener noreferrer"', $dashboard);
+        $this->assertStringContainsString('.dash-quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}', $dashboard);
+        $this->assertStringContainsString('.dash-stats,#${rootId} .dash-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}', $dashboard);
+        $this->assertStringContainsString('.dash-quick-header{align-items:flex-start;flex-direction:row}', $dashboard);
+        $this->assertStringContainsString('.dash-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}', $dashboard);
+        $this->assertStringContainsString('.dash-quick-card{grid-template-columns:minmax(0,1fr);min-height:7.25rem;gap:.55rem;padding:.72rem}', $dashboard);
+        $this->assertStringContainsString('.dash-quick-arrow{display:none}', $dashboard);
+        $this->assertStringContainsString('.dash-quick-customize{flex:0 0 2.35rem;width:2.35rem;min-width:2.35rem;height:2.35rem;min-height:2.35rem;padding:0;gap:0}', $dashboard);
+        $this->assertStringContainsString('.dash-quick-customize span{display:none}', $dashboard);
+        $this->assertStringContainsString('@media (max-width:1024px)', $dashboard);
     }
 
     public function test_dom_ready_sensitive_crm_modules_boot_even_when_loaded_late(): void

@@ -3,6 +3,7 @@
 .crm-native-shell,
 .crm-mobile-fallback-header,
 .crm-mobile-fallback-panel,
+.ms-ui-modal,
 .ms-ui-dialog,
 .resa-dialog,
 .rent-dialog {
@@ -698,6 +699,26 @@ body.ms-ui-modal-open {
   background: #fff;
 }
 
+.crm-native-content .rent-product-card.has-no-visible-price .rent-product-image {
+  height: 12.35rem !important;
+  border-bottom: 1px solid rgb(226 232 240) !important;
+  background: #fff !important;
+  padding: 0 !important;
+}
+
+.crm-native-content .rent-product-card.has-no-visible-price .rent-product-image img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  padding: 0 !important;
+  background: #fff !important;
+}
+
+.crm-native-content .rent-product-card.has-no-visible-price.is-rent-photo-portrait .rent-product-image {
+  height: 13.2rem !important;
+}
+
 .resa-vehicle-card .resa-product-image {
   width: 100% !important;
   min-width: 0 !important;
@@ -967,6 +988,19 @@ body.ms-ui-modal-open {
     aspect-ratio: 1.22 / 1;
   }
 
+  .crm-native-content .rent-product-card.has-no-visible-price {
+    min-height: 15.75rem !important;
+  }
+
+  .crm-native-content .rent-product-card.has-no-visible-price .rent-product-image {
+    height: clamp(10.85rem, 50vw, 12.2rem) !important;
+    padding: 0 !important;
+  }
+
+  .crm-native-content .rent-product-card.has-no-visible-price.is-rent-photo-portrait .rent-product-image {
+    height: clamp(11.75rem, 55vw, 13.15rem) !important;
+  }
+
   .resa-product-image {
     aspect-ratio: auto !important;
     min-height: 100% !important;
@@ -978,6 +1012,11 @@ body.ms-ui-modal-open {
     padding: 0.72rem !important;
   }
 
+  .crm-native-content .rent-product-card.has-no-visible-price .rent-product-body {
+    min-height: 3.55rem !important;
+    padding: 0.48rem 0.68rem 0.76rem !important;
+  }
+
   .resa-product-body {
     min-height: 0 !important;
     padding: 0.65rem 0.72rem !important;
@@ -987,6 +1026,11 @@ body.ms-ui-modal-open {
   .resa-product-name,
   .rent-product-name {
     font-size: 0.91rem !important;
+  }
+
+  .crm-native-content .rent-product-card.has-no-visible-price .rent-product-name {
+    font-size: 0.88rem !important;
+    line-height: 1.14 !important;
   }
 
   .resa-toolbar,
@@ -1031,14 +1075,514 @@ body.ms-ui-modal-open {
   }
 }
 
+/* Unified HUB module dialogs: same shell as the administration drawer. */
+.ms-ui-modal,
+.crm-native-content
+  :is(
+    .resa-modal,
+    .rent-modal,
+    .check-modal-backdrop,
+    .deposit-modal-backdrop,
+    .leaves-modal-backdrop,
+    .cash-modal-backdrop,
+    .doc-modal-backdrop,
+    .crm-modal-backdrop,
+    .tour-modal-backdrop,
+    .sales-modal-backdrop
+  ) {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483000 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  background: rgb(15 23 42 / 0.18) !important;
+  backdrop-filter: none !important;
+  animation: hub-module-backdrop-in 160ms var(--ms-ui-ease) !important;
+}
+
+.ms-ui-dialog,
+.crm-native-content
+  :is(
+    .resa-dialog,
+    .rent-dialog,
+    .check-modal,
+    .deposit-modal,
+    .leaves-modal,
+    .cash-modal,
+    .doc-modal,
+    .crm-modal,
+    .tour-modal,
+    .sales-modal
+  ) {
+  position: absolute !important;
+  inset: 0 0 0 auto !important;
+  display: flex !important;
+  width: min(35rem, calc(100vw - 1rem)) !important;
+  min-width: min(35rem, calc(100vw - 1rem)) !important;
+  max-width: calc(100vw - 1rem) !important;
+  height: 100dvh !important;
+  max-height: none !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-left: 1px solid var(--ms-ui-border) !important;
+  border-radius: 0.75rem 0 0 0.75rem !important;
+  background: var(--ms-ui-soft) !important;
+  box-shadow: -20px 0 70px rgb(15 23 42 / 0.18) !important;
+  animation: hub-module-drawer-in 180ms var(--ms-ui-ease) !important;
+}
+
+.crm-native-content :is(.check-modal:not(.check-small-modal), .cash-modal-wide, .crm-modal, .tour-modal) {
+  width: min(50rem, 66.666vw) !important;
+  max-width: calc(100vw - 1rem) !important;
+}
+
+.ms-ui-dialog-close,
+.crm-native-content
+  :is(
+    .resa-close,
+    .rent-close,
+    .check-modal-head > button,
+    .deposit-modal > header > button,
+    .leaves-modal-head > button,
+    .cash-modal-head > button,
+    .doc-modal > header > button,
+    .crm-modal-head > button,
+    .tour-modal-close,
+    .sales-modal-head > button
+  ) {
+  position: static !important;
+  display: inline-grid !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  place-items: center !important;
+  border: 1px solid var(--ms-ui-border) !important;
+  border-radius: 0.55rem !important;
+  background: #fff !important;
+  padding: 0 !important;
+  color: var(--ms-ui-muted) !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  font-size: 0 !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+}
+
+.ms-ui-dialog-close > *,
+.crm-native-content
+  :is(
+    .resa-close,
+    .rent-close,
+    .check-modal-head > button,
+    .deposit-modal > header > button,
+    .leaves-modal-head > button,
+    .cash-modal-head > button,
+    .doc-modal > header > button,
+    .crm-modal-head > button,
+    .tour-modal-close,
+    .sales-modal-head > button
+  )
+  > * {
+  display: none !important;
+}
+
+.ms-ui-dialog-close::before,
+.crm-native-content
+  :is(
+    .resa-close,
+    .rent-close,
+    .check-modal-head > button,
+    .deposit-modal > header > button,
+    .leaves-modal-head > button,
+    .cash-modal-head > button,
+    .doc-modal > header > button,
+    .crm-modal-head > button,
+    .tour-modal-close,
+    .sales-modal-head > button
+  )::before {
+  content: "\00d7";
+  color: currentColor;
+  font-size: 1.24rem;
+  line-height: 1;
+}
+
+.crm-native-content
+  :is(
+    .resa-dialog-header,
+    .rent-dialog-header,
+    .check-modal-head,
+    .deposit-modal > header,
+    .leaves-modal-head,
+    .cash-modal-head,
+    .doc-modal > header,
+    .crm-modal-head,
+    .tour-modal > header,
+    .sales-modal-head
+  ) {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 3 !important;
+  display: flex !important;
+  flex: 0 0 auto !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  border-bottom: 1px solid var(--ms-ui-border) !important;
+  background: #fff !important;
+  padding: 1rem !important;
+}
+
+.crm-native-content
+  :is(
+    .resa-dialog-title,
+    .rent-dialog-title,
+    .check-modal-head h2,
+    .deposit-modal header h2,
+    .leaves-modal-head strong,
+    .cash-modal-head h2,
+    .doc-modal h2,
+    .crm-modal-title,
+    .tour-modal h2,
+    .sales-modal-head h2
+  ) {
+  margin: 0 !important;
+  color: var(--ms-ui-text) !important;
+  font-size: 1.08rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.crm-native-content
+  :is(
+    .resa-dialog-kicker,
+    .check-modal-head p,
+    .deposit-modal header p,
+    .leaves-modal-head p,
+    .cash-modal-head p,
+    .doc-modal p,
+    .crm-modal-head p,
+    .tour-modal p,
+    .sales-modal-head p
+  ) {
+  margin: 0.22rem 0 0 !important;
+  color: var(--ms-ui-muted) !important;
+  font-size: 0.78rem !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+}
+
+.crm-native-content
+  :is(
+    .resa-view,
+    .resa-form,
+    .rent-form,
+    .check-form,
+    .check-check-form,
+    .deposit-form,
+    .leaves-form-grid,
+    .cash-create-day-form,
+    .cash-receipt-form-modal,
+    .cash-form-modal,
+    .cash-modal-scroll,
+    .cash-movement-form-modal,
+    .doc-modal-body,
+    .crm-form,
+    .tour-form,
+    .tour-report,
+    .sales-modal form
+  ) {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  padding: 1rem !important;
+  background: var(--ms-ui-soft) !important;
+}
+
+.crm-native-content
+  :is(
+    .resa-view-actions,
+    .reservation-fast-actions,
+    .rent-actions,
+    .check-modal-actions,
+    .deposit-form footer,
+    .leaves-modal .leaves-actions,
+    .cash-modal-actions,
+    .doc-modal footer,
+    .crm-modal-actions,
+    .tour-modal-actions,
+    .sales-modal-actions
+  ) {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.5rem !important;
+  border-top: 1px solid var(--ms-ui-border) !important;
+  background: #fff !important;
+  padding: 1rem !important;
+}
+
+@keyframes hub-module-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hub-module-drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .ms-ui-modal,
+  .crm-native-content
+    :is(
+      .resa-modal,
+      .rent-modal,
+      .check-modal-backdrop,
+      .deposit-modal-backdrop,
+      .leaves-modal-backdrop,
+      .cash-modal-backdrop,
+      .doc-modal-backdrop,
+      .crm-modal-backdrop,
+      .tour-modal-backdrop,
+      .sales-modal-backdrop
+    ) {
+    background: #f8fafc !important;
+  }
+
+  .ms-ui-dialog,
+  .crm-native-content
+    :is(
+      .resa-dialog,
+      .rent-dialog,
+      .check-modal,
+      .deposit-modal,
+      .leaves-modal,
+      .cash-modal,
+      .doc-modal,
+      .crm-modal,
+      .tour-modal,
+      .sales-modal
+    ) {
+    inset: 0 !important;
+    width: 100vw !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #f8fafc !important;
+    box-shadow: none !important;
+    animation: none !important;
+  }
+
+  .crm-native-content
+    :is(
+      .resa-dialog-header,
+      .rent-dialog-header,
+      .check-modal-head,
+      .deposit-modal > header,
+      .leaves-modal-head,
+      .cash-modal-head,
+      .doc-modal > header,
+      .crm-modal-head,
+      .tour-modal > header,
+      .sales-modal-head
+    ) {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    border-bottom: 0 !important;
+    background: #f8fafc !important;
+    padding: 1.05rem 1rem 0.85rem !important;
+  }
+
+  .ms-ui-dialog-close,
+  .crm-native-content
+    :is(
+      .resa-close,
+      .rent-close,
+      .check-modal-head > button,
+      .deposit-modal > header > button,
+      .leaves-modal-head > button,
+      .cash-modal-head > button,
+      .doc-modal > header > button,
+      .crm-modal-head > button,
+      .tour-modal-close,
+      .sales-modal-head > button
+    ) {
+    order: -1 !important;
+    justify-self: start !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0.1rem 0 !important;
+    color: rgb(var(--theme-primary)) !important;
+    box-shadow: none !important;
+  }
+
+  .ms-ui-dialog-close::before,
+  .crm-native-content
+    :is(
+      .resa-close,
+      .rent-close,
+      .check-modal-head > button,
+      .deposit-modal > header > button,
+      .leaves-modal-head > button,
+      .cash-modal-head > button,
+      .doc-modal > header > button,
+      .crm-modal-head > button,
+      .tour-modal-close,
+      .sales-modal-head > button
+    )::before {
+    content: "\2190  Retour";
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .crm-native-content
+    :is(
+      .resa-dialog-title,
+      .rent-dialog-title,
+      .check-modal-head h2,
+      .deposit-modal header h2,
+      .leaves-modal-head strong,
+      .cash-modal-head h2,
+      .doc-modal h2,
+      .crm-modal-title,
+      .tour-modal h2,
+      .sales-modal-head h2
+    ) {
+    font-size: 1.55rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .crm-native-content
+    :is(
+      .resa-view,
+      .resa-form,
+      .rent-form,
+      .check-form,
+      .check-check-form,
+      .deposit-form,
+      .leaves-form-grid,
+      .cash-create-day-form,
+      .cash-receipt-form-modal,
+      .cash-form-modal,
+      .cash-modal-scroll,
+      .cash-movement-form-modal,
+      .doc-modal-body,
+      .crm-form,
+      .tour-form,
+      .tour-report,
+      .sales-modal form
+    ) {
+    padding: 0 1rem calc(5.35rem + env(safe-area-inset-bottom)) !important;
+    background: #f8fafc !important;
+  }
+
+  .crm-native-content
+    :is(
+      .resa-view-actions,
+      .reservation-fast-actions,
+      .rent-actions,
+      .check-modal-actions,
+      .deposit-form footer,
+      .leaves-modal .leaves-actions,
+      .cash-modal-actions,
+      .doc-modal footer,
+      .crm-modal-actions,
+      .tour-modal-actions,
+      .sales-modal-actions
+    ) {
+    position: fixed !important;
+    right: auto !important;
+    bottom: calc(0.65rem + env(safe-area-inset-bottom)) !important;
+    left: 50% !important;
+    z-index: 2147483200 !important;
+    display: inline-flex !important;
+    width: max-content !important;
+    max-width: calc(100vw - 2rem) !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    border: 1px solid var(--ms-ui-border) !important;
+    border-radius: 0.75rem !important;
+    background: rgb(255 255 255 / 0.96) !important;
+    padding: 0.45rem !important;
+    box-shadow: 0 -16px 34px rgb(15 23 42 / 0.08) !important;
+  }
+
+  .crm-native-content
+    :is(
+      .resa-view-actions,
+      .reservation-fast-actions,
+      .rent-actions,
+      .check-modal-actions,
+      .deposit-form footer,
+      .leaves-modal .leaves-actions,
+      .cash-modal-actions,
+      .doc-modal footer,
+      .crm-modal-actions,
+      .tour-modal-actions,
+      .sales-modal-actions
+    )
+    :is(button, .resa-button, .rent-button, .check-button, .deposit-button, .leaves-button, .cash-button, .doc-button, .crm-button, .tour-button, .sales-button) {
+    flex: 0 1 auto !important;
+    min-width: 5rem !important;
+    max-width: 8.25rem !important;
+    overflow: hidden !important;
+    padding-inline: 0.65rem !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .crm-native-content,
   .ms-ui-modal,
   .resa-modal,
   .rent-modal,
+  .check-modal-backdrop,
+  .deposit-modal-backdrop,
+  .leaves-modal-backdrop,
+  .cash-modal-backdrop,
+  .doc-modal-backdrop,
+  .crm-modal-backdrop,
+  .tour-modal-backdrop,
+  .sales-modal-backdrop,
   .ms-ui-dialog,
   .resa-dialog,
   .rent-dialog,
+  .check-modal,
+  .deposit-modal,
+  .leaves-modal,
+  .cash-modal,
+  .doc-modal,
+  .crm-modal,
+  .tour-modal,
+  .sales-modal,
   .ms-ui-product-card,
   .resa-product-card,
   .rent-product-card,

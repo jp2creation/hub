@@ -55,12 +55,12 @@ class CrmPage extends Model
         });
 
         static::deleting(function (CrmPage $page): void {
-            CrmMenuItem::query()
+            CrmMenuItem::withTrashed()
                 ->whereIn('item_key', [
                     'cms-page:'.$page->slug,
                     'cms-page:'.($page->getOriginal('slug') ?: $page->slug),
                 ])
-                ->delete();
+                ->forceDelete();
 
             static::syncPagesMenuGroupVisibility();
         });
@@ -92,12 +92,18 @@ class CrmPage extends Model
 
         $oldSlug = $page->getOriginal('slug') ?: $page->slug;
         if ($oldSlug !== $page->slug) {
-            CrmMenuItem::query()
+            CrmMenuItem::withTrashed()
                 ->where('item_key', 'cms-page:'.$oldSlug)
-                ->delete();
+                ->forceDelete();
         }
 
-        $menuItem = CrmMenuItem::firstOrNew(['item_key' => 'cms-page:'.$page->slug]);
+        $menuItem = CrmMenuItem::withTrashed()->firstOrNew(['item_key' => 'cms-page:'.$page->slug]);
+        if ($menuItem->exists && $menuItem->trashed()) {
+            static::syncPagesMenuGroupVisibility();
+
+            return;
+        }
+
         $menuItem->fill([
             'group_key' => 'pages',
             'icon_key' => $page->icon_key ?: 'article',

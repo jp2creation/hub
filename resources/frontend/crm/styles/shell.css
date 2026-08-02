@@ -88,14 +88,67 @@ body.crm-native-shell-active {
 }
 
 .crm-native-nav-title {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
   margin: 0 0 0.5rem;
+  border: 0;
+  background: transparent;
   padding: 0 1rem;
   color: rgb(125 142 159);
+  cursor: pointer;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   line-height: 1.5;
+  text-align: left;
   text-transform: uppercase;
+  transition: color 0.16s ease;
+}
+
+.crm-native-nav-title:hover {
+  color: rgb(29 53 79);
+}
+
+.crm-native-nav-title-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crm-native-nav-section-chevron {
+  display: inline-grid;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  place-items: center;
+  transition: transform 0.16s ease;
+}
+
+.crm-native-nav-section-chevron svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.crm-native-nav-group.is-open .crm-native-nav-section-chevron {
+  transform: rotate(180deg);
+}
+
+.crm-native-nav-group-body {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.crm-native-nav-group.is-collapsed .crm-native-nav-group-body {
+  display: none;
 }
 
 .crm-native-nav-link {
@@ -294,13 +347,13 @@ body.crm-native-shell-active {
 
 .crm-native-nav-subitems .crm-native-nav-link.crm-native-nav-subitem.is-active,
 .crm-native-nav-subitems .crm-native-nav-branch.is-active {
-  background: var(--crm-martin-yellow);
-  color: #fff;
+  background: transparent;
+  color: rgb(29 53 79);
 }
 
 .crm-native-nav-subitems .crm-native-nav-link.crm-native-nav-subitem.is-active .crm-native-nav-icon,
 .crm-native-nav-subitems .crm-native-nav-branch.is-active .crm-native-nav-icon {
-  color: #fff;
+  color: var(--crm-martin-yellow);
 }
 
 .crm-native-logout {
@@ -637,6 +690,11 @@ html.crm-ui-module-ready .crm-native-content > * {
 
   body.crm-native-sidebar-collapsed .crm-native-nav-group + .crm-native-nav-group {
     margin-top: 0.45rem;
+  }
+
+  body.crm-native-sidebar-collapsed .crm-native-nav-group-body {
+    display: grid;
+    gap: 0.18rem;
   }
 
   body.crm-native-sidebar-collapsed .crm-native-nav-title,

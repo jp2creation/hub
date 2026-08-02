@@ -47,7 +47,7 @@ Route::post('/api/hub-assistant/message', HubAssistantController::class)
     ->middleware([...$crmApiMiddleware, 'auth'])
     ->name('hub-assistant.message');
 
-Route::match(['GET', 'OPTIONS'], '/api/dashboard', DashboardApiController::class)
+Route::match(['GET', 'POST', 'OPTIONS'], '/api/dashboard', DashboardApiController::class)
     ->middleware([...$crmApiMiddleware, 'hub.mobile_scope:hub:module:dashboard'])
     ->name('crm.api.dashboard');
 

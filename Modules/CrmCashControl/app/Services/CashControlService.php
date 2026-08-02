@@ -1015,7 +1015,7 @@ class CashControlService
         return CrmSite::query()
             ->active()
             ->whereIn('id', $this->siteIds($actor))
-            ->orderBy('id')
+            ->orderedForHub()
             ->get();
     }
 

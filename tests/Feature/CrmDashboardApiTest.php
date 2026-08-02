@@ -14,6 +14,7 @@ use App\Models\CrmNotificationLog;
 use App\Models\CrmReservation;
 use App\Models\CrmSite;
 use App\Models\CrmUser;
+use App\Models\CrmUserQuickAccessModule;
 use App\Models\CrmVehicle;
 use App\Models\DashboardMetric;
 use App\Models\User;
@@ -255,6 +256,139 @@ class CrmDashboardApiTest extends TestCase
             ->assertJsonPath('stats.equipmentAvailable', 7)
             ->assertJsonPath('stats.equipmentTotal', 9)
             ->assertJsonPath('reservationTrend.6.total', 7);
+    }
+
+    public function test_dashboard_quick_access_can_be_customized_per_user(): void
+    {
+        Cache::flush();
+
+        $site = CrmSite::query()->create([
+            'name' => 'Palissy',
+            'slug' => 'palissy',
+            'active' => true,
+        ]);
+
+        $dashboard = CrmModule::query()->updateOrCreate(
+            ['slug' => 'dashboard'],
+            [
+                'name' => 'Tableau de bord',
+                'route_path' => '/',
+                'active' => true,
+                'sort_order' => 0,
+            ],
+        );
+        $reservations = CrmModule::query()->updateOrCreate(
+            ['slug' => 'reservations'],
+            [
+                'name' => 'Réservations véhicules',
+                'route_path' => '/reservations',
+                'active' => true,
+                'sort_order' => 10,
+            ],
+        );
+        $teams = CrmModule::query()->updateOrCreate(
+            ['slug' => 'equipes'],
+            [
+                'name' => 'Équipe',
+                'route_path' => '/equipes',
+                'active' => true,
+                'sort_order' => 20,
+            ],
+        );
+        $leaves = CrmModule::query()->updateOrCreate(
+            ['slug' => 'conges'],
+            [
+                'name' => 'Congés & Absences',
+                'route_path' => '/conges',
+                'active' => true,
+                'sort_order' => 30,
+            ],
+        );
+
+        $user = CrmUser::query()->create([
+            'name' => 'Jean-Philippe',
+            'email' => 'jp-dashboard@example.com',
+            'role' => 'user',
+            'active' => true,
+        ]);
+        $user->sites()->syncWithoutDetaching([$site->id => ['is_default' => true]]);
+        $user->modules()->sync([$dashboard->id, $reservations->id, $teams->id, $leaves->id]);
+
+        $this->actingAs($user)
+            ->getJson('/api/dashboard?siteId='.$site->id)
+            ->assertOk()
+            ->assertJsonPath('quickAccessModules.0.slug', 'reservations')
+            ->assertJsonPath('quickAccessModules.1.slug', 'equipes')
+            ->assertJsonPath('quickAccessModules.2.slug', 'conges');
+
+        $this->actingAs($user)
+            ->postJson('/api/dashboard?action=save_quick_access', [
+                'modules' => [
+                    ['slug' => 'conges', 'enabled' => true],
+                    ['slug' => 'reservations', 'enabled' => false],
+                    ['slug' => 'equipes', 'enabled' => true],
+                ],
+            ])
+            ->assertOk()
+            ->assertJsonPath('quickAccessModules.0.slug', 'conges')
+            ->assertJsonPath('quickAccessModules.1.slug', 'equipes')
+            ->assertJsonPath('quickAccessSettings.0.slug', 'conges')
+            ->assertJsonPath('quickAccessSettings.1.slug', 'reservations')
+            ->assertJsonPath('quickAccessSettings.1.enabled', false);
+
+        $reservationsPreference = CrmUserQuickAccessModule::query()
+            ->where('user_id', $user->id)
+            ->where('module_id', $reservations->id)
+            ->first();
+
+        $this->assertNotNull($reservationsPreference);
+        $this->assertFalse($reservationsPreference->enabled);
+        $this->assertSame(1, $reservationsPreference->sort_order);
+
+        $this->actingAs($user)
+            ->getJson('/api/dashboard?siteId='.$site->id)
+            ->assertOk()
+            ->assertJsonPath('quickAccessModules.0.slug', 'conges')
+            ->assertJsonPath('quickAccessModules.1.slug', 'equipes');
+    }
+
+    public function test_dashboard_rejects_unknown_quick_access_module(): void
+    {
+        $dashboard = CrmModule::query()->updateOrCreate(
+            ['slug' => 'dashboard'],
+            [
+                'name' => 'Tableau de bord',
+                'route_path' => '/',
+                'active' => true,
+                'sort_order' => 0,
+            ],
+        );
+        $reservations = CrmModule::query()->updateOrCreate(
+            ['slug' => 'reservations'],
+            [
+                'name' => 'Réservations véhicules',
+                'route_path' => '/reservations',
+                'active' => true,
+                'sort_order' => 10,
+            ],
+        );
+        $user = CrmUser::query()->create([
+            'name' => 'Jean-Philippe',
+            'email' => 'jp-invalid-dashboard@example.com',
+            'role' => 'user',
+            'active' => true,
+        ]);
+        $user->modules()->sync([$dashboard->id, $reservations->id]);
+
+        $this->actingAs($user)
+            ->postJson('/api/dashboard?action=save_quick_access', [
+                'modules' => [
+                    ['slug' => 'module-inconnu', 'enabled' => true],
+                ],
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('ok', false)
+            ->assertJsonPath('error', 'Module d’accès rapide invalide');
     }
 
     public function test_refresh_dashboard_metrics_command_populates_metric_table(): void

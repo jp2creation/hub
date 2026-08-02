@@ -476,7 +476,7 @@ class SalesTourService
         return CrmSite::query()
             ->active()
             ->whereIn('id', $siteIds)
-            ->orderBy('name')
+            ->orderedForHub()
             ->get(['id', 'name', 'slug']);
     }
 

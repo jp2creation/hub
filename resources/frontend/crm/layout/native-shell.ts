@@ -16,6 +16,7 @@ type CrmProfile = {
 const nativeShellSelector = '[data-crm-native-shell]';
 const profileStorageKey = 'martin-sols-hub-profile';
 const sidebarStorageKey = 'martin-sols-hub-sidebar-collapsed';
+const navigationGroupStorageKey = 'martin-sols-hub-nav-groups-collapsed';
 let installed = false;
 let profileLoaded = false;
 let currentProfile: CrmProfile | undefined = readStoredProfile();
@@ -229,6 +230,29 @@ function storeSidebarCollapsed(collapsed: boolean): void {
   }
 }
 
+function readCollapsedNavigationGroups(): Set<string> {
+  try {
+    const raw = window.localStorage?.getItem(navigationGroupStorageKey);
+    const values = raw ? (JSON.parse(raw) as unknown) : [];
+
+    if (!Array.isArray(values)) {
+      return new Set<string>();
+    }
+
+    return new Set<string>(values.filter((value): value is string => typeof value === 'string' && value !== ''));
+  } catch {
+    return new Set<string>();
+  }
+}
+
+function storeCollapsedNavigationGroups(collapsedGroups: Set<string>): void {
+  try {
+    window.localStorage?.setItem(navigationGroupStorageKey, JSON.stringify(Array.from(collapsedGroups)));
+  } catch {
+    // Navigation groups are a visual preference only.
+  }
+}
+
 function iconFor(item: CrmMenuItem): string {
   return iconForKey(item.iconKey);
 }
@@ -251,22 +275,6 @@ function badgeHtml(item: CrmMenuItem): string {
   }
 
   return `<span class="crm-native-nav-badge">${esc(module.menuBadge)}</span>`;
-}
-
-function isSubmenuGroup(group: CrmMenuGroup, items: CrmMenuItem[]): boolean {
-  const sectionGroups = new Set(['home', 'apps', 'accounting', 'internal']);
-
-  return items.length > 1 && !sectionGroups.has(group.menuKey);
-}
-
-function groupIconKey(group: CrmMenuGroup): string {
-  const icons: Record<string, string> = {
-    commercial: 'dashboard',
-    documents: 'article',
-    internal: 'settings',
-  };
-
-  return icons[group.menuKey] || 'category';
 }
 
 function parentItemKey(item: CrmMenuItem): string {
@@ -319,16 +327,18 @@ function menuBranchItemHtml(
   nested = false,
 ): string {
   const parentPath = routes[item.itemKey] || '#';
-  const active = isActivePath(parentPath) || children.some((child: CrmMenuItem) => isActivePath(routes[child.itemKey] || '#'));
+  const active = isNavigationItemActive(parentPath);
+  const childActive = children.some((child: CrmMenuItem) => menuItemTreeIsActive(child, routes, childrenByParent));
+  const open = active || childActive;
 
   return [
-    `<div class="crm-native-nav-submenu${active ? ' is-open' : ''}" data-crm-native-submenu>`,
+    `<div class="crm-native-nav-submenu${open ? ' is-open' : ''}" data-crm-native-submenu>`,
     `<div class="crm-native-nav-branch${active ? ' is-active' : ''}" data-crm-native-nav-branch>`,
     `<a class="crm-native-nav-link crm-native-nav-branch-link${nested ? ' crm-native-nav-subitem' : ''}" href="${esc(parentPath)}">`,
     `<span class="crm-native-nav-icon">${iconFor(item)}</span>`,
     `<span class="crm-native-nav-label">${esc(item.label || 'HUB')}</span>`,
     '</a>',
-    `<button class="crm-native-nav-branch-toggle" type="button" data-crm-native-submenu-toggle aria-expanded="${active ? 'true' : 'false'}" aria-label="Afficher les sous-pages de ${esc(item.label || 'HUB')}">`,
+    `<button class="crm-native-nav-branch-toggle" type="button" data-crm-native-submenu-toggle aria-expanded="${open ? 'true' : 'false'}" aria-label="Afficher les sous-pages de ${esc(item.label || 'HUB')}">`,
     `<span class="crm-native-nav-chevron">${chevronIcon()}</span>`,
     '</button>',
     '</div>',
@@ -339,12 +349,27 @@ function menuBranchItemHtml(
   ].join('');
 }
 
+function menuItemTreeIsActive(
+  item: CrmMenuItem,
+  routes: Record<string, string>,
+  childrenByParent: Map<string, CrmMenuItem[]>,
+): boolean {
+  if (isNavigationItemActive(routes[item.itemKey] || '#')) {
+    return true;
+  }
+
+  return (childrenByParent.get(item.itemKey) || []).some((child: CrmMenuItem) =>
+    menuItemTreeIsActive(child, routes, childrenByParent),
+  );
+}
+
 function menuGroupsHtml(): string {
   const routes = routeByItemKey();
   const itemsByParent = childrenByParentItem(navigation().menuItems.filter((item: CrmMenuItem) => item && item.active !== false));
   const groups = navigation()
     .menuGroups.filter((group: CrmMenuGroup) => group && group.active !== false)
     .sort((a: CrmMenuGroup, b: CrmMenuGroup) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0));
+  const collapsedGroups = readCollapsedNavigationGroups();
 
   return groups
     .map((group: CrmMenuGroup) => {
@@ -358,48 +383,23 @@ function menuGroupsHtml(): string {
         return '';
       }
 
-      if (isSubmenuGroup(group, items)) {
-        return [
-          '<section class="crm-native-nav-group crm-native-nav-group-nested">',
-          submenuHtml(group, items, routes, itemsByParent),
-          '</section>',
-        ].join('');
-      }
+      const title = group.title || group.menuKey || 'HUB';
+      const groupKey = group.menuKey || title;
+      const collapsed = collapsedGroups.has(groupKey);
 
       return [
-        '<section class="crm-native-nav-group">',
-        `<p class="crm-native-nav-title">${esc(group.title || group.menuKey || 'HUB')}</p>`,
+        `<section class="crm-native-nav-group${collapsed ? ' is-collapsed' : ' is-open'}" data-crm-native-nav-group="${esc(groupKey)}">`,
+        `<button class="crm-native-nav-title" type="button" data-crm-native-nav-group-toggle aria-expanded="${collapsed ? 'false' : 'true'}">`,
+        `<span class="crm-native-nav-title-text">${esc(title)}</span>`,
+        `<span class="crm-native-nav-section-chevron">${chevronIcon()}</span>`,
+        '</button>',
+        '<div class="crm-native-nav-group-body">',
         items.map((item: CrmMenuItem) => menuItemWithChildrenHtml(item, routes, itemsByParent)).join(''),
+        '</div>',
         '</section>',
       ].join('');
     })
     .join('');
-}
-
-function submenuHtml(
-  group: CrmMenuGroup,
-  items: CrmMenuItem[],
-  routes: Record<string, string>,
-  childrenByParent: Map<string, CrmMenuItem[]>,
-): string {
-  const active = items.some((item: CrmMenuItem) => {
-    const children = childrenByParent.get(item.itemKey) || [];
-
-    return isActivePath(routes[item.itemKey] || '#') || children.some((child) => isActivePath(routes[child.itemKey] || '#'));
-  });
-
-  return [
-    `<div class="crm-native-nav-submenu${active ? ' is-open' : ''}" data-crm-native-submenu>`,
-    `<button class="crm-native-nav-link crm-native-nav-button${active ? ' is-active' : ''}" type="button" data-crm-native-submenu-toggle aria-expanded="${active ? 'true' : 'false'}">`,
-    `<span class="crm-native-nav-icon">${iconForKey(groupIconKey(group))}</span>`,
-    `<span class="crm-native-nav-label">${esc(group.title || group.menuKey || 'HUB')}</span>`,
-    `<span class="crm-native-nav-chevron">${chevronIcon()}</span>`,
-    '</button>',
-    '<div class="crm-native-nav-subitems">',
-    items.map((item: CrmMenuItem) => menuItemWithChildrenHtml(item, routes, childrenByParent, true)).join(''),
-    '</div>',
-    '</div>',
-  ].join('');
 }
 
 function menuItemHtml(item: CrmMenuItem, path: string, nested = false): string {
@@ -607,9 +607,48 @@ function shellHtml(route: CrmHostRoute | null): string {
 
 function updateActiveLinks(): void {
   document.querySelectorAll<HTMLAnchorElement>('.crm-native-nav-link').forEach((link) => {
-    const active = isActivePath(link.getAttribute('href') || '#');
+    const active = isNavigationItemActive(link.getAttribute('href') || '#');
     link.classList.toggle('is-active', active);
     link.closest<HTMLElement>('[data-crm-native-nav-branch]')?.classList.toggle('is-active', active);
+  });
+
+  syncActiveNavigationGroups();
+}
+
+function setNavigationGroupOpen(group: HTMLElement | null, open: boolean): void {
+  if (!group) {
+    return;
+  }
+
+  group.classList.toggle('is-open', open);
+  group.classList.toggle('is-collapsed', !open);
+  group
+    .querySelector<HTMLElement>('[data-crm-native-nav-group-toggle]')
+    ?.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+function storeCurrentNavigationGroupState(): void {
+  const collapsedGroups = new Set<string>();
+
+  document.querySelectorAll<HTMLElement>('[data-crm-native-nav-group].is-collapsed').forEach((group) => {
+    const groupKey = group.dataset.crmNativeNavGroup || '';
+
+    if (groupKey) {
+      collapsedGroups.add(groupKey);
+    }
+  });
+
+  storeCollapsedNavigationGroups(collapsedGroups);
+}
+
+function syncActiveNavigationGroups(): void {
+  const collapsedGroups = readCollapsedNavigationGroups();
+
+  document.querySelectorAll<HTMLElement>('[data-crm-native-nav-group]').forEach((group) => {
+    const groupKey = group.dataset.crmNativeNavGroup || '';
+    const collapsed = groupKey ? collapsedGroups.has(groupKey) : false;
+
+    setNavigationGroupOpen(group, !collapsed);
   });
 }
 
@@ -830,6 +869,17 @@ function installEvents(): void {
 
       if (target && !target.closest('[data-crm-native-user-wrap]')) {
         setUserMenuOpen(false);
+      }
+
+      const groupButton = target?.closest<HTMLElement>('[data-crm-native-nav-group-toggle]');
+      if (groupButton) {
+        event.preventDefault();
+        const group = groupButton.closest<HTMLElement>('[data-crm-native-nav-group]');
+        const open = !group?.classList.contains('is-open');
+
+        setNavigationGroupOpen(group, open);
+        storeCurrentNavigationGroupState();
+        return;
       }
 
       const submenuButton = target?.closest<HTMLElement>('[data-crm-native-submenu-toggle]');

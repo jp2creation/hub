@@ -28,6 +28,7 @@ use Modules\CrmCore\Support\CrmReferenceCache;
  * @property string|null $phone
  * @property string|null $photo_url
  * @property string|null $slug
+ * @property int $sort_order
  * @property-read object{is_default?: mixed}|null $pivot
  * @property-read Collection<int, CrmVehicle> $vehicles
  * @property-read Collection<int, CrmReservation> $reservations
@@ -47,6 +48,7 @@ class CrmSite extends Model
         'name',
         'slug',
         'active',
+        'sort_order',
         'morning_start',
         'morning_end',
         'afternoon_start',
@@ -61,6 +63,7 @@ class CrmSite extends Model
 
     protected $attributes = [
         'color' => '#95002e',
+        'sort_order' => 100,
     ];
 
     protected function casts(): array
@@ -146,6 +149,18 @@ class CrmSite extends Model
     }
 
     /**
+     * @param  Builder<CrmSite>  $query
+     * @return Builder<CrmSite>
+     */
+    public function scopeOrderedForHub(Builder $query): Builder
+    {
+        return $query
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->orderBy('id');
+    }
+
+    /**
      * @return HasMany<CrmVehicle, $this>
      */
     public function vehicles(): HasMany
@@ -211,7 +226,7 @@ class CrmSite extends Model
     {
         return static::query()
             ->orderByDesc('active')
-            ->orderBy('name')
+            ->orderedForHub()
             ->pluck('name', 'id')
             ->all();
     }

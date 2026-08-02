@@ -442,22 +442,28 @@
       #${rootId} .resa-dialog-kicker{margin:.16rem 0 0;color:var(--resa-muted);font-size:.78rem;font-weight:800}
       #${rootId} .resa-dialog-title{margin:0;color:var(--resa-text);font-size:1.05rem;font-weight:600}
       #${rootId} .resa-close{display:grid;place-items:center;width:2rem;height:2rem;border:1px solid var(--resa-border);border-radius:999px;background:#fff;color:var(--resa-muted);cursor:pointer}
-      #${rootId} .resa-view{display:grid;gap:.68rem;padding:.85rem}
-      #${rootId} .resa-view-vehicle{display:grid;grid-template-columns:4.2rem minmax(0,1fr);align-items:center;gap:.72rem;border:1px solid var(--resa-border);border-radius:.58rem;background:#f8fafc;padding:.55rem}
-      #${rootId} .resa-view-photo{display:grid;place-items:center;width:4.2rem;aspect-ratio:1;border-radius:.5rem;background:linear-gradient(135deg,#f7e8ee,#f3edf0);color:var(--resa-primary);font-size:1rem;font-weight:600;overflow:hidden}
+      #${rootId} .resa-dialog-reservation-detail{width:min(100%,34rem)}
+      #${rootId} .resa-view{display:grid;gap:.72rem;padding:1rem;background:#f8fafc}
+      #${rootId} .resa-view-vehicle{display:grid;grid-template-columns:7rem minmax(0,1fr);align-items:center;gap:1.15rem;min-height:8.1rem;border:1px solid var(--resa-border);border-radius:.85rem;background:#fff;padding:1rem;box-shadow:0 12px 28px rgba(15,23,42,.04)}
+      #${rootId} .resa-view-photo{display:grid;place-items:center;width:7rem;aspect-ratio:1;border-radius:.72rem;background:linear-gradient(135deg,#f7e8ee,#f3edf0);color:var(--resa-primary);font-size:1rem;font-weight:600;overflow:hidden}
       #${rootId} .resa-view-photo img{width:100%;height:100%;object-fit:cover}
-      #${rootId} .resa-view-vehicle strong{display:block;color:var(--resa-text);font-size:.96rem;font-weight:600;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      #${rootId} .resa-view-vehicle span{display:block;margin-top:.18rem;color:var(--resa-muted);font-size:.76rem;font-weight:800}
-      #${rootId} .resa-view-details{display:grid;grid-template-columns:1.15fr .85fr .85fr;gap:.45rem}
-      #${rootId} .resa-view-field{min-width:0;border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.56rem .62rem}
-      #${rootId} .resa-view-field>span{display:block;color:var(--resa-muted);font-size:.64rem;font-weight:600;text-transform:uppercase}
-      #${rootId} .resa-view-field strong{display:block;margin-top:.12rem;color:var(--resa-text);font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      #${rootId} .resa-view-note{border:1px solid var(--resa-border);border-radius:.5rem;background:#fff;padding:.58rem .65rem}
-      #${rootId} .resa-view-note span{display:block;color:var(--resa-muted);font-size:.64rem;font-weight:600;text-transform:uppercase}
-      #${rootId} .resa-view-note p{margin:.2rem 0 0;color:var(--resa-text);font-size:.84rem;font-weight:750;line-height:1.35;white-space:pre-wrap}
-      #${rootId} .resa-view-actions{display:flex;align-items:center;justify-content:flex-end;gap:.45rem;border-top:1px solid var(--resa-border);padding:.7rem .85rem}
-      #${rootId} .resa-icon-action{display:grid;place-items:center;width:2.35rem;height:2.35rem;border:1px solid var(--resa-border);border-radius:.55rem;background:#fff;color:var(--resa-muted);cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
-      #${rootId} .resa-icon-action-primary{border-color:color-mix(in srgb,var(--resa-primary) 22%,white);color:var(--resa-primary)}
+      #${rootId} .resa-view-vehicle-copy{display:grid;gap:.5rem;min-width:0}
+      #${rootId} .resa-view-line{display:flex;align-items:center;gap:.62rem;min-width:0;color:var(--resa-muted);font-size:.96rem;font-weight:400;line-height:1.25}
+      #${rootId} .resa-view-line strong{display:block;min-width:0;color:var(--resa-text);font-size:1.22rem;font-weight:600;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-view-line-icon{display:grid;place-items:center;width:2.38rem;height:2.38rem;flex:0 0 auto;border-radius:999px;background:#f7e8ee;color:var(--resa-primary)}
+      #${rootId} .resa-view-details{display:grid;grid-template-columns:1fr 1fr;gap:.62rem}
+      #${rootId} .resa-view-field{display:grid;grid-template-columns:2.65rem minmax(0,1fr);align-items:center;gap:.72rem;min-width:0;min-height:5.3rem;border:1px solid var(--resa-border);border-radius:.78rem;background:#fff;padding:.78rem .9rem;box-shadow:0 10px 24px rgba(15,23,42,.035)}
+      #${rootId} .resa-view-field.is-wide{grid-column:1/-1}
+      #${rootId} .resa-view-field-icon{display:grid;place-items:center;width:2.65rem;height:2.65rem;border-radius:.72rem;background:#fdf2f8;color:var(--resa-primary)}
+      #${rootId} .resa-view-field-copy{display:grid;gap:.16rem;min-width:0}
+      #${rootId} .resa-view-field-label{display:block;color:var(--resa-muted);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0}
+      #${rootId} .resa-view-field strong{display:block;color:var(--resa-text);font-size:1rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .resa-view-note{align-items:start;min-height:5.8rem}
+      #${rootId} .resa-view-note p{margin:0;color:var(--resa-text);font-size:1rem;font-weight:600;line-height:1.36;white-space:pre-wrap}
+      #${rootId} .resa-view-actions{display:flex;align-items:center;justify-content:center;gap:.55rem;border-top:0;padding:.82rem 1rem;background:#fff}
+      #${rootId} .resa-icon-action{display:grid;place-items:center;width:6.8rem;height:3rem;border:1px solid var(--resa-border);border-radius:.65rem;background:#fff;color:var(--resa-muted);cursor:pointer;box-shadow:0 12px 28px rgba(15,23,42,.06)}
+      #${rootId} .resa-icon-action svg{width:1.25rem;height:1.25rem}
+      #${rootId} .resa-icon-action-primary{border-color:var(--resa-primary);background:var(--resa-primary);color:#fff;box-shadow:0 16px 30px rgb(var(--theme-primary) / .22)}
       #${rootId} .resa-icon-action-danger{color:#b91c1c}
       #${rootId} .resa-form{display:grid;gap:.78rem;padding:1rem}
       #${rootId} .resa-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
@@ -703,6 +709,30 @@
     return renderReservationFormModal(reservation, vehicle, startAt, endAt);
   }
 
+  function renderReservationViewField(iconName, label, value, extraClass = '') {
+    return `
+      <div class="resa-view-field ${extraClass}">
+        <span class="resa-view-field-icon">${icon(iconName)}</span>
+        <span class="resa-view-field-copy">
+          <span class="resa-view-field-label">${esc(label)}</span>
+          <strong>${esc(value)}</strong>
+        </span>
+      </div>
+    `;
+  }
+
+  function renderReservationViewNote(notes) {
+    return `
+      <div class="resa-view-field resa-view-note is-wide">
+        <span class="resa-view-field-icon">${icon('file')}</span>
+        <span class="resa-view-field-copy">
+          <span class="resa-view-field-label">Note</span>
+          <p>${esc(notes || 'Aucune note.')}</p>
+        </span>
+      </div>
+    `;
+  }
+
   function renderReservationDetailsModal(reservation, vehicle) {
     const startAt = reservation?.startAt || '';
     const endAt = reservation?.endAt || '';
@@ -722,7 +752,7 @@
 
     return `
       <div class="resa-modal" data-modal-close>
-        <section class="resa-dialog resa-dialog-compact" role="dialog" aria-modal="true" aria-label="Détail réservation">
+        <section class="resa-dialog resa-dialog-compact resa-dialog-reservation-detail" role="dialog" aria-modal="true" aria-label="Détail réservation">
           <header class="resa-dialog-header">
             <div>
               <h2 class="resa-dialog-title">Réservation</h2>
@@ -735,18 +765,24 @@
               <span class="resa-view-photo">
                 ${vehicle?.photoUrl ? `<img src="${esc(vehicle.photoUrl)}" alt="${esc(vehicle.name)}" loading="lazy">` : esc(initials || 'V')}
               </span>
-              <span>
-                <strong>${esc(vehicle?.name || 'Véhicule')}</strong>
-                <span>${esc(dateLabel(startAt))}</span>
+              <span class="resa-view-vehicle-copy">
+                <span class="resa-view-line">
+                  <span class="resa-view-line-icon">${icon('truck')}</span>
+                  <strong>${esc(vehicle?.name || 'Véhicule')}</strong>
+                </span>
+                <span class="resa-view-line">
+                  <span class="resa-view-line-icon">${icon('calendar')}</span>
+                  <span>${esc(dateLabel(startAt))}</span>
+                </span>
               </span>
             </div>
             <div class="resa-view-details">
-              <span class="resa-view-field"><span>Date</span><strong>${esc(dateLabel(startAt))}</strong></span>
-              <span class="resa-view-field"><span>Début</span><strong>${esc(timeLabel(startAt))}</strong></span>
-              <span class="resa-view-field"><span>Fin</span><strong>${esc(timeLabel(endAt))}</strong></span>
+              ${renderReservationViewField('calendar', 'Date', dateLabel(startAt), 'is-wide')}
+              ${renderReservationViewField('clock', 'Début', timeLabel(startAt))}
+              ${renderReservationViewField('clock', 'Fin', timeLabel(endAt))}
+              ${renderReservationViewField('user', 'Réservé par', reservationUserName(reservation), 'is-wide')}
+              ${renderReservationViewNote(notes)}
             </div>
-            <span class="resa-view-field"><span>Réservé par</span><strong>${esc(reservationUserName(reservation))}</strong></span>
-            <div class="resa-view-note"><span>Note</span><p>${esc(notes || 'Aucune note.')}</p></div>
           </div>
           ${actions ? `<footer class="resa-view-actions">${actions}</footer>` : ''}
         </section>
@@ -1144,6 +1180,11 @@
       save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"></path><path d="M17 21v-8H7v8M7 3v5h8"></path>',
       trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"></path>',
       edit: '<path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>',
+      truck: '<path d="M10 17h4V5H2v12h3"></path><path d="M14 8h4l4 4v5h-3"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="16.5" cy="17.5" r="2.5"></circle>',
+      calendar: '<path d="M8 2v4M16 2v4M3 10h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect>',
+      clock: '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>',
+      user: '<path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle>',
+      file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6M8 13h8M8 17h5"></path>',
     };
 
     return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.plus}</svg>`;

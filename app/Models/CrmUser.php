@@ -30,6 +30,7 @@ use Modules\CrmCore\Support\CrmReferenceCache;
  * @property-read Collection<int, CrmSite> $sites
  * @property-read Collection<int, CrmModule> $modules
  * @property-read Collection<int, CrmPermission> $permissions
+ * @property-read Collection<int, CrmUserQuickAccessModule> $quickAccessModules
  * @property-read Collection<int, CrmUserSiteModulePermission> $siteModulePermissions
  * @property-read Collection<int, CrmReservation> $reservations
  * @property-read Collection<int, CrmEquipmentRental> $equipmentRentals
@@ -107,6 +108,7 @@ class CrmUser extends User
             $user->sites()->detach();
             $user->modules()->detach();
             $user->permissions()->detach();
+            $user->quickAccessModules()->delete();
             $user->siteModulePermissions()->delete();
         });
 
@@ -183,6 +185,14 @@ class CrmUser extends User
     public function siteModulePermissions(): HasMany
     {
         return $this->hasMany(CrmUserSiteModulePermission::class, 'user_id');
+    }
+
+    /**
+     * @return HasMany<CrmUserQuickAccessModule, $this>
+     */
+    public function quickAccessModules(): HasMany
+    {
+        return $this->hasMany(CrmUserQuickAccessModule::class, 'user_id');
     }
 
     /**

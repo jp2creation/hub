@@ -60,14 +60,6 @@ export const fallbackNavigation: CrmFallbackNavigation = {
       sortOrder: 26,
     },
     { name: 'Remise de chèques', slug: 'remise-cheques', routePath: '/remise-cheques', active: true, sortOrder: 27 },
-    {
-      name: 'Addvance',
-      slug: 'addvance',
-      routePath: 'https://martinsols.addvancesolutions.fr',
-      active: true,
-      sortOrder: 28,
-    },
-    { name: 'Pages HUB', slug: 'pages-crm', routePath: '/pages-crm', active: true, sortOrder: 18 },
     { name: 'Administration', slug: 'administration', routePath: '/administration', active: true, sortOrder: 20 },
   ],
   menuGroups: [
@@ -175,22 +167,6 @@ export const fallbackNavigation: CrmFallbackNavigation = {
       iconKey: 'creditCard',
       active: true,
       sortOrder: 27,
-    },
-    {
-      itemKey: 'module:addvance',
-      groupKey: 'accounting',
-      label: 'Addvance',
-      iconKey: 'creditCard',
-      active: true,
-      sortOrder: 28,
-    },
-    {
-      itemKey: 'module:pages-crm',
-      groupKey: 'internal',
-      label: 'Pages HUB',
-      iconKey: 'article',
-      active: true,
-      sortOrder: 18,
     },
     {
       itemKey: 'module:administration',

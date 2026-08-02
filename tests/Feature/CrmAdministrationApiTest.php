@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Modules\CrmAdministration\Filament\Resources\CrmUsers\Pages\ManageCrmUsers;
+use Modules\CrmCore\Support\CrmReferenceCache;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -319,6 +320,30 @@ class CrmAdministrationApiTest extends TestCase
             'item_key' => 'module:planning',
             'active' => false,
         ]);
+        $this->assertDatabaseHas('crm_modules', [
+            'slug' => 'planning',
+            'active' => false,
+        ]);
+        $this->assertDatabaseHas('crm_modules', [
+            'slug' => 'pages-crm',
+            'active' => false,
+        ]);
+        $this->assertDatabaseHas('crm_menu_items', [
+            'item_key' => 'module:pages-crm',
+            'active' => false,
+        ]);
+        $this->assertDatabaseMissing('crm_menu_items', [
+            'item_key' => 'admin:pages',
+            'active' => true,
+        ]);
+        $this->assertDatabaseHas('crm_modules', [
+            'slug' => 'stats',
+            'active' => false,
+        ]);
+        $this->assertDatabaseHas('crm_menu_items', [
+            'item_key' => 'module:stats',
+            'active' => false,
+        ]);
         $this->assertDatabaseMissing('crm_menu_groups', ['menu_key' => 'check_remittances']);
         $this->assertDatabaseHas('crm_menu_groups', [
             'menu_key' => 'accounting',
@@ -334,13 +359,13 @@ class CrmAdministrationApiTest extends TestCase
         $this->assertDatabaseHas('crm_modules', [
             'slug' => 'addvance',
             'route_path' => 'https://martinsols.addvancesolutions.fr',
-            'active' => true,
+            'active' => false,
         ]);
         $this->assertDatabaseHas('crm_menu_items', [
             'item_key' => 'module:addvance',
             'group_key' => 'accounting',
             'label' => 'Addvance',
-            'active' => true,
+            'active' => false,
         ]);
         $this->assertDatabaseHas('crm_menu_groups', [
             'menu_key' => 'documents',
@@ -432,6 +457,55 @@ class CrmAdministrationApiTest extends TestCase
             ]);
     }
 
+    public function test_menu_settings_keep_conges_in_home_group_after_bootstrap(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $bootstrap = $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json();
+
+        $congesItem = collect($bootstrap['menuItems'])
+            ->firstWhere('itemKey', 'module:conges');
+
+        $this->assertNotNull($congesItem);
+        $this->assertSame('apps', $congesItem['groupKey']);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_menu_settings', [
+                'items' => [[
+                    'itemKey' => 'module:conges',
+                    'groupKey' => 'home',
+                    'parentItemKey' => '',
+                    'iconKey' => $congesItem['iconKey'],
+                    'label' => $congesItem['label'],
+                    'active' => true,
+                    'sortOrder' => 20,
+                ]],
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseHas('crm_menu_items', [
+            'item_key' => 'module:conges',
+            'group_key' => 'home',
+            'parent_item_key' => null,
+            'sort_order' => 20,
+        ]);
+
+        $reloaded = $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json();
+
+        $reloadedCongesItem = collect($reloaded['menuItems'])
+            ->firstWhere('itemKey', 'module:conges');
+
+        $this->assertSame('home', $reloadedCongesItem['groupKey'] ?? null);
+        $this->assertNull($reloadedCongesItem['parentItemKey'] ?? null);
+    }
+
     public function test_admin_can_assign_menu_item_as_sub_link(): void
     {
         [$account] = $this->createAdminUser();
@@ -469,6 +543,61 @@ class CrmAdministrationApiTest extends TestCase
             'label' => 'Utilisateurs HUB',
             'sort_order' => 15,
         ]);
+    }
+
+    public function test_bootstrap_normalizes_legacy_administration_menu_label(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk();
+
+        CrmMenuItem::query()
+            ->where('item_key', 'module:administration')
+            ->update(['label' => 'Tableau de bord']);
+
+        $bootstrap = $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json();
+
+        $administrationItem = collect($bootstrap['menuItems'])
+            ->firstWhere('itemKey', 'module:administration');
+
+        $this->assertSame('Administration', $administrationItem['label'] ?? null);
+        $this->assertDatabaseHas('crm_menu_items', [
+            'item_key' => 'module:administration',
+            'label' => 'Administration',
+        ]);
+    }
+
+    public function test_admin_can_delete_menu_item_and_sub_links(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk();
+
+        $deletedItemKeys = $this->actingAs($account)
+            ->postJson('/api/administration?action=delete_menu_item', [
+                'itemKey' => 'module:administration',
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->json('deletedItemKeys');
+
+        $this->assertContains('module:administration', $deletedItemKeys);
+        $this->assertContains('admin:users', $deletedItemKeys);
+        $this->assertSoftDeleted('crm_menu_items', ['item_key' => 'module:administration']);
+        $this->assertSoftDeleted('crm_menu_items', ['item_key' => 'admin:users']);
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->assertJsonMissing(['itemKey' => 'module:administration'])
+            ->assertJsonMissing(['itemKey' => 'admin:users']);
     }
 
     public function test_profile_navigation_keeps_admin_page_visible_when_moved_to_top_level(): void
@@ -619,6 +748,52 @@ class CrmAdministrationApiTest extends TestCase
             ->assertStatus(400)
             ->assertJsonPath('ok', false)
             ->assertJsonPath('error', 'Couleur invalide');
+    }
+
+    public function test_admin_can_reorder_sites_for_hub_display(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $sites = $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json('sites');
+
+        $orderedIds = array_reverse(collect($sites)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all());
+
+        $this->assertGreaterThan(1, count($orderedIds));
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=reorder_sites', [
+                'sites' => collect($orderedIds)
+                    ->map(fn (int $id, int $index): array => [
+                        'id' => $id,
+                        'sortOrder' => ($index + 1) * 10,
+                    ])
+                    ->values()
+                    ->all(),
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertSame($orderedIds, CrmSite::query()
+            ->orderedForHub()
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all());
+
+        $this->assertSame($orderedIds, collect(CrmReferenceCache::activeSiteRows())
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all());
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->assertJsonPath('sites.0.id', $orderedIds[0]);
     }
 
     public function test_admin_can_create_blocked_user_without_rights(): void

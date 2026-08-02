@@ -17,9 +17,9 @@ use Modules\CrmCore\Services\CrmImageStorage;
 
 final class CrmReferenceCache
 {
-    public const ACTIVE_SITE_ROWS = 'hub:sites:active:rows:v3';
+    public const ACTIVE_SITE_ROWS = 'hub:sites:active:rows:v4';
 
-    public const ACTIVE_SITE_IDS = 'hub:sites:active:ids:v1';
+    public const ACTIVE_SITE_IDS = 'hub:sites:active:ids:v2';
 
     public const ACTIVE_MODULE_ROWS = 'hub:modules:active:rows:v1';
 
@@ -38,19 +38,20 @@ final class CrmReferenceCache
     public const ACTIVE_EQUIPMENT_ITEM_ROWS = 'hub:equipment-items:active:rows:v1';
 
     /**
-     * @return array<int, array{id: int, name: string, slug: string, address: string, phone: string, email: string, color: string, photoUrl: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
+     * @return array<int, array{id: int, name: string, slug: string, sortOrder: int, address: string, phone: string, email: string, color: string, photoUrl: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
      */
     public static function activeSiteRows(): array
     {
         return Cache::rememberForever(self::ACTIVE_SITE_ROWS, function (): array {
             return CrmSite::query()
                 ->active()
-                ->orderBy('id')
+                ->orderedForHub()
                 ->get()
                 ->map(fn (CrmSite $site): array => [
                     'id' => (int) $site->id,
                     'name' => $site->name,
                     'slug' => $site->slug,
+                    'sortOrder' => (int) $site->sort_order,
                     'address' => trim((string) $site->address),
                     'phone' => trim((string) $site->phone),
                     'email' => trim((string) $site->email),

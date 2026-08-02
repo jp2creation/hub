@@ -24,6 +24,10 @@ class CrmApiRequest extends FormRequest
             'site_id' => ['sometimes', 'integer', 'min:1'],
             'allSites' => ['sometimes', 'boolean'],
             'all_sites' => ['sometimes', 'boolean'],
+            'modules' => ['sometimes', 'array', 'max:80'],
+            'modules.*' => ['array:slug,enabled'],
+            'modules.*.slug' => ['required_with:modules', 'string', 'max:120'],
+            'modules.*.enabled' => ['sometimes', 'boolean'],
         ];
     }
 
@@ -41,6 +45,13 @@ class CrmApiRequest extends FormRequest
             'site_id.min' => 'Site invalide.',
             'allSites.boolean' => 'Recherche tous sites invalide.',
             'all_sites.boolean' => 'Recherche tous sites invalide.',
+            'modules.array' => 'Liste de modules invalide.',
+            'modules.max' => 'Trop de modules dans la liste.',
+            'modules.*.array' => 'Module invalide.',
+            'modules.*.slug.required_with' => 'Module invalide.',
+            'modules.*.slug.string' => 'Module invalide.',
+            'modules.*.slug.max' => 'Module invalide.',
+            'modules.*.enabled.boolean' => 'Activation de module invalide.',
         ];
     }
 

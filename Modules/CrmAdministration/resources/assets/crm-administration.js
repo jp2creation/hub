@@ -168,6 +168,35 @@
       #${rootId} .admin-pill.is-hidden{--admin-pill-color:#b91c1c}
       #${rootId} .admin-site-heading{display:flex;align-items:center;gap:.55rem;min-width:0}
       #${rootId} .admin-site-swatch{display:inline-block;width:1rem;height:1rem;flex:0 0 auto;border:1px solid var(--admin-border);border-radius:999px;background:var(--site-color,var(--admin-primary));box-shadow:0 0 0 .18rem color-mix(in srgb,var(--site-color,var(--admin-primary)) 12%,transparent)}
+      #${rootId} .admin-site-form{display:flex;flex-direction:column;gap:.85rem}
+      #${rootId} .admin-site-overview{display:grid;grid-template-columns:2.75rem minmax(0,1fr) auto;align-items:center;gap:.75rem;border:1px solid var(--admin-border);border-radius:.7rem;background:linear-gradient(135deg,color-mix(in srgb,var(--site-color,var(--admin-primary)) 10%,white),#fff 58%);padding:.85rem}
+      #${rootId} .admin-site-overview-icon{display:grid;place-items:center;width:2.75rem;height:2.75rem;overflow:hidden;border-radius:.65rem;background:color-mix(in srgb,var(--site-color,var(--admin-primary)) 16%,white);color:var(--site-color,var(--admin-primary))}
+      #${rootId} .admin-site-overview-icon img{width:100%;height:100%;object-fit:cover}
+      #${rootId} .admin-site-overview-copy{min-width:0}
+      #${rootId} .admin-site-overview-copy strong{display:block;overflow:hidden;color:var(--admin-text);font-size:1rem;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+      #${rootId} .admin-site-overview-copy span{display:block;margin-top:.12rem;overflow:hidden;color:var(--admin-muted);font-size:.74rem;font-weight:400;text-overflow:ellipsis;white-space:nowrap}
+      #${rootId} .admin-form-section{display:grid;gap:.75rem;border:1px solid var(--admin-border);border-radius:.7rem;background:#fff;padding:.9rem;box-shadow:0 10px 24px rgba(15,23,42,.035)}
+      #${rootId} .admin-form-section-head{display:grid;grid-template-columns:2.1rem minmax(0,1fr);align-items:center;gap:.65rem}
+      #${rootId} .admin-form-section-icon{display:grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:.55rem;background:var(--admin-primary-soft);color:var(--admin-primary)}
+      #${rootId} .admin-form-section-title strong{display:block;color:var(--admin-text);font-size:.92rem;font-weight:600}
+      #${rootId} .admin-form-section-title span{display:block;margin-top:.08rem;color:var(--admin-muted);font-size:.72rem;font-weight:400}
+      #${rootId} .admin-site-status-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.75rem;border:1px solid var(--admin-border);border-radius:.55rem;background:var(--admin-soft);padding:.72rem;text-transform:none}
+      #${rootId} .admin-site-status-card strong{display:block;color:var(--admin-text);font-size:.84rem;font-weight:600}
+      #${rootId} .admin-site-status-card span{display:block;margin-top:.12rem;color:var(--admin-muted);font-size:.72rem;font-weight:400}
+      #${rootId} .admin-site-status-card input{width:1rem;height:1rem}
+      #${rootId} .admin-site-identity-grid{display:grid;grid-template-columns:minmax(0,1fr) 3rem auto;align-items:end;gap:.55rem}
+      #${rootId} .admin-site-identity-grid label{min-width:0}
+      #${rootId} .admin-site-color-field{justify-items:start}
+      #${rootId} .admin-site-color-field input{width:2.45rem;height:2.45rem;border-radius:.52rem;padding:.18rem}
+      #${rootId} .admin-site-status-card.is-compact{min-height:2.45rem;padding:.5rem .58rem}
+      #${rootId} .admin-site-status-card.is-compact span span{display:none}
+      #${rootId} .admin-site-status-card.is-compact strong{font-size:.78rem}
+      #${rootId} .admin-site-status-card.is-compact input{width:1.05rem;height:1.05rem}
+      #${rootId} .admin-site-hours-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem}
+      #${rootId} .admin-site-hours-grid label{font-size:.64rem}
+      #${rootId} .admin-site-hours-grid input{min-height:2.35rem;padding:.5rem .45rem;text-align:center}
+      #${rootId} .admin-modal-body > form{box-sizing:border-box;min-height:100%}
+      #${rootId} .admin-modal-body > form.admin-row{display:flex;flex-direction:column}
       #${rootId} .admin-site-photo{display:grid;grid-template-columns:6.2rem minmax(0,1fr);align-items:center;gap:.8rem;border:1px solid var(--admin-border);border-radius:.55rem;background:var(--admin-soft);padding:.7rem}
       #${rootId} .admin-site-photo-preview{display:grid;place-items:center;width:6.2rem;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;color:var(--admin-muted);font-size:.72rem;font-weight:600;text-align:center}
       #${rootId} .admin-site-photo-preview img{width:100%;height:100%;object-fit:cover}
@@ -178,7 +207,8 @@
       #${rootId} .admin-password-panel{display:grid;gap:.65rem;border:1px solid var(--admin-border);border-radius:.55rem;background:var(--admin-soft);padding:.8rem}
       #${rootId} .admin-password-panel strong{color:var(--admin-text);font-size:.9rem;font-weight:600}
       #${rootId} .admin-password-panel p,#${rootId} .admin-help{margin:.12rem 0 0;color:var(--admin-muted);font-size:.74rem;font-weight:400;text-transform:none}
-      #${rootId} .admin-actions{display:flex;justify-content:flex-end;gap:.55rem;flex-wrap:wrap}
+      #${rootId} .admin-actions,#${rootId} .admin-site-form-footer,#${rootId} .admin-role-actions{position:sticky;bottom:0;z-index:2;gap:.55rem;margin-top:auto;border-top:1px solid var(--admin-border);background:rgba(250,250,250,.94);padding:.8rem 0 0;backdrop-filter:blur(10px)}
+      #${rootId} .admin-actions,#${rootId} .admin-site-form-footer{display:flex;justify-content:flex-end;flex-wrap:wrap}
       #${rootId} .admin-empty,#${rootId} .admin-loading{display:grid;place-items:center;min-height:7rem;border:1px dashed var(--admin-border);border-radius:.55rem;color:var(--admin-muted);font-weight:400;text-align:center;padding:1rem}
       #${rootId} .admin-alert{border:1px solid #fecaca;border-radius:.55rem;background:#fff1f2;padding:.8rem;color:#b91c1c;font-weight:400}
       #${rootId} .admin-menu-tree-card{overflow:hidden}
@@ -214,13 +244,18 @@
       #${rootId} .admin-list-side{display:flex;align-items:center;justify-content:flex-end;gap:.4rem;min-width:0}
       #${rootId} .admin-icon-button{display:inline-grid;place-items:center;width:2rem;min-width:2rem;height:2rem;border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;color:var(--admin-text);cursor:pointer}
       #${rootId} .admin-icon-button:hover{border-color:rgb(var(--theme-primary) / .45);background:#fff;color:var(--admin-primary)}
-      #${rootId} .admin-modal-backdrop{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(15,23,42,.45);padding:1rem}
-      #${rootId} .admin-modal{width:min(46rem,100%);max-height:min(90vh,48rem);display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;border:1px solid var(--admin-border);border-radius:.75rem;background:#fff;box-shadow:0 24px 80px rgba(15,23,42,.25)}
-      #${rootId} .admin-modal-wide{width:min(58rem,100%)}
-      #${rootId} .admin-modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--admin-border);padding:1rem}
+      #${rootId} .admin-modal-backdrop{position:fixed;inset:0;z-index:2147483000;display:block;background:rgba(15,23,42,.18);padding:0}
+      #${rootId} .admin-modal{position:absolute;top:0;right:0;display:grid;grid-template-rows:auto minmax(0,1fr);width:min(35rem,66.666vw);height:100dvh;max-height:none;overflow:hidden;border:0;border-left:1px solid var(--admin-border);border-radius:.75rem 0 0 .75rem;background:#fff;box-shadow:-20px 0 70px rgba(15,23,42,.18);animation:adminDrawerIn .18s ease-out}
+      #${rootId} .admin-modal-wide{width:min(50rem,66.666vw)}
+      #${rootId} .admin-modal-role{width:min(62rem,66.666vw);height:100dvh;max-height:none}
+      #${rootId} .admin-modal-header{display:grid;grid-template-columns:minmax(0,1fr) 2rem;align-items:flex-start;gap:1rem;border-bottom:1px solid var(--admin-border);padding:1rem}
+      #${rootId} .admin-modal-heading{min-width:0}
       #${rootId} .admin-modal-title{margin:0;color:var(--admin-text);font-size:1.08rem;font-weight:600}
       #${rootId} .admin-modal-subtitle{margin:.22rem 0 0;color:var(--admin-muted);font-size:.78rem;font-weight:400}
       #${rootId} .admin-modal-body{min-height:0;overflow:auto;padding:1rem;background:#fafafa}
+      #${rootId} .admin-modal-role .admin-modal-body{padding:0;background:#f8fafc}
+      #${rootId} .admin-modal-back-button{display:none}
+      #${rootId} .admin-modal-close-button{grid-column:2}
       #${rootId} .admin-modal-body .admin-row{box-shadow:none}
       #${rootId} .admin-role-profile{display:grid;gap:.18rem;border:1px solid rgb(var(--theme-primary) / .16);border-radius:.55rem;background:var(--admin-primary-soft);padding:.78rem .85rem}
       #${rootId} .admin-role-profile strong{color:var(--admin-text);font-size:.9rem;font-weight:600}
@@ -238,6 +273,109 @@
       #${rootId} .admin-access-check input{width:1rem;height:1rem;margin:.12rem 0 0;padding:0}
       #${rootId} .admin-access-check strong{display:block;overflow:hidden;font-size:.78rem;font-weight:600;line-height:1.15;text-overflow:ellipsis;white-space:nowrap}
       #${rootId} .admin-access-check span{display:block;margin-top:.1rem;overflow:hidden;color:var(--admin-muted);font-size:.68rem;font-weight:400;text-overflow:ellipsis;white-space:nowrap}
+      #${rootId} .admin-role-wizard{display:flex;flex-direction:column;gap:1rem;padding:1rem;background:#f8fafc}
+      #${rootId} .admin-role-stage{display:grid;gap:.8rem;border:1px solid var(--admin-border);border-radius:.7rem;background:#fff;padding:1rem;box-shadow:0 16px 38px rgba(15,23,42,.055)}
+      #${rootId} .admin-role-step-title{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--admin-border);padding-bottom:.65rem}
+      #${rootId} .admin-role-step-title strong{display:block;color:var(--admin-primary);font-size:.92rem;font-weight:600}
+      #${rootId} .admin-role-step-title strong::after{display:block;width:1.4rem;height:.12rem;margin-top:.5rem;border-radius:999px;background:var(--admin-primary);content:""}
+      #${rootId} .admin-role-step-title span{display:block;color:var(--admin-muted);font-size:.72rem;font-weight:400;text-align:right}
+      #${rootId} .admin-role-profile-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(13rem,.52fr);gap:.8rem}
+      #${rootId} .admin-role-profile-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
+      #${rootId} .admin-role-choice{position:relative;display:grid;grid-template-columns:3.1rem minmax(0,1fr) 1.15rem;align-items:center;gap:.75rem;min-height:6rem;border:1px solid var(--admin-border);border-radius:.65rem;background:#fff;padding:.8rem;color:var(--admin-text);text-transform:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.035)}
+      #${rootId} .admin-role-choice:hover,#${rootId} .admin-role-choice.is-selected{border-color:var(--admin-primary);background:linear-gradient(135deg,rgb(var(--theme-primary) / .08),#fff 52%)}
+      #${rootId} .admin-role-choice input{position:absolute;opacity:0;pointer-events:none}
+      #${rootId} .admin-role-choice-icon{display:grid;place-items:center;width:3.1rem;height:3.1rem;border-radius:.75rem;background:color-mix(in srgb,var(--role-color,var(--admin-primary)) 12%,white);color:var(--role-color,var(--admin-primary))}
+      #${rootId} .admin-role-choice-icon svg{width:1.45rem;height:1.45rem}
+      #${rootId} .admin-role-choice-copy{display:grid;gap:.2rem;min-width:0}
+      #${rootId} .admin-role-choice-copy strong{display:flex;align-items:center;gap:.4rem;min-width:0;color:var(--admin-text);font-size:.95rem;font-weight:600;line-height:1.15}
+      #${rootId} .admin-role-choice-copy em{border-radius:999px;background:color-mix(in srgb,var(--role-color,var(--admin-primary)) 12%,white);padding:.13rem .38rem;color:var(--role-color,var(--admin-primary));font-size:.58rem;font-style:normal;font-weight:600;white-space:nowrap}
+      #${rootId} .admin-role-choice-copy span{color:var(--admin-muted);font-size:.72rem;font-weight:400;line-height:1.35}
+      #${rootId} .admin-role-choice-radio{display:grid;place-items:center;width:1.05rem;height:1.05rem;border:1px solid #cbd5e1;border-radius:999px}
+      #${rootId} .admin-role-choice.is-selected .admin-role-choice-radio{border-color:var(--admin-primary);box-shadow:inset 0 0 0 .28rem #fff;background:var(--admin-primary)}
+      #${rootId} .admin-role-include,#${rootId} .admin-role-tip,#${rootId} .admin-role-recap{border:1px solid var(--admin-border);border-radius:.65rem;background:#fff;padding:.85rem}
+      #${rootId} .admin-role-include{display:grid;align-content:start;gap:.65rem}
+      #${rootId} .admin-role-include header,#${rootId} .admin-role-recap header{display:flex;align-items:center;justify-content:space-between;gap:.6rem;color:var(--admin-text);font-size:.86rem;font-weight:600}
+      #${rootId} .admin-role-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem}
+      #${rootId} .admin-role-metric{display:grid;place-items:center;gap:.25rem;min-height:4.8rem;border-left:1px solid var(--admin-border);text-align:center}
+      #${rootId} .admin-role-metric:first-child{border-left:0}
+      #${rootId} .admin-role-metric svg{width:1.2rem;height:1.2rem;color:var(--metric-color,var(--admin-primary))}
+      #${rootId} .admin-role-metric strong{color:var(--admin-text);font-size:1.1rem;font-weight:600;line-height:1}
+      #${rootId} .admin-role-metric span{color:var(--admin-muted);font-size:.66rem;font-weight:400}
+      #${rootId} .admin-role-help{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.6rem;align-items:center;border-radius:.6rem;background:#f8fafc;padding:.7rem;color:var(--admin-muted);font-size:.72rem;font-weight:400;line-height:1.35}
+      #${rootId} .admin-role-help svg{color:#f59e0b}
+      #${rootId} .admin-role-primary-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(14rem,.38fr);gap:1rem;align-items:start}
+      #${rootId} .admin-role-flow{display:grid;gap:.8rem;min-width:0}
+      #${rootId} .admin-role-panel{display:grid;gap:.75rem;border:1px solid var(--admin-border);border-radius:.65rem;background:#fff;padding:.82rem}
+      #${rootId} .admin-role-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem}
+      #${rootId} .admin-role-panel-head small{display:block;color:var(--admin-muted);font-size:.68rem;font-weight:400;text-align:right}
+      #${rootId} .admin-role-profile-strip{display:grid;gap:.75rem}
+      #${rootId} .admin-role-profile-list-compact{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
+      #${rootId} .admin-role-profile-list-compact .admin-role-choice{grid-template-columns:2.35rem minmax(0,1fr) 1rem;min-height:5.05rem;gap:.6rem;padding:.68rem}
+      #${rootId} .admin-role-profile-list-compact .admin-role-choice-icon{width:2.35rem;height:2.35rem;border-radius:.58rem}
+      #${rootId} .admin-role-profile-list-compact .admin-role-choice-icon svg{width:1.12rem;height:1.12rem}
+      #${rootId} .admin-role-profile-list-compact .admin-role-choice-copy strong{font-size:.82rem}
+      #${rootId} .admin-role-profile-list-compact .admin-role-choice-copy span{display:-webkit-box;overflow:hidden;font-size:.66rem;line-height:1.22;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+      #${rootId} .admin-role-profile-actions{display:flex;justify-content:flex-end}
+      #${rootId} .admin-role-profile-actions .admin-button{width:auto;min-width:11rem}
+      #${rootId} .admin-role-sites-grid{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(14rem,.48fr);gap:1rem;align-items:start}
+      #${rootId} .admin-role-site-module-layout{display:grid;grid-template-columns:minmax(12rem,.58fr) minmax(0,1.42fr);gap:1rem}
+      #${rootId} .admin-role-subsection{display:grid;align-content:start;gap:.65rem;min-width:0}
+      #${rootId} .admin-role-subsection-title{display:flex;align-items:center;gap:.45rem;color:var(--admin-text);font-size:.86rem;font-weight:600}
+      #${rootId} .admin-role-site-list{display:grid;gap:.55rem}
+      #${rootId} .admin-role-site-list.is-grid{grid-template-columns:repeat(auto-fit,minmax(10.5rem,1fr))}
+      #${rootId} .admin-role-site-card{position:relative;display:grid;grid-template-columns:2.5rem minmax(0,1fr) 1rem;align-items:center;gap:.65rem;min-height:4.4rem;border:1px solid var(--admin-border);border-radius:.6rem;background:#fff;padding:.65rem;color:var(--admin-text);text-transform:none;cursor:pointer}
+      #${rootId} .admin-role-site-card input{position:absolute;opacity:0;pointer-events:none}
+      #${rootId} .admin-role-site-card:hover,#${rootId} .admin-role-site-card.is-selected{border-color:var(--admin-primary);background:rgb(var(--theme-primary) / .055)}
+      #${rootId} .admin-role-site-logo{display:grid;place-items:center;width:2.5rem;height:2.5rem;overflow:hidden;border-radius:.55rem;background:color-mix(in srgb,var(--site-color,var(--admin-primary)) 14%,white);color:var(--site-color,var(--admin-primary));font-size:.86rem;font-weight:600}
+      #${rootId} .admin-role-site-logo img{width:100%;height:100%;object-fit:cover}
+      #${rootId} .admin-role-site-card strong,#${rootId} .admin-role-module-card strong{display:block;overflow:hidden;color:var(--admin-text);font-size:.82rem;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+      #${rootId} .admin-role-site-card small,#${rootId} .admin-role-module-card small{display:block;overflow:hidden;margin-top:.14rem;color:var(--admin-muted);font-size:.66rem;font-weight:400;text-overflow:ellipsis;white-space:nowrap}
+      #${rootId} .admin-role-site-check{display:grid;place-items:center;width:1rem;height:1rem;border:1px solid #cbd5e1;border-radius:999px;color:#fff}
+      #${rootId} .admin-role-site-card.is-selected .admin-role-site-check{border-color:var(--admin-primary);background:var(--admin-primary)}
+      #${rootId} .admin-role-site-card:not(.is-selected) .admin-role-site-check svg{display:none}
+      #${rootId} .admin-role-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
+      #${rootId} .admin-role-module-card{display:grid;gap:.65rem;border:1px solid var(--admin-border);border-radius:.6rem;background:#fff;padding:.72rem}
+      #${rootId} .admin-role-module-card.is-selected{border-color:rgb(var(--theme-primary) / .35);box-shadow:0 10px 24px rgb(var(--theme-primary) / .07)}
+      #${rootId} .admin-role-module-head{display:grid;grid-template-columns:2.2rem minmax(0,1fr);align-items:center;gap:.6rem}
+      #${rootId} .admin-role-module-icon{display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:.55rem;background:var(--admin-primary-soft);color:var(--admin-primary)}
+      #${rootId} .admin-role-levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.3rem}
+      #${rootId} .admin-role-levels button{min-height:1.85rem;border:1px solid var(--admin-border);border-radius:.38rem;background:#f8fafc;color:var(--admin-muted);font:inherit;font-size:.64rem;font-weight:400;cursor:pointer}
+      #${rootId} .admin-role-levels button.is-active{border-color:var(--level-color,var(--admin-primary));background:color-mix(in srgb,var(--level-color,var(--admin-primary)) 13%,white);color:var(--level-color,var(--admin-primary));font-weight:600}
+      #${rootId} .admin-role-final-grid{display:grid;grid-template-columns:minmax(0,1.34fr) minmax(14rem,.46fr);gap:1rem;align-items:start}
+      #${rootId} .admin-role-advanced-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(16rem,.72fr);gap:1rem;align-items:start}
+      #${rootId} .admin-role-module-grid.is-compact{grid-template-columns:1fr;gap:.5rem}
+      #${rootId} .admin-role-module-grid.is-compact .admin-role-module-card{gap:.55rem;padding:.65rem}
+      #${rootId} .admin-role-module-grid.is-compact .admin-role-module-head{grid-template-columns:2rem minmax(0,1fr)}
+      #${rootId} .admin-role-module-grid.is-compact .admin-role-module-icon{width:2rem;height:2rem}
+      #${rootId} .admin-role-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem}
+      #${rootId} .admin-role-shortcut{position:relative;display:grid;place-items:center;gap:.4rem;min-height:4.65rem;border:1px solid var(--admin-border);border-radius:.6rem;background:#fff;color:var(--admin-text);font:inherit;font-size:.74rem;font-weight:600;cursor:pointer;text-align:center}
+      #${rootId} .admin-role-shortcut svg{width:1.3rem;height:1.3rem;color:var(--shortcut-color,var(--admin-primary))}
+      #${rootId} .admin-role-shortcut:hover,#${rootId} .admin-role-shortcut.is-active{border-color:var(--admin-primary);background:rgb(var(--theme-primary) / .055)}
+      #${rootId} .admin-role-permission-list{display:grid;gap:.6rem}
+      #${rootId} .admin-role-permission-group{border:1px solid var(--admin-border);border-radius:.65rem;background:#fff;overflow:hidden}
+      #${rootId} .admin-role-permission-group summary{display:grid;grid-template-columns:2rem minmax(0,1fr) auto 1rem;align-items:center;gap:.6rem;min-height:3.6rem;padding:.65rem .8rem;cursor:pointer;list-style:none}
+      #${rootId} .admin-role-permission-group summary::-webkit-details-marker{display:none}
+      #${rootId} .admin-role-permission-group summary > span:first-child{display:grid;place-items:center;width:2rem;height:2rem;border-radius:.5rem;background:var(--admin-primary-soft);color:var(--admin-primary)}
+      #${rootId} .admin-role-permission-group summary strong{display:block;color:var(--admin-text);font-size:.88rem;font-weight:600}
+      #${rootId} .admin-role-permission-count{border-radius:999px;background:#dcfce7;padding:.16rem .45rem;color:#16a34a;font-size:.68rem;font-weight:600}
+      #${rootId} .admin-role-permission-items{display:grid;gap:.25rem;border-top:1px solid var(--admin-border);padding:.55rem .8rem .75rem}
+      #${rootId} .admin-role-permission-toggle{display:grid;grid-template-columns:1.4rem minmax(0,1fr) 2.4rem;align-items:center;gap:.6rem;padding:.42rem 0;color:var(--admin-text);text-transform:none}
+      #${rootId} .admin-role-permission-toggle > span:first-child{display:grid;place-items:center;width:1.4rem;height:1.4rem;border:1px solid #cbd5e1;border-radius:999px;color:#94a3b8}
+      #${rootId} .admin-role-permission-toggle.is-checked > span:first-child{border-color:#16a34a;color:#16a34a}
+      #${rootId} .admin-role-permission-toggle strong{display:block;color:var(--admin-text);font-size:.78rem;font-weight:600;line-height:1.15}
+      #${rootId} .admin-role-permission-toggle small{display:block;margin-top:.1rem;color:var(--admin-muted);font-size:.66rem;font-weight:400}
+      #${rootId} .admin-role-switch{position:relative;width:2.35rem;height:1.24rem}
+      #${rootId} .admin-role-switch input{position:absolute;opacity:0;pointer-events:none}
+      #${rootId} .admin-role-switch i{position:absolute;inset:0;border-radius:999px;background:#94a3b8;transition:.16s ease}
+      #${rootId} .admin-role-switch i::after{position:absolute;top:.16rem;left:.16rem;width:.92rem;height:.92rem;border-radius:999px;background:#fff;box-shadow:0 1px 4px rgba(15,23,42,.18);transition:.16s ease;content:""}
+      #${rootId} .admin-role-switch input:checked + i{background:var(--admin-primary)}
+      #${rootId} .admin-role-switch input:checked + i::after{transform:translateX(1.1rem)}
+      #${rootId} .admin-role-recap{position:sticky;top:1rem;display:grid;gap:.55rem;background:#fff}
+      #${rootId} .admin-role-recap-row{display:grid;grid-template-columns:1.9rem minmax(0,1fr);gap:.55rem;align-items:center;border:1px solid var(--admin-border);border-radius:.55rem;background:#fff;padding:.55rem}
+      #${rootId} .admin-role-recap-row span:first-child{display:grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:.48rem;background:color-mix(in srgb,var(--recap-color,var(--admin-primary)) 12%,white);color:var(--recap-color,var(--admin-primary))}
+      #${rootId} .admin-role-recap-row small{display:block;color:var(--admin-muted);font-size:.65rem;font-weight:400}
+      #${rootId} .admin-role-recap-row strong{display:block;margin-top:.08rem;color:var(--admin-text);font-size:.78rem;font-weight:600}
+      #${rootId} .admin-role-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
       #${rootId} .admin-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
       #${rootId} .admin-overview-list{display:grid;gap:.65rem}
       #${rootId} .admin-overview-link{display:grid;grid-template-columns:2.3rem minmax(0,1fr) auto;align-items:center;gap:.7rem;border:1px solid var(--admin-border);border-radius:.55rem;background:#fff;padding:.72rem;text-align:left;color:var(--admin-text);font:inherit;cursor:pointer}
@@ -247,12 +385,16 @@
       #${rootId} .admin-overview-copy > span{display:block;margin-top:.12rem;color:var(--admin-muted);font-size:.72rem;font-weight:400}
       #${rootId} .admin-list-meta{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap}
       .dark #${rootId}{--admin-border:var(--color-surface-700,#334155);--admin-text:#fff;--admin-muted:var(--color-secondary-400,#94a3b8);--admin-soft:var(--color-surface-800,#1e293b)}
-      .dark #${rootId} .admin-card,.dark #${rootId} .admin-row,.dark #${rootId} .admin-button,.dark #${rootId} .admin-icon-button,.dark #${rootId} .admin-filter-card,.dark #${rootId} .admin-filter-all,.dark #${rootId} .admin-toolbar,.dark #${rootId} .admin-stat,.dark #${rootId} .admin-list-row,.dark #${rootId} .admin-menu-tree-row,.dark #${rootId} .admin-menu-tree-row-item .admin-list-icon,.dark #${rootId} .admin-modal,.dark #${rootId} .admin-overview-link,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .admin-site-photo,.dark #${rootId} .admin-site-photo-preview,.dark #${rootId} .admin-password-panel{background:var(--color-surface-900,#0f172a);border-color:var(--admin-border)}
+      .dark #${rootId} .admin-card,.dark #${rootId} .admin-row,.dark #${rootId} .admin-button,.dark #${rootId} .admin-icon-button,.dark #${rootId} .admin-filter-card,.dark #${rootId} .admin-filter-all,.dark #${rootId} .admin-toolbar,.dark #${rootId} .admin-stat,.dark #${rootId} .admin-list-row,.dark #${rootId} .admin-menu-tree-row,.dark #${rootId} .admin-menu-tree-row-item .admin-list-icon,.dark #${rootId} .admin-modal,.dark #${rootId} .admin-overview-link,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea,.dark #${rootId} .admin-site-overview,.dark #${rootId} .admin-form-section,.dark #${rootId} .admin-site-status-card,.dark #${rootId} .admin-site-photo,.dark #${rootId} .admin-site-photo-preview,.dark #${rootId} .admin-password-panel,.dark #${rootId} .admin-role-stage,.dark #${rootId} .admin-role-panel,.dark #${rootId} .admin-role-choice,.dark #${rootId} .admin-role-profile-strip,.dark #${rootId} .admin-role-include,.dark #${rootId} .admin-role-tip,.dark #${rootId} .admin-role-recap,.dark #${rootId} .admin-role-site-card,.dark #${rootId} .admin-role-module-card,.dark #${rootId} .admin-role-shortcut,.dark #${rootId} .admin-role-permission-group,.dark #${rootId} .admin-role-recap-row{background:var(--color-surface-900,#0f172a);border-color:var(--admin-border)}
       .dark #${rootId} .admin-modal-body{background:var(--color-surface-800,#1e293b)}
+      .dark #${rootId} .admin-modal-role .admin-modal-body,.dark #${rootId} .admin-role-wizard,.dark #${rootId} .admin-role-actions{background:var(--color-surface-800,#1e293b)}
+      @keyframes adminDrawerIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+      @media (prefers-reduced-motion:reduce){#${rootId} .admin-modal{animation:none}}
       @media (max-width:1100px){#${rootId} .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-      @media (max-width:900px){#${rootId} .admin-grid,#${rootId} .admin-grid-3,#${rootId} .admin-overview-grid,#${rootId} .admin-access-layout{grid-template-columns:1fr}}
-      @media (max-width:700px){#${rootId} .admin-top,#${rootId} .admin-toolbar,#${rootId} .admin-filter-card{display:grid}#${rootId} .admin-title h1{font-size:1.55rem}#${rootId} .admin-actions{display:grid;grid-template-columns:1fr 1fr}#${rootId} .admin-search,#${rootId} .admin-filter-control{min-width:0;width:100%;max-width:none}#${rootId} .admin-filter-count{margin-left:0}#${rootId} .admin-list-row{grid-template-columns:2.5rem minmax(0,1fr);align-items:start}#${rootId} .admin-list-row.is-draggable,#${rootId} .admin-menu-tree-row{grid-template-columns:1.8rem 2.5rem minmax(0,1fr)}#${rootId} .admin-list-side{grid-column:1 / -1;justify-content:space-between}#${rootId} .admin-menu-tree-row .admin-list-side{padding-left:calc(4.1rem + var(--menu-indent))}}
-      @media (max-width:520px){#${rootId} .admin-stats{grid-template-columns:1fr}#${rootId} .admin-site-photo{grid-template-columns:1fr}#${rootId} .admin-site-photo-preview{width:100%;max-width:14rem}#${rootId} .admin-actions{grid-template-columns:1fr}}
+      @media (max-width:1024px){#${rootId} .admin-modal-backdrop{background:#f8fafc}#${rootId} .admin-modal,#${rootId} .admin-modal-wide,#${rootId} .admin-modal-role{inset:0;width:100vw;max-width:none;height:100dvh;border:0;border-radius:0;box-shadow:none}#${rootId} .admin-modal-header{position:sticky;top:0;z-index:3;grid-template-columns:1fr;gap:.75rem;border-bottom:0;background:#f8fafc;padding:1.05rem 1rem .85rem}#${rootId} .admin-modal-back-button{display:inline-flex;justify-content:flex-start;gap:.4rem;width:auto;min-width:0;height:auto;border:0;background:transparent;padding:.1rem 0;color:var(--admin-primary);font-size:.98rem;font-weight:600}#${rootId} .admin-modal-back-button svg{width:1.25rem;height:1.25rem}#${rootId} .admin-modal-close-button{display:none}#${rootId} .admin-modal-title{font-size:1.55rem;line-height:1.05}#${rootId} .admin-modal-subtitle{font-size:.82rem}#${rootId} .admin-modal-body{background:#f8fafc;padding:0 1rem calc(5.35rem + env(safe-area-inset-bottom))}#${rootId} .admin-actions,#${rootId} .admin-site-form-footer,#${rootId} .admin-role-actions{position:fixed;right:auto;bottom:calc(.65rem + env(safe-area-inset-bottom));left:50%;display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:calc(100vw - 2rem);transform:translateX(-50%);margin:0;border:1px solid var(--admin-border);border-radius:.75rem;background:rgba(255,255,255,.96);padding:.45rem;box-shadow:0 -16px 34px rgba(15,23,42,.08)}#${rootId} .admin-actions .admin-button,#${rootId} .admin-site-form-footer .admin-button,#${rootId} .admin-role-actions .admin-button{flex:0 1 auto;min-width:5.45rem;max-width:8.75rem;overflow:hidden;padding-inline:.72rem;text-overflow:ellipsis}#${rootId} .admin-role-actions .admin-button-primary{max-width:11rem}#${rootId} .admin-modal-role .admin-modal-body{background:#f8fafc;padding:0 0 calc(5.35rem + env(safe-area-inset-bottom))}}
+      @media (max-width:900px){#${rootId} .admin-grid,#${rootId} .admin-grid-3,#${rootId} .admin-overview-grid,#${rootId} .admin-access-layout,#${rootId} .admin-role-profile-grid,#${rootId} .admin-role-primary-grid,#${rootId} .admin-role-sites-grid,#${rootId} .admin-role-site-module-layout,#${rootId} .admin-role-final-grid,#${rootId} .admin-role-advanced-layout{grid-template-columns:1fr}#${rootId} .admin-role-recap{position:relative;top:auto;grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-role-recap header{grid-column:1 / -1}}
+      @media (max-width:700px){#${rootId} .admin-top,#${rootId} .admin-toolbar,#${rootId} .admin-filter-card{display:grid}#${rootId} .admin-title h1{font-size:1.55rem}#${rootId} .admin-search,#${rootId} .admin-filter-control{min-width:0;width:100%;max-width:none}#${rootId} .admin-filter-count{margin-left:0}#${rootId} .admin-list-row{grid-template-columns:2.5rem minmax(0,1fr);align-items:start}#${rootId} .admin-list-row.is-draggable,#${rootId} .admin-menu-tree-row{grid-template-columns:1.8rem 2.5rem minmax(0,1fr)}#${rootId} .admin-list-side{grid-column:1 / -1;justify-content:space-between}#${rootId} .admin-menu-tree-row .admin-list-side{padding-left:calc(4.1rem + var(--menu-indent))}}
+      @media (max-width:520px){#${rootId} .admin-stats{grid-template-columns:1fr}#${rootId} .admin-site-overview{grid-template-columns:2.75rem minmax(0,1fr)}#${rootId} .admin-site-overview .admin-pill{grid-column:1 / -1;justify-self:start}#${rootId} .admin-site-identity-grid{grid-template-columns:minmax(0,1fr) 2.85rem auto;gap:.45rem}#${rootId} .admin-site-color-field input{width:2.35rem;height:2.35rem}#${rootId} .admin-site-hours-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}#${rootId} .admin-site-photo{grid-template-columns:1fr}#${rootId} .admin-site-photo-preview{width:100%;max-width:14rem}#${rootId} .admin-actions .admin-button,#${rootId} .admin-site-form-footer .admin-button,#${rootId} .admin-role-actions .admin-button{font-size:.76rem}#${rootId} .admin-role-profile-list,#${rootId} .admin-role-module-grid,#${rootId} .admin-role-recap{grid-template-columns:1fr}#${rootId} .admin-role-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-role-metrics{grid-template-columns:1fr}#${rootId} .admin-role-metric{border-left:0;border-top:1px solid var(--admin-border)}#${rootId} .admin-role-metric:first-child{border-top:0}#${rootId} .admin-role-wizard{padding:.75rem}#${rootId} .admin-role-stage{padding:.85rem}}
     `;
     document.head.appendChild(style);
   }
@@ -526,6 +668,70 @@
     return (state.data?.roles || []).find((item) => item.key === roleKey) || null;
   }
 
+  function orderedRoleProfiles() {
+    const roles = state.data?.roles || [];
+    const order = ["admin", "responsable", "user", "blocked"];
+
+    return order
+      .map((key) => roles.find((role) => role.key === key))
+      .filter(Boolean);
+  }
+
+  function roleVisual(roleKey) {
+    const visuals = {
+      admin: {
+        label: "Administrateur",
+        badge: "Recommandé",
+        description: "Accès complet à tous les sites, modules, utilisateurs, rôles et permissions.",
+        icon: "crown",
+        color: "var(--admin-primary)",
+      },
+      responsable: {
+        label: "Manager",
+        badge: "Populaire",
+        description: "Peut gérer les équipes, réservations et congés. Accès étendu.",
+        icon: "shield",
+        color: "#16a34a",
+      },
+      user: {
+        label: "Membre",
+        badge: "Standard",
+        description: "Accès aux fonctionnalités essentielles pour son travail.",
+        icon: "users",
+        color: "#2563eb",
+      },
+      blocked: {
+        label: "Invité",
+        badge: "Limité",
+        description: "Accès en lecture seule à certaines informations.",
+        icon: "eye",
+        color: "#7c3aed",
+      },
+    };
+    const role = roleProfile(roleKey);
+
+    return visuals[roleKey] || {
+      label: role?.label || roleKey || "Profil",
+      badge: "Personnalisé",
+      description: role?.description || "Profil ajusté manuellement.",
+      icon: "shield",
+      color: "var(--admin-primary)",
+    };
+  }
+
+  function roleGlobalLevel(userOrForm) {
+    const isForm = typeof HTMLFormElement !== "undefined" && userOrForm instanceof HTMLFormElement;
+    const roleKey = isForm ? selectedRoleValue(userOrForm) : userOrForm?.role;
+    const labels = {
+      admin: "Accès complet",
+      responsable: "Gestion avancée",
+      user: "Accès standard",
+      blocked: "Accès limité",
+    };
+
+    return labels[roleKey] || "Personnalisé";
+  }
+
   function groupedPermissions(permissions) {
     const groups = new Map();
 
@@ -728,6 +934,7 @@
         <div class="admin-actions">
           <button class="admin-button" type="button" data-close-admin-modal>Annuler</button>
           <button class="admin-button admin-button-primary" type="submit">${state.saving === "menu" ? "Enregistrement..." : "Enregistrer"}</button>
+          <button class="admin-button admin-button-danger" type="button" data-delete-menu-item="${esc(item.itemKey)}">Supprimer</button>
         </div>
       </form>
     `;
@@ -784,13 +991,15 @@
         title: site.name || "Nouveau site",
         subtitle: [site.address || "Adresse non renseignée", site.phone || "Téléphone non renseigné", site.email || "E-mail non renseigné"].join(" · "),
         iconHtml: photo,
-        meta: `${statusPill(site.active !== false, "Actif", "Masqué")}<span class="admin-pill">${esc(site.slug || "nouveau")}</span>`,
+        meta: `${statusPill(site.active !== false, "Actif", "Masqué")}<span class="admin-pill">ordre ${esc(site.sortOrder || 100)}</span><span class="admin-pill">${esc(site.slug || "nouveau")}</span>`,
+        dragType: site.id ? "site" : "",
+        dragId: site.id || "",
       });
     });
 
     return renderListCard(
       "Liste des sites",
-      "Coordonnées, horaires, couleur, photo et activation.",
+      "Glissez les sites pour choisir leur ordre d’affichage dans le HUB.",
       `<button class="admin-button admin-button-primary" type="button" data-new-site>${icon("plus")} Créer un site</button>`,
       rows,
       "Aucun site trouvé.",
@@ -800,28 +1009,88 @@
   function renderSiteForm(site) {
     const hours = site.hours || {};
     const color = validHexColor(site.color) || defaultSiteColor();
+    const title = site.name || "Nouveau site";
+    const overviewIcon = site.photoUrl
+      ? `<img src="${esc(site.photoUrl)}" alt="">`
+      : `<i class="admin-site-swatch" style="--site-color:${esc(color)}" aria-hidden="true"></i>`;
 
     return `
-      <form class="admin-row" data-site-form>
+      <form class="admin-site-form" data-site-form>
         <input type="hidden" name="id" value="${esc(site.id || "")}">
-        <div class="admin-row-title">
-          <span class="admin-site-heading" style="--site-color:${esc(color)}"><i class="admin-site-swatch" aria-hidden="true"></i><strong>${esc(site.name || "Nouveau site")}</strong></span>
+        <input type="hidden" name="sortOrder" value="${esc(site.sortOrder || "")}">
+        <div class="admin-site-overview" style="--site-color:${esc(color)}">
+          <span class="admin-site-overview-icon">${overviewIcon}</span>
+          <span class="admin-site-overview-copy">
+            <strong>${esc(title)}</strong>
+            <span>${esc(site.address || "Adresse non renseignée")} · ordre ${esc(site.sortOrder || 100)}</span>
+          </span>
           <span class="admin-pill${site.active === false ? " is-hidden" : " is-active"}">${site.active === false ? "Masqué" : "Actif"}</span>
         </div>
-        ${renderSitePhoto(site)}
-        <div class="admin-grid-3">
-          <label>Nom <input name="name" value="${esc(site.name || "")}" required></label>
-          <label>Couleur <input name="color" type="color" value="${esc(color)}"></label>
-          <label>Téléphone <input name="phone" type="tel" value="${esc(site.phone || "")}"></label>
-          <label>E-mail <input name="email" type="email" value="${esc(site.email || "")}"></label>
-          <label>Matin début <input name="morningStart" type="time" value="${esc(hours.morningStart || "07:30")}"></label>
-          <label>Matin fin <input name="morningEnd" type="time" value="${esc(hours.morningEnd || "12:00")}"></label>
-          <label>Après-midi début <input name="afternoonStart" type="time" value="${esc(hours.afternoonStart || "13:30")}"></label>
-          <label>Après-midi fin <input name="afternoonEnd" type="time" value="${esc(hours.afternoonEnd || "17:30")}"></label>
-          <label class="admin-check"><input name="active" type="checkbox"${site.active !== false ? " checked" : ""}> Actif</label>
-        </div>
-        <label>Adresse <input name="address" value="${esc(site.address || "")}"></label>
-        <div class="admin-actions">
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("building")}</span>
+            <span class="admin-form-section-title">
+              <strong>Identité du site</strong>
+              <span>Nom affiché, couleur et visibilité dans le HUB.</span>
+            </span>
+          </div>
+          <div class="admin-site-identity-grid">
+            <label>Nom <input name="name" value="${esc(site.name || "")}" required></label>
+            <label class="admin-site-color-field">Couleur <input name="color" type="color" value="${esc(color)}" aria-label="Couleur du site"></label>
+            <label class="admin-site-status-card is-compact">
+              <span>
+                <strong>Actif</strong>
+                <span>Visible dans les menus et les sélecteurs du HUB.</span>
+              </span>
+            <input name="active" type="checkbox"${site.active !== false ? " checked" : ""}>
+            </label>
+          </div>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("eye")}</span>
+            <span class="admin-form-section-title">
+              <strong>Photo du site</strong>
+              <span>Image utilisée dans les vues équipe et informations du site.</span>
+            </span>
+          </div>
+          ${renderSitePhoto(site)}
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("dashboard")}</span>
+            <span class="admin-form-section-title">
+              <strong>Coordonnées</strong>
+              <span>Informations affichées aux membres du site.</span>
+            </span>
+          </div>
+          <div class="admin-grid">
+            <label>Téléphone <input name="phone" type="tel" value="${esc(site.phone || "")}"></label>
+            <label>E-mail <input name="email" type="email" value="${esc(site.email || "")}"></label>
+          </div>
+          <label>Adresse <input name="address" value="${esc(site.address || "")}"></label>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("calendar")}</span>
+            <span class="admin-form-section-title">
+              <strong>Horaires du site</strong>
+              <span>Plages utilisées comme référence dans le HUB.</span>
+            </span>
+          </div>
+          <div class="admin-site-hours-grid">
+            <label>Matin début <input name="morningStart" type="time" value="${esc(hours.morningStart || "07:30")}"></label>
+            <label>Matin fin <input name="morningEnd" type="time" value="${esc(hours.morningEnd || "12:00")}"></label>
+            <label>Après-midi début <input name="afternoonStart" type="time" value="${esc(hours.afternoonStart || "13:30")}"></label>
+            <label>Après-midi fin <input name="afternoonEnd" type="time" value="${esc(hours.afternoonEnd || "17:30")}"></label>
+          </div>
+        </section>
+
+        <div class="admin-site-form-footer">
           <button class="admin-button" type="button" data-close-admin-modal>Annuler</button>
           <button class="admin-button admin-button-primary" type="submit">Enregistrer</button>
           ${site.id ? `<button class="admin-button admin-button-danger" type="button" data-delete-site="${esc(site.id)}">Supprimer</button>` : ""}
@@ -837,8 +1106,8 @@
       <div class="admin-site-photo">
         <span class="admin-site-photo-preview" data-site-photo-preview>${src ? `<img src="${esc(src)}" alt="${esc(site.name || "Site")}" loading="lazy">` : "<span>Photo du site</span>"}</span>
         <div class="admin-site-photo-content">
-          <strong>Photo du site</strong>
-          <p>Image affichée avec les informations du site.</p>
+          <strong>Image actuelle</strong>
+          <p>Choisissez ou remplacez la photo affichée avec ce site.</p>
           <div class="admin-site-photo-actions">
             <button class="admin-button" type="button" data-site-photo-pick>${src ? "Remplacer" : "Choisir une photo"}</button>
             <button class="admin-button admin-button-danger" type="button" data-site-photo-remove${src ? "" : " hidden"}>Supprimer</button>
@@ -1028,46 +1297,291 @@
 
   function renderUserRolesForm(user) {
     const active = user.active !== false;
+    const primarySiteId = Number(user.primarySiteId || (user.siteIds || [])[0] || (state.data?.sites || [])[0]?.id || 0);
 
     return `
-      <form class="admin-row" data-user-roles-form>
+      <form class="admin-role-wizard" data-user-roles-form data-role-preset="">
         <input type="hidden" name="id" value="${esc(user.id)}">
         <input type="hidden" name="name" value="${esc(user.name)}">
         <input type="hidden" name="email" value="${esc(user.email || "")}">
         <input type="hidden" name="phone" value="${esc(user.phone || "")}">
         <input type="hidden" name="active" value="${active ? "1" : "0"}">
         <input type="hidden" name="accessRules" value="${esc(JSON.stringify(user.accessRules || []))}">
-        <div class="admin-row-title">
-          <strong>${esc(user.name)}</strong>
-          <span class="admin-list-meta"><span class="admin-pill${active ? " is-active" : " is-hidden"}">${active ? "Actif" : "Inactif"}</span><span class="admin-pill">${esc(roleLabel(user.role))}</span></span>
-        </div>
-        <div class="admin-grid">
-          <label>Profil de rôle
-            <select name="role" data-role-select>
-              ${(state.data?.roles || []).map((role) => `<option value="${esc(role.key)}"${role.key === user.role ? " selected" : ""}>${esc(role.label)}</option>`).join("")}
-            </select>
-          </label>
-          <label>Site principal
-            <select name="primarySiteId">
-              ${(state.data?.sites || []).map((site) => `<option value="${esc(site.id)}"${Number(site.id) === Number(user.primarySiteId) ? " selected" : ""}>${esc(site.name)}</option>`).join("")}
-            </select>
-          </label>
-        </div>
-        ${renderRoleProfileHint(user.role)}
-        <div class="admin-actions">
-          <button class="admin-button admin-button-soft" type="button" data-apply-role-profile>${icon("checklist")} Appliquer le profil</button>
-        </div>
-        <div class="admin-access-layout">
-          ${renderAccessBox("Sites autorisés", "Sites visibles par ce membre.", renderSiteAccessChecks(user))}
-          ${renderAccessBox("Modules autorisés", "Modules affichés dans le HUB.", renderModuleAccessChecks(user))}
-          ${renderAccessBox("Permissions", "Actions autorisées dans les modules.", renderPermissionAccessChecks(user))}
-        </div>
-        <div class="admin-actions">
+        <input type="hidden" name="primarySiteId" value="${esc(primarySiteId)}" data-primary-site-id>
+
+        <section class="admin-role-stage">
+          ${renderRoleStepTitle(1, "Profil et accès rapides", active ? "Permissions rapides" : "Compte inactif")}
+          <div class="admin-role-primary-grid">
+            <div class="admin-role-flow">
+              <div class="admin-role-panel admin-role-profile-strip">
+                <div class="admin-role-panel-head">
+                  <div class="admin-role-subsection-title">${icon("crown")} Profil de départ</div>
+                  <small>Choisir vite les accès</small>
+                </div>
+                <div class="admin-role-profile-list admin-role-profile-list-compact">
+                  ${renderRoleChoiceCards(user)}
+                </div>
+                <div class="admin-role-profile-actions">
+                  <button class="admin-button admin-button-primary" type="button" data-apply-role-profile>${icon("sparkles")} Appliquer le profil</button>
+                </div>
+              </div>
+              <div class="admin-role-panel admin-role-quick-panel">
+                <div class="admin-role-panel-head">
+                  <div class="admin-role-subsection-title">${icon("shield")} Niveau de droits rapide</div>
+                  <small>Lecture, contribution, gestion ou accès complet</small>
+                </div>
+                <div class="admin-role-shortcuts">
+                  ${renderRoleShortcut("read", "Lecture seule", "eye", "#2563eb")}
+                  ${renderRoleShortcut("contributor", "Contributeur", "users", "#16a34a")}
+                  ${renderRoleShortcut("manager", "Gestionnaire", "settings", "#f59e0b")}
+                  ${renderRoleShortcut("full", "Accès complet", "crown", "var(--admin-primary)")}
+                </div>
+              </div>
+            </div>
+            ${renderRoleRecapPanel(user)}
+          </div>
+        </section>
+
+        <section class="admin-role-stage">
+          ${renderRoleStepTitle(2, "Sites autorisés", "Où l’utilisateur peut travailler")}
+          <div class="admin-role-sites-grid">
+            <div class="admin-role-subsection">
+              <div class="admin-role-subsection-title">${icon("building")} Sites du HUB</div>
+              <div class="admin-role-site-list is-grid">
+                ${renderRoleSiteCards(user)}
+              </div>
+            </div>
+            ${renderRoleIncludePanel(user)}
+          </div>
+        </section>
+
+        <section class="admin-role-stage">
+          ${renderRoleStepTitle(3, "Ajustements avancés", "Permissions détaillées si besoin")}
+          <div class="admin-role-advanced-layout">
+            <div class="admin-role-subsection">
+              <div class="admin-role-subsection-title">${icon("shield")} Permissions détaillées</div>
+              <div class="admin-role-permission-list">
+                ${renderRolePermissionGroups(user)}
+              </div>
+            </div>
+            <div class="admin-role-subsection">
+              <div class="admin-role-subsection-title">${icon("package")} Modules activés automatiquement</div>
+              <div class="admin-role-help">${icon("info")} <span>Les modules suivent les permissions cochées. Vous pouvez encore ajuster module par module.</span></div>
+              <div class="admin-role-module-grid is-compact">
+                ${renderRoleModuleCards(user)}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="admin-role-actions">
           <button class="admin-button" type="button" data-close-admin-modal>Annuler</button>
           <button class="admin-button admin-button-primary" type="submit">Enregistrer les rôles</button>
         </div>
       </form>
     `;
+  }
+
+  function renderRoleStepTitle(number, title, subtitle) {
+    return `
+      <div class="admin-role-step-title">
+        <strong>${esc(number)}. ${esc(title)}</strong>
+        <span>${esc(subtitle)}</span>
+      </div>
+    `;
+  }
+
+  function renderRoleChoiceCards(user) {
+    return orderedRoleProfiles().map((role) => {
+      const visual = roleVisual(role.key);
+      const selected = role.key === user.role;
+
+      return `
+        <label class="admin-role-choice${selected ? " is-selected" : ""}" style="--role-color:${esc(visual.color)}" data-role-card>
+          <input type="radio" name="role" value="${esc(role.key)}"${selected ? " checked" : ""} data-role-select>
+          <span class="admin-role-choice-icon">${icon(visual.icon)}</span>
+          <span class="admin-role-choice-copy">
+            <strong>${esc(visual.label)} <em>${esc(visual.badge)}</em></strong>
+            <span>${esc(visual.description || role.description || "")}</span>
+          </span>
+          <i class="admin-role-choice-radio" aria-hidden="true"></i>
+        </label>
+      `;
+    }).join("");
+  }
+
+  function renderRoleIncludePanel(user) {
+    return `
+      <aside class="admin-role-include" data-role-profile-help>
+        <header>
+          <strong>Ce profil inclut</strong>
+          ${icon("info")}
+        </header>
+        <div class="admin-role-metrics">
+          ${roleMetric("Sites", selectedCount(user.siteIds), "building", "#16a34a", "data-role-summary-sites")}
+          ${roleMetric("Modules", selectedCount(user.moduleIds), "package", "#2563eb", "data-role-summary-modules")}
+          ${roleMetric("Permissions", selectedCount(user.permissionIds), "shield", "#f59e0b", "data-role-summary-permissions")}
+        </div>
+        <div class="admin-role-help">${icon("shield")} <span>Les permissions détaillées peuvent être affinées dans les modules et les raccourcis.</span></div>
+      </aside>
+    `;
+  }
+
+  function roleMetric(label, value, iconKey, color, marker) {
+    return `
+      <span class="admin-role-metric" style="--metric-color:${esc(color)}">
+        ${icon(iconKey)}
+        <strong ${marker}>${esc(value)}</strong>
+        <span>${esc(label)}</span>
+      </span>
+    `;
+  }
+
+  function renderRoleSiteCards(user) {
+    const selected = new Set((user.siteIds || []).map((id) => Number(id)));
+
+    return (state.data?.sites || []).map((site) => {
+      const checked = selected.has(Number(site.id));
+      const color = validHexColor(site.color) || defaultSiteColor();
+
+      return `
+        <label class="admin-role-site-card${checked ? " is-selected" : ""}" style="--site-color:${esc(color)}" data-role-site-card>
+          <input type="checkbox" name="siteIds" value="${esc(site.id)}"${checked ? " checked" : ""} data-role-site-input>
+          <span class="admin-role-site-logo">${site.photoUrl ? `<img src="${esc(site.photoUrl)}" alt="">` : esc(siteInitials(site))}</span>
+          <span>
+            <strong>${esc(site.name)}</strong>
+            <small>${esc(site.slug || site.address || "site HUB")}</small>
+          </span>
+          <i class="admin-role-site-check">${icon("check")}</i>
+        </label>
+      `;
+    }).join("");
+  }
+
+  function renderRoleModuleCards(user) {
+    const selectedModules = new Set((user.moduleIds || []).map((id) => Number(id)));
+    const selectedPermissions = new Set((user.permissionIds || []).map((id) => Number(id)));
+
+    return (state.data?.modules || []).map((module) => {
+      const level = moduleAccessLevel(module, selectedModules, selectedPermissions);
+      const checked = level !== "none";
+
+      return `
+        <article class="admin-role-module-card${checked ? " is-selected" : ""}" data-role-module-card data-module-id="${esc(module.id)}">
+          <input type="checkbox" name="moduleIds" value="${esc(module.id)}"${checked ? " checked" : ""} hidden data-role-module-input>
+          <div class="admin-role-module-head">
+            <span class="admin-role-module-icon">${icon(moduleIcon(module))}</span>
+            <span>
+              <strong>${esc(module.name)}</strong>
+              <small>${esc(module.slug)}</small>
+            </span>
+          </div>
+          <div class="admin-role-levels" data-role-module-levels>
+            ${renderModuleLevelButton("none", "Aucun", level, "#94a3b8")}
+            ${renderModuleLevelButton("view", "Voir", level, "#16a34a")}
+            ${renderModuleLevelButton("manage", "Gérer", level, "#f59e0b")}
+            ${renderModuleLevelButton("admin", "Admin", level, "var(--admin-primary)")}
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function renderModuleLevelButton(level, label, currentLevel, color) {
+    return `<button class="${currentLevel === level ? "is-active" : ""}" style="--level-color:${esc(color)}" type="button" data-module-access-level="${esc(level)}">${esc(label)}</button>`;
+  }
+
+  function renderRoleShortcut(preset, label, iconKey, color) {
+    return `
+      <button class="admin-role-shortcut" style="--shortcut-color:${esc(color)}" type="button" data-role-preset="${esc(preset)}">
+        ${icon(iconKey)}
+        <span>${esc(label)}</span>
+      </button>
+    `;
+  }
+
+  function renderRolePermissionGroups(user) {
+    const selected = new Set((user.permissionIds || []).map((id) => Number(id)));
+    const groups = groupedPermissions(state.data?.permissions || []);
+
+    return groups.map(([group, permissions], index) => {
+      const selectedInGroup = permissions.filter((permission) => selected.has(Number(permission.id))).length;
+
+      return `
+        <details class="admin-role-permission-group" data-permission-group="${esc(group || "Autres")}"${index < 3 ? " open" : ""}>
+          <summary>
+            <span>${icon(permissionGroupIcon(group))}</span>
+            <strong>${esc(group || "Autres")}</strong>
+            <span class="admin-role-permission-count" data-permission-group-count>${esc(selectedInGroup)}/${esc(permissions.length)}</span>
+            ${icon("chevron")}
+          </summary>
+          <div class="admin-role-permission-items">
+            ${permissions.map((permission) => renderPermissionToggle(permission, selected.has(Number(permission.id)))).join("")}
+          </div>
+        </details>
+      `;
+    }).join("");
+  }
+
+  function renderPermissionToggle(permission, checked) {
+    return `
+      <label class="admin-role-permission-toggle${checked ? " is-checked" : ""}" data-permission-row data-permission-group="${esc(permission.group || "Autres")}">
+        <span>${icon("check")}</span>
+        <span>
+          <strong>${esc(permission.label || permission.name)}</strong>
+          <small>${esc(permission.name)}</small>
+        </span>
+        <span class="admin-role-switch">
+          <input type="checkbox" name="permissionIds" value="${esc(permission.id)}"${checked ? " checked" : ""} data-permission-name="${esc(permission.name)}" data-permission-group-name="${esc(permission.group || "Autres")}">
+          <i aria-hidden="true"></i>
+        </span>
+      </label>
+    `;
+  }
+
+  function renderRoleRecapPanel(user) {
+    return `
+      <aside class="admin-role-recap" data-role-recap>
+        <header>
+          <strong>Récapitulatif du rôle</strong>
+          ${icon("shield")}
+        </header>
+        <div class="admin-role-recap-row" style="--recap-color:var(--admin-primary)">
+          <span>${icon("crown")}</span>
+          <span><small>Profil appliqué</small><strong data-role-recap-profile>${esc(roleVisual(user.role).label)}</strong></span>
+        </div>
+        <div class="admin-role-recap-row" style="--recap-color:#f59e0b">
+          <span>${icon("shield")}</span>
+          <span><small>Niveau global</small><strong data-role-recap-level>${esc(roleGlobalLevel(user))}</strong></span>
+        </div>
+        <div class="admin-role-recap-row" style="--recap-color:#16a34a">
+          <span>${icon("building")}</span>
+          <span><small>Sites autorisés</small><strong><span data-role-recap-sites>${esc(selectedCount(user.siteIds))}</span> sélectionné(s)</strong></span>
+        </div>
+        <div class="admin-role-recap-row" style="--recap-color:#2563eb">
+          <span>${icon("package")}</span>
+          <span><small>Modules actifs</small><strong><span data-role-recap-modules>${esc(selectedCount(user.moduleIds))}</span> module(s)</strong></span>
+        </div>
+        <div class="admin-role-recap-row" style="--recap-color:#f59e0b">
+          <span>${icon("shield")}</span>
+          <span><small>Permissions actives</small><strong><span data-role-recap-permissions>${esc(selectedCount(user.permissionIds))}</span> permission(s)</strong></span>
+        </div>
+      </aside>
+    `;
+  }
+
+  function selectedCount(value) {
+    return Array.isArray(value) ? value.length : 0;
+  }
+
+  function siteInitials(site) {
+    return String(site?.name || "MS")
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0] || "")
+      .join("")
+      .toUpperCase() || "MS";
   }
 
   function renderRoleProfileHint(roleKey) {
@@ -1154,13 +1668,14 @@
 
     return `
       <div class="admin-modal-backdrop" data-admin-modal-backdrop>
-        <section class="admin-modal${modal.wide ? " admin-modal-wide" : ""}" role="dialog" aria-modal="true" aria-label="${esc(modal.title)}">
+        <section class="admin-modal${modal.wide ? " admin-modal-wide" : ""}${modal.roleWizard ? " admin-modal-role" : ""}" role="dialog" aria-modal="true" aria-label="${esc(modal.title)}">
           <header class="admin-modal-header">
-            <div>
+            <button class="admin-icon-button admin-modal-back-button" type="button" data-close-admin-modal aria-label="Retour">${icon("arrowLeft")}<span>Retour</span></button>
+            <div class="admin-modal-heading">
               <h2 class="admin-modal-title">${esc(modal.title)}</h2>
               <p class="admin-modal-subtitle">${esc(modal.subtitle)}</p>
             </div>
-            <button class="admin-icon-button" type="button" data-close-admin-modal aria-label="Fermer">${icon("close")}</button>
+            <button class="admin-icon-button admin-modal-close-button" type="button" data-close-admin-modal aria-label="Fermer">${icon("close")}</button>
           </header>
           <div class="admin-modal-body">
             ${modal.body}
@@ -1180,7 +1695,7 @@
     }
 
     if (type === "user-roles") {
-      return { title: "Rôles et accès", subtitle: record.name, body: renderUserRolesForm(record), wide: true };
+      return { title: "Rôles et accès", subtitle: record.name, body: renderUserRolesForm(record), wide: true, roleWizard: true };
     }
 
     if (type === "site") {
@@ -1243,6 +1758,98 @@
     return iconBySlug[module.slug] || "category";
   }
 
+  function permissionGroupIcon(group) {
+    const normalized = normalizeText(group);
+
+    if (normalized.includes("reservation")) return "truck";
+    if (normalized.includes("location")) return "package";
+    if (normalized.includes("conge")) return "calendar";
+    if (normalized.includes("caisse") || normalized.includes("cheque")) return "creditCard";
+    if (normalized.includes("equipe")) return "users";
+    if (normalized.includes("administration")) return "shield";
+    if (normalized.includes("page") || normalized.includes("document")) return "fileText";
+
+    return "category";
+  }
+
+  function normalizeText(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  }
+
+  function modulePermissionGroups(module) {
+    const map = {
+      administration: ["Administration"],
+      conges: ["Congés & Absences"],
+      "controle-caisse": ["Controle caisse"],
+      dashboard: [],
+      "demandes-acompte": ["Demande d'acompte"],
+      documents: ["Documents"],
+      "documents-fiches-techniques": ["Documents"],
+      "documents-procedures": ["Documents"],
+      "documents-promo": ["Documents"],
+      equipes: ["Equipe"],
+      "locations-materiel": ["Location materiel"],
+      "pages-crm": ["Pages HUB"],
+      "pilotage-commercial": ["Pilotage commercial"],
+      reservations: ["Reservations"],
+      "remise-cheques": ["Remise de chèques"],
+      "tournees-representants": ["Rapport de visite"],
+    };
+
+    return map[module?.slug] || [module?.name || module?.slug || ""];
+  }
+
+  function modulePermissions(module) {
+    const groups = modulePermissionGroups(module).map(normalizeText).filter(Boolean);
+    if (groups.length === 0) return [];
+
+    return (state.data?.permissions || []).filter((permission) => groups.includes(normalizeText(permission.group)));
+  }
+
+  function moduleAccessLevel(module, selectedModules, selectedPermissions) {
+    const moduleId = Number(module.id);
+    const checked = selectedModules.has(moduleId);
+    const permissions = modulePermissions(module);
+
+    if (!checked && permissions.every((permission) => !selectedPermissions.has(Number(permission.id)))) {
+      return "none";
+    }
+
+    if (permissions.length === 0) {
+      return checked ? "view" : "none";
+    }
+
+    const selected = permissions.filter((permission) => selectedPermissions.has(Number(permission.id)));
+    if (!selected.length && checked) return "view";
+    if (selected.length === permissions.length) return "admin";
+    if (selected.some((permission) => !isViewPermission(permission))) return "manage";
+
+    return "view";
+  }
+
+  function isViewPermission(permission) {
+    return String(permission?.name || "").endsWith(".view");
+  }
+
+  function isManagePermission(permission) {
+    const name = String(permission?.name || "");
+
+    return isViewPermission(permission)
+      || name.endsWith(".create")
+      || name.endsWith(".update_own")
+      || name.endsWith(".update_any")
+      || name.endsWith(".delete_own")
+      || name.endsWith(".delete_any")
+      || name.endsWith(".report")
+      || name.endsWith(".sync")
+      || name.endsWith(".manage")
+      || name.endsWith(".validate")
+      || name.endsWith(".commissions");
+  }
+
   function emptyState(message) {
     return `<div class="admin-empty">${esc(message)}</div>`;
   }
@@ -1273,6 +1880,7 @@
     });
     root.querySelectorAll("[data-menu-group-form]").forEach((form) => form.addEventListener("submit", saveMenuGroup));
     root.querySelectorAll("[data-menu-item-form]").forEach((form) => form.addEventListener("submit", saveMenuItem));
+    root.querySelectorAll("[data-delete-menu-item]").forEach((button) => button.addEventListener("click", deleteMenuItem));
     root.querySelectorAll("[data-module-form]").forEach((form) => form.addEventListener("submit", saveModule));
     root.querySelectorAll("[data-site-form]").forEach((form) => form.addEventListener("submit", saveSite));
     root.querySelectorAll("[data-site-form]").forEach(bindSitePhotoForm);
@@ -1280,10 +1888,30 @@
     root.querySelectorAll("[data-user-form]").forEach((form) => form.addEventListener("submit", saveUser));
     root.querySelectorAll("[data-user-roles-form]").forEach((form) => form.addEventListener("submit", saveUserRoles));
     root.querySelectorAll("[data-role-select]").forEach((select) => {
-      select.addEventListener("change", () => updateRoleProfileHint(select.closest("[data-user-roles-form]")));
+      select.addEventListener("change", () => updateRoleWizardState(select.closest("[data-user-roles-form]")));
     });
     root.querySelectorAll("[data-apply-role-profile]").forEach((button) => {
       button.addEventListener("click", () => applySelectedRoleProfile(button.closest("[data-user-roles-form]")));
+    });
+    root.querySelectorAll("[data-role-site-input]").forEach((input) => {
+      input.addEventListener("change", () => updateRoleWizardState(input.closest("[data-user-roles-form]")));
+    });
+    root.querySelectorAll("[data-module-access-level]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const form = button.closest("[data-user-roles-form]");
+        if (form) form.dataset.rolePreset = "";
+        setModuleAccessLevel(form, button.closest("[data-role-module-card]")?.dataset.moduleId, button.dataset.moduleAccessLevel);
+      });
+    });
+    root.querySelectorAll("[data-role-preset]").forEach((button) => {
+      button.addEventListener("click", () => applyRolePreset(button.closest("[data-user-roles-form]"), button.dataset.rolePreset));
+    });
+    root.querySelectorAll("[data-permission-row] input[name=\"permissionIds\"]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const form = input.closest("[data-user-roles-form]");
+        if (form) form.dataset.rolePreset = "";
+        updateRoleWizardState(form);
+      });
     });
     root.querySelector("[data-user-filter-reset]")?.addEventListener("click", resetUserFilters);
     root.querySelectorAll("[data-user-filter]").forEach((filter) => {
@@ -1293,7 +1921,7 @@
     root.querySelectorAll("[data-delete-site]").forEach((button) => button.addEventListener("click", deleteSite));
     root.querySelectorAll("[data-delete-page]").forEach((button) => button.addEventListener("click", deletePage));
     root.querySelector("[data-new-site]")?.addEventListener("click", () => {
-      state.data.sites = [{ id: "", name: "", active: true, address: "", phone: "", email: "", color: defaultSiteColor(), photoUrl: "", hours: {} }, ...(state.data?.sites || [])];
+      state.data.sites = [...(state.data?.sites || []), { id: "", name: "", active: true, sortOrder: nextSiteSortOrder(), address: "", phone: "", email: "", color: defaultSiteColor(), photoUrl: "", hours: {} }];
       state.editing = { type: "site", id: "new" };
       render();
     });
@@ -1380,6 +2008,7 @@
     const targetId = row.dataset.menuDragId;
 
     if (targetType === currentMenuDrag.type && targetId === currentMenuDrag.id) return false;
+    if (currentMenuDrag.type === "site") return targetType === "site";
     if (currentMenuDrag.type === "menu-group") return targetType === "menu-group";
     if (currentMenuDrag.type === "menu-item") return targetType === "menu-item" || targetType === "menu-group";
 
@@ -1438,15 +2067,44 @@
   }
 
   async function reorderMenu(type, sourceId, targetType, targetId, position) {
-    const changed = type === "menu-group"
-      ? reorderMenuGroup(sourceId, targetType, targetId, position)
-      : type === "menu-item"
-        ? reorderMenuItem(sourceId, targetType, targetId, position)
-        : false;
+    let changed = false;
+    if (type === "site") {
+      changed = reorderSites(sourceId, targetType, targetId, position);
+    } else if (type === "menu-group") {
+      changed = reorderMenuGroup(sourceId, targetType, targetId, position);
+    } else if (type === "menu-item") {
+      changed = reorderMenuItem(sourceId, targetType, targetId, position);
+    }
 
     if (!changed) return;
 
+    if (type === "site") {
+      await saveSiteOrder();
+      return;
+    }
+
     await saveMenuOrder();
+  }
+
+  function reorderSites(sourceId, targetType, targetId, position) {
+    if (targetType !== "site") return false;
+
+    const records = state.data?.sites || [];
+    const ordered = [...records];
+    const fromIndex = ordered.findIndex((record) => String(record?.id) === String(sourceId));
+    const moving = ordered[fromIndex];
+
+    if (fromIndex < 0 || !moving) return false;
+
+    ordered.splice(fromIndex, 1);
+    let toIndex = ordered.findIndex((record) => String(record?.id) === String(targetId));
+    if (toIndex < 0) return false;
+    if (position === "after") toIndex += 1;
+    ordered.splice(toIndex, 0, moving);
+
+    state.data.sites = renumberSites(ordered);
+
+    return true;
   }
 
   function reorderMenuGroup(sourceId, targetType, targetId, position) {
@@ -1524,6 +2182,13 @@
     }));
   }
 
+  function renumberSites(sites) {
+    return sites.map((site, index) => ({
+      ...site,
+      sortOrder: (index + 1) * 10,
+    }));
+  }
+
   function renumberMenuItems(items) {
     const counters = {};
 
@@ -1550,6 +2215,26 @@
       method: "POST",
       body: { groups: menuGroupsPayload(), items: menuItemsPayload() },
     }));
+  }
+
+  async function saveSiteOrder() {
+    await save("site", () => request("reorder_sites", {
+      method: "POST",
+      body: { sites: sitesPayload() },
+    }));
+  }
+
+  function sitesPayload() {
+    return (state.data?.sites || [])
+      .filter((site) => site.id)
+      .map((site) => ({
+        id: Number(site.id),
+        sortOrder: Number(site.sortOrder || 100),
+      }));
+  }
+
+  function nextSiteSortOrder() {
+    return Math.max(0, ...(state.data?.sites || []).map((site) => Number(site.sortOrder || 0))) + 10;
   }
 
   async function saveMenuGroup(event) {
@@ -1653,6 +2338,7 @@
         photoDataUrl: String(data.get("photoDataUrl") || ""),
         removePhoto: Boolean(data.get("removePhoto")),
         active: Boolean(data.get("active")),
+        sortOrder: Number(data.get("sortOrder") || 0),
       },
     }));
   }
@@ -1796,18 +2482,12 @@
   }
 
   function updateRoleProfileHint(form) {
-    if (!form) return;
-    const profile = roleProfile(form.querySelector("[data-role-select]")?.value);
-    const hint = form.querySelector("[data-role-profile-help]");
-    if (!hint || !profile) return;
-
-    hint.querySelector("strong").textContent = profile.label || "Profil personnalisé";
-    hint.querySelector("span").textContent = profile.description || "Ajustez les accès ci-dessous pour créer un profil sur mesure.";
+    updateRoleWizardState(form);
   }
 
   function applySelectedRoleProfile(form) {
     if (!form) return;
-    const profile = roleProfile(form.querySelector("[data-role-select]")?.value);
+    const profile = roleProfile(selectedRoleValue(form));
     if (!profile) return;
 
     const moduleSlugs = new Set(profile.moduleSlugs || []);
@@ -1815,15 +2495,210 @@
     const moduleIds = new Set((state.data?.modules || []).filter((module) => moduleSlugs.has(module.slug)).map((module) => Number(module.id)));
     const permissionIds = new Set((state.data?.permissions || []).filter((permission) => permissionNames.has(permission.name)).map((permission) => Number(permission.id)));
 
-    form.querySelectorAll('input[name="moduleIds"]').forEach((input) => {
-      input.checked = moduleIds.has(Number(input.value));
-    });
-    form.querySelectorAll('input[name="permissionIds"]').forEach((input) => {
-      input.checked = permissionIds.has(Number(input.value));
-    });
+    if (profile.key === "admin") {
+      setCheckedNumberValues(form, "siteIds", new Set((state.data?.sites || []).map((site) => Number(site.id))));
+    }
+
+    setCheckedNumberValues(form, "moduleIds", moduleIds);
+    setCheckedNumberValues(form, "permissionIds", permissionIds);
     const accessRules = form.querySelector('[name="accessRules"]');
     if (accessRules) accessRules.value = "[]";
-    updateRoleProfileHint(form);
+    form.dataset.rolePreset = "";
+    updateRoleWizardState(form);
+  }
+
+  function selectedRoleValue(form) {
+    if (!form) return "user";
+
+    return form.querySelector('input[name="role"][data-role-select]:checked')?.value
+      || form.querySelector("[data-role-select]")?.value
+      || "user";
+  }
+
+  function setRoleValue(form, roleKey) {
+    form.querySelectorAll('input[name="role"][data-role-select]').forEach((input) => {
+      input.checked = input.value === roleKey;
+    });
+  }
+
+  function checkedNumberSet(form, name) {
+    return new Set(checkedNumberValues(form, name));
+  }
+
+  function setCheckedNumberValues(form, name, values) {
+    const selected = new Set(Array.from(values || []).map((value) => Number(value)));
+
+    form.querySelectorAll(`input[name="${name}"]`).forEach((input) => {
+      input.checked = selected.has(Number(input.value));
+    });
+  }
+
+  function updateRoleWizardState(form) {
+    if (!form) return;
+
+    syncPrimarySiteInput(form);
+    updateRoleCards(form);
+    updateRoleSiteCards(form);
+    updateRolePermissionRows(form);
+    updateRolePermissionGroupCounts(form);
+    updateRoleModuleCards(form);
+    updateRoleSummary(form);
+    updateRolePresetButtons(form);
+  }
+
+  function syncPrimarySiteInput(form) {
+    const primaryInput = form.querySelector("[data-primary-site-id]");
+    if (!primaryInput) return;
+
+    const selectedSites = checkedNumberValues(form, "siteIds");
+    const current = Number(primaryInput.value || 0);
+
+    if (!selectedSites.includes(current)) {
+      primaryInput.value = String(selectedSites[0] || "");
+    }
+  }
+
+  function updateRoleCards(form) {
+    const roleKey = selectedRoleValue(form);
+
+    form.querySelectorAll("[data-role-card]").forEach((card) => {
+      const input = card.querySelector('input[name="role"]');
+
+      card.classList.toggle("is-selected", input?.value === roleKey);
+    });
+  }
+
+  function updateRoleSiteCards(form) {
+    form.querySelectorAll("[data-role-site-card]").forEach((card) => {
+      card.classList.toggle("is-selected", Boolean(card.querySelector("input")?.checked));
+    });
+  }
+
+  function updateRoleModuleCards(form) {
+    const selectedModules = checkedNumberSet(form, "moduleIds");
+    const selectedPermissions = checkedNumberSet(form, "permissionIds");
+
+    form.querySelectorAll("[data-role-module-card]").forEach((card) => {
+      const module = (state.data?.modules || []).find((item) => Number(item.id) === Number(card.dataset.moduleId));
+      if (!module) return;
+
+      const level = moduleAccessLevel(module, selectedModules, selectedPermissions);
+      const input = card.querySelector('input[name="moduleIds"]');
+      if (input) input.checked = level !== "none";
+
+      card.classList.toggle("is-selected", level !== "none");
+      card.querySelectorAll("[data-module-access-level]").forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.moduleAccessLevel === level);
+      });
+    });
+  }
+
+  function updateRolePermissionRows(form) {
+    form.querySelectorAll("[data-permission-row]").forEach((row) => {
+      row.classList.toggle("is-checked", Boolean(row.querySelector('input[name="permissionIds"]')?.checked));
+    });
+  }
+
+  function updateRolePermissionGroupCounts(form) {
+    form.querySelectorAll("[data-permission-group]").forEach((group) => {
+      const permissions = Array.from(group.querySelectorAll('input[name="permissionIds"]'));
+      const selected = permissions.filter((input) => input.checked).length;
+      const count = group.querySelector("[data-permission-group-count]");
+
+      if (count) count.textContent = `${selected}/${permissions.length}`;
+    });
+  }
+
+  function updateRoleSummary(form) {
+    const roleKey = selectedRoleValue(form);
+    const visual = roleVisual(roleKey);
+    const siteCount = checkedNumberValues(form, "siteIds").length;
+    const moduleCount = checkedNumberValues(form, "moduleIds").length;
+    const permissionCount = checkedNumberValues(form, "permissionIds").length;
+
+    setText(form, "[data-role-summary-sites]", siteCount);
+    setText(form, "[data-role-summary-modules]", moduleCount);
+    setText(form, "[data-role-summary-permissions]", permissionCount);
+    setText(form, "[data-role-recap-profile]", visual.label);
+    setText(form, "[data-role-recap-level]", roleGlobalLevel(form));
+    setText(form, "[data-role-recap-sites]", siteCount);
+    setText(form, "[data-role-recap-modules]", moduleCount);
+    setText(form, "[data-role-recap-permissions]", permissionCount);
+  }
+
+  function updateRolePresetButtons(form) {
+    const preset = form.dataset.rolePreset || "";
+
+    form.querySelectorAll("[data-role-preset]").forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.rolePreset === preset);
+    });
+  }
+
+  function setText(form, selector, value) {
+    const target = form.querySelector(selector);
+    if (target) target.textContent = String(value ?? "");
+  }
+
+  function setModuleAccessLevel(form, moduleId, level) {
+    if (!form || !moduleId) return;
+
+    const module = (state.data?.modules || []).find((item) => Number(item.id) === Number(moduleId));
+    if (!module) return;
+
+    const moduleCard = form.querySelector(`[data-role-module-card][data-module-id="${moduleId}"]`);
+    const moduleInput = moduleCard?.querySelector('input[name="moduleIds"]');
+    const permissionIds = new Set(modulePermissions(module).map((permission) => Number(permission.id)));
+
+    if (moduleInput) moduleInput.checked = level !== "none";
+
+    form.querySelectorAll('input[name="permissionIds"]').forEach((input) => {
+      const permissionId = Number(input.value);
+      if (!permissionIds.has(permissionId)) return;
+
+      const permission = (state.data?.permissions || []).find((item) => Number(item.id) === permissionId);
+      input.checked = level === "admin" || (level === "manage" && isManagePermission(permission)) || (level === "view" && isViewPermission(permission));
+    });
+
+    updateRoleWizardState(form);
+  }
+
+  function applyRolePreset(form, preset) {
+    if (!form) return;
+
+    const permissions = state.data?.permissions || [];
+    let selectedPermissions = new Set();
+
+    if (preset === "read") {
+      selectedPermissions = new Set(permissions.filter(isViewPermission).map((permission) => Number(permission.id)));
+      setRoleValue(form, "user");
+    } else if (preset === "contributor") {
+      selectedPermissions = new Set(permissions.filter((permission) => {
+        const name = String(permission.name || "");
+
+        return isViewPermission(permission) || name.endsWith(".create") || name.endsWith(".update_own") || name.endsWith(".report");
+      }).map((permission) => Number(permission.id)));
+      setRoleValue(form, "user");
+    } else if (preset === "manager") {
+      selectedPermissions = new Set(permissions.filter((permission) => !String(permission.name || "").startsWith("platform.")).map((permission) => Number(permission.id)));
+      setRoleValue(form, "responsable");
+    } else if (preset === "full") {
+      selectedPermissions = new Set(permissions.map((permission) => Number(permission.id)));
+      setRoleValue(form, "admin");
+      setCheckedNumberValues(form, "siteIds", new Set((state.data?.sites || []).map((site) => Number(site.id))));
+    }
+
+    setCheckedNumberValues(form, "permissionIds", selectedPermissions);
+    setCheckedNumberValues(form, "moduleIds", moduleIdsForPermissionIds(selectedPermissions));
+    form.dataset.rolePreset = preset || "";
+    updateRoleWizardState(form);
+  }
+
+  function moduleIdsForPermissionIds(permissionIds) {
+    const selectedPermissions = new Set(Array.from(permissionIds || []).map((id) => Number(id)));
+
+    return new Set((state.data?.modules || [])
+      .filter((module) => modulePermissions(module).some((permission) => selectedPermissions.has(Number(permission.id))))
+      .map((module) => Number(module.id)));
   }
 
   async function deleteSite(event) {
@@ -1838,6 +2713,13 @@
     if (!id || !confirm("Supprimer cette page ?")) return;
 
     await save("page", () => request("delete_page", { method: "POST", body: { id } }));
+  }
+
+  async function deleteMenuItem(event) {
+    const itemKey = String(event.currentTarget.dataset.deleteMenuItem || "");
+    if (!itemKey || !confirm("Supprimer ce lien du menu ? Les sous-liens seront supprimés aussi.")) return;
+
+    await save("menu", () => request("delete_menu_item", { method: "POST", body: { itemKey } }));
   }
 
   async function save(key, callback) {
@@ -1939,24 +2821,31 @@
   function icon(key) {
     const paths = {
       article: '<path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v5h5"></path><path d="M10 12h6M10 16h5"></path>',
+      arrowLeft: '<path d="m15 18-6-6 6-6"></path><path d="M9 12h12"></path>',
       banknote: '<rect x="3" y="6" width="18" height="12" rx="2"></rect><circle cx="12" cy="12" r="2.5"></circle><path d="M6 9h1M17 15h1"></path>',
+      building: '<path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path><path d="M9 9h1M9 13h1M9 17h1"></path>',
       bus: '<rect x="5" y="3" width="14" height="14" rx="3"></rect><path d="M8 7h8M8 11h8M8 17v2M16 17v2"></path>',
       calendar: '<rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path>',
       category: '<rect x="4" y="4" width="6" height="6" rx="1.5"></rect><rect x="14" y="4" width="6" height="6" rx="1.5"></rect><rect x="4" y="14" width="6" height="6" rx="1.5"></rect><rect x="14" y="14" width="6" height="6" rx="1.5"></rect>',
+      check: '<path d="m5 12 4 4L19 6"></path>',
       chevron: '<path d="m9 18 6-6-6-6"></path>',
       checklist: '<path d="m8 7 1.6 1.6L13 5"></path><path d="M16 7h4"></path><path d="m8 15 1.6 1.6L13 13"></path><path d="M16 15h4"></path>',
       creditCard: '<rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path>',
       close: '<path d="M18 6 6 18M6 6l12 12"></path>',
+      crown: '<path d="m2 7 5 5 5-9 5 9 5-5-2 12H4z"></path><path d="M5 19h14"></path>',
       dashboard: '<rect x="4" y="4" width="6" height="6" rx="1.5"></rect><rect x="14" y="4" width="6" height="6" rx="1.5"></rect><rect x="4" y="14" width="6" height="6" rx="1.5"></rect><rect x="14" y="14" width="6" height="6" rx="1.5"></rect>',
       edit: '<path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>',
+      eye: '<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle>',
       fileText: '<path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v5h5"></path><path d="M10 13h6M10 17h4"></path>',
       grip: '<path d="M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01"></path>',
+      info: '<circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path>',
       package: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"></path><path d="m4 7.5 8 4.5 8-4.5M12 12v9"></path>',
       plus: '<path d="M12 5v14M5 12h14"></path>',
       ruler: '<path d="M4 17 17 4l3 3L7 20z"></path><path d="m14 7 3 3M11 10l2 2M8 13l3 3"></path>',
       search: '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>',
       settings: '<path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3"></path>',
       shield: '<path d="M12 3 19 6v5c0 5-3.1 8.7-7 10-3.9-1.3-7-5-7-10V6z"></path><path d="m9.5 12 1.8 1.8 3.7-4"></path>',
+      sparkles: '<path d="m12 3 1.4 4.1L17.5 8.5l-4.1 1.4L12 14l-1.4-4.1L6.5 8.5l4.1-1.4z"></path><path d="m5 15 .8 2.2L8 18l-2.2.8L5 21l-.8-2.2L2 18l2.2-.8z"></path><path d="m19 13 .8 2.2L22 16l-2.2.8L19 19l-.8-2.2L16 16l2.2-.8z"></path>',
       table: '<path d="M4 6h16M4 12h16M4 18h16"></path><path d="M8 6v12M16 6v12"></path>',
       truck: '<path d="M3 7h11v8H3z"></path><path d="M14 10h3l3 3v2h-6z"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle>',
       users: '<path d="M16 11a4 4 0 1 0-8 0"></path><path d="M4 21a8 8 0 0 1 16 0"></path>',

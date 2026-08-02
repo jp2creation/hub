@@ -943,7 +943,7 @@ class HubAssistantService
         return CrmSite::query()
             ->active()
             ->whereIn('id', $siteIds)
-            ->orderBy('name')
+            ->orderedForHub()
             ->get()
             ->all();
     }
@@ -1264,7 +1264,7 @@ class HubAssistantService
         return CrmSite::query()
             ->active()
             ->when($actor->role !== 'admin', fn ($query) => $query->whereIn('id', $siteIds))
-            ->orderBy('name')
+            ->orderedForHub()
             ->get()
             ->all();
     }

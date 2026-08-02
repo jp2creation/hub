@@ -64,12 +64,19 @@ class CrmModule extends Model
         static::saved(function (CrmModule $module): void {
             $oldSlug = $module->getOriginal('slug') ?: $module->slug;
 
-            $menuItem = CrmMenuItem::query()
+            $menuItem = CrmMenuItem::withTrashed()
                 ->where('item_key', 'module:'.$oldSlug)
                 ->first();
 
             if (! $menuItem) {
-                $menuItem = CrmMenuItem::firstOrNew(['item_key' => 'module:'.$module->slug]);
+                $menuItem = CrmMenuItem::withTrashed()->firstOrNew(['item_key' => 'module:'.$module->slug]);
+            }
+
+            if ($menuItem->exists && $menuItem->trashed()) {
+                self::syncFeatureFlag($module, $oldSlug);
+                CrmReferenceCache::forgetModules();
+
+                return;
             }
 
             $menuItemExists = $menuItem->exists;
@@ -97,7 +104,7 @@ class CrmModule extends Model
 
             $module->users()->detach();
             $module->siteModulePermissions()->delete();
-            CrmMenuItem::query()->where('item_key', 'module:'.$module->slug)->delete();
+            CrmMenuItem::withTrashed()->where('item_key', 'module:'.$module->slug)->forceDelete();
         });
 
         static::deleted(function (): void {

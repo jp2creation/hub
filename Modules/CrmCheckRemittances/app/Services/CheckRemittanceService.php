@@ -504,7 +504,7 @@ class CheckRemittanceService
         return CrmSite::query()
             ->active()
             ->whereIn('id', $this->siteIds($actor))
-            ->orderBy('name')
+            ->orderedForHub()
             ->get();
     }
 

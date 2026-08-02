@@ -11,11 +11,13 @@ use App\Models\CrmLeaveEntry;
 use App\Models\CrmNotificationLog;
 use App\Models\CrmReservation;
 use App\Models\CrmUser;
+use App\Models\CrmUserQuickAccessModule;
 use App\Models\DashboardMetric;
 use App\Models\User;
 use App\Support\CrmTheme;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Modules\CrmCore\Support\CrmReferenceCache;
@@ -49,12 +51,109 @@ class DashboardService
     {
         $generalSiteIds = $this->generalSiteIds($actor);
         $selectedSiteId = $this->selectedSiteId($actor, $requestedSiteId, $generalSiteIds);
-        $cacheKey = sprintf('crm:dashboard:v1:user:%d:site:%s', $actor->id, $selectedSiteId ?: 'all');
+        $cacheKey = $this->dashboardCacheKey($actor, $selectedSiteId);
         $ttl = max(0, (int) config('crm.dashboard.cache_seconds', 300));
 
         $payload = fn (): array => $this->buildOverview($actor, $selectedSiteId, $generalSiteIds);
 
         return $ttl > 0 ? Cache::remember($cacheKey, $ttl, $payload) : $payload();
+    }
+
+    /**
+     * @param  array<string, mixed>  $body
+     * @return array<string, mixed>
+     */
+    public function saveQuickAccess(CrmUser $actor, array $body): array
+    {
+        if (! array_key_exists('modules', $body) || ! is_array($body['modules'])) {
+            $this->fail('Liste de modules invalide', 422);
+        }
+
+        $modules = $this->moduleRows($actor);
+        $availableModules = $this->quickAccessAvailableModuleRows($modules);
+        $availableModulesBySlug = $availableModules->keyBy('slug');
+        $submittedModules = collect($body['modules'])
+            ->filter(fn (mixed $module): bool => is_array($module))
+            ->values();
+        $submittedSlugs = $submittedModules
+            ->map(fn (array $module): string => (string) ($module['slug'] ?? ''))
+            ->filter()
+            ->unique()
+            ->values();
+
+        $invalidSlug = $submittedSlugs
+            ->first(fn (string $slug): bool => ! $availableModulesBySlug->has($slug));
+
+        if ($invalidSlug !== null) {
+            $this->fail('Module d’accès rapide invalide', 422);
+        }
+
+        $now = now();
+        $sortOrder = 0;
+        $rows = [];
+        $handledSlugs = [];
+
+        foreach ($submittedModules as $submittedModule) {
+            $slug = (string) ($submittedModule['slug'] ?? '');
+
+            if ($slug === '' || isset($handledSlugs[$slug])) {
+                continue;
+            }
+
+            $module = $availableModulesBySlug->get($slug);
+
+            if (! $module) {
+                continue;
+            }
+
+            $handledSlugs[$slug] = true;
+            $rows[] = [
+                'user_id' => $actor->id,
+                'module_id' => (int) $module['id'],
+                'enabled' => $this->quickAccessEnabled($submittedModule['enabled'] ?? true),
+                'sort_order' => $sortOrder,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+            $sortOrder++;
+        }
+
+        foreach ($availableModules as $module) {
+            $slug = (string) $module['slug'];
+
+            if (isset($handledSlugs[$slug])) {
+                continue;
+            }
+
+            $rows[] = [
+                'user_id' => $actor->id,
+                'module_id' => (int) $module['id'],
+                'enabled' => false,
+                'sort_order' => $sortOrder,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+            $sortOrder++;
+        }
+
+        DB::transaction(function () use ($actor, $rows): void {
+            CrmUserQuickAccessModule::query()
+                ->where('user_id', $actor->id)
+                ->delete();
+
+            if ($rows !== []) {
+                CrmUserQuickAccessModule::query()->insert($rows);
+            }
+        });
+
+        $this->forgetOverviewCache($actor);
+
+        return [
+            'ok' => true,
+            'modules' => $modules,
+            'quickAccessModules' => $this->quickAccessModuleRows($actor, $modules),
+            'quickAccessSettings' => $this->quickAccessSettingsRows($actor, $modules),
+        ];
     }
 
     /**
@@ -91,6 +190,7 @@ class DashboardService
         [$equipmentAvailable, $equipmentTotal] = $equipmentSiteIds === []
             ? [0, 0]
             : ($metrics['equipmentAvailability'] ?? $this->equipmentAvailability($equipmentSiteIds, $now));
+        $modules = $this->moduleRows($actor);
 
         return [
             'ok' => true,
@@ -104,7 +204,9 @@ class DashboardService
             ],
             'selectedSiteId' => $selectedSiteId,
             'sites' => $this->siteRows($generalSiteIds),
-            'modules' => $this->moduleRows($actor),
+            'modules' => $modules,
+            'quickAccessModules' => $this->quickAccessModuleRows($actor, $modules),
+            'quickAccessSettings' => $this->quickAccessSettingsRows($actor, $modules),
             'access' => $moduleAccess,
             'stats' => [
                 'reservationsToday' => $reservationSiteIds === []
@@ -625,6 +727,93 @@ class DashboardService
             ])
             ->values()
             ->all();
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $modules
+     * @return array<int, array<string, mixed>>
+     */
+    private function quickAccessModuleRows(CrmUser $actor, array $modules): array
+    {
+        return collect($this->quickAccessSettingsRows($actor, $modules))
+            ->filter(fn (array $module): bool => (bool) $module['enabled'])
+            ->map(fn (array $module): array => [
+                'id' => (int) $module['id'],
+                'name' => (string) $module['name'],
+                'slug' => (string) $module['slug'],
+                'routePath' => (string) ($module['routePath'] ?? ''),
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $modules
+     * @return array<int, array<string, mixed>>
+     */
+    private function quickAccessSettingsRows(CrmUser $actor, array $modules): array
+    {
+        $preferences = $this->quickAccessPreferenceRows($actor);
+        $hasPreferences = $preferences->isNotEmpty();
+
+        return $this->quickAccessAvailableModuleRows($modules)
+            ->map(function (array $module, int $index) use ($preferences, $hasPreferences): array {
+                $preference = $preferences->get((int) $module['id']);
+
+                return [
+                    'id' => (int) $module['id'],
+                    'name' => (string) $module['name'],
+                    'slug' => (string) $module['slug'],
+                    'routePath' => (string) ($module['routePath'] ?? ''),
+                    'enabled' => $preference ? (bool) $preference->enabled : ! $hasPreferences,
+                    'quickAccessSortOrder' => $preference ? (int) $preference->sort_order : 1000 + $index,
+                ];
+            })
+            ->sortBy([
+                ['quickAccessSortOrder', 'asc'],
+                ['name', 'asc'],
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $modules
+     */
+    private function quickAccessAvailableModuleRows(array $modules): Collection
+    {
+        return collect($modules)
+            ->filter(fn (array $module): bool => (string) ($module['slug'] ?? '') !== 'dashboard')
+            ->filter(fn (array $module): bool => (string) ($module['routePath'] ?? $module['slug'] ?? '') !== '')
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, CrmUserQuickAccessModule>
+     */
+    private function quickAccessPreferenceRows(CrmUser $actor): Collection
+    {
+        return CrmUserQuickAccessModule::query()
+            ->where('user_id', $actor->id)
+            ->get(['module_id', 'enabled', 'sort_order'])
+            ->keyBy('module_id');
+    }
+
+    private function quickAccessEnabled(mixed $value): bool
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
+    }
+
+    private function dashboardCacheKey(CrmUser $actor, ?int $selectedSiteId): string
+    {
+        return sprintf('crm:dashboard:v1:user:%d:site:%s', $actor->id, $selectedSiteId ?: 'all');
+    }
+
+    private function forgetOverviewCache(CrmUser $actor): void
+    {
+        foreach (collect([null, ...$this->generalSiteIds($actor)])->unique() as $siteId) {
+            Cache::forget($this->dashboardCacheKey($actor, $siteId));
+        }
     }
 
     private function leaveTypeLabel(string $type): string
