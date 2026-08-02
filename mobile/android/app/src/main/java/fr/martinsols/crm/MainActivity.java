@@ -99,9 +99,6 @@ public class MainActivity extends Activity {
     private static final int SPLASH_ANIMATION_WIDTH = 720;
     private static final int SPLASH_ANIMATION_HEIGHT = 1280;
     private static final int UPDATE_PROGRESS_MAX = 100;
-    private static final float INTRO_ANIMATION_WIDTH_FRACTION = 0.62f;
-    private static final float INTRO_ANIMATION_HEIGHT_FRACTION = 0.62f;
-    private static final int INTRO_ANIMATION_MAX_WIDTH_DP = 260;
     private static final int MARTIN_SOLS_RED = Color.rgb(149, 0, 46);
     private static final int MARTIN_SOLS_BACKGROUND = Color.rgb(245, 247, 251);
     private static final int MARTIN_SOLS_NAVIGATION = Color.rgb(17, 24, 39);
@@ -1956,19 +1953,8 @@ public class MainActivity extends Activity {
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             int viewWidth = MeasureSpec.getSize(widthMeasureSpec);
             int viewHeight = MeasureSpec.getSize(heightMeasureSpec);
-            float animationAspectRatio = (float) SPLASH_ANIMATION_WIDTH / (float) SPLASH_ANIMATION_HEIGHT;
-            float density = getResources().getDisplayMetrics().density;
-            int maxWidth = Math.round(INTRO_ANIMATION_MAX_WIDTH_DP * density);
-            int desiredWidth = Math.min(Math.round(viewWidth * INTRO_ANIMATION_WIDTH_FRACTION), maxWidth);
-            int desiredHeight = Math.round(desiredWidth / animationAspectRatio);
-            int maxHeight = Math.round(viewHeight * INTRO_ANIMATION_HEIGHT_FRACTION);
 
-            if (desiredHeight > maxHeight) {
-                desiredHeight = maxHeight;
-                desiredWidth = Math.round(desiredHeight * animationAspectRatio);
-            }
-
-            setMeasuredDimension(desiredWidth, desiredHeight);
+            setMeasuredDimension(viewWidth, viewHeight);
         }
 
         @Override
@@ -1995,7 +1981,7 @@ public class MainActivity extends Activity {
 
             float animationWidth = Math.max(animation.width(), SPLASH_ANIMATION_WIDTH);
             float animationHeight = Math.max(animation.height(), SPLASH_ANIMATION_HEIGHT);
-            float scale = Math.min(getWidth() / animationWidth, getHeight() / animationHeight);
+            float scale = Math.max(getWidth() / animationWidth, getHeight() / animationHeight);
             float left = (getWidth() - animationWidth * scale) / 2f;
             float top = (getHeight() - animationHeight * scale) / 2f;
 

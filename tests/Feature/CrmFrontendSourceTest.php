@@ -271,9 +271,9 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('private static final long UPDATE_CHECK_DELAY_MS = 1500L;', $mainActivity);
         $this->assertStringContainsString('private static final long UPDATE_PROGRESS_INTERVAL_MS = 450L;', $mainActivity);
         $this->assertStringContainsString('private static final int SPLASH_ANIMATION_RESOURCE = R.raw.intro;', $mainActivity);
-        $this->assertStringContainsString('private static final float INTRO_ANIMATION_WIDTH_FRACTION = 0.62f;', $mainActivity);
-        $this->assertStringContainsString('private static final float INTRO_ANIMATION_HEIGHT_FRACTION = 0.62f;', $mainActivity);
-        $this->assertStringContainsString('private static final int INTRO_ANIMATION_MAX_WIDTH_DP = 260;', $mainActivity);
+        $this->assertStringNotContainsString('INTRO_ANIMATION_WIDTH_FRACTION', $mainActivity);
+        $this->assertStringNotContainsString('INTRO_ANIMATION_HEIGHT_FRACTION', $mainActivity);
+        $this->assertStringNotContainsString('INTRO_ANIMATION_MAX_WIDTH_DP', $mainActivity);
         $this->assertStringContainsString('private static final int UPDATE_PROGRESS_MAX = 100;', $mainActivity);
         $this->assertStringContainsString('private static final long NATIVE_LOCATION_TIMEOUT_MS = 15000L;', $mainActivity);
         $this->assertStringContainsString('requestWindowFeature(Window.FEATURE_NO_TITLE);', $mainActivity);
@@ -329,8 +329,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('webView.bringToFront();', $mainActivity);
         $this->assertStringContainsString('webView.invalidate();', $mainActivity);
         $this->assertStringContainsString('webView.loadUrl(HUB_URL);', $mainActivity);
-        $this->assertStringContainsString('int desiredWidth = Math.min(Math.round(viewWidth * INTRO_ANIMATION_WIDTH_FRACTION), maxWidth);', $mainActivity);
-        $this->assertStringContainsString('int desiredHeight = Math.round(desiredWidth / animationAspectRatio);', $mainActivity);
+        $this->assertStringContainsString('setMeasuredDimension(viewWidth, viewHeight);', $mainActivity);
+        $this->assertStringContainsString('float scale = Math.max(getWidth() / animationWidth, getHeight() / animationHeight);', $mainActivity);
         $this->assertStringContainsString('private void scheduleUpdateCheck()', $mainActivity);
         $this->assertStringContainsString('view.addJavascriptInterface(new MartinSolsNativeAppBridge(), "MartinSolsNativeApp")', $mainActivity);
         $this->assertStringContainsString('import android.webkit.JavascriptInterface;', $mainActivity);
@@ -563,6 +563,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringNotContainsString('crm-app-settings-button', $mobileStyles);
         $this->assertStringNotContainsString('startup-crm-loader', $mobileStyles);
         $this->assertStringContainsString('.startup-intro-media', $mobileStyles);
+        $this->assertStringContainsString('position: absolute;', $mobileStyles);
+        $this->assertStringContainsString('object-fit: cover;', $mobileStyles);
         $this->assertStringContainsString('html.crm-native-handoff #app', $mobileStyles);
         $this->assertStringContainsString('body.crm-mobile-app-settings-open', $shellCss);
         $this->assertStringContainsString('.crm-mobile-app-settings-content', $shellCss);

@@ -1384,16 +1384,19 @@ final class MacAppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegat
             }
 
             body {
-              display: grid;
-              place-items: center;
+              position: relative;
             }
 
             img {
+              position: fixed;
+              inset: 0;
               display: block;
-              width: min(26vw, 340px);
-              max-width: 340px;
-              max-height: 70vh;
-              object-fit: contain;
+              width: 100%;
+              height: 100%;
+              max-width: none;
+              max-height: none;
+              object-fit: cover;
+              object-position: center;
               background: transparent;
             }
           </style>

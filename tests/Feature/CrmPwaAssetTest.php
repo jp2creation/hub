@@ -211,8 +211,10 @@ class CrmPwaAssetTest extends TestCase
         $this->assertFileExists($publicImage);
         $this->assertSame(hash_file('sha256', $sourceImage), hash_file('sha256', $publicImage));
         $this->assertStringContainsString('--loader-size: 78px', $publicCss);
-        $this->assertStringContainsString('--loader-media-width', $publicCss);
+        $this->assertStringContainsString('--loader-message-offset', $publicCss);
+        $this->assertStringContainsString('height: 100dvh;', $publicCss);
         $this->assertStringContainsString('.brand-morph-loader__image', $publicCss);
+        $this->assertStringContainsString('object-fit: cover;', $publicCss);
         $this->assertStringContainsString('--logo-thickness: 24%', $publicCss);
         $this->assertStringContainsString('@keyframes morph-top', $publicCss);
         $this->assertStringContainsString('border-radius: 7px', $publicCss);
