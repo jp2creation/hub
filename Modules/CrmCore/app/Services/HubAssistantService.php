@@ -112,6 +112,7 @@ class HubAssistantService
     private function destinations(CrmUser $actor): array
     {
         $moduleIds = $this->access->moduleIds($actor);
+        $hasPagesModule = false;
         $destinations = [
             [
                 'label' => 'Paramètres du compte',
@@ -128,6 +129,7 @@ class HubAssistantService
                 ->orderBy('sort_order')
                 ->orderBy('name')
                 ->get();
+            $hasPagesModule = $modules->contains(fn (CrmModule $module): bool => $module->slug === 'pages-crm');
 
             $menuItems = CrmMenuItem::query()
                 ->where('active', true)
@@ -155,7 +157,7 @@ class HubAssistantService
             }
         }
 
-        if ($this->access->hasModule($actor, 'pages-crm')) {
+        if ($hasPagesModule) {
             foreach ($this->pages() as $page) {
                 $destinations[] = $page;
             }
@@ -1578,6 +1580,18 @@ class HubAssistantService
             return null;
         }
 
+        $basicReply = $this->basicKnowledgeReply($query);
+
+        if ($basicReply !== null) {
+            return [
+                'ok' => true,
+                'message' => $basicReply,
+                'url' => null,
+                'label' => null,
+                'suggestions' => $this->suggestions($destinations, 4),
+            ];
+        }
+
         if ($this->isPoliteGreeting($tokens)) {
             return [
                 'ok' => true,
@@ -1728,6 +1742,135 @@ class HubAssistantService
                 'destinations' => ['administration', 'utilisateurs', 'sites', 'permissions', 'modules'],
                 'message' => 'Pour l’administration, ouvrez Administration. Vous y gérez les utilisateurs HUB, les sites, les modules, les menus, les rôles et les permissions selon vos droits.',
             ],
+        ];
+    }
+
+    private function basicKnowledgeReply(string $query): ?string
+    {
+        foreach ($this->basicKnowledgeBase() as $question => $answer) {
+            if ($query === $this->normalize($question)) {
+                return $this->renderBasicKnowledgeAnswer($answer);
+            }
+        }
+
+        return null;
+    }
+
+    private function renderBasicKnowledgeAnswer(string $answer): string
+    {
+        $now = CarbonImmutable::now($this->displayTimezone());
+
+        return strtr($answer, [
+            '{heure}' => $now->format('H:i'),
+            '{date}' => $now->format('d/m/Y'),
+            '{jour}' => $this->frenchDay($now),
+            '{mois}' => $this->frenchMonth($now),
+            '{année}' => $now->format('Y'),
+        ]);
+    }
+
+    private function frenchDay(CarbonImmutable $date): string
+    {
+        return [
+            1 => 'lundi',
+            2 => 'mardi',
+            3 => 'mercredi',
+            4 => 'jeudi',
+            5 => 'vendredi',
+            6 => 'samedi',
+            7 => 'dimanche',
+        ][$date->isoWeekday()];
+    }
+
+    private function frenchMonth(CarbonImmutable $date): string
+    {
+        return [
+            1 => 'janvier',
+            2 => 'février',
+            3 => 'mars',
+            4 => 'avril',
+            5 => 'mai',
+            6 => 'juin',
+            7 => 'juillet',
+            8 => 'août',
+            9 => 'septembre',
+            10 => 'octobre',
+            11 => 'novembre',
+            12 => 'décembre',
+        ][(int) $date->format('n')];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function basicKnowledgeBase(): array
+    {
+        return [
+            'Bonjour' => 'Bonjour ! Comment puis-je vous aider ?',
+            'Salut' => 'Salut ! Que puis-je faire pour vous ?',
+            'Bonsoir' => 'Bonsoir ! Comment puis-je vous aider ?',
+            'Coucou' => 'Coucou ! Que puis-je faire pour vous ?',
+            'Comment vas-tu ?' => 'Je vais bien, merci. Et vous ?',
+            'Ça va ?' => 'Oui, merci ! Comment puis-je vous aider ?',
+            'Qui es-tu ?' => 'Je suis Assistant HUB, l’assistant virtuel conçu pour répondre à vos questions et vous aider dans le HUB.',
+            'Comment tu t’appelles ?' => 'Je suis Assistant HUB.',
+            'Que peux-tu faire ?' => 'Je peux répondre à vos questions, vous donner des informations et vous aider dans différentes tâches.',
+            'Peux-tu m’aider ?' => 'Bien sûr ! Dites-moi ce dont vous avez besoin.',
+            'Quelle heure est-il ?' => 'Il est actuellement {heure}.',
+            'Donne-moi l’heure' => 'Il est {heure}.',
+            'Il est quelle heure ?' => 'Il est actuellement {heure}.',
+            'Quelle est la date aujourd’hui ?' => 'Nous sommes le {date}.',
+            'Quel jour sommes-nous ?' => 'Nous sommes {jour}.',
+            'On est quel jour ?' => 'Nous sommes {jour}.',
+            'Quel mois sommes-nous ?' => 'Nous sommes au mois de {mois}.',
+            'Quelle est l’année actuelle ?' => 'Nous sommes en {année}.',
+            'Quel temps fait-il ?' => 'Indiquez-moi votre ville afin que je puisse vous donner la météo.',
+            'Quelle est la météo aujourd’hui ?' => 'Dans quelle ville souhaitez-vous connaître la météo ?',
+            'Va-t-il pleuvoir ?' => 'Indiquez-moi votre ville pour que je puisse vérifier les prévisions météorologiques.',
+            'Quelle température fait-il ?' => 'Dans quelle ville souhaitez-vous connaître la température ?',
+            'Où suis-je ?' => 'Je ne peux pas connaître votre position sans votre autorisation.',
+            'Où habites-tu ?' => 'Je suis un assistant virtuel, je n’ai pas de domicile.',
+            'Quel âge as-tu ?' => 'Je n’ai pas d’âge comme une personne, car je suis un programme informatique.',
+            'Es-tu un robot ?' => 'Je suis un assistant virtuel, c’est-à-dire un programme conçu pour communiquer avec vous.',
+            'Es-tu humain ?' => 'Non, je suis un assistant virtuel.',
+            'Es-tu intelligent ?' => 'Je peux comprendre de nombreuses questions et essayer d’y répondre au mieux.',
+            'Tu parles français ?' => 'Oui, je parle français.',
+            'Quelles langues parles-tu ?' => 'Je peux comprendre et utiliser plusieurs langues, notamment le français et l’anglais.',
+            'Parle en anglais' => 'Of course! How can I help you?',
+            'Merci' => 'Avec plaisir !',
+            'Merci beaucoup' => 'Je vous en prie !',
+            'De rien' => 'Avec plaisir.',
+            'Bravo' => 'Merci beaucoup !',
+            'Tu es gentil' => 'Merci, c’est gentil !',
+            'Je t’aime' => 'Merci, c’est très gentil !',
+            'Je suis content' => 'C’est une bonne nouvelle !',
+            'Je suis triste' => 'Je suis désolé de l’apprendre. Souhaitez-vous en parler ?',
+            'Je m’ennuie' => 'Je peux vous proposer une devinette, une histoire, un jeu ou un sujet de discussion.',
+            'Raconte-moi une blague' => 'Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tomberaient dans le bateau !',
+            'Raconte-moi une histoire' => 'Quel type d’histoire souhaitez-vous : drôle, fantastique, courte ou mystérieuse ?',
+            'Donne-moi une devinette' => 'Qu’est-ce qui a des dents, mais ne peut pas mordre ? Un peigne.',
+            'Fais-moi rire' => 'Que dit un ordinateur quand il plonge dans l’eau ? J’ai Windows !',
+            'Quel est ton film préféré ?' => 'Je n’ai pas de préférence personnelle, mais je peux vous conseiller un film.',
+            'Quelle est ta couleur préférée ?' => 'Je n’ai pas de couleur préférée, mais je peux vous aider à choisir une couleur.',
+            'Aimes-tu la musique ?' => 'Je n’ai pas de goûts personnels, mais je peux vous conseiller des musiques ou des artistes.',
+            'Quelle est la capitale de la France ?' => 'La capitale de la France est Paris.',
+            'Combien font 1 + 1 ?' => '1 + 1 est égal à 2.',
+            'Peux-tu calculer ?' => 'Oui. Indiquez-moi le calcul que vous souhaitez effectuer.',
+            'Ouvre Google' => 'Je ne peux pas ouvrir directement Google avec cette commande.',
+            'Lance une musique' => 'Je ne peux pas lancer directement une musique, mais je peux vous aider à en rechercher une.',
+            'Appelle quelqu’un' => 'Je ne peux pas passer directement un appel sans être connecté à cette fonctionnalité.',
+            'Envoie un message' => 'Indiquez le destinataire et le message que vous souhaitez envoyer.',
+            'Répète' => 'Bien sûr. Que souhaitez-vous que je répète ?',
+            'Je n’ai pas compris' => 'Aucun problème. Je peux reformuler ma réponse plus simplement.',
+            'Peux-tu expliquer ?' => 'Bien sûr. Quel sujet souhaitez-vous que je vous explique ?',
+            'Parle moins vite' => 'D’accord, je vais utiliser des phrases plus courtes et plus simples.',
+            'Arrête' => 'D’accord, j’arrête.',
+            'Tais-toi' => 'D’accord.',
+            'Au revoir' => 'Au revoir ! À bientôt.',
+            'À bientôt' => 'À bientôt !',
+            'Bonne journée' => 'Merci, bonne journée à vous aussi !',
+            'Bonne soirée' => 'Merci, bonne soirée à vous aussi !',
+            'Bonne nuit' => 'Bonne nuit et à bientôt !',
         ];
     }
 

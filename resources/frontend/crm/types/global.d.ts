@@ -16,6 +16,7 @@ declare global {
     MartinSolsCrmApi?: CrmApiClient;
     MartinSolsCrmAssets?: {
       brandMorphLoaderStylesheet?: string;
+      brandMorphLoaderVideo?: string;
       logoUrl?: string;
     };
     MartinSolsCrmConfig?: CrmShellConfig;
@@ -111,6 +112,7 @@ export type CrmMenuItem = {
 export type CrmModule = {
   active: boolean;
   menuBadge?: string;
+  menuBadgeColor?: string;
   name: string;
   routePath: string;
   showMenuBadge?: boolean;
@@ -127,6 +129,7 @@ export type CrmRequestOptions = Omit<RequestInit, 'body'> & {
 export type CrmShellConfig = {
   assets: {
     brandMorphLoaderStylesheet: string;
+    brandMorphLoaderVideo: string;
     logoUrl: string;
   };
   csrfToken: string;

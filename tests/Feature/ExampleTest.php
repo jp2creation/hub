@@ -33,7 +33,17 @@ class ExampleTest extends TestCase
         $html = (string) $response->getContent();
         $this->assertFileExists(public_path('hub-ms.svg'));
         $this->assertStringContainsString('brand-hub-signature', $html);
+        $this->assertStringContainsString('login-copy', $html);
+        $this->assertStringContainsString('Accès sécurisé', $html);
+        $this->assertStringContainsString('Bienvenue sur le', $html);
+        $this->assertStringContainsString('Connectez-vous pour accéder à vos modules Martin Sols.', $html);
+        $this->assertStringContainsString('--shadow: 0 20px 42px rgba(16, 32, 51, 0.08);', $html);
+        $this->assertStringContainsString('width: min(100%, 480px);', $html);
         $this->assertStringContainsString('hub-ms.svg', $html);
+        $this->assertStringContainsString('box-shadow: none;', $html);
+        $this->assertStringContainsString('@media (max-width: 680px)', $html);
+        $this->assertStringContainsString('max-width: 132px;', $html);
+        $this->assertStringContainsString('width: 18px;', $html);
 
         $previousLibxmlState = libxml_use_internal_errors(true);
         $document = new \DOMDocument;
@@ -51,8 +61,13 @@ class ExampleTest extends TestCase
         $this->assertStringContainsString('min-height: 48px;', $html);
         $this->assertStringContainsString('border-radius: 10px;', $html);
         $this->assertStringContainsString('const isIpad', $html);
-        $this->assertStringContainsString("label: 'Web APK'", $html);
-        $this->assertStringContainsString("label: 'Android'", $html);
+        $this->assertStringContainsString('data-login-app-kind="webapk"', $html);
+        $this->assertStringContainsString('data-login-app-kind="android"', $html);
+        $this->assertStringContainsString('data-login-app-kind="iphone"', $html);
+        $this->assertStringContainsString('data-login-app-kind="ipad"', $html);
+        $this->assertStringContainsString('data-login-app-kind="macos"', $html);
+        $this->assertStringContainsString('is-current', $html);
+        $this->assertStringContainsString('currentKind', $html);
         $this->assertStringContainsString('Ajouter sur', $html);
         $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
     }

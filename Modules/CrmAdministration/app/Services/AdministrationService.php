@@ -2,6 +2,8 @@
 
 namespace Modules\CrmAdministration\Services;
 
+use App\Models\CrmEquipmentCategory;
+use App\Models\CrmEquipmentItem;
 use App\Models\CrmMenuGroup;
 use App\Models\CrmMenuItem;
 use App\Models\CrmModule;
@@ -10,6 +12,7 @@ use App\Models\CrmPermission;
 use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\CrmUserSiteModulePermission;
+use App\Models\CrmVehicle;
 use App\Models\User;
 use App\Support\CrmTheme;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +32,8 @@ class AdministrationService
     private const ADMIN_NAVIGATION_PERMISSIONS = [
         'admin:users' => ['platform.manage_users', 'platform.manage_roles'],
         'admin:sites' => ['platform.manage_sites'],
+        'admin:reservations' => ['reservations.manage_vehicles', 'platform.manage_modules'],
+        'admin:equipment' => ['equipment_rentals.manage_items', 'platform.manage_modules'],
         'admin:modules' => ['platform.manage_modules'],
         'admin:menu' => ['platform.manage_modules'],
     ];
@@ -90,6 +95,13 @@ class AdministrationService
                 ->where('slug', 'reservations')
                 ->whereNull('menu_badge')
                 ->update(['menu_badge' => 'Martin', 'show_menu_badge' => true]);
+
+            if (Schema::hasColumn('crm_modules', 'menu_badge_color')) {
+                CrmModule::query()
+                    ->where('slug', 'reservations')
+                    ->whereNull('menu_badge_color')
+                    ->update(['menu_badge_color' => CrmTheme::primaryHex()]);
+            }
 
             foreach ($this->menuGroupSeed() as [$menuKey, $title, $sortOrder, $active]) {
                 CrmMenuGroup::query()->updateOrCreate(
@@ -297,6 +309,8 @@ class AdministrationService
             'platform.manage_modules',
             'platform.manage_sites',
             'platform.manage_roles',
+            'reservations.manage_vehicles',
+            'equipment_rentals.manage_items',
         ]);
 
         $sites = CrmSite::query()
@@ -328,6 +342,27 @@ class AdministrationService
             ->orderBy('sort_order')
             ->orderBy('title')
             ->get();
+        $vehicles = CrmVehicle::query()
+            ->with(['site:id,name'])
+            ->withCount('reservations')
+            ->orderByDesc('active')
+            ->orderBy('site_id')
+            ->orderBy('name')
+            ->get();
+        $equipmentCategories = CrmEquipmentCategory::query()
+            ->withCount('equipmentItems')
+            ->orderByDesc('active')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+        $equipmentItems = CrmEquipmentItem::query()
+            ->with(['site:id,name', 'category:id,name'])
+            ->withCount('rentals')
+            ->orderByDesc('active')
+            ->orderBy('site_id')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
         $users = CrmUser::query()
             ->with(['sites:id', 'modules:id', 'permissions:id,name', 'siteModulePermissions:id,user_id,site_id,module_id,permission_id'])
             ->orderByDesc('active')
@@ -344,6 +379,9 @@ class AdministrationService
             'menuItems' => $menuItems->map(fn (CrmMenuItem $item): array => $this->menuItemRow($item))->values()->all(),
             'permissions' => $permissions->map(fn (CrmPermission $permission): array => $this->permissionRow($permission))->values()->all(),
             'pages' => $pages->map(fn (CrmPage $page): array => $this->pageRow($page))->values()->all(),
+            'vehicles' => $vehicles->map(fn (CrmVehicle $vehicle): array => $this->vehicleRow($vehicle))->values()->all(),
+            'equipmentCategories' => $equipmentCategories->map(fn (CrmEquipmentCategory $category): array => $this->equipmentCategoryRow($category))->values()->all(),
+            'equipmentItems' => $equipmentItems->map(fn (CrmEquipmentItem $item): array => $this->equipmentItemRow($item))->values()->all(),
             'users' => $users->map(fn (CrmUser $user): array => $this->userRow($user))->values()->all(),
         ];
     }
@@ -639,6 +677,10 @@ class AdministrationService
                 'email' => $email !== '' ? $email : null,
                 'color' => $color,
                 'photo_url' => $photoUrl !== '' ? $photoUrl : null,
+                'show_photo_in_header' => $this->boolean(
+                    $data['showPhotoInHeader'] ?? $data['show_photo_in_header'] ?? null,
+                    (bool) ($site?->show_photo_in_header ?? true),
+                ),
                 'morning_start' => $morningStart,
                 'morning_end' => $morningEnd,
                 'afternoon_start' => $afternoonStart,
@@ -733,6 +775,311 @@ class AdministrationService
         });
     }
 
+    public function saveVehicle(CrmUser $actor, array $data): array
+    {
+        $this->requireAny($actor, ['reservations.manage_vehicles', 'platform.manage_modules']);
+
+        return DB::transaction(function () use ($actor, $data): array {
+            $id = max(0, (int) ($data['id'] ?? 0));
+            $siteId = (int) ($data['siteId'] ?? $data['site_id'] ?? 0);
+            $name = trim((string) ($data['name'] ?? ''));
+            $description = trim((string) ($data['description'] ?? ''));
+            $photoDataUrl = (string) ($data['photoDataUrl'] ?? $data['photo_data_url'] ?? '');
+            $removePhoto = $this->boolean($data['removePhoto'] ?? $data['remove_photo'] ?? null, false);
+
+            if (! CrmSite::query()->whereKey($siteId)->exists()) {
+                $this->fail('Site du vehicule invalide', 400);
+            }
+            if ($name === '' || mb_strlen($name) > 160) {
+                $this->fail('Nom de vehicule invalide', 400);
+            }
+            if (mb_strlen($description) > 255) {
+                $this->fail('Description trop longue', 400);
+            }
+
+            $vehicle = $id > 0 ? CrmVehicle::query()->lockForUpdate()->find($id) : new CrmVehicle;
+            if ($id > 0 && ! $vehicle) {
+                $this->fail('Vehicule introuvable', 404);
+            }
+
+            $duplicateExists = CrmVehicle::query()
+                ->where('name', $name)
+                ->when($id > 0, fn ($query) => $query->whereKeyNot($id))
+                ->lockForUpdate()
+                ->exists();
+
+            if ($duplicateExists) {
+                $this->fail('Un vehicule porte deja ce nom', 409);
+            }
+
+            $dayStartTime = $this->normalizeOptionalTime($data, 'dayStartTime', 'day_start_time', $vehicle?->day_start_time ?: '06:00');
+            $dayEndTime = $this->normalizeOptionalTime($data, 'dayEndTime', 'day_end_time', $vehicle?->day_end_time ?: '19:30');
+
+            if ($this->minutes($dayEndTime) <= $this->minutes($dayStartTime)) {
+                $this->fail('Horaires du vehicule invalides', 400);
+            }
+
+            $photoUrl = trim((string) ($vehicle?->photo_url ?? ''));
+            if ($removePhoto) {
+                $photoUrl = '';
+            }
+            if ($photoDataUrl !== '') {
+                $photoUrl = $this->images->storeDataUrl($photoDataUrl, 'vehicles', $photoUrl, [
+                    'label' => 'Photo du vehicule',
+                    'imageMaxWidth' => 1600,
+                    'imageMaxHeight' => 1200,
+                    'thumbnailSize' => 480,
+                ])['url'];
+            }
+
+            $active = $this->boolean($data['active'] ?? null, true);
+            if (! $active) {
+                $photoUrl = '';
+            }
+
+            try {
+                $vehicle->fill([
+                    'site_id' => $siteId,
+                    'name' => $name,
+                    'description' => $description !== '' ? $description : null,
+                    'color' => $this->siteColor((string) ($data['color'] ?? $vehicle?->color ?? '')),
+                    'photo_url' => $photoUrl !== '' ? $photoUrl : null,
+                    'day_start_time' => $dayStartTime,
+                    'day_end_time' => $dayEndTime,
+                    'active' => $active,
+                ])->save();
+            } catch (ValidationException $error) {
+                $this->fail($this->validationMessage($error, 'Vehicule invalide'), 400);
+            }
+
+            $this->log($actor, $id > 0 ? 'modification vehicule' : 'creation vehicule', $name);
+
+            return ['ok' => true, 'id' => $vehicle->id];
+        });
+    }
+
+    public function deleteVehicle(CrmUser $actor, array $data): array
+    {
+        $this->requireAny($actor, ['reservations.manage_vehicles', 'platform.manage_modules']);
+
+        return DB::transaction(function () use ($actor, $data): array {
+            $id = (int) ($data['id'] ?? 0);
+            if ($id <= 0) {
+                $this->fail('Vehicule invalide', 400);
+            }
+
+            $vehicle = CrmVehicle::query()
+                ->withCount('reservations')
+                ->lockForUpdate()
+                ->find($id);
+
+            if (! $vehicle) {
+                $this->fail('Vehicule introuvable', 404);
+            }
+
+            $name = $vehicle->name;
+            $used = (int) $vehicle->reservations_count > 0;
+
+            if ($used) {
+                $vehicle->forceFill(['active' => false, 'photo_url' => null])->save();
+            } else {
+                $vehicle->delete();
+            }
+
+            $this->log($actor, $used ? 'masquage vehicule' : 'suppression vehicule', $name);
+
+            return ['ok' => true, 'id' => $id, 'archived' => $used];
+        });
+    }
+
+    public function saveEquipmentCategory(CrmUser $actor, array $data): array
+    {
+        $this->requireAny($actor, ['equipment_rentals.manage_items', 'platform.manage_modules']);
+
+        return DB::transaction(function () use ($actor, $data): array {
+            $id = max(0, (int) ($data['id'] ?? 0));
+            $name = trim((string) ($data['name'] ?? ''));
+
+            if ($name === '' || mb_strlen($name) > 120) {
+                $this->fail('Nom de categorie invalide', 400);
+            }
+
+            $category = $id > 0 ? CrmEquipmentCategory::query()->lockForUpdate()->find($id) : new CrmEquipmentCategory;
+            if ($id > 0 && ! $category) {
+                $this->fail('Categorie introuvable', 404);
+            }
+
+            $category->fill([
+                'name' => $name,
+                'active' => $this->boolean($data['active'] ?? null, true),
+                'sort_order' => (int) ($data['sortOrder'] ?? $data['sort_order'] ?? $category?->sort_order ?? 100),
+            ])->save();
+
+            $this->log($actor, $id > 0 ? 'modification categorie materiel' : 'creation categorie materiel', $name);
+
+            return ['ok' => true, 'id' => $category->id];
+        });
+    }
+
+    public function deleteEquipmentCategory(CrmUser $actor, array $data): array
+    {
+        $this->requireAny($actor, ['equipment_rentals.manage_items', 'platform.manage_modules']);
+
+        return DB::transaction(function () use ($actor, $data): array {
+            $id = (int) ($data['id'] ?? 0);
+            if ($id <= 0) {
+                $this->fail('Categorie invalide', 400);
+            }
+
+            $category = CrmEquipmentCategory::query()
+                ->withCount('equipmentItems')
+                ->lockForUpdate()
+                ->find($id);
+
+            if (! $category) {
+                $this->fail('Categorie introuvable', 404);
+            }
+
+            $name = $category->name;
+            $used = (int) $category->equipment_items_count > 0;
+
+            if ($used) {
+                $category->forceFill(['active' => false])->save();
+            } else {
+                $category->delete();
+            }
+
+            $this->log($actor, $used ? 'masquage categorie materiel' : 'suppression categorie materiel', $name);
+
+            return ['ok' => true, 'id' => $id, 'archived' => $used];
+        });
+    }
+
+    public function saveEquipmentItem(CrmUser $actor, array $data): array
+    {
+        $this->requireAny($actor, ['equipment_rentals.manage_items', 'platform.manage_modules']);
+
+        return DB::transaction(function () use ($actor, $data): array {
+            $id = max(0, (int) ($data['id'] ?? 0));
+            $siteId = (int) ($data['siteId'] ?? $data['site_id'] ?? 0);
+            $categoryId = (int) ($data['categoryId'] ?? $data['category_id'] ?? 0);
+            $name = trim((string) ($data['name'] ?? ''));
+            $inventoryCode = trim((string) ($data['inventoryCode'] ?? $data['inventory_code'] ?? ''));
+            $description = trim((string) ($data['description'] ?? ''));
+            $photoDataUrl = (string) ($data['photoDataUrl'] ?? $data['photo_data_url'] ?? '');
+            $removePhoto = $this->boolean($data['removePhoto'] ?? $data['remove_photo'] ?? null, false);
+
+            if (! CrmSite::query()->whereKey($siteId)->exists()) {
+                $this->fail('Site du materiel invalide', 400);
+            }
+            if ($categoryId > 0 && ! CrmEquipmentCategory::query()->whereKey($categoryId)->exists()) {
+                $this->fail('Categorie introuvable', 404);
+            }
+            if ($name === '' || mb_strlen($name) > 160) {
+                $this->fail('Nom du materiel invalide', 400);
+            }
+            if (mb_strlen($inventoryCode) > 80) {
+                $this->fail('Code inventaire trop long', 400);
+            }
+            if (mb_strlen($description) > 255) {
+                $this->fail('Description trop longue', 400);
+            }
+
+            $item = $id > 0 ? CrmEquipmentItem::query()->lockForUpdate()->find($id) : new CrmEquipmentItem;
+            if ($id > 0 && ! $item) {
+                $this->fail('Materiel introuvable', 404);
+            }
+
+            if ($inventoryCode !== '') {
+                $duplicateExists = CrmEquipmentItem::query()
+                    ->where('inventory_code', $inventoryCode)
+                    ->when($id > 0, fn ($query) => $query->whereKeyNot($id))
+                    ->lockForUpdate()
+                    ->exists();
+
+                if ($duplicateExists) {
+                    $this->fail('Ce code inventaire existe deja', 409);
+                }
+            }
+
+            $photoUrl = trim((string) ($item?->photo_url ?? ''));
+            if ($removePhoto) {
+                $photoUrl = '';
+            }
+            if ($photoDataUrl !== '') {
+                $photoUrl = $this->images->storeDataUrl($photoDataUrl, 'equipment', $photoUrl, [
+                    'label' => 'Photo du materiel',
+                    'imageMaxWidth' => 1600,
+                    'imageMaxHeight' => 1200,
+                    'thumbnailSize' => 480,
+                ])['url'];
+            }
+
+            $active = $this->boolean($data['active'] ?? null, true);
+            if (! $active) {
+                $photoUrl = '';
+            }
+
+            $item->fill([
+                'site_id' => $siteId,
+                'category_id' => $categoryId > 0 ? $categoryId : null,
+                'name' => $name,
+                'inventory_code' => $inventoryCode !== '' ? $inventoryCode : null,
+                'description' => $description !== '' ? $description : null,
+                'color' => $this->siteColor((string) ($data['color'] ?? $item?->color ?? '')),
+                'photo_url' => $photoUrl !== '' ? $photoUrl : null,
+                'half_day_price' => $this->decimal($data['halfDayPrice'] ?? $data['half_day_price'] ?? 0),
+                'day_price' => $this->decimal($data['dayPrice'] ?? $data['day_price'] ?? 0),
+                'show_half_day_price' => $this->boolean($data['showHalfDayPrice'] ?? $data['show_half_day_price'] ?? null, true),
+                'show_day_price' => $this->boolean($data['showDayPrice'] ?? $data['show_day_price'] ?? null, true),
+                'rental_mode' => in_array(($data['rentalMode'] ?? $data['rental_mode'] ?? ''), ['half_day_and_day', 'day_only'], true)
+                    ? (string) ($data['rentalMode'] ?? $data['rental_mode'])
+                    : 'half_day_and_day',
+                'deposit_amount' => $this->decimal($data['depositAmount'] ?? $data['deposit_amount'] ?? 0),
+                'active' => $active,
+                'sort_order' => (int) ($data['sortOrder'] ?? $data['sort_order'] ?? $item?->sort_order ?? 100),
+            ])->save();
+
+            $this->log($actor, $id > 0 ? 'modification materiel' : 'creation materiel', $name);
+
+            return ['ok' => true, 'id' => $item->id];
+        });
+    }
+
+    public function deleteEquipmentItem(CrmUser $actor, array $data): array
+    {
+        $this->requireAny($actor, ['equipment_rentals.manage_items', 'platform.manage_modules']);
+
+        return DB::transaction(function () use ($actor, $data): array {
+            $id = (int) ($data['id'] ?? 0);
+            if ($id <= 0) {
+                $this->fail('Materiel invalide', 400);
+            }
+
+            $item = CrmEquipmentItem::query()
+                ->withCount('rentals')
+                ->lockForUpdate()
+                ->find($id);
+
+            if (! $item) {
+                $this->fail('Materiel introuvable', 404);
+            }
+
+            $name = $item->name;
+            $used = (int) $item->rentals_count > 0;
+
+            if ($used) {
+                $item->forceFill(['active' => false, 'photo_url' => null])->save();
+            } else {
+                $item->delete();
+            }
+
+            $this->log($actor, $used ? 'masquage materiel' : 'suppression materiel', $name);
+
+            return ['ok' => true, 'id' => $id, 'archived' => $used];
+        });
+    }
+
     public function saveModule(CrmUser $actor, array $data): array
     {
         $this->requireAny($actor, ['platform.manage_modules']);
@@ -743,6 +1090,7 @@ class AdministrationService
             $slugSource = trim((string) ($data['slug'] ?? '')) ?: $name;
             $routePath = trim((string) ($data['routePath'] ?? $data['route_path'] ?? ''));
             $menuBadge = trim((string) ($data['menuBadge'] ?? $data['menu_badge'] ?? ''));
+            $menuBadgeColor = $this->siteColor((string) ($data['menuBadgeColor'] ?? $data['menu_badge_color'] ?? ''));
 
             if ($name === '') {
                 $this->fail('Nom du module obligatoire', 400);
@@ -767,6 +1115,7 @@ class AdministrationService
                 'description' => trim((string) ($data['description'] ?? '')),
                 'route_path' => $routePath,
                 'menu_badge' => $menuBadge !== '' ? $menuBadge : null,
+                'menu_badge_color' => $menuBadgeColor,
                 'show_menu_badge' => $this->boolean($data['showMenuBadge'] ?? $data['show_menu_badge'] ?? null, false),
                 'active' => $this->boolean($data['active'] ?? null, true),
                 'sort_order' => (int) ($data['sortOrder'] ?? $data['sort_order'] ?? 100),
@@ -1277,8 +1626,10 @@ class AdministrationService
         return [
             ['admin:users', 'internal', 'Utilisateurs', 'users', 10, 'module:administration'],
             ['admin:sites', 'internal', 'Sites', 'category', 20, 'module:administration'],
-            ['admin:modules', 'internal', 'Modules', 'package', 30, 'module:administration'],
-            ['admin:menu', 'internal', 'Navigation', 'settings', 40, 'module:administration'],
+            ['admin:reservations', 'internal', 'Réservations', 'truck', 30, 'module:administration'],
+            ['admin:equipment', 'internal', 'Location matériel', 'package', 40, 'module:administration'],
+            ['admin:modules', 'internal', 'Modules', 'package', 50, 'module:administration'],
+            ['admin:menu', 'internal', 'Navigation', 'settings', 60, 'module:administration'],
         ];
     }
 
@@ -1314,6 +1665,7 @@ class AdministrationService
             'email' => trim((string) $site->email),
             'color' => $this->siteColor((string) $site->color),
             'photoUrl' => $this->images->normalizePublicUrl($site->photo_url),
+            'showPhotoInHeader' => (bool) $site->show_photo_in_header,
             'hours' => [
                 'morningStart' => $this->time5($site->morning_start, '07:30'),
                 'morningEnd' => $this->time5($site->morning_end, '12:00'),
@@ -1332,9 +1684,67 @@ class AdministrationService
             'description' => $module->description ?? '',
             'routePath' => $module->route_path ?? '',
             'menuBadge' => $module->menu_badge ?? '',
+            'menuBadgeColor' => $this->siteColor((string) $module->menu_badge_color),
             'showMenuBadge' => (bool) $module->show_menu_badge,
             'active' => (bool) $module->active,
             'sortOrder' => (int) $module->sort_order,
+        ];
+    }
+
+    private function vehicleRow(CrmVehicle $vehicle): array
+    {
+        return [
+            'id' => $vehicle->id,
+            'siteId' => (int) $vehicle->site_id,
+            'siteName' => $vehicle->site?->name ?? '',
+            'name' => $vehicle->name,
+            'description' => trim((string) $vehicle->description),
+            'color' => $this->siteColor((string) $vehicle->color),
+            'photoUrl' => $this->images->normalizePublicUrl($vehicle->photo_url),
+            'dayStartTime' => $this->time5($vehicle->day_start_time, '06:00'),
+            'dayEndTime' => $this->time5($vehicle->day_end_time, '19:30'),
+            'hoursLabel' => $vehicle->reservationHoursLabel($vehicle->site),
+            'active' => (bool) $vehicle->active,
+            'reservationsCount' => (int) ($vehicle->reservations_count ?? 0),
+        ];
+    }
+
+    private function equipmentCategoryRow(CrmEquipmentCategory $category): array
+    {
+        return [
+            'id' => $category->id,
+            'name' => $category->name,
+            'slug' => $category->slug,
+            'active' => (bool) $category->active,
+            'sortOrder' => (int) $category->sort_order,
+            'itemsCount' => (int) ($category->equipment_items_count ?? 0),
+        ];
+    }
+
+    private function equipmentItemRow(CrmEquipmentItem $item): array
+    {
+        return [
+            'id' => $item->id,
+            'siteId' => (int) $item->site_id,
+            'siteName' => $item->site?->name ?? '',
+            'categoryId' => $item->category_id ? (int) $item->category_id : null,
+            'categoryName' => $item->category?->name ?? '',
+            'name' => $item->name,
+            'inventoryCode' => trim((string) $item->inventory_code),
+            'description' => trim((string) $item->description),
+            'color' => $this->siteColor((string) $item->color),
+            'photoUrl' => $this->images->normalizePublicUrl($item->photo_url),
+            'halfDayPrice' => (float) $item->half_day_price,
+            'dayPrice' => (float) $item->day_price,
+            'showHalfDayPrice' => (bool) ($item->show_half_day_price ?? true),
+            'showDayPrice' => (bool) ($item->show_day_price ?? true),
+            'rentalMode' => in_array($item->rental_mode, ['half_day_and_day', 'day_only'], true)
+                ? (string) $item->rental_mode
+                : 'half_day_and_day',
+            'depositAmount' => (float) $item->deposit_amount,
+            'active' => (bool) $item->active,
+            'sortOrder' => (int) $item->sort_order,
+            'rentalsCount' => (int) ($item->rentals_count ?? 0),
         ];
     }
 
@@ -1797,6 +2207,17 @@ class AdministrationService
         return sprintf('%02d:%02d:00', $hour, (int) $matches[2]);
     }
 
+    private function normalizeOptionalTime(array $data, string $camelKey, string $snakeKey, string $default): string
+    {
+        $value = trim((string) ($data[$camelKey] ?? $data[$snakeKey] ?? $default));
+
+        if ($value === '') {
+            $value = $default;
+        }
+
+        return $this->normalizeTime([$camelKey => $value], $camelKey, $snakeKey, $default);
+    }
+
     private function minutes(string $time): int
     {
         [$hour, $minute] = array_map('intval', explode(':', substr($time, 0, 5)));
@@ -1854,6 +2275,38 @@ class AdministrationService
         }
 
         return in_array(strtolower((string) $value), ['1', 'true', 'yes', 'on'], true);
+    }
+
+    private function decimal(mixed $value): float
+    {
+        $value = trim(str_replace(',', '.', (string) $value));
+        if ($value === '') {
+            return 0.0;
+        }
+
+        if (! is_numeric($value)) {
+            $this->fail('Montant invalide', 400);
+        }
+
+        $amount = (float) $value;
+        if ($amount < 0) {
+            $this->fail('Les montants ne peuvent pas etre negatifs', 400);
+        }
+
+        return round($amount, 2);
+    }
+
+    private function validationMessage(ValidationException $error, string $fallback): string
+    {
+        foreach ($error->errors() as $messages) {
+            foreach ((array) $messages as $message) {
+                if (is_string($message) && $message !== '') {
+                    return $message;
+                }
+            }
+        }
+
+        return $fallback;
     }
 
     /**

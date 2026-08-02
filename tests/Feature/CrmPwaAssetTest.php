@@ -185,8 +185,10 @@ class CrmPwaAssetTest extends TestCase
         $this->assertSame(1, substr_count($html, 'id="brand-morph-loader"'));
         $this->assertStringContainsString('class="brand-morph-loader"', $html);
         $this->assertStringContainsString('data-brand-loader-error', $html);
+        $this->assertStringContainsString('data-brand-loader-video', $html);
         $this->assertStringContainsString("loader.classList.add('is-visible')", $html);
         $this->assertStringContainsString('modules/crm-core/brand-morph-loader.css', $html);
+        $this->assertStringContainsString('modules/crm-core/brand-morph-loader.mp4', $html);
         $this->assertStringContainsString('modules/crm-core/brand-morph-loader.js', $html);
         $this->assertStringContainsString('modules/crm-core/brand-morph-loader-app.js', $html);
     }
@@ -199,16 +201,24 @@ class CrmPwaAssetTest extends TestCase
         $publicScript = (string) file_get_contents(public_path('modules/crm-core/brand-morph-loader.js'));
         $sourceAppScript = (string) file_get_contents(base_path('Modules/CrmCore/resources/assets/brand-morph-loader-app.js'));
         $publicAppScript = (string) file_get_contents(public_path('modules/crm-core/brand-morph-loader-app.js'));
+        $sourceVideo = base_path('Modules/CrmCore/resources/assets/brand-morph-loader.mp4');
+        $publicVideo = public_path('modules/crm-core/brand-morph-loader.mp4');
 
         $this->assertSame($sourceCss, $publicCss);
         $this->assertSame($sourceScript, $publicScript);
         $this->assertSame($sourceAppScript, $publicAppScript);
+        $this->assertFileExists($sourceVideo);
+        $this->assertFileExists($publicVideo);
+        $this->assertSame(hash_file('sha256', $sourceVideo), hash_file('sha256', $publicVideo));
         $this->assertStringContainsString('--loader-size: 78px', $publicCss);
+        $this->assertStringContainsString('--loader-video-width', $publicCss);
+        $this->assertStringContainsString('.brand-morph-loader__video', $publicCss);
         $this->assertStringContainsString('--logo-thickness: 24%', $publicCss);
         $this->assertStringContainsString('@keyframes morph-top', $publicCss);
         $this->assertStringContainsString('border-radius: 7px', $publicCss);
         $this->assertStringContainsString('.brand-morph-loader.is-error', $publicCss);
         $this->assertStringContainsString('window.BrandMorphLoader', $publicScript);
+        $this->assertStringContainsString('[data-brand-loader-video]', $publicScript);
         $this->assertStringContainsString('window.CrmLoader = window.BrandMorphLoader', $publicScript);
         $this->assertStringContainsString('activeOperations', $publicScript);
         $this->assertStringContainsString('crmNavigationHistoryState', $publicScript);

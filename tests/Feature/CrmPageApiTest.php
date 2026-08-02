@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CrmFeatureFlag;
 use App\Models\CrmModule;
 use App\Models\CrmPage;
 use App\Models\CrmPermission;
@@ -146,6 +147,16 @@ class CrmPageApiTest extends TestCase
                 'route_path' => '/pages-crm',
                 'active' => true,
                 'sort_order' => 18,
+            ],
+        );
+
+        CrmFeatureFlag::query()->updateOrCreate(
+            ['flag_key' => 'module:pages-crm'],
+            [
+                'scope' => 'module',
+                'name' => 'Pages HUB',
+                'description' => 'Pages internes',
+                'enabled' => true,
             ],
         );
 

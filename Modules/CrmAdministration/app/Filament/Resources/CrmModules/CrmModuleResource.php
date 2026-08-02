@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -67,6 +68,8 @@ class CrmModuleResource extends Resource
                 TextInput::make('menu_badge')
                     ->label('Badge menu')
                     ->maxLength(40),
+                ColorPicker::make('menu_badge_color')
+                    ->label('Couleur du badge menu'),
                 Toggle::make('show_menu_badge')
                     ->label('Afficher le badge'),
                 Toggle::make('active')
@@ -89,6 +92,7 @@ class CrmModuleResource extends Resource
                 TextEntry::make('route_path')->label('Route'),
                 TextEntry::make('sort_order')->label('Ordre'),
                 TextEntry::make('menu_badge')->label('Badge'),
+                TextEntry::make('menu_badge_color')->label('Couleur badge'),
                 IconEntry::make('active')->label('Actif')->boolean(),
                 TextEntry::make('description')->label('Description')->columnSpanFull(),
             ])
@@ -114,6 +118,10 @@ class CrmModuleResource extends Resource
                     ->label('Badge')
                     ->badge()
                     ->placeholder('-'),
+                TextColumn::make('menu_badge_color')
+                    ->label('Couleur badge')
+                    ->placeholder('-')
+                    ->toggleable(),
                 IconColumn::make('active')
                     ->label('Actif')
                     ->boolean()

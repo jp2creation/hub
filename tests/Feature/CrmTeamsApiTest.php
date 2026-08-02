@@ -59,7 +59,50 @@ class CrmTeamsApiTest extends TestCase
         $this->assertSame('palissy@example.test', $site['email'] ?? null);
         $this->assertSame('#2563eb', $site['color'] ?? null);
         $this->assertSame('/uploads/assets/uploads/sites/palissy.webp', $site['photoUrl'] ?? null);
+        $this->assertTrue($site['showPhotoInHeader'] ?? false);
         $this->assertSame('08:00', $site['hours']['morningStart'] ?? null);
+    }
+
+    public function test_site_photo_background_can_be_hidden_for_team_header(): void
+    {
+        [$account, , $palissy] = $this->createCrmContext();
+
+        $palissy->forceFill(['show_photo_in_header' => false])->save();
+
+        $site = collect($this->actingAs($account)
+            ->getJson('/api/equipes?action=bootstrap&siteId='.$palissy->id)
+            ->assertOk()
+            ->json('sites'))->firstWhere('id', $palissy->id);
+
+        $this->assertSame('/uploads/assets/uploads/sites/palissy.webp', $site['photoUrl'] ?? null);
+        $this->assertFalse($site['showPhotoInHeader'] ?? true);
+    }
+
+    public function test_team_member_exposes_only_primary_site_for_display(): void
+    {
+        [$account, , $palissy, $bordeaux] = $this->createCrmContext();
+
+        $member = CrmUser::query()->create([
+            'name' => 'Claire Multi',
+            'first_name' => 'Claire',
+            'last_name' => 'Multi',
+            'email' => 'claire@example.test',
+            'role' => 'user',
+            'active' => true,
+        ]);
+        $member->sites()->sync([
+            $palissy->id => ['is_default' => false],
+            $bordeaux->id => ['is_default' => true],
+        ]);
+
+        $members = $this->actingAs($account)
+            ->getJson('/api/equipes?action=bootstrap&siteId='.$palissy->id)
+            ->assertOk()
+            ->json('members');
+        $claire = collect($members)->firstWhere('firstName', 'Claire');
+
+        $this->assertSame($bordeaux->id, $claire['primarySiteId'] ?? null);
+        $this->assertSame('Bordeaux', $claire['primarySiteName'] ?? null);
     }
 
     public function test_user_can_request_an_authorized_site(): void

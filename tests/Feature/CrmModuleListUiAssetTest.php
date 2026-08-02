@@ -28,20 +28,23 @@ class CrmModuleListUiAssetTest extends TestCase
         $this->assertStringNotContainsString('class="visit-card"', $public);
     }
 
-    public function test_team_members_keep_table_desktop_and_cards_mobile(): void
+    public function test_team_members_keep_adminex_like_contacts_table_across_widths(): void
     {
         $source = (string) file_get_contents(base_path('Modules/CrmTeams/resources/assets/crm-equipes.js'));
         $public = (string) file_get_contents(public_path('modules/crm-teams/crm-equipes.js'));
 
         $this->assertSame($source, $public);
         $this->assertStringContainsString('class="teams-table-wrap"', $public);
-        $this->assertStringContainsString('<table class="teams-table">', $public);
-        $this->assertStringNotContainsString('<th>Rôle</th>', $public);
+        $this->assertStringContainsString('<table class="teams-table" aria-label="Liste des membres">', $public);
+        $this->assertStringContainsString('<th>Rôle</th>', $public);
         $this->assertStringNotContainsString('class="teams-role-pill"', $public);
         $this->assertStringNotContainsString('Compte HUB', $public);
-        $this->assertStringContainsString('class="teams-mobile-list"', $public);
-        $this->assertStringContainsString('function renderMemberCard', $public);
-        $this->assertStringContainsString('class="teams-person-card"', $public);
+        $this->assertStringContainsString('class="teams-filter-card"', $public);
+        $this->assertStringContainsString('class="teams-contact-count"', $public);
+        $this->assertStringContainsString('class="teams-card-count"', $public);
+        $this->assertStringNotContainsString('class="teams-mobile-list"', $public);
+        $this->assertStringNotContainsString('function renderMemberCard', $public);
+        $this->assertStringNotContainsString('class="teams-person-card"', $public);
         $this->assertStringContainsString('searchAllSites: false', $public);
         $this->assertStringContainsString('params.set("allSites", "1")', $public);
         $this->assertStringContainsString('function renderSearchScope(searchAllSites)', $public);
@@ -57,19 +60,23 @@ class CrmModuleListUiAssetTest extends TestCase
         $this->assertStringContainsString('if (root?.contains(event.target)) return;', $public);
         $this->assertStringContainsString('} else if (!root.querySelector(".teams-page")) {', $public);
         $this->assertStringContainsString('Tous les sites', $public);
-        $this->assertStringContainsString('${showSites ? "<th>Sites</th>" : ""}', $public);
-        $this->assertStringContainsString('function memberSites(member)', $public);
+        $this->assertStringContainsString('<th>Site principal</th>', $public);
+        $this->assertStringContainsString('function memberPrimarySite(member)', $public);
+        $this->assertStringContainsString('member?.primarySiteName', $public);
+        $this->assertStringNotContainsString('function memberSites(member)', $public);
         $this->assertStringNotContainsString('input?.focus()', $public);
         $this->assertStringNotContainsString('input?.setSelectionRange', $public);
         $this->assertStringContainsString('html.crm-teams-route main .layout-container.layout-page{width:100%;max-width:100%;min-width:0;overflow-x:hidden}', $public);
         $this->assertStringNotContainsString('html.crm-teams-route .layout-container.layout-page{width:100%;max-width:100%;min-width:0;overflow-x:hidden}', $public);
-        $this->assertStringContainsString('.teams-table-wrap{display:none}', $public);
-        $this->assertStringContainsString('container-name:teams-card', $public);
-        $this->assertStringContainsString('@container teams-card (max-width:58rem)', $public);
+        $this->assertStringNotContainsString('.teams-table-wrap{display:none}', $public);
+        $this->assertStringNotContainsString('container-name:teams-card', $public);
+        $this->assertStringNotContainsString('@container teams-card (max-width:58rem)', $public);
         $this->assertStringContainsString('grid-template-columns:repeat(auto-fit,minmax(min(100%,13.5rem),1fr))', $public);
-        $this->assertStringContainsString('.teams-mobile-list{display:none;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr))}', $public);
+        $this->assertStringContainsString('.teams-filter-card{display:grid;grid-template-columns:minmax(0,1fr) auto;', $public);
         $this->assertStringContainsString('.teams-table{width:100%;min-width:50rem;', $public);
+        $this->assertStringContainsString('.teams-table{min-width:46rem}', $public);
         $this->assertStringNotContainsString('.teams-table{min-width:54rem}', $public);
+        $this->assertStringNotContainsString('teams-header-tools', $public);
         $this->assertStringNotContainsString('class="teams-sites"', $public);
         $this->assertStringNotContainsString('data-site-id', $public);
         $this->assertStringNotContainsString('function renderSiteButton', $public);

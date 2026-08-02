@@ -21,15 +21,15 @@ final class CrmReferenceCache
 
     public const ACTIVE_SITE_IDS = 'hub:sites:active:ids:v2';
 
-    public const ACTIVE_MODULE_ROWS = 'hub:modules:active:rows:v1';
+    public const ACTIVE_MODULE_ROWS = 'hub:modules:active:rows:v2';
 
-    public const ACTIVE_MODULE_LOOKUP = 'hub:modules:active:lookup:v1';
+    public const ACTIVE_MODULE_LOOKUP = 'hub:modules:active:lookup:v2';
 
     public const PERMISSION_ROWS = 'hub:permissions:rows:v1';
 
     public const PERMISSION_ID_LOOKUP = 'hub:permissions:id-lookup:v1';
 
-    public const ACTIVE_USER_ROWS = 'hub:users:active:rows:v1';
+    public const ACTIVE_USER_ROWS = 'hub:users:active:rows:v2';
 
     public const ACTIVE_VEHICLE_ROWS = 'hub:vehicles:active:rows:v1';
 
@@ -38,7 +38,7 @@ final class CrmReferenceCache
     public const ACTIVE_EQUIPMENT_ITEM_ROWS = 'hub:equipment-items:active:rows:v1';
 
     /**
-     * @return array<int, array{id: int, name: string, slug: string, sortOrder: int, address: string, phone: string, email: string, color: string, photoUrl: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
+     * @return array<int, array{id: int, name: string, slug: string, sortOrder: int, address: string, phone: string, email: string, color: string, photoUrl: string, showPhotoInHeader: bool, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
      */
     public static function activeSiteRows(): array
     {
@@ -57,6 +57,7 @@ final class CrmReferenceCache
                     'email' => trim((string) $site->email),
                     'color' => self::siteColor($site),
                     'photoUrl' => app(CrmImageStorage::class)->normalizePublicUrl($site->photo_url),
+                    'showPhotoInHeader' => (bool) $site->show_photo_in_header,
                     'hours' => self::siteHours($site),
                 ])
                 ->values()
@@ -91,7 +92,7 @@ final class CrmReferenceCache
     }
 
     /**
-     * @return array<int, array{id: int, name: string, slug: string, description: string, active: bool, sortOrder: int}>
+     * @return array<int, array{id: int, name: string, slug: string, description: string, menuBadge: string, menuBadgeColor: string, showMenuBadge: bool, active: bool, sortOrder: int}>
      */
     public static function activeMenuModuleRows(): array
     {
@@ -118,6 +119,9 @@ final class CrmReferenceCache
                     'name' => $module->name,
                     'slug' => $module->slug,
                     'description' => $module->description ?? '',
+                    'menuBadge' => $module->menu_badge ?? '',
+                    'menuBadgeColor' => self::moduleBadgeColor($module),
+                    'showMenuBadge' => (bool) $module->show_menu_badge,
                     'active' => (bool) $module->active,
                     'sortOrder' => (int) $module->sort_order,
                 ])
@@ -127,7 +131,7 @@ final class CrmReferenceCache
     }
 
     /**
-     * @return array<string, array{id: int, name: string, slug: string, routePath: string, sortOrder: int}>
+     * @return array<string, array{id: int, name: string, slug: string, routePath: string, menuBadge: string, menuBadgeColor: string, showMenuBadge: bool, sortOrder: int}>
      */
     public static function activeModuleLookup(): array
     {
@@ -138,7 +142,7 @@ final class CrmReferenceCache
                 ->active()
                 ->orderBy('sort_order')
                 ->orderBy('name')
-                ->get(['id', 'name', 'slug', 'route_path', 'sort_order'])
+                ->get(['id', 'name', 'slug', 'route_path', 'menu_badge', 'menu_badge_color', 'show_menu_badge', 'sort_order'])
                 ->filter(fn (CrmModule $module): bool => $features->enabledModule($module->slug))
                 ->mapWithKeys(fn (CrmModule $module): array => [
                     $module->slug => [
@@ -146,6 +150,9 @@ final class CrmReferenceCache
                         'name' => $module->name,
                         'slug' => $module->slug,
                         'routePath' => $module->route_path,
+                        'menuBadge' => $module->menu_badge ?? '',
+                        'menuBadgeColor' => self::moduleBadgeColor($module),
+                        'showMenuBadge' => (bool) $module->show_menu_badge,
                         'sortOrder' => (int) $module->sort_order,
                     ],
                 ])
@@ -154,11 +161,18 @@ final class CrmReferenceCache
     }
 
     /**
-     * @return array{id: int, name: string, slug: string, routePath: string, sortOrder: int}|null
+     * @return array{id: int, name: string, slug: string, routePath: string, menuBadge: string, menuBadgeColor: string, showMenuBadge: bool, sortOrder: int}|null
      */
     public static function activeModule(string $slug): ?array
     {
         return self::activeModuleLookup()[$slug] ?? null;
+    }
+
+    private static function moduleBadgeColor(CrmModule $module): string
+    {
+        $color = trim((string) $module->menu_badge_color);
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : CrmTheme::primaryHex();
     }
 
     /**
@@ -217,7 +231,7 @@ final class CrmReferenceCache
     }
 
     /**
-     * @return array<int, array{id: int, name: string, firstName: string, lastName: string, email: string, phone: string, role: string, photoUrl: string, siteIds: array<int, int>, siteNames: array<int, string>, defaultSiteId: int|null}>
+     * @return array<int, array{id: int, name: string, firstName: string, lastName: string, email: string, phone: string, role: string, photoUrl: string, siteIds: array<int, int>, siteNames: array<int, string>, defaultSiteId: int|null, defaultSiteName: string}>
      */
     public static function activeUserRows(): array
     {
@@ -369,7 +383,7 @@ final class CrmReferenceCache
     }
 
     /**
-     * @return array{id: int, name: string, firstName: string, lastName: string, email: string, phone: string, role: string, photoUrl: string, siteIds: array<int, int>, siteNames: array<int, string>, defaultSiteId: int|null}
+     * @return array{id: int, name: string, firstName: string, lastName: string, email: string, phone: string, role: string, photoUrl: string, siteIds: array<int, int>, siteNames: array<int, string>, defaultSiteId: int|null, defaultSiteName: string}
      */
     private static function userRow(CrmUser $user): array
     {
@@ -395,6 +409,7 @@ final class CrmReferenceCache
             'siteIds' => $siteIds,
             'siteNames' => $user->sites->pluck('name')->map(fn ($name): string => (string) $name)->values()->all(),
             'defaultSiteId' => $defaultSite ? (int) $defaultSite->id : ($siteIds[0] ?? null),
+            'defaultSiteName' => (string) ($defaultSite?->name ?? $user->sites->first()?->name ?? ''),
         ];
     }
 

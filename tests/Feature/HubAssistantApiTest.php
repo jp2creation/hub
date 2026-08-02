@@ -65,8 +65,32 @@ class HubAssistantApiTest extends TestCase
             ->assertJsonPath('ok', true)
             ->assertJsonPath('url', null)
             ->assertJsonFragment([
-                'message' => 'Bonjour. Je peux vous aider à trouver une page, comprendre où faire une action courante ou vous guider dans le HUB. Dites-moi par exemple : congés, équipe, véhicule, profil, caisse ou administration.',
+                'message' => 'Bonjour ! Comment puis-je vous aider ?',
             ]);
+    }
+
+    public function test_it_answers_basic_time_and_date_questions(): void
+    {
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-02 10:15:00', 'Europe/Paris'));
+
+        try {
+            [$account] = $this->createHubUser('admin');
+            $this->createModule('dashboard', 'Tableau de bord', '/');
+
+            $this->actingAs($account)
+                ->postJson('/api/hub-assistant/message', ['message' => 'Quelle heure est-il ?'])
+                ->assertOk()
+                ->assertJsonPath('ok', true)
+                ->assertJsonPath('message', 'Il est actuellement 10:15.');
+
+            $this->actingAs($account)
+                ->postJson('/api/hub-assistant/message', ['message' => 'Quel jour sommes-nous ?'])
+                ->assertOk()
+                ->assertJsonPath('ok', true)
+                ->assertJsonPath('message', 'Nous sommes dimanche.');
+        } finally {
+            CarbonImmutable::setTestNow();
+        }
     }
 
     public function test_it_guides_common_leave_questions_with_accessible_link(): void
@@ -461,13 +485,12 @@ class HubAssistantApiTest extends TestCase
      */
     private function createHubUser(string $role = 'user'): array
     {
-        $account = User::factory()->create();
         $crmUser = CrmUser::query()->create([
-            'user_id' => $account->id,
             'name' => $role === 'admin' ? 'Admin HUB' : 'Jean-Philippe HUB',
             'role' => $role,
             'active' => true,
         ]);
+        $account = User::query()->findOrFail($crmUser->id);
 
         return [$account, $crmUser];
     }

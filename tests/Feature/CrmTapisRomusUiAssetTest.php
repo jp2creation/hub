@@ -49,10 +49,16 @@ class CrmTapisRomusUiAssetTest extends TestCase
         $this->assertStringContainsString('font-size:1.55rem', $asset);
         $this->assertStringContainsString('grid-template-columns:2.6rem minmax(0,1fr)', $asset);
         $this->assertStringContainsString('color-mix(in srgb,var(--tapis-kpi-color,var(--tapis-primary)) 14%,white)', $asset);
+        $this->assertStringContainsString('.tapis-kpi-icon{display:grid;place-items:center;width:2.6rem;height:2.6rem', $asset);
+        $this->assertStringContainsString('line-height:0;flex:0 0 auto', $asset);
+        $this->assertStringContainsString('.tapis-kpi-copy{display:block;min-width:0}', $asset);
+        $this->assertStringContainsString('.tapis-kpi-copy span{display:block;color:var(--tapis-muted);font-size:.72rem;font-weight:600;text-transform:uppercase}', $asset);
         $this->assertStringContainsString('.tapis-kpi.is-command', $asset);
         $this->assertStringContainsString('.tapis-kpi.is-references', $asset);
         $this->assertStringContainsString('.tapis-kpi.is-dimensions', $asset);
         $this->assertStringContainsString('.tapis-kpi.is-pdf', $asset);
+        $this->assertStringContainsString('<span class="tapis-kpi-copy"><span>${esc(label)}</span><strong>${esc(value)}</strong></span>', $asset);
+        $this->assertStringNotContainsString('.tapis-kpi span{display:block;color:var(--tapis-muted)', $asset);
         $this->assertStringNotContainsString('tapis-romus-mark', $asset);
         $this->assertStringContainsString('clipboardCheck', $asset);
         $this->assertStringContainsString('rulerSquare', $asset);

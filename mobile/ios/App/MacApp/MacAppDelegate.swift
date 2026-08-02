@@ -23,7 +23,7 @@ final class MacAppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegat
     private static let crmUrl = URL(string: "https://crm.jp2.fr/?mobile_app=1&source=mac_app")!
     private static let updateManifestUrl = URL(string: "https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json")!
     private static let nativeMessageHandlerName = "martinSolsNativeApp"
-    private static let splashDuration: TimeInterval = 5.5
+    private static let splashDuration: TimeInterval = 12.6
     private static let updateCheckDelay: TimeInterval = 1.5
     private static let nativeLocationTimeout: TimeInterval = 15
     private static let titleBarHeight: CGFloat = 46
@@ -1388,17 +1388,18 @@ final class MacAppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegat
               place-items: center;
             }
 
-            img {
+            video {
               display: block;
               width: min(26vw, 340px);
               max-width: 340px;
               max-height: 70vh;
               object-fit: contain;
+              background: transparent;
             }
           </style>
         </head>
         <body>
-          <img src="opening-animation.gif" alt="">
+          <video src="opening-animation.mp4" autoplay muted playsinline></video>
         </body>
         </html>
         """

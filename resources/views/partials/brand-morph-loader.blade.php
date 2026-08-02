@@ -2,12 +2,16 @@
     <div class="brand-morph-loader__backdrop"></div>
 
     <div class="brand-morph-loader__stage" role="status" aria-live="polite" aria-label="Chargement">
-        <div class="brand-morph-loader__symbol">
-            <span class="segment segment--top"></span>
-            <span class="segment segment--right"></span>
-            <span class="segment segment--bottom"></span>
-            <span class="segment segment--left"></span>
-        </div>
+        <video
+            class="brand-morph-loader__video"
+            src="{{ \App\Support\CrmAsset::url('modules/crm-core/brand-morph-loader.mp4') }}"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="auto"
+            data-brand-loader-video
+        ></video>
         <p class="brand-morph-loader__message" data-brand-loader-message>Connexion...</p>
         <p class="brand-morph-loader__error" data-brand-loader-error></p>
     </div>

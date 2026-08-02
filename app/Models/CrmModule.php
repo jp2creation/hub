@@ -17,6 +17,7 @@ use Modules\CrmCore\Support\CrmReferenceCache;
  * @property bool $active
  * @property string|null $description
  * @property string|null $menu_badge
+ * @property string|null $menu_badge_color
  * @property string $name
  * @property string|null $route_path
  * @property bool $show_menu_badge
@@ -35,6 +36,7 @@ class CrmModule extends Model
         'description',
         'route_path',
         'menu_badge',
+        'menu_badge_color',
         'show_menu_badge',
         'active',
         'sort_order',

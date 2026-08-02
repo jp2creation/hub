@@ -10,6 +10,7 @@ export const fallbackNavigation: CrmFallbackNavigation = {
       active: true,
       sortOrder: 10,
       menuBadge: 'Martin',
+      menuBadgeColor: '#95002e',
       showMenuBadge: true,
     },
     {

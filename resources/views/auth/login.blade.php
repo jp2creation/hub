@@ -23,7 +23,9 @@
         --muted: #697386;
         --line: #dce2ea;
         --surface: #ffffff;
-        --page: #f3f6fa;
+        --field: #f9fbfd;
+        --page: #f7f8fb;
+        --shadow: 0 20px 42px rgba(16, 32, 51, 0.08);
       }
 
       * {
@@ -41,54 +43,47 @@
         margin: 0;
         display: grid;
         place-items: center;
-        padding: 24px;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.98) 46%, rgba(243, 246, 250, 0.98)),
-          var(--page);
+        padding: 28px;
+        background: var(--page);
         color: var(--ink);
         font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background:
-          linear-gradient(115deg, rgb(var(--theme-primary) / 0.055), transparent 38%),
-          linear-gradient(245deg, rgb(var(--theme-accent) / 0.09), transparent 42%);
+        display: none;
       }
 
       main {
         position: relative;
         z-index: 1;
-        width: min(100%, 460px);
+        width: min(100%, 480px);
         display: grid;
-        gap: 14px;
+        gap: 16px;
       }
 
       .login-card {
         display: grid;
-        gap: 22px;
-        padding: 28px;
-        border: 1px solid rgba(220, 226, 234, 0.96);
+        gap: 24px;
+        padding: 34px;
+        border: 1px solid rgba(220, 226, 234, 0.92);
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.98);
-        box-shadow: 0 18px 44px rgba(16, 32, 51, 0.08);
+        background: var(--surface);
+        box-shadow: var(--shadow);
       }
 
       .brand {
-        display: grid;
-        justify-items: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 12px;
         text-align: center;
       }
 
       .brand-main-logo {
         display: block;
-        width: min(250px, 72vw);
+        width: min(190px, 58vw);
         height: auto;
-        max-height: 96px;
+        max-height: 72px;
         object-fit: contain;
       }
 
@@ -96,20 +91,67 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 34px;
-        padding: 6px 10px;
-        border: 1px solid rgba(220, 226, 234, 0.96);
-        border-radius: 10px;
-        background: #fff;
-        box-shadow: 0 8px 20px rgba(16, 32, 51, 0.05);
+        min-height: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .login-title {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 9px;
+      }
+
+      .login-title .brand-hub-signature {
+        transform: translateY(1px);
+      }
+
+      .login-title .brand-hub-signature img {
+        width: 72px;
+        max-height: 21px;
       }
 
       .brand-hub-signature img {
         display: block;
-        width: 70px;
+        width: 64px;
         height: auto;
-        max-height: 20px;
+        max-height: 18px;
         object-fit: contain;
+      }
+
+      .login-copy {
+        display: grid;
+        gap: 7px;
+      }
+
+      .login-eyebrow {
+        margin: 0;
+        color: var(--primary);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .login-card h1 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 1.78rem;
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: 0;
+      }
+
+      .login-copy p:last-child {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 400;
+        line-height: 1.45;
       }
 
       .app-install {
@@ -203,6 +245,11 @@
 
       .app-install__badge[hidden] {
         display: none;
+      }
+
+      .app-install__badge.is-current {
+        border-color: rgb(var(--theme-primary) / 0.38);
+        box-shadow: 0 16px 30px rgb(var(--theme-primary) / 0.14);
       }
 
       .app-install__badge.is-android {
@@ -355,52 +402,53 @@
 
       form {
         display: grid;
-        gap: 17px;
+        gap: 16px;
       }
 
       .field {
         display: grid;
-        gap: 8px;
+        gap: 7px;
       }
 
       label {
-        color: var(--ink);
-        font-size: 0.94rem;
-        font-weight: 800;
+        color: #17243a;
+        font-size: 0.82rem;
+        font-weight: 600;
       }
 
       input[type="email"],
       input[type="password"] {
         width: 100%;
-        min-height: 52px;
-        padding: 0 14px;
+        min-height: 42px;
+        padding: 0 13px;
         border: 1px solid var(--line);
-        border-radius: 10px;
-        background: #fff;
+        border-radius: 9px;
+        background: var(--field);
         color: var(--ink);
         font: inherit;
-        font-size: 1rem;
-        font-weight: 650;
+        font-size: 0.92rem;
+        font-weight: 400;
       }
 
       input:focus {
-        outline: 4px solid rgb(var(--theme-primary) / 0.14);
+        outline: 3px solid rgb(var(--theme-primary) / 0.12);
         border-color: var(--primary);
+        background: #fff;
       }
 
       .remember {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 9px;
         width: fit-content;
         color: var(--muted);
-        font-size: 0.94rem;
+        font-size: 0.84rem;
         font-weight: 400;
       }
 
       .remember input {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
         margin: 0;
         accent-color: var(--primary);
       }
@@ -416,16 +464,16 @@
       }
 
       button {
-        min-height: 54px;
+        min-height: 44px;
         border: 0;
-        border-radius: 10px;
+        border-radius: 9px;
         background: var(--primary);
         color: #fff;
         font: inherit;
-        font-size: 1rem;
-        font-weight: 800;
+        font-size: 0.92rem;
+        font-weight: 600;
         cursor: pointer;
-        box-shadow: 0 14px 30px rgb(var(--theme-primary) / 0.2);
+        box-shadow: 0 14px 26px rgb(var(--theme-primary) / 0.2);
       }
 
       button:focus {
@@ -441,6 +489,57 @@
         display: none !important;
       }
 
+      @media (max-width: 680px) {
+        .brand-hub-signature {
+          min-height: 0;
+          padding: 0;
+        }
+
+        .login-title .brand-hub-signature img {
+          width: 66px;
+          max-height: 20px;
+        }
+
+        .app-install__actions {
+          gap: 8px;
+        }
+
+        .app-install__badge {
+          flex: 0 1 124px;
+          min-width: 0;
+          max-width: 132px;
+          min-height: 38px;
+          padding: 5px 8px;
+          gap: 7px;
+          border-radius: 8px;
+          box-shadow: 0 9px 18px var(--install-shadow, rgba(0, 0, 0, 0.13));
+        }
+
+        .app-install__badge svg {
+          width: 18px;
+          height: 18px;
+          stroke-width: 2.25;
+        }
+
+        .app-install__badge span:first-child {
+          width: 20px;
+          height: 20px;
+        }
+
+        .app-install__badge span:first-child > span {
+          font-size: 1.08rem;
+        }
+
+        .app-install__badge small {
+          font-size: 0.46rem;
+          font-weight: 700;
+        }
+
+        .app-install__badge strong {
+          font-size: 0.78rem;
+        }
+      }
+
       @media (max-width: 520px) {
         body {
           place-items: center;
@@ -448,23 +547,23 @@
         }
 
         .login-card {
-          gap: 16px;
-          padding: 20px;
+          gap: 20px;
+          padding: 24px;
           border-radius: 12px;
         }
 
         .brand {
-          gap: 10px;
+          gap: 9px;
         }
 
         .brand-main-logo {
-          width: min(190px, 60vw);
-          max-height: 74px;
+          width: min(158px, 50vw);
+          max-height: 58px;
         }
 
         .brand-hub-signature {
-          min-height: 30px;
-          padding: 5px 9px;
+          min-height: 0;
+          padding: 0;
         }
 
         .brand-hub-signature img {
@@ -472,13 +571,22 @@
           max-height: 17px;
         }
 
+        .login-title {
+          gap: 7px;
+        }
+
+        .login-title .brand-hub-signature img {
+          width: 64px;
+          max-height: 19px;
+        }
+
         form {
-          gap: 14px;
+          gap: 15px;
         }
 
         input[type="email"],
         input[type="password"] {
-          min-height: 48px;
+          min-height: 44px;
         }
 
         .app-install {
@@ -486,11 +594,11 @@
         }
 
         .app-install__badge {
-          min-width: 148px;
+          min-width: 0;
         }
 
         button {
-          min-height: 50px;
+          min-height: 46px;
         }
       }
 
@@ -508,7 +616,7 @@
         }
 
         .app-install__badge {
-          width: 100%;
+          flex-basis: calc(50% - 4px);
         }
       }
     </style>
@@ -525,13 +633,21 @@
       })()
     </script>
     <main>
+      <div class="brand" aria-label="Martin Sols HUB">
+        <img class="brand-main-logo" src="{{ asset('martin-sols-logo.png') }}" alt="Martin Sols" />
+      </div>
+
       <section class="login-card" aria-label="Connexion Martin Sols">
-        <div class="brand">
-          <img class="brand-main-logo" src="{{ asset('martin-sols-logo.png') }}" alt="Martin Sols" />
-          <span class="brand-hub-signature" aria-label="HUB Martin Sols">
-            <img src="{{ asset('hub-ms.svg') }}" alt="HUB" />
-          </span>
-        </div>
+        <header class="login-copy">
+          <p class="login-eyebrow">Accès sécurisé</p>
+          <h1 class="login-title">
+            <span>Bienvenue sur le</span>
+            <span class="brand-hub-signature" aria-label="HUB Martin Sols">
+              <img src="{{ asset('hub-ms.svg') }}" alt="HUB" />
+            </span>
+          </h1>
+          <p>Connectez-vous pour accéder à vos modules Martin Sols.</p>
+        </header>
 
         <form method="post" action="{{ route('login') }}" autocomplete="on" data-login-form>
           @csrf
@@ -598,18 +714,39 @@
       >
         <div class="app-install__head">
           <div class="app-install__actions">
-            <a class="app-install__badge" href="#" data-login-app-button rel="noopener">
-              <span data-login-app-icon aria-hidden="true"></span>
+            <a class="app-install__badge is-webapk" href="#" data-login-app-kind="webapk" rel="noopener">
+              <span data-login-app-icon="webapk" aria-hidden="true"></span>
               <span>
-                <small data-login-app-small>Installer</small>
-                <strong data-login-app-label>Web APK</strong>
+                <small>Installer</small>
+                <strong>Web APK</strong>
               </span>
             </a>
-            <a class="app-install__badge" href="#" data-login-webview-button rel="noopener" hidden>
-              <span data-login-webview-icon aria-hidden="true"></span>
+            <a class="app-install__badge is-android" href="#" data-login-app-kind="android" rel="noopener">
+              <span data-login-app-icon="android" aria-hidden="true"></span>
               <span>
-                <small data-login-webview-small>Télécharger</small>
-                <strong data-login-webview-label>Android</strong>
+                <small>Télécharger</small>
+                <strong>Android</strong>
+              </span>
+            </a>
+            <a class="app-install__badge is-iphone" href="#" data-login-app-kind="iphone" rel="noopener">
+              <span data-login-app-icon="iphone" aria-hidden="true"></span>
+              <span>
+                <small>Ajouter sur</small>
+                <strong>iPhone</strong>
+              </span>
+            </a>
+            <a class="app-install__badge is-ipad" href="#" data-login-app-kind="ipad" rel="noopener">
+              <span data-login-app-icon="ipad" aria-hidden="true"></span>
+              <span>
+                <small>Ajouter sur</small>
+                <strong>iPad</strong>
+              </span>
+            </a>
+            <a class="app-install__badge is-macos" href="#" data-login-app-kind="macos" rel="noopener">
+              <span data-login-app-icon="macos" aria-hidden="true"></span>
+              <span>
+                <small>Télécharger</small>
+                <strong>macOS</strong>
               </span>
             </a>
           </div>
@@ -935,15 +1072,9 @@
           return;
         }
 
-        const button = card.querySelector('[data-login-app-button]');
-        const webviewButton = card.querySelector('[data-login-webview-button]');
         const help = card.querySelector('[data-login-app-help]');
-        const small = card.querySelector('[data-login-app-small]');
-        const label = card.querySelector('[data-login-app-label]');
-        const icon = card.querySelector('[data-login-app-icon]');
-        const webviewSmall = card.querySelector('[data-login-webview-small]');
-        const webviewLabel = card.querySelector('[data-login-webview-label]');
-        const webviewIcon = card.querySelector('[data-login-webview-icon]');
+        const badges = Array.from(card.querySelectorAll('[data-login-app-kind]'));
+        const badgeByKind = new Map(badges.map((badge) => [badge.dataset.loginAppKind || '', badge]));
         const params = new URLSearchParams(window.location.search);
 
         const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches === true
@@ -957,15 +1088,8 @@
         if (
           isStandalone
           || isNativeApp
-          || !button
-          || !webviewButton
           || !help
-          || !small
-          || !label
-          || !icon
-          || !webviewSmall
-          || !webviewLabel
-          || !webviewIcon
+          || badges.length === 0
         ) {
           card.remove();
 
@@ -992,23 +1116,6 @@
           download: '<svg viewBox="0 0 24 24"><path d="M12 3v11"></path><path d="m7.5 9.5 4.5 4.5 4.5-4.5"></path><path d="M5 18.5h14"></path></svg>',
         };
 
-        const setupButton = (target, kind, textTargets, options) => {
-          target.className = `app-install__badge is-${kind}`;
-          target.href = options.href || '#';
-          target.toggleAttribute('download', options.download === true);
-          textTargets.small.textContent = options.small;
-          textTargets.label.textContent = options.label;
-          textTargets.icon.innerHTML = options.icon;
-          target.onclick = options.onClick || null;
-          target.hidden = false;
-        };
-
-        const hideWebviewButton = () => {
-          webviewButton.hidden = true;
-          webviewButton.onclick = null;
-          webviewButton.removeAttribute('download');
-        };
-
         const installPwa = (event) => {
           event.preventDefault();
 
@@ -1020,86 +1127,88 @@
           help.textContent = 'Dans Chrome ou Edge : menu du navigateur, puis Installer l’application.';
         };
 
-        const configure = (kind, options) => {
-          card.className = `app-install is-${kind}`;
-          setupButton(button, kind, { small, label, icon }, options);
-          hideWebviewButton();
-          help.textContent = options.help;
-          card.hidden = false;
+        const configureBadge = (kind, options) => {
+          const badge = badgeByKind.get(kind);
+
+          if (!badge) {
+            return;
+          }
+
+          const iconTarget = badge.querySelector(`[data-login-app-icon="${kind}"]`);
+
+          if (iconTarget) {
+            iconTarget.innerHTML = options.icon || '';
+          }
+
+          badge.href = options.href || '#';
+          badge.toggleAttribute('download', options.download === true);
+          badge.onclick = options.onClick || null;
         };
 
-        if (isAndroid && androidUrl) {
-          card.className = 'app-install is-android';
-          setupButton(button, 'webapk', { small, label, icon }, {
-            href: '#',
-            icon: icons.chrome,
-            small: 'Installer',
-            label: 'Web APK',
-            help: '',
-            onClick: installPwa,
-          });
-          setupButton(webviewButton, 'android', {
-            small: webviewSmall,
-            label: webviewLabel,
-            icon: webviewIcon,
-          }, {
-            href: androidUrl,
-            download: true,
-            icon: icons.google,
-            small: 'Télécharger',
-            label: 'Android',
-            help: '',
-          });
-          help.textContent = '';
-          card.hidden = false;
+        const showIosHelp = (event) => {
+          event.preventDefault();
+          help.textContent = 'Safari > Partager > Ajouter à l’écran d’accueil. Le HUB s’ouvrira ensuite en plein écran.';
+        };
 
-          return;
-        }
+        const showMacosHelp = (event) => {
+          event.preventDefault();
+          help.textContent = 'Le téléchargement Mac sera proposé ici dès que le paquet sera publié.';
+        };
 
-        if (isIos) {
-          const iosKind = isIpad ? 'ipad' : 'iphone';
-          const iosLabel = isIpad ? 'iPad' : 'iPhone';
-
-          configure(iosKind, {
-            href: iosUrl || '#',
-            icon: icons.apple,
-            small: iosUrl ? 'Installer via' : 'Ajouter sur',
-            label: iosLabel,
-            help: '',
-            onClick: iosUrl ? null : (event) => {
-              event.preventDefault();
-              help.textContent = 'Safari > Partager > Ajouter à l’écran d’accueil. Le HUB s’ouvrira ensuite en plein écran.';
-            },
-          });
-
-          return;
-        }
-
-        if (isMacos) {
-          configure('macos', {
-            href: macosUrl || '#',
-            download: Boolean(macosUrl),
-            icon: icons.apple,
-            small: macosUrl ? 'Télécharger' : 'Bientôt',
-            label: 'macOS',
-            help: '',
-            onClick: macosUrl ? null : (event) => {
-              event.preventDefault();
-              help.textContent = 'Le téléchargement Mac sera proposé ici dès que le paquet sera publié.';
-            },
-          });
-
-          return;
-        }
-
-        configure('web', {
+        configureBadge('webapk', {
           href: '#',
           icon: icons.chrome,
-          small: 'Installer',
-          label: 'Web APK',
-          help: '',
           onClick: installPwa,
         });
+
+        configureBadge('android', {
+          href: androidUrl || '#',
+          download: Boolean(androidUrl),
+          icon: icons.google,
+        });
+
+        configureBadge('iphone', {
+          href: iosUrl || '#',
+          icon: icons.apple,
+          onClick: iosUrl ? null : showIosHelp,
+        });
+
+        configureBadge('ipad', {
+          href: iosUrl || '#',
+          icon: icons.apple,
+          onClick: iosUrl ? null : showIosHelp,
+        });
+
+        configureBadge('macos', {
+          href: macosUrl || '#',
+          download: Boolean(macosUrl),
+          icon: icons.apple,
+          onClick: macosUrl ? null : showMacosHelp,
+        });
+
+        const currentKind = isAndroid
+          ? 'android'
+          : isIpad
+            ? 'ipad'
+            : isIphone
+              ? 'iphone'
+              : isMacos
+                ? 'macos'
+                : 'webapk';
+        const currentBadge = badgeByKind.get(currentKind);
+
+        card.className = `app-install is-${currentKind}`;
+        badges.forEach((badge) => {
+          badge.classList.toggle('is-current', badge === currentBadge);
+          badge.hidden = false;
+        });
+
+        if (currentBadge?.parentElement) {
+          currentBadge.parentElement.prepend(currentBadge);
+        }
+
+        help.textContent = '';
+        card.hidden = false;
       })();
     </script>
   </body>

@@ -274,7 +274,28 @@ function badgeHtml(item: CrmMenuItem): string {
     return '';
   }
 
-  return `<span class="crm-native-nav-badge">${esc(module.menuBadge)}</span>`;
+  const badgeRgb = hexToRgbTriplet(module.menuBadgeColor);
+  const style = badgeRgb ? ` style="--crm-native-nav-badge-rgb:${badgeRgb}"` : '';
+
+  return `<span class="crm-native-nav-badge"${style}>${esc(module.menuBadge)}</span>`;
+}
+
+function hexToRgbTriplet(value?: string): string {
+  const match = String(value || '')
+    .trim()
+    .match(/^#([0-9a-fA-F]{6})$/);
+
+  if (!match) {
+    return '';
+  }
+
+  const hex = match[1];
+
+  return [
+    Number.parseInt(hex.slice(0, 2), 16),
+    Number.parseInt(hex.slice(2, 4), 16),
+    Number.parseInt(hex.slice(4, 6), 16),
+  ].join(' ');
 }
 
 function parentItemKey(item: CrmMenuItem): string {

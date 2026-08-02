@@ -149,7 +149,7 @@
         member.name,
         member.phone,
         member.email,
-        memberSites(member),
+        memberPrimarySite(member),
       ].some((value) => normalize(value).includes(query));
     });
   }
@@ -210,12 +210,9 @@
             <h1>Équipe</h1>
             <p>${esc(site?.name || "Site actif")}</p>
           </div>
-          <div class="teams-header-tools">
-            <label class="teams-search">
-              ${icon("search")}
-              <input type="search" value="${esc(state.query)}" placeholder="Rechercher un membre" data-teams-search />
-            </label>
-            ${renderSearchScope(searchAllSites)}
+          <div class="teams-contact-count" aria-label="Nombre de membres affichés">
+            <strong>${esc(currentMembers.length)}</strong>
+            <span>membre${currentMembers.length > 1 ? "s" : ""}</span>
           </div>
         </header>
 
@@ -254,11 +251,19 @@
       <section class="teams-card" data-teams-members-card>
         <div class="teams-card-head">
           <div>
-            <h2>${esc(membersTitle)}</h2>
-            <p>${esc(membersScope)}</p>
+            <h2>Liste des membres</h2>
+            <p>${esc(membersTitle)} · ${esc(membersScope)}</p>
           </div>
+          <span class="teams-card-count">${esc(currentMembers.length)} contact${currentMembers.length > 1 ? "s" : ""}</span>
         </div>
-        ${currentMembers.length ? renderMembers(currentMembers, searchAllSites) : renderEmptyMembers(searchAllSites)}
+        <div class="teams-filter-card">
+          <label class="teams-search">
+            ${icon("search")}
+            <input type="search" value="${esc(state.query)}" placeholder="Rechercher un membre par nom, e-mail, téléphone..." data-teams-search />
+          </label>
+          ${renderSearchScope(searchAllSites)}
+        </div>
+        ${currentMembers.length ? renderMembers(currentMembers) : renderEmptyMembers(searchAllSites)}
       </section>
     `;
   }
@@ -281,6 +286,7 @@
     return `
       <label class="teams-search-scope" title="Inclure les membres de tous les sites visibles">
         <input type="checkbox" ${searchAllSites ? "checked" : ""} data-teams-all-sites />
+        ${icon("filter")}
         <span>Tous les sites</span>
       </label>
     `;
@@ -315,6 +321,8 @@
   }
 
   function sitePhotoUrl(site) {
+    if (site?.showPhotoInHeader === false) return "";
+
     const url = String(site?.photoUrl || "").trim();
 
     return /^(\/|https?:\/\/)/i.test(url) ? url : "";
@@ -341,19 +349,18 @@
     `;
   }
 
-  function renderMembers(list, showSites) {
+  function renderMembers(list) {
     return `
-      <div class="teams-table-wrap">
-        <table class="teams-table">
+      <div class="teams-table-wrap" data-teams-contact-list>
+        <table class="teams-table" aria-label="Liste des membres">
           <thead>
             <tr>
-              <th>Membre</th>
-              ${canViewPresence() ? "<th>Statut</th>" : ""}
-              <th>Prénom</th>
-              <th>Nom</th>
-              ${showSites ? "<th>Sites</th>" : ""}
+              <th>Contact</th>
               <th>Téléphone</th>
-              <th>Mail</th>
+              <th>Rôle</th>
+              <th>Site principal</th>
+              ${canViewPresence() ? "<th>Statut</th>" : ""}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -363,62 +370,51 @@
                   <div class="teams-member">
                     <span class="teams-avatar">${member.photoUrl ? `<img src="${esc(member.photoUrl)}" alt="" onerror="this.remove()" />` : ""}<b>${esc(initials(member))}</b></span>
                     <span>
-                      <strong>${esc(member.name || [member.firstName, member.lastName].join(" "))}</strong>
+                      <strong>${esc(memberFullName(member))}</strong>
+                      ${member.email ? `<small>${esc(member.email)}</small>` : `<small class="teams-muted">E-mail non renseigné</small>`}
                     </span>
                   </div>
                 </td>
+                <td>${member.phone ? `<a class="teams-contact-link" href="tel:${esc(phoneHref(member.phone))}">${esc(member.phone)}</a>` : `<span class="teams-muted">Non renseigné</span>`}</td>
+                <td>${memberRole(member)}</td>
+                <td>${cell(memberPrimarySite(member) || activeSite()?.name)}</td>
                 ${canViewPresence() ? `<td>${presencePill(member)}</td>` : ""}
-                <td>${cell(member.firstName)}</td>
-                <td>${cell(member.lastName)}</td>
-                ${showSites ? `<td>${cell(memberSites(member))}</td>` : ""}
-                <td>${member.phone ? `<a href="tel:${esc(phoneHref(member.phone))}">${esc(member.phone)}</a>` : `<span class="teams-muted">Non renseigné</span>`}</td>
-                <td>${member.email ? `<a href="mailto:${esc(member.email)}">${esc(member.email)}</a>` : `<span class="teams-muted">Non renseigné</span>`}</td>
+                <td>${renderMemberActions(member)}</td>
               </tr>
             `).join("")}
           </tbody>
         </table>
       </div>
-      <div class="teams-mobile-list" aria-label="Membres">
-        ${list.map((member) => renderMemberCard(member, showSites)).join("")}
-      </div>
     `;
   }
 
-  function renderMemberCard(member, showSites) {
-    const fullName = member.name || [member.firstName, member.lastName].filter(Boolean).join(" ");
+  function memberFullName(member) {
+    return member.name || [member.firstName, member.lastName].filter(Boolean).join(" ") || "Membre HUB";
+  }
+
+  function memberRole(member) {
+    const role = String(member.role || "Membre HUB").trim();
+    const labels = {
+      admin: "Administrateur",
+      administrator: "Administrateur",
+      manager: "Manager",
+      member: "Membre",
+      employee: "Collaborateur",
+      user: "Utilisateur",
+    };
+
+    return esc(labels[role.toLowerCase()] || role || "Membre HUB");
+  }
+
+  function renderMemberActions(member) {
+    const phone = String(member.phone || "").trim();
+    const email = String(member.email || "").trim();
 
     return `
-      <article class="teams-person-card">
-        <div class="teams-person-main">
-          <span class="teams-avatar">${member.photoUrl ? `<img src="${esc(member.photoUrl)}" alt="" onerror="this.remove()" />` : ""}<b>${esc(initials(member))}</b></span>
-          <span class="teams-person-identity">
-            <strong>${esc(fullName || "Membre HUB")}</strong>
-            ${canViewPresence() ? `<span class="teams-person-meta">${presencePill(member)}</span>` : ""}
-          </span>
-        </div>
-        <dl class="teams-person-details">
-          <div>
-            <dt>Prénom</dt>
-            <dd>${cell(member.firstName)}</dd>
-          </div>
-          <div>
-            <dt>Nom</dt>
-            <dd>${cell(member.lastName)}</dd>
-          </div>
-          ${showSites ? `<div>
-            <dt>Sites</dt>
-            <dd>${cell(memberSites(member))}</dd>
-          </div>` : ""}
-          <div>
-            <dt>Téléphone</dt>
-            <dd>${member.phone ? `<a href="tel:${esc(phoneHref(member.phone))}">${esc(member.phone)}</a>` : `<span class="teams-muted">Non renseigné</span>`}</dd>
-          </div>
-          <div>
-            <dt>E-mail</dt>
-            <dd>${member.email ? `<a href="mailto:${esc(member.email)}">${esc(member.email)}</a>` : `<span class="teams-muted">Non renseigné</span>`}</dd>
-          </div>
-        </dl>
-      </article>
+      <span class="teams-actions" aria-label="Actions ${esc(memberFullName(member))}">
+        ${phone ? `<a class="teams-action" href="tel:${esc(phoneHref(phone))}" title="Appeler">${icon("phone")}</a>` : `<span class="teams-action is-disabled" title="Téléphone non renseigné">${icon("phone")}</span>`}
+        ${email ? `<a class="teams-action" href="mailto:${esc(email)}" title="Envoyer un e-mail">${icon("mail")}</a>` : `<span class="teams-action is-disabled" title="E-mail non renseigné">${icon("mail")}</span>`}
+      </span>
     `;
   }
 
@@ -437,10 +433,9 @@
     `;
   }
 
-  function memberSites(member) {
-    return (Array.isArray(member?.siteNames) ? member.siteNames : [])
-      .filter(Boolean)
-      .join(", ");
+  function memberPrimarySite(member) {
+    return String(member?.primarySiteName || member?.defaultSiteName || member?.siteName || "").trim()
+      || String(Array.isArray(member?.siteNames) ? (member.siteNames[0] || "") : "").trim();
   }
 
   function renderEmptyMembers(searchAllSites = false) {
@@ -555,20 +550,24 @@
       #${rootId}{--teams-primary:rgb(var(--theme-primary));--teams-border:var(--color-surface-200,#e2e8f0);--teams-muted:var(--color-secondary-500,#64748b);--teams-text:var(--color-secondary-900,#0f172a);display:block;min-width:0;color:var(--teams-text)}
       #${rootId} *{box-sizing:border-box}
       #${rootId} svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-      #${rootId} a{color:var(--teams-primary);font-weight:850;text-decoration:none}
+      #${rootId} a{color:var(--teams-primary);font-weight:600;text-decoration:none}
       #${rootId} a:hover{text-decoration:underline}
       #${rootId} .teams-page{display:grid;gap:1rem;min-width:0}
       #${rootId} .teams-header{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
       #${rootId} .teams-title span{display:block;color:var(--teams-primary);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
       #${rootId} .teams-title h1{margin:.15rem 0 0;color:var(--teams-text);font-size:1.85rem;line-height:1.05;font-weight:600;letter-spacing:0}
       #${rootId} .teams-title p{margin:.3rem 0 0;color:var(--teams-muted);font-size:.88rem;font-weight:750}
-      #${rootId} .teams-header-tools{display:grid;gap:.55rem;justify-items:end;width:min(100%,22rem);min-width:0}
-      #${rootId} .teams-search{display:grid;grid-template-columns:1.1rem minmax(0,1fr);align-items:center;gap:.55rem;width:min(100%,22rem);min-height:2.55rem;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:0 .8rem;color:var(--teams-muted);box-shadow:0 10px 24px rgba(15,23,42,.04)}
-      #${rootId} .teams-search input{width:100%;min-width:0;border:0;background:transparent;color:var(--teams-text);font:inherit;font-size:.9rem;font-weight:750;outline:none}
+      #${rootId} .teams-contact-count{display:inline-flex;align-items:center;gap:.35rem;color:var(--teams-muted);font-size:.88rem;font-weight:500;white-space:nowrap}
+      #${rootId} .teams-contact-count strong{color:var(--teams-text);font-size:1rem;font-weight:600}
+      #${rootId} .teams-filter-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.75rem;border-bottom:1px solid var(--teams-border);padding:.9rem 1rem;background:#fff}
+      #${rootId} .teams-search{display:grid;grid-template-columns:1.1rem minmax(0,1fr);align-items:center;gap:.6rem;width:100%;min-height:2.65rem;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:0 .85rem;color:var(--teams-muted);box-shadow:0 10px 24px rgba(15,23,42,.04)}
+      #${rootId} .teams-search input{width:100%;min-width:0;border:0;background:transparent;color:var(--teams-text);font:inherit;font-size:.9rem;font-weight:400;outline:none}
       #${rootId} .teams-search:focus-within{border-color:var(--teams-border);box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .teams-search input:focus{outline:none;box-shadow:none}
-      #${rootId} .teams-search-scope{display:inline-flex;align-items:center;gap:.45rem;min-height:2rem;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.35rem .65rem;color:var(--teams-muted);font-size:.78rem;font-weight:850;box-shadow:0 10px 24px rgba(15,23,42,.04);cursor:pointer;user-select:none}
-      #${rootId} .teams-search-scope input{width:.95rem;height:.95rem;margin:0;accent-color:var(--teams-primary)}
+      #${rootId} .teams-search-scope{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-height:2.65rem;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:0 .8rem;color:var(--teams-muted);font-size:.82rem;font-weight:500;box-shadow:0 10px 24px rgba(15,23,42,.04);cursor:pointer;user-select:none;white-space:nowrap}
+      #${rootId} .teams-search-scope input{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+      #${rootId} .teams-search-scope:has(input:checked){border-color:rgb(var(--theme-primary) / .24);background:rgb(var(--theme-primary) / .08);color:var(--teams-primary)}
+      #${rootId} .teams-search-scope svg{width:1rem;height:1rem}
       #${rootId} .teams-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13.5rem),1fr));gap:.85rem;min-width:0}
       #${rootId} .teams-stat{display:grid;grid-template-columns:2.55rem minmax(0,1fr);gap:.75rem;align-items:center;min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;padding:.85rem;box-shadow:0 12px 28px rgba(15,23,42,.05)}
       #${rootId} .teams-stat-icon{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:.5rem;background:color-mix(in srgb,var(--stat-color) 14%,white);color:var(--stat-color)}
@@ -590,32 +589,35 @@
       #${rootId} .teams-site-info-item strong,#${rootId} .teams-site-info-item a{display:block;min-width:0;margin:.12rem 0 0;color:var(--teams-text);font-size:.84rem;font-weight:600;line-height:1.25;overflow-wrap:anywhere}
       #${rootId} .teams-site-info-item a{color:var(--site-color,var(--teams-primary))}
       #${rootId} .teams-site-info-item .teams-muted{color:var(--teams-muted)}
-      #${rootId} .teams-card{container-name:teams-card;container-type:inline-size;min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05);overflow:hidden}
+      #${rootId} .teams-card{min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.05);overflow:hidden}
       #${rootId} .teams-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--teams-border);padding:.95rem 1rem}
       #${rootId} .teams-card-head h2{margin:0;color:var(--teams-text);font-size:1.08rem;font-weight:600;letter-spacing:0}
       #${rootId} .teams-card-head p{margin:.18rem 0 0;color:var(--teams-muted);font-size:.78rem;font-weight:750}
+      #${rootId} .teams-card-count{align-self:center;border-radius:999px;background:#f1f5f9;padding:.28rem .65rem;color:#475569;font-size:.78rem;font-weight:600;white-space:nowrap}
       #${rootId} .teams-table-wrap{max-width:100%;overflow:auto;-webkit-overflow-scrolling:touch}
-      #${rootId} .teams-table{width:100%;min-width:50rem;border-collapse:collapse}
-      #${rootId} .teams-table th{background:#f8fafc;color:var(--teams-muted);font-size:.72rem;font-weight:600;text-align:left;text-transform:uppercase;padding:.82rem 1rem;white-space:nowrap}
-      #${rootId} .teams-table td{border-top:1px solid var(--teams-border);padding:.58rem 1rem;color:var(--teams-text);font-size:.88rem;font-weight:750;vertical-align:middle}
-      #${rootId} .teams-mobile-list{display:none;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr))}
-      #${rootId} .teams-member{display:grid;grid-template-columns:1.5rem minmax(0,1fr);align-items:center;gap:.5rem;min-width:0}
-      #${rootId} .teams-member strong{display:block;color:var(--teams-text);font-size:.92rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      #${rootId} .teams-member small{display:block;margin-top:.1rem;color:var(--teams-muted);font-size:.72rem;font-weight:800}
-      #${rootId} .teams-person-card{display:grid;gap:.75rem;border-top:1px solid var(--teams-border);padding:.9rem 1rem}
-      #${rootId} .teams-person-main{display:grid;grid-template-columns:2.35rem minmax(0,1fr);align-items:center;gap:.65rem}
-      #${rootId} .teams-person-identity{min-width:0}
-      #${rootId} .teams-person-identity strong{display:block;color:var(--teams-text);font-size:1rem;font-weight:600;line-height:1.15}
-      #${rootId} .teams-person-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.28rem}
-      #${rootId} .teams-person-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin:0}
-      #${rootId} .teams-person-details div{min-width:0;border:1px solid var(--teams-border);border-radius:.5rem;background:#f8fafc;padding:.55rem .65rem}
-      #${rootId} .teams-person-details dt{margin:0 0 .18rem;color:var(--teams-muted);font-size:.66rem;font-weight:600;text-transform:uppercase}
-      #${rootId} .teams-person-details dd{margin:0;min-width:0;color:var(--teams-text);font-size:.82rem;font-weight:850;line-height:1.25;overflow-wrap:anywhere}
+      #${rootId} .teams-table{width:100%;min-width:50rem;border-collapse:separate;border-spacing:0}
+      #${rootId} .teams-table th{background:#f8fafc;color:var(--teams-muted);font-size:.7rem;font-weight:600;text-align:left;text-transform:uppercase;padding:.78rem 1rem;white-space:nowrap}
+      #${rootId} .teams-table th:first-child{padding-left:1.15rem}
+      #${rootId} .teams-table th:last-child{text-align:right;padding-right:1.15rem}
+      #${rootId} .teams-table tbody tr{transition:background .16s ease}
+      #${rootId} .teams-table tbody tr:hover{background:#fbfdff}
+      #${rootId} .teams-table td{border-top:1px solid var(--teams-border);padding:.68rem 1rem;color:var(--teams-text);font-size:.86rem;font-weight:400;vertical-align:middle}
+      #${rootId} .teams-table td:first-child{width:32%;padding-left:1.15rem}
+      #${rootId} .teams-table td:last-child{text-align:right;padding-right:1.15rem}
+      #${rootId} .teams-member{display:grid;grid-template-columns:1.8rem minmax(0,1fr);align-items:center;gap:.72rem;min-width:0}
+      #${rootId} .teams-member strong{display:block;color:var(--teams-text);font-size:.9rem;font-weight:600;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .teams-member small{display:block;margin-top:.16rem;color:var(--teams-muted);font-size:.74rem;font-weight:400;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #${rootId} .teams-contact-link{color:#334155;font-weight:500}
+      #${rootId} .teams-actions{display:inline-flex;align-items:center;justify-content:flex-end;gap:.34rem;white-space:nowrap}
+      #${rootId} .teams-action{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;border:1px solid transparent;border-radius:.45rem;color:#64748b;text-decoration:none;transition:background .16s ease,border-color .16s ease,color .16s ease}
+      #${rootId} .teams-action:hover{border-color:var(--teams-border);background:#fff;color:var(--teams-primary);text-decoration:none}
+      #${rootId} .teams-action svg{width:.95rem;height:.95rem}
+      #${rootId} .teams-action.is-disabled{color:#cbd5e1;cursor:not-allowed}
       #${rootId} .teams-presence{display:inline-flex;align-items:center;gap:.36rem;min-height:1.65rem;border-radius:999px;padding:.18rem .58rem;font-size:.72rem;font-weight:600;white-space:nowrap}
       #${rootId} .teams-presence i{display:block;width:.48rem;height:.48rem;border-radius:999px;background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 14%,transparent)}
       #${rootId} .teams-presence.is-online{background:rgba(22,163,74,.1);color:#16a34a}
       #${rootId} .teams-presence.is-offline{background:#f1f5f9;color:#64748b}
-      #${rootId} .teams-avatar{position:relative;display:grid;place-items:center;width:1.5rem;height:1.5rem;overflow:hidden;border-radius:999px;background:color-mix(in srgb,var(--teams-primary) 12%,white);color:var(--teams-primary);font-size:.55rem;font-weight:600}
+      #${rootId} .teams-avatar{position:relative;display:grid;place-items:center;width:1.8rem;height:1.8rem;overflow:hidden;border-radius:999px;background:color-mix(in srgb,var(--teams-primary) 12%,white);color:var(--teams-primary);font-size:.62rem;font-weight:600;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .8)}
       #${rootId} .teams-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       #${rootId} .teams-avatar b{position:relative;z-index:1}
       #${rootId} .teams-avatar img + b{display:none}
@@ -626,11 +628,9 @@
       .dark #${rootId} .teams-site-info.has-site-photo::after{background:linear-gradient(90deg,rgba(15,23,42,.22),rgba(15,23,42,.68) 58%,var(--color-surface-900,#0f172a) 100%)}
       .dark #${rootId} .teams-site-info.has-site-photo .teams-site-info-title{background:linear-gradient(90deg,rgba(15,23,42,.84),rgba(15,23,42,.62),rgba(15,23,42,.12))}
       .dark #${rootId} .teams-table th{background:var(--color-surface-800,#1e293b)}
-      .dark #${rootId} .teams-person-details div,.dark #${rootId} .teams-site-info-item{background:var(--color-surface-800,#1e293b)}
-      @container teams-card (max-width:58rem){#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid}}
+      .dark #${rootId} .teams-site-info-item{background:var(--color-surface-800,#1e293b)}
       @media (max-width:1100px){#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .teams-site-info{grid-template-columns:1fr}#${rootId} .teams-site-info.has-site-photo::before{inset:0 0 auto 0;width:100%;height:7.5rem;-webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,transparent 100%)}#${rootId} .teams-site-info.has-site-photo::after{inset:0 0 auto 0;width:100%;height:7.5rem;background:linear-gradient(180deg,rgba(255,255,255,.42),#fff 100%)}.dark #${rootId} .teams-site-info.has-site-photo::after{background:linear-gradient(180deg,rgba(15,23,42,.48),var(--color-surface-900,#0f172a) 100%)}#${rootId} .teams-site-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-      @media (max-width:720px){#${rootId} .teams-header{align-items:stretch;flex-direction:column}#${rootId} .teams-title h1{font-size:1.55rem}#${rootId} .teams-header-tools,#${rootId} .teams-search{width:100%}#${rootId} .teams-header-tools{justify-items:stretch}#${rootId} .teams-search-scope{justify-content:flex-start;width:max-content;max-width:100%}#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .teams-stat{grid-template-columns:2.25rem minmax(0,1fr);padding:.7rem}#${rootId} .teams-stat-icon{width:2.25rem;height:2.25rem}#${rootId} .teams-site-info-grid{grid-template-columns:1fr}#${rootId} .teams-table-wrap{display:none}#${rootId} .teams-mobile-list{display:grid;grid-template-columns:1fr}}
-      @media (max-width:390px){#${rootId} .teams-person-details{grid-template-columns:1fr}}
+      @media (max-width:720px){#${rootId} .teams-header{align-items:stretch;flex-direction:column}#${rootId} .teams-title h1{font-size:1.55rem}#${rootId} .teams-contact-count{justify-content:flex-start}#${rootId} .teams-filter-card{grid-template-columns:1fr;padding:.75rem}#${rootId} .teams-search-scope{justify-content:flex-start;width:max-content;max-width:100%}#${rootId} .teams-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}#${rootId} .teams-stat{grid-template-columns:2.25rem minmax(0,1fr);padding:.7rem}#${rootId} .teams-stat-icon{width:2.25rem;height:2.25rem}#${rootId} .teams-site-info-grid{grid-template-columns:1fr}#${rootId} .teams-table{min-width:46rem}#${rootId} .teams-card-head{align-items:flex-start;flex-direction:column}.dark #${rootId} .teams-filter-card{background:var(--color-surface-900,#0f172a)}}
     `;
     document.head.appendChild(style);
   }
@@ -644,6 +644,7 @@
       mapPin: '<path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.4"></circle>',
       clock: '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>',
       search: '<circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path>',
+      filter: '<path d="M3 5h18"></path><path d="M6 12h12"></path><path d="M10 19h4"></path>',
     };
 
     return `<svg viewBox="0 0 24 24" aria-hidden="true">${icons[name] || icons.users}</svg>`;

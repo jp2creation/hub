@@ -1,3 +1,5 @@
+import { readCrmShellConfig } from './config';
+
 function mountBrandLoaderElement(): HTMLElement {
   const existing = document.getElementById('brand-morph-loader');
 
@@ -13,12 +15,16 @@ function mountBrandLoaderElement(): HTMLElement {
   loader.innerHTML = `
     <div class="brand-morph-loader__backdrop"></div>
     <div class="brand-morph-loader__stage" role="status" aria-live="polite" aria-label="Chargement">
-      <div class="brand-morph-loader__symbol">
-        <span class="segment segment--top"></span>
-        <span class="segment segment--right"></span>
-        <span class="segment segment--bottom"></span>
-        <span class="segment segment--left"></span>
-      </div>
+      <video
+        class="brand-morph-loader__video"
+        src="${escapeHtml(readCrmShellConfig().assets.brandMorphLoaderVideo)}"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        data-brand-loader-video
+      ></video>
       <p class="brand-morph-loader__message" data-brand-loader-message>Connexion...</p>
       <p class="brand-morph-loader__error" data-brand-loader-error></p>
     </div>
@@ -27,6 +33,20 @@ function mountBrandLoaderElement(): HTMLElement {
   document.body.prepend(loader);
 
   return loader;
+}
+
+function escapeHtml(value: unknown): string {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => {
+    const entities: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    };
+
+    return entities[char] || char;
+  });
 }
 
 export function revealBrandLoaderElement(): void {

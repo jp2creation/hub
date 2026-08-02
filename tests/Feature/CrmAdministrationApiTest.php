@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\CrmEquipmentItem;
 use App\Models\CrmMenuGroup;
 use App\Models\CrmMenuItem;
 use App\Models\CrmModule;
 use App\Models\CrmPermission;
 use App\Models\CrmSite;
 use App\Models\CrmUser;
+use App\Models\CrmVehicle;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -56,16 +58,27 @@ class CrmAdministrationApiTest extends TestCase
 
         $reservationItem = collect($readProfile['navigation']['menuItems'])
             ->firstWhere('itemKey', 'module:reservations');
+        $reservationModule = collect($readProfile['navigation']['modules'])
+            ->firstWhere('slug', 'reservations');
         $leavesItem = collect($readProfile['navigation']['menuItems'])
             ->firstWhere('itemKey', 'module:conges');
         $adminUsersItem = collect($readProfile['navigation']['menuItems'])
             ->firstWhere('itemKey', 'admin:users');
+        $adminReservationsItem = collect($readProfile['navigation']['menuItems'])
+            ->firstWhere('itemKey', 'admin:reservations');
+        $adminEquipmentItem = collect($readProfile['navigation']['menuItems'])
+            ->firstWhere('itemKey', 'admin:equipment');
         $documentsGroup = collect($readProfile['navigation']['menuGroups'])
             ->firstWhere('menuKey', 'documents');
 
         $this->assertSame('truck', $reservationItem['iconKey'] ?? null);
+        $this->assertSame('Martin', $reservationModule['menuBadge'] ?? null);
+        $this->assertSame('#95002e', $reservationModule['menuBadgeColor'] ?? null);
+        $this->assertTrue($reservationModule['showMenuBadge'] ?? false);
         $this->assertSame('Congés & Absences', $leavesItem['label'] ?? null);
         $this->assertSame('module:administration', $adminUsersItem['parentItemKey'] ?? null);
+        $this->assertSame('module:administration', $adminReservationsItem['parentItemKey'] ?? null);
+        $this->assertSame('module:administration', $adminEquipmentItem['parentItemKey'] ?? null);
         $this->assertSame('Documents', $documentsGroup['title'] ?? null);
 
         $profile = $this->actingAs($account)
@@ -663,6 +676,7 @@ class CrmAdministrationApiTest extends TestCase
                 'email' => 'atelier-nord@example.test',
                 'color' => '#2563eb',
                 'photoDataUrl' => $this->crmPngDataUrl(16, 10),
+                'showPhotoInHeader' => false,
                 'hours' => [
                     'morningStart' => '08:00',
                     'morningEnd' => '12:15',
@@ -693,6 +707,7 @@ class CrmAdministrationApiTest extends TestCase
             'email' => 'atelier-nord@example.test',
             'color' => '#2563eb',
             'photo_url' => $photoUrl,
+            'show_photo_in_header' => false,
         ]);
 
         $this->actingAs($account)
@@ -705,6 +720,7 @@ class CrmAdministrationApiTest extends TestCase
                 'email' => 'atelier-nord@example.test',
                 'color' => '#2563eb',
                 'photoUrl' => $photoUrl,
+                'showPhotoInHeader' => false,
             ]);
 
         $this->actingAs($account)
@@ -730,6 +746,7 @@ class CrmAdministrationApiTest extends TestCase
         $this->assertDatabaseHas('crm_sites', [
             'id' => $siteId,
             'photo_url' => null,
+            'show_photo_in_header' => false,
         ]);
         Storage::disk('public')->assertMissing($photoPath);
         Storage::disk('public')->assertMissing(str_replace('.webp', '-thumb.webp', $photoPath));
@@ -748,6 +765,49 @@ class CrmAdministrationApiTest extends TestCase
             ->assertStatus(400)
             ->assertJsonPath('ok', false)
             ->assertJsonPath('error', 'Couleur invalide');
+    }
+
+    public function test_admin_can_manage_module_menu_badge_text_and_color(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $moduleId = (int) collect($this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json('modules'))
+            ->firstWhere('slug', 'reservations')['id'];
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_module', [
+                'id' => $moduleId,
+                'name' => 'Réservations véhicules',
+                'slug' => 'reservations',
+                'routePath' => '/reservations',
+                'menuBadge' => 'Essai',
+                'menuBadgeColor' => '#f5b212',
+                'showMenuBadge' => true,
+                'active' => true,
+                'sortOrder' => 10,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseHas('crm_modules', [
+            'id' => $moduleId,
+            'menu_badge' => 'Essai',
+            'menu_badge_color' => '#f5b212',
+            'show_menu_badge' => true,
+        ]);
+
+        $module = collect($this->actingAs($account)
+            ->getJson('/api/administration?action=profile')
+            ->assertOk()
+            ->json('profile.navigation.modules'))
+            ->firstWhere('slug', 'reservations');
+
+        $this->assertSame('Essai', $module['menuBadge'] ?? null);
+        $this->assertSame('#f5b212', $module['menuBadgeColor'] ?? null);
+        $this->assertTrue($module['showMenuBadge'] ?? false);
     }
 
     public function test_admin_can_reorder_sites_for_hub_display(): void
@@ -794,6 +854,230 @@ class CrmAdministrationApiTest extends TestCase
             ->getJson('/api/administration?action=bootstrap')
             ->assertOk()
             ->assertJsonPath('sites.0.id', $orderedIds[0]);
+    }
+
+    public function test_admin_can_manage_reservation_vehicles_from_hub_administration(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $sites = $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json('sites');
+        $siteId = (int) collect($sites)->first()['id'];
+
+        $vehicleId = $this->actingAs($account)
+            ->postJson('/api/administration?action=save_vehicle', [
+                'siteId' => $siteId,
+                'name' => 'Camion atelier',
+                'description' => 'Vehicule principal du site',
+                'color' => '#2563eb',
+                'dayStartTime' => '07:00',
+                'dayEndTime' => '18:30',
+                'photoDataUrl' => $this->crmPngDataUrl(16, 10),
+                'active' => true,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->json('id');
+
+        $vehicle = CrmVehicle::query()->findOrFail($vehicleId);
+        $photoUrl = (string) $vehicle->photo_url;
+        $photoPath = substr($photoUrl, strlen('/uploads/'));
+
+        $this->assertStringStartsWith('/uploads/assets/uploads/vehicles/', $photoUrl);
+        Storage::disk('public')->assertExists($photoPath);
+        $this->assertDatabaseHas('crm_vehicles', [
+            'id' => $vehicleId,
+            'site_id' => $siteId,
+            'name' => 'Camion atelier',
+            'description' => 'Vehicule principal du site',
+            'color' => '#2563eb',
+            'photo_url' => $photoUrl,
+            'active' => true,
+        ]);
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $vehicleId,
+                'siteId' => $siteId,
+                'name' => 'Camion atelier',
+                'description' => 'Vehicule principal du site',
+                'dayStartTime' => '07:00',
+                'dayEndTime' => '18:30',
+                'photoUrl' => $photoUrl,
+                'reservationsCount' => 0,
+            ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_vehicle', [
+                'id' => $vehicleId,
+                'siteId' => $siteId,
+                'name' => 'Camion atelier',
+                'description' => 'Vehicule principal du site',
+                'color' => '#2563eb',
+                'dayStartTime' => '07:00',
+                'dayEndTime' => '18:30',
+                'removePhoto' => true,
+                'active' => false,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseHas('crm_vehicles', [
+            'id' => $vehicleId,
+            'active' => false,
+            'photo_url' => null,
+        ]);
+        Storage::disk('public')->assertMissing($photoPath);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=delete_vehicle', ['id' => $vehicleId])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('archived', false);
+
+        $this->assertDatabaseMissing('crm_vehicles', ['id' => $vehicleId]);
+    }
+
+    public function test_admin_can_manage_equipment_categories_and_items_from_hub_administration(): void
+    {
+        [$account] = $this->createAdminUser();
+
+        $sites = $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->json('sites');
+        $siteId = (int) collect($sites)->first()['id'];
+
+        $categoryId = $this->actingAs($account)
+            ->postJson('/api/administration?action=save_equipment_category', [
+                'name' => 'Ponceuses',
+                'active' => true,
+                'sortOrder' => 35,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->json('id');
+
+        $itemId = $this->actingAs($account)
+            ->postJson('/api/administration?action=save_equipment_item', [
+                'siteId' => $siteId,
+                'categoryId' => $categoryId,
+                'name' => 'Ponceuse test HUB',
+                'inventoryCode' => 'PONCEUSE-HUB-01',
+                'description' => 'Materiel administrable depuis le HUB',
+                'color' => '#95002e',
+                'halfDayPrice' => 42.5,
+                'dayPrice' => 80,
+                'depositAmount' => 150,
+                'rentalMode' => 'day_only',
+                'showHalfDayPrice' => false,
+                'showDayPrice' => true,
+                'photoDataUrl' => $this->crmPngDataUrl(16, 10),
+                'active' => true,
+                'sortOrder' => 20,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->json('id');
+
+        $item = CrmEquipmentItem::query()->findOrFail($itemId);
+        $photoUrl = (string) $item->photo_url;
+        $photoPath = substr($photoUrl, strlen('/uploads/'));
+
+        $this->assertStringStartsWith('/uploads/assets/uploads/equipment/', $photoUrl);
+        Storage::disk('public')->assertExists($photoPath);
+        $this->assertDatabaseHas('crm_equipment_categories', [
+            'id' => $categoryId,
+            'name' => 'Ponceuses',
+            'slug' => 'ponceuses',
+            'active' => true,
+            'sort_order' => 35,
+        ]);
+        $this->assertDatabaseHas('crm_equipment_items', [
+            'id' => $itemId,
+            'site_id' => $siteId,
+            'category_id' => $categoryId,
+            'name' => 'Ponceuse test HUB',
+            'inventory_code' => 'PONCEUSE-HUB-01',
+            'description' => 'Materiel administrable depuis le HUB',
+            'color' => '#95002e',
+            'show_half_day_price' => false,
+            'show_day_price' => true,
+            'rental_mode' => 'day_only',
+            'photo_url' => $photoUrl,
+            'active' => true,
+            'sort_order' => 20,
+        ]);
+
+        $this->actingAs($account)
+            ->getJson('/api/administration?action=bootstrap')
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $categoryId,
+                'name' => 'Ponceuses',
+                'slug' => 'ponceuses',
+                'itemsCount' => 1,
+            ])
+            ->assertJsonFragment([
+                'id' => $itemId,
+                'siteId' => $siteId,
+                'categoryId' => $categoryId,
+                'categoryName' => 'Ponceuses',
+                'name' => 'Ponceuse test HUB',
+                'inventoryCode' => 'PONCEUSE-HUB-01',
+                'photoUrl' => $photoUrl,
+                'showHalfDayPrice' => false,
+                'showDayPrice' => true,
+                'rentalMode' => 'day_only',
+                'rentalsCount' => 0,
+            ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=save_equipment_item', [
+                'id' => $itemId,
+                'siteId' => $siteId,
+                'categoryId' => $categoryId,
+                'name' => 'Ponceuse test HUB',
+                'inventoryCode' => 'PONCEUSE-HUB-01',
+                'description' => 'Materiel administrable depuis le HUB',
+                'color' => '#95002e',
+                'halfDayPrice' => 42.5,
+                'dayPrice' => 80,
+                'depositAmount' => 150,
+                'rentalMode' => 'day_only',
+                'showHalfDayPrice' => false,
+                'showDayPrice' => true,
+                'removePhoto' => true,
+                'active' => false,
+                'sortOrder' => 20,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true);
+
+        $this->assertDatabaseHas('crm_equipment_items', [
+            'id' => $itemId,
+            'active' => false,
+            'photo_url' => null,
+        ]);
+        Storage::disk('public')->assertMissing($photoPath);
+
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=delete_equipment_item', ['id' => $itemId])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('archived', false);
+        $this->actingAs($account)
+            ->postJson('/api/administration?action=delete_equipment_category', ['id' => $categoryId])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('archived', false);
+
+        $this->assertDatabaseMissing('crm_equipment_items', ['id' => $itemId]);
+        $this->assertDatabaseMissing('crm_equipment_categories', ['id' => $categoryId]);
     }
 
     public function test_admin_can_create_blocked_user_without_rights(): void

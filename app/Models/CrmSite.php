@@ -27,6 +27,7 @@ use Modules\CrmCore\Support\CrmReferenceCache;
  * @property string $name
  * @property string|null $phone
  * @property string|null $photo_url
+ * @property bool $show_photo_in_header
  * @property string|null $slug
  * @property int $sort_order
  * @property-read object{is_default?: mixed}|null $pivot
@@ -58,11 +59,13 @@ class CrmSite extends Model
         'email',
         'color',
         'photo_url',
+        'show_photo_in_header',
         'deleted_at',
     ];
 
     protected $attributes = [
         'color' => '#95002e',
+        'show_photo_in_header' => true,
         'sort_order' => 100,
     ];
 
@@ -71,6 +74,7 @@ class CrmSite extends Model
         return [
             'active' => 'boolean',
             'deleted_at' => 'datetime',
+            'show_photo_in_header' => 'boolean',
         ];
     }
 

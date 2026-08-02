@@ -26,6 +26,8 @@ import hubLogoUrl from "./logo-hub.svg";
       ["overview", "Vue d'ensemble", "Pilotage", "dashboard"],
       ["users", "Utilisateurs", "Accès et droits", "users"],
       ["sites", "Sites", "Coordonnées", "category"],
+      ["reservations", "Réservations", "Véhicules", "truck"],
+      ["equipment", "Location matériel", "Matériel et catégories", "package"],
       ["modules", "Modules", "Visibilité", "package"],
       ["menu", "Navigation", "Sections et pages", "settings"],
       ["pages", "Pages HUB", "Contenus", "article"],
@@ -145,6 +147,7 @@ import hubLogoUrl from "./logo-hub.svg";
       #${rootId} .admin-card-title{margin:0;color:var(--admin-text);font-size:1rem;font-weight:600}
       #${rootId} .admin-card-subtitle{margin:.18rem 0 0;color:var(--admin-muted);font-size:.78rem;font-weight:400}
       #${rootId} .admin-card-body{display:grid;gap:.85rem;padding:1rem}
+      #${rootId} .admin-resource-grid{display:grid;grid-template-columns:minmax(0,.64fr) minmax(0,1.36fr);gap:1rem;align-items:start}
       #${rootId} .admin-list-card .admin-card-body{display:block;padding:0}
       #${rootId} .admin-list-card .admin-empty{margin:1rem}
       #${rootId} .admin-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.4rem;border:1px solid var(--admin-border);border-radius:.5rem;background:#fff;padding:.55rem .8rem;color:var(--admin-text);font-size:.84rem;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
@@ -207,6 +210,13 @@ import hubLogoUrl from "./logo-hub.svg";
       #${rootId} .admin-site-photo-content strong{color:var(--admin-text);font-size:.9rem;font-weight:600}
       #${rootId} .admin-site-photo-content p{margin:0;color:var(--admin-muted);font-size:.74rem;font-weight:400}
       #${rootId} .admin-site-photo-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem}
+      #${rootId} .admin-site-background-toggle{margin-top:.55rem}
+      #${rootId} .admin-asset-media{display:grid;place-items:center;width:2.25rem;height:2.25rem;overflow:hidden;border-radius:.5rem;background:color-mix(in srgb,var(--asset-color,var(--admin-primary)) 12%,white);color:var(--asset-color,var(--admin-primary))}
+      #${rootId} .admin-asset-media img{width:100%;height:100%;object-fit:cover}
+      #${rootId} .admin-asset-form{display:flex;flex-direction:column;gap:.85rem}
+      #${rootId} .admin-asset-details-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.8rem}
+      #${rootId} .admin-asset-prices-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem}
+      #${rootId} .admin-asset-prices-grid input,#${rootId} .admin-asset-prices-grid select{min-height:2.35rem;padding:.5rem .45rem}
       #${rootId} .admin-password-panel{display:grid;gap:.65rem;border:1px solid var(--admin-border);border-radius:.55rem;background:var(--admin-soft);padding:.8rem}
       #${rootId} .admin-password-panel strong{color:var(--admin-text);font-size:.9rem;font-weight:600}
       #${rootId} .admin-password-panel p,#${rootId} .admin-help{margin:.12rem 0 0;color:var(--admin-muted);font-size:.74rem;font-weight:400;text-transform:none}
@@ -395,9 +405,9 @@ import hubLogoUrl from "./logo-hub.svg";
       @media (prefers-reduced-motion:reduce){#${rootId} .admin-modal{animation:none}}
       @media (max-width:1100px){#${rootId} .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
       @media (max-width:1024px){#${rootId} .admin-modal-backdrop{background:#f8fafc}#${rootId} .admin-modal,#${rootId} .admin-modal-wide,#${rootId} .admin-modal-role{inset:0;width:100vw;max-width:none;height:100dvh;border:0;border-radius:0;box-shadow:none}#${rootId} .admin-modal-header{position:sticky;top:0;z-index:3;grid-template-columns:1fr;gap:.75rem;border-bottom:0;background:#f8fafc;padding:1.05rem 1rem .85rem}#${rootId} .admin-modal-back-button{display:inline-flex;justify-content:flex-start;gap:.4rem;width:auto;min-width:0;height:auto;border:0;background:transparent;padding:.1rem 0;color:var(--admin-primary);font-size:.98rem;font-weight:600}#${rootId} .admin-modal-back-button svg{width:1.25rem;height:1.25rem}#${rootId} .admin-modal-close-button{display:none}#${rootId} .admin-modal-title{font-size:1.55rem;line-height:1.05}#${rootId} .admin-modal-subtitle{font-size:.82rem}#${rootId} .admin-modal-body{background:#f8fafc;padding:0 1rem calc(5.35rem + env(safe-area-inset-bottom))}#${rootId} .admin-actions,#${rootId} .admin-site-form-footer,#${rootId} .admin-role-actions{position:fixed;right:auto;bottom:calc(.65rem + env(safe-area-inset-bottom));left:50%;display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:calc(100vw - 2rem);transform:translateX(-50%);margin:0;border:1px solid var(--admin-border);border-radius:.75rem;background:rgba(255,255,255,.96);padding:.45rem;box-shadow:0 -16px 34px rgba(15,23,42,.08)}#${rootId} .admin-actions .admin-button,#${rootId} .admin-site-form-footer .admin-button,#${rootId} .admin-role-actions .admin-button{flex:0 1 auto;min-width:5.45rem;max-width:8.75rem;overflow:hidden;padding-inline:.72rem;text-overflow:ellipsis}#${rootId} .admin-role-actions .admin-button-primary{max-width:11rem}#${rootId} .admin-modal-role .admin-modal-body{background:#f8fafc;padding:0 0 calc(5.35rem + env(safe-area-inset-bottom))}}
-      @media (max-width:900px){#${rootId} .admin-grid,#${rootId} .admin-grid-3,#${rootId} .admin-overview-grid,#${rootId} .admin-access-layout,#${rootId} .admin-role-profile-grid,#${rootId} .admin-role-primary-grid,#${rootId} .admin-role-sites-grid,#${rootId} .admin-role-site-module-layout,#${rootId} .admin-role-final-grid,#${rootId} .admin-role-advanced-layout{grid-template-columns:1fr}#${rootId} .admin-role-recap{position:relative;top:auto;grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-role-recap header{grid-column:1 / -1}}
+      @media (max-width:900px){#${rootId} .admin-grid,#${rootId} .admin-grid-3,#${rootId} .admin-resource-grid,#${rootId} .admin-asset-details-grid,#${rootId} .admin-overview-grid,#${rootId} .admin-access-layout,#${rootId} .admin-role-profile-grid,#${rootId} .admin-role-primary-grid,#${rootId} .admin-role-sites-grid,#${rootId} .admin-role-site-module-layout,#${rootId} .admin-role-final-grid,#${rootId} .admin-role-advanced-layout{grid-template-columns:1fr}#${rootId} .admin-role-recap{position:relative;top:auto;grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-role-recap header{grid-column:1 / -1}}
       @media (max-width:700px){#${rootId} .admin-top,#${rootId} .admin-toolbar,#${rootId} .admin-filter-card{display:grid}#${rootId} .admin-title h1{font-size:1.55rem}#${rootId} .admin-title-logo{height:1.38rem;max-width:4.2rem}#${rootId} .admin-search,#${rootId} .admin-filter-control{min-width:0;width:100%;max-width:none}#${rootId} .admin-filter-count{margin-left:0}#${rootId} .admin-list-row{grid-template-columns:2.5rem minmax(0,1fr);align-items:start}#${rootId} .admin-list-row.is-draggable,#${rootId} .admin-menu-tree-row{grid-template-columns:1.8rem 2.5rem minmax(0,1fr)}#${rootId} .admin-list-side{grid-column:1 / -1;justify-content:space-between}#${rootId} .admin-menu-tree-row .admin-list-side{padding-left:calc(4.1rem + var(--menu-indent))}}
-      @media (max-width:520px){#${rootId} .admin-stats{grid-template-columns:1fr}#${rootId} .admin-site-overview{grid-template-columns:2.75rem minmax(0,1fr)}#${rootId} .admin-site-overview .admin-pill{grid-column:1 / -1;justify-self:start}#${rootId} .admin-site-identity-grid{grid-template-columns:minmax(0,1fr) 2.85rem auto;gap:.45rem}#${rootId} .admin-site-color-field input{width:2.35rem;height:2.35rem}#${rootId} .admin-site-hours-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}#${rootId} .admin-site-photo{grid-template-columns:1fr}#${rootId} .admin-site-photo-preview{width:100%;max-width:14rem}#${rootId} .admin-actions .admin-button,#${rootId} .admin-site-form-footer .admin-button,#${rootId} .admin-role-actions .admin-button{font-size:.76rem}#${rootId} .admin-role-profile-list,#${rootId} .admin-role-module-grid,#${rootId} .admin-role-recap{grid-template-columns:1fr}#${rootId} .admin-role-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-role-metrics{grid-template-columns:1fr}#${rootId} .admin-role-metric{border-left:0;border-top:1px solid var(--admin-border)}#${rootId} .admin-role-metric:first-child{border-top:0}#${rootId} .admin-role-wizard{padding:.75rem}#${rootId} .admin-role-stage{padding:.85rem}}
+      @media (max-width:520px){#${rootId} .admin-stats{grid-template-columns:1fr}#${rootId} .admin-site-overview{grid-template-columns:2.75rem minmax(0,1fr)}#${rootId} .admin-site-overview .admin-pill{grid-column:1 / -1;justify-self:start}#${rootId} .admin-site-identity-grid{grid-template-columns:minmax(0,1fr) 2.85rem auto;gap:.45rem}#${rootId} .admin-site-color-field input{width:2.35rem;height:2.35rem}#${rootId} .admin-site-hours-grid,#${rootId} .admin-asset-prices-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}#${rootId} .admin-site-photo{grid-template-columns:1fr}#${rootId} .admin-site-photo-preview{width:100%;max-width:14rem}#${rootId} .admin-actions .admin-button,#${rootId} .admin-site-form-footer .admin-button,#${rootId} .admin-role-actions .admin-button{font-size:.76rem}#${rootId} .admin-role-profile-list,#${rootId} .admin-role-module-grid,#${rootId} .admin-role-recap{grid-template-columns:1fr}#${rootId} .admin-role-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}#${rootId} .admin-role-metrics{grid-template-columns:1fr}#${rootId} .admin-role-metric{border-left:0;border-top:1px solid var(--admin-border)}#${rootId} .admin-role-metric:first-child{border-top:0}#${rootId} .admin-role-wizard{padding:.75rem}#${rootId} .admin-role-stage{padding:.85rem}}
     `;
     document.head.appendChild(style);
   }
@@ -516,6 +526,8 @@ import hubLogoUrl from "./logo-hub.svg";
     if (state.tab === "overview") return renderOverview();
     if (state.tab === "modules") return renderModules();
     if (state.tab === "sites") return renderSites();
+    if (state.tab === "reservations") return renderReservationsAdmin();
+    if (state.tab === "equipment") return renderEquipmentAdmin();
     if (state.tab === "pages") return renderPages();
     if (state.tab === "users") return renderUsers();
 
@@ -527,6 +539,8 @@ import hubLogoUrl from "./logo-hub.svg";
       overview: "Vue synthétique de l'administration et accès rapides.",
       users: "Identité, mot de passe, site principal, modules et permissions.",
       sites: "Coordonnées, horaires, couleur, photo et activation des sites.",
+      reservations: "Véhicules disponibles, photos, horaires et activation.",
+      equipment: "Matériel louable, catégories, photos, tarifs et visibilité.",
       modules: "Modules disponibles dans le HUB, routes et badges du menu.",
       menu: "Organisation du menu latéral affiché dans le HUB.",
       pages: "Pages internes, contenus et visibilité dans le menu.",
@@ -536,13 +550,15 @@ import hubLogoUrl from "./logo-hub.svg";
   }
 
   function searchableTabs() {
-    return ["users", "sites", "modules", "pages"];
+    return ["users", "sites", "reservations", "equipment", "modules", "pages"];
   }
 
   function searchPlaceholder(key) {
     return {
       users: "Rechercher un utilisateur",
       sites: "Rechercher un site",
+      reservations: "Rechercher un véhicule",
+      equipment: "Rechercher matériel ou catégorie",
       modules: "Rechercher un module",
       pages: "Rechercher une page",
     }[key] || "Rechercher";
@@ -572,6 +588,8 @@ import hubLogoUrl from "./logo-hub.svg";
           <div class="admin-card-body admin-overview-list">
             ${overviewLink("users", "Gérer les utilisateurs", "Créer, activer, attribuer les sites et droits", "users")}
             ${overviewLink("sites", "Gérer les sites", "Adresse, téléphone, horaires, couleur et photo", "category")}
+            ${overviewLink("reservations", "Gérer les véhicules", "Photos, horaires et disponibilité des réservations", "truck")}
+            ${overviewLink("equipment", "Gérer le matériel", "Catégories, machines, photos et tarifs visibles", "package")}
             ${overviewLink("modules", "Gérer les modules", "Routes, badges et visibilité dans le HUB", "package")}
             ${overviewLink("menu", "Organiser la navigation", "Sections, pages, sous-pages, icônes et ordre d’affichage", "settings")}
           </div>
@@ -659,6 +677,40 @@ import hubLogoUrl from "./logo-hub.svg";
     const site = (state.data?.sites || []).find((item) => Number(item.id) === Number(id));
 
     return site?.name || "";
+  }
+
+  function siteOptions(selectedId) {
+    return (state.data?.sites || [])
+      .map((site) => `<option value="${esc(site.id)}"${Number(site.id) === Number(selectedId) ? " selected" : ""}>${esc(site.name)}</option>`)
+      .join("");
+  }
+
+  function categoryName(id) {
+    const category = (state.data?.equipmentCategories || []).find((item) => Number(item.id) === Number(id));
+
+    return category?.name || "";
+  }
+
+  function categoryOptions(selectedId) {
+    return (state.data?.equipmentCategories || [])
+      .map((category) => `<option value="${esc(category.id)}"${Number(category.id) === Number(selectedId) ? " selected" : ""}>${esc(category.name)}</option>`)
+      .join("");
+  }
+
+  function equipmentPriceLabel(item) {
+    const prices = [];
+    if (item.showHalfDayPrice !== false && Number(item.halfDayPrice || 0) > 0) {
+      prices.push(`1/2 j ${money(item.halfDayPrice)}`);
+    }
+    if (item.showDayPrice !== false && Number(item.dayPrice || 0) > 0) {
+      prices.push(`jour ${money(item.dayPrice)}`);
+    }
+
+    return prices.join(" · ");
+  }
+
+  function money(value) {
+    return `${Number(value || 0).toLocaleString("fr-FR", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} €`;
   }
 
   function roleLabel(roleKey) {
@@ -944,20 +996,26 @@ import hubLogoUrl from "./logo-hub.svg";
   }
 
   function renderModules() {
-    const modules = filteredRecords(state.data?.modules || [], ["name", "slug", "routePath", "menuBadge"]);
-    const rows = modules.map((module) => renderListRow({
-      type: "module",
-      id: module.id,
-      title: module.name,
-      subtitle: `${module.routePath || "Route non renseignée"} · ${module.description || module.slug}`,
-      iconKey: moduleIcon(module),
-      meta: `${statusPill(module.active !== false, "Actif", "Masqué")}<span class="admin-pill">${esc(module.slug)}</span>${module.menuBadge ? `<span class="admin-pill">${esc(module.menuBadge)}</span>` : ""}`,
-    }));
+    const modules = filteredRecords(state.data?.modules || [], ["name", "slug", "routePath", "menuBadge", "menuBadgeColor"]);
+    const rows = modules.map((module) => {
+      const badgeColor = validHexColor(module.menuBadgeColor) || defaultSiteColor();
+
+      return renderListRow({
+        type: "module",
+        id: module.id,
+        title: module.name,
+        subtitle: `${module.routePath || "Route non renseignée"} · ${module.description || module.slug}`,
+        iconKey: moduleIcon(module),
+        meta: `${statusPill(module.active !== false, "Actif", "Masqué")}<span class="admin-pill">${esc(module.slug)}</span>${module.menuBadge ? `<span class="admin-pill" style="border-color:${esc(badgeColor)};color:${esc(badgeColor)};background:${esc(badgeColor)}12">${esc(module.menuBadge)}</span>` : ""}`,
+      });
+    });
 
     return renderListCard("Liste des modules", "Titre, route, badge et visibilité. Cliquez sur le crayon pour modifier.", "", rows, "Aucun module trouvé.");
   }
 
   function renderModuleForm(module) {
+    const menuBadgeColor = validHexColor(module.menuBadgeColor) || defaultSiteColor();
+
     return `
       <form class="admin-row" data-module-form>
         <input type="hidden" name="id" value="${esc(module.id)}">
@@ -970,6 +1028,7 @@ import hubLogoUrl from "./logo-hub.svg";
           <label>Slug <input name="slug" value="${esc(module.slug)}" required></label>
           <label>Route <input name="routePath" value="${esc(module.routePath)}" required></label>
           <label>Badge <input name="menuBadge" value="${esc(module.menuBadge)}"></label>
+          <label class="admin-site-color-field">Couleur badge <input name="menuBadgeColor" type="color" value="${esc(menuBadgeColor)}" aria-label="Couleur du badge menu"></label>
           <label>Ordre <input name="sortOrder" type="number" value="${esc(module.sortOrder)}"></label>
           <label class="admin-check"><input name="active" type="checkbox"${module.active !== false ? " checked" : ""}> Actif</label>
           <label class="admin-check"><input name="showMenuBadge" type="checkbox"${module.showMenuBadge ? " checked" : ""}> Afficher badge</label>
@@ -987,6 +1046,9 @@ import hubLogoUrl from "./logo-hub.svg";
     const rows = sites.map((site) => {
       const color = validHexColor(site.color) || defaultSiteColor();
       const photo = site.photoUrl ? `<img src="${esc(site.photoUrl)}" alt="">` : `<i class="admin-site-swatch" style="--site-color:${esc(color)}" aria-hidden="true"></i>`;
+      const backgroundPill = site.photoUrl && site.showPhotoInHeader === false
+        ? `<span class="admin-pill is-hidden">fond masqué</span>`
+        : "";
 
       return renderListRow({
         type: "site",
@@ -994,7 +1056,7 @@ import hubLogoUrl from "./logo-hub.svg";
         title: site.name || "Nouveau site",
         subtitle: [site.address || "Adresse non renseignée", site.phone || "Téléphone non renseigné", site.email || "E-mail non renseigné"].join(" · "),
         iconHtml: photo,
-        meta: `${statusPill(site.active !== false, "Actif", "Masqué")}<span class="admin-pill">ordre ${esc(site.sortOrder || 100)}</span><span class="admin-pill">${esc(site.slug || "nouveau")}</span>`,
+        meta: `${statusPill(site.active !== false, "Actif", "Masqué")}${backgroundPill}<span class="admin-pill">ordre ${esc(site.sortOrder || 100)}</span><span class="admin-pill">${esc(site.slug || "nouveau")}</span>`,
         dragType: site.id ? "site" : "",
         dragId: site.id || "",
       });
@@ -1115,7 +1177,302 @@ import hubLogoUrl from "./logo-hub.svg";
             <button class="admin-button" type="button" data-site-photo-pick>${src ? "Remplacer" : "Choisir une photo"}</button>
             <button class="admin-button admin-button-danger" type="button" data-site-photo-remove${src ? "" : " hidden"}>Supprimer</button>
           </div>
+          <label class="admin-site-status-card admin-site-background-toggle">
+            <span>
+              <strong>Photo en arrière-plan</strong>
+              <span>Afficher cette photo dans le bandeau informations du site.</span>
+            </span>
+            <input name="showPhotoInHeader" type="checkbox"${site.showPhotoInHeader !== false ? " checked" : ""}>
+          </label>
           <input type="file" accept="image/png,image/jpeg,image/webp" hidden data-site-photo-input>
+          <input type="hidden" name="photoDataUrl" value="">
+          <input type="hidden" name="removePhoto" value="">
+        </div>
+      </div>
+    `;
+  }
+
+  function renderReservationsAdmin() {
+    const vehicles = filteredRecords(state.data?.vehicles || [], ["name", "description", "siteName"]);
+    const rows = vehicles.map((vehicle) => {
+      const color = validHexColor(vehicle.color) || defaultSiteColor();
+      const media = entityMedia(vehicle.photoUrl, vehicle.name, color, "truck");
+
+      return renderListRow({
+        type: "vehicle",
+        id: vehicle.id || "new",
+        title: vehicle.name || "Nouveau véhicule",
+        subtitle: [vehicle.siteName || siteName(vehicle.siteId) || "Site non renseigné", vehicle.description || "Description non renseignée", vehicle.hoursLabel || `${vehicle.dayStartTime || "06:00"}-${vehicle.dayEndTime || "19:30"}`].join(" · "),
+        iconHtml: media,
+        meta: `${statusPill(vehicle.active !== false, "Actif", "Masqué")}<span class="admin-pill">${esc(vehicle.reservationsCount || 0)} réservation(s)</span>`,
+      });
+    });
+
+    return renderListCard(
+      "Véhicules de réservation",
+      "Véhicules visibles dans le module Réservations, avec photo, site et horaires.",
+      `<button class="admin-button admin-button-primary" type="button" data-new-vehicle>${icon("plus")} Créer un véhicule</button>`,
+      rows,
+      "Aucun véhicule trouvé.",
+    );
+  }
+
+  function renderVehicleForm(vehicle) {
+    const color = validHexColor(vehicle.color) || defaultSiteColor();
+    const title = vehicle.name || "Nouveau véhicule";
+
+    return `
+      <form class="admin-asset-form" data-vehicle-form>
+        <input type="hidden" name="id" value="${esc(vehicle.id || "")}">
+        <div class="admin-site-overview" style="--site-color:${esc(color)}">
+          <span class="admin-site-overview-icon">${entityMedia(vehicle.photoUrl, title, color, "truck")}</span>
+          <span class="admin-site-overview-copy">
+            <strong>${esc(title)}</strong>
+            <span>${esc(vehicle.siteName || siteName(vehicle.siteId) || "Site non renseigné")} · ${esc(vehicle.hoursLabel || "Horaires véhicule")}</span>
+          </span>
+          <span class="admin-pill${vehicle.active === false ? " is-hidden" : " is-active"}">${vehicle.active === false ? "Masqué" : "Actif"}</span>
+        </div>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("truck")}</span>
+            <span class="admin-form-section-title">
+              <strong>Identité du véhicule</strong>
+              <span>Nom, site, couleur et disponibilité dans le planning.</span>
+            </span>
+          </div>
+          <div class="admin-site-identity-grid">
+            <label>Nom <input name="name" value="${esc(vehicle.name || "")}" required></label>
+            <label class="admin-site-color-field">Couleur <input name="color" type="color" value="${esc(color)}" aria-label="Couleur du véhicule"></label>
+            <label class="admin-site-status-card is-compact">
+              <span><strong>Actif</strong><span>Visible dans les réservations.</span></span>
+              <input name="active" type="checkbox"${vehicle.active !== false ? " checked" : ""}>
+            </label>
+          </div>
+          <label>Site
+            <select name="siteId" required>
+              ${siteOptions(vehicle.siteId)}
+            </select>
+          </label>
+          <label>Description <input name="description" value="${esc(vehicle.description || "")}"></label>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("eye")}</span>
+            <span class="admin-form-section-title">
+              <strong>Photo du véhicule</strong>
+              <span>Image affichée dans les cartes de réservation.</span>
+            </span>
+          </div>
+          ${renderEntityPhoto(vehicle, "vehicle", "Photo du véhicule")}
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("calendar")}</span>
+            <span class="admin-form-section-title">
+              <strong>Horaires de réservation</strong>
+              <span>Plage disponible par défaut dans le planning véhicule.</span>
+            </span>
+          </div>
+          <div class="admin-site-hours-grid">
+            <label>Début <input name="dayStartTime" type="time" value="${esc(vehicle.dayStartTime || "06:00")}"></label>
+            <label>Fin <input name="dayEndTime" type="time" value="${esc(vehicle.dayEndTime || "19:30")}"></label>
+          </div>
+        </section>
+
+        <div class="admin-site-form-footer">
+          <button class="admin-button" type="button" data-close-admin-modal>Annuler</button>
+          <button class="admin-button admin-button-primary" type="submit">Enregistrer</button>
+          ${vehicle.id ? `<button class="admin-button admin-button-danger" type="button" data-delete-vehicle="${esc(vehicle.id)}">Supprimer</button>` : ""}
+        </div>
+      </form>
+    `;
+  }
+
+  function renderEquipmentAdmin() {
+    const categories = filteredRecords(state.data?.equipmentCategories || [], ["name", "slug"]);
+    const items = filteredRecords(state.data?.equipmentItems || [], ["name", "description", "inventoryCode", "siteName", "categoryName"]);
+    const categoryRows = categories.map((category) => renderListRow({
+      type: "equipment-category",
+      id: category.id || "new",
+      title: category.name || "Nouvelle catégorie",
+      subtitle: `${category.slug || "categorie"} · ${category.itemsCount || 0} matériel(s)`,
+      iconKey: "category",
+      meta: `${statusPill(category.active !== false, "Active", "Masquée")}<span class="admin-pill">ordre ${esc(category.sortOrder || 100)}</span>`,
+    }));
+    const itemRows = items.map((item) => {
+      const color = validHexColor(item.color) || defaultSiteColor();
+      const price = equipmentPriceLabel(item);
+
+      return renderListRow({
+        type: "equipment-item",
+        id: item.id || "new",
+        title: item.name || "Nouveau matériel",
+        subtitle: [item.siteName || siteName(item.siteId) || "Site non renseigné", item.categoryName || categoryName(item.categoryId) || "Sans catégorie", item.description || item.inventoryCode || "Description non renseignée"].join(" · "),
+        iconHtml: entityMedia(item.photoUrl, item.name, color, "package"),
+        meta: `${statusPill(item.active !== false, "Actif", "Masqué")}${price ? `<span class="admin-pill">${esc(price)}</span>` : ""}<span class="admin-pill">${esc(item.rentalsCount || 0)} location(s)</span>`,
+      });
+    });
+
+    return `
+      <section class="admin-resource-grid">
+        ${renderListCard(
+          "Catégories",
+          "Familles affichées dans le filtre du module Location matériel.",
+          `<button class="admin-button admin-button-primary" type="button" data-new-equipment-category>${icon("plus")} Catégorie</button>`,
+          categoryRows,
+          "Aucune catégorie trouvée.",
+        )}
+        ${renderListCard(
+          "Matériels",
+          "Machines et matériels disponibles à la location interne.",
+          `<button class="admin-button admin-button-primary" type="button" data-new-equipment-item>${icon("plus")} Matériel</button>`,
+          itemRows,
+          "Aucun matériel trouvé.",
+        )}
+      </section>
+    `;
+  }
+
+  function renderEquipmentCategoryForm(category) {
+    return `
+      <form class="admin-row" data-equipment-category-form>
+        <input type="hidden" name="id" value="${esc(category.id || "")}">
+        <div class="admin-row-title">
+          <strong>${esc(category.name || "Nouvelle catégorie")}</strong>
+          <span class="admin-list-meta"><span class="admin-pill${category.active !== false ? " is-active" : " is-hidden"}">${category.active !== false ? "Active" : "Masquée"}</span><span class="admin-pill">${esc(category.itemsCount || 0)} matériel(s)</span></span>
+        </div>
+        <div class="admin-grid">
+          <label>Nom <input name="name" value="${esc(category.name || "")}" required></label>
+          <label>Ordre <input name="sortOrder" type="number" value="${esc(category.sortOrder || 100)}"></label>
+          <label class="admin-check"><input name="active" type="checkbox"${category.active !== false ? " checked" : ""}> Active</label>
+        </div>
+        <div class="admin-actions">
+          <button class="admin-button" type="button" data-close-admin-modal>Annuler</button>
+          <button class="admin-button admin-button-primary" type="submit">Enregistrer</button>
+          ${category.id ? `<button class="admin-button admin-button-danger" type="button" data-delete-equipment-category="${esc(category.id)}">Supprimer</button>` : ""}
+        </div>
+      </form>
+    `;
+  }
+
+  function renderEquipmentItemForm(item) {
+    const color = validHexColor(item.color) || defaultSiteColor();
+    const title = item.name || "Nouveau matériel";
+
+    return `
+      <form class="admin-asset-form" data-equipment-item-form>
+        <input type="hidden" name="id" value="${esc(item.id || "")}">
+        <div class="admin-site-overview" style="--site-color:${esc(color)}">
+          <span class="admin-site-overview-icon">${entityMedia(item.photoUrl, title, color, "package")}</span>
+          <span class="admin-site-overview-copy">
+            <strong>${esc(title)}</strong>
+            <span>${esc(item.siteName || siteName(item.siteId) || "Site non renseigné")} · ${esc(item.categoryName || categoryName(item.categoryId) || "Sans catégorie")}</span>
+          </span>
+          <span class="admin-pill${item.active === false ? " is-hidden" : " is-active"}">${item.active === false ? "Masqué" : "Actif"}</span>
+        </div>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("package")}</span>
+            <span class="admin-form-section-title">
+              <strong>Identité du matériel</strong>
+              <span>Nom, site, catégorie, couleur et visibilité.</span>
+            </span>
+          </div>
+          <div class="admin-site-identity-grid">
+            <label>Nom <input name="name" value="${esc(item.name || "")}" required></label>
+            <label class="admin-site-color-field">Couleur <input name="color" type="color" value="${esc(color)}" aria-label="Couleur du matériel"></label>
+            <label class="admin-site-status-card is-compact">
+              <span><strong>Actif</strong><span>Visible dans la location.</span></span>
+              <input name="active" type="checkbox"${item.active !== false ? " checked" : ""}>
+            </label>
+          </div>
+          <div class="admin-asset-details-grid">
+            <label>Site
+              <select name="siteId" required>${siteOptions(item.siteId)}</select>
+            </label>
+            <label>Catégorie
+              <select name="categoryId">
+                <option value="">Sans catégorie</option>
+                ${categoryOptions(item.categoryId)}
+              </select>
+            </label>
+          </div>
+          <div class="admin-asset-details-grid">
+            <label>Code inventaire <input name="inventoryCode" value="${esc(item.inventoryCode || "")}"></label>
+            <label>Ordre <input name="sortOrder" type="number" value="${esc(item.sortOrder || 100)}"></label>
+          </div>
+          <label>Description <input name="description" value="${esc(item.description || "")}"></label>
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("eye")}</span>
+            <span class="admin-form-section-title">
+              <strong>Photo du matériel</strong>
+              <span>Image affichée dans les cartes de location.</span>
+            </span>
+          </div>
+          ${renderEntityPhoto(item, "equipment", "Photo du matériel")}
+        </section>
+
+        <section class="admin-form-section">
+          <div class="admin-form-section-head">
+            <span class="admin-form-section-icon">${icon("creditCard")}</span>
+            <span class="admin-form-section-title">
+              <strong>Tarifs et mode</strong>
+              <span>Prix visibles ou masqués dans le module Location matériel.</span>
+            </span>
+          </div>
+          <div class="admin-asset-prices-grid">
+            <label>Demi-journée <input name="halfDayPrice" type="number" min="0" step="0.01" value="${esc(item.halfDayPrice || 0)}"></label>
+            <label>Journée <input name="dayPrice" type="number" min="0" step="0.01" value="${esc(item.dayPrice || 0)}"></label>
+            <label>Caution <input name="depositAmount" type="number" min="0" step="0.01" value="${esc(item.depositAmount || 0)}"></label>
+            <label>Mode
+              <select name="rentalMode">
+                <option value="half_day_and_day"${item.rentalMode !== "day_only" ? " selected" : ""}>Demi-journée + journée</option>
+                <option value="day_only"${item.rentalMode === "day_only" ? " selected" : ""}>Journée uniquement</option>
+              </select>
+            </label>
+          </div>
+          <div class="admin-grid">
+            <label class="admin-check"><input name="showHalfDayPrice" type="checkbox"${item.showHalfDayPrice !== false ? " checked" : ""}> Afficher le prix 1/2 journée</label>
+            <label class="admin-check"><input name="showDayPrice" type="checkbox"${item.showDayPrice !== false ? " checked" : ""}> Afficher le prix journée</label>
+          </div>
+        </section>
+
+        <div class="admin-site-form-footer">
+          <button class="admin-button" type="button" data-close-admin-modal>Annuler</button>
+          <button class="admin-button admin-button-primary" type="submit">Enregistrer</button>
+          ${item.id ? `<button class="admin-button admin-button-danger" type="button" data-delete-equipment-item="${esc(item.id)}">Supprimer</button>` : ""}
+        </div>
+      </form>
+    `;
+  }
+
+  function entityMedia(src, label, color, iconKey) {
+    return src
+      ? `<span class="admin-asset-media" style="--asset-color:${esc(color)}"><img src="${esc(src)}" alt="${esc(label || "")}" loading="lazy"></span>`
+      : `<span class="admin-asset-media" style="--asset-color:${esc(color)}">${icon(iconKey)}</span>`;
+  }
+
+  function renderEntityPhoto(record, prefix, label) {
+    const src = record.photoUrl || "";
+
+    return `
+      <div class="admin-site-photo" data-entity-photo="${esc(prefix)}">
+        <span class="admin-site-photo-preview" data-entity-photo-preview>${src ? `<img src="${esc(src)}" alt="${esc(record.name || label)}" loading="lazy">` : `<span>${esc(label)}</span>`}</span>
+        <div class="admin-site-photo-content">
+          <strong>Image actuelle</strong>
+          <p>Choisissez ou remplacez la photo affichée dans le module.</p>
+          <div class="admin-site-photo-actions">
+            <button class="admin-button" type="button" data-entity-photo-pick>${src ? "Remplacer" : "Choisir une photo"}</button>
+            <button class="admin-button admin-button-danger" type="button" data-entity-photo-remove${src ? "" : " hidden"}>Supprimer</button>
+          </div>
+          <input type="file" accept="image/png,image/jpeg,image/webp" hidden data-entity-photo-input>
           <input type="hidden" name="photoDataUrl" value="">
           <input type="hidden" name="removePhoto" value="">
         </div>
@@ -1705,6 +2062,18 @@ import hubLogoUrl from "./logo-hub.svg";
       return { title: record.id ? "Modifier le site" : "Créer un site", subtitle: record.name || "Nouveau site", body: renderSiteForm(record) };
     }
 
+    if (type === "vehicle") {
+      return { title: record.id ? "Modifier le véhicule" : "Créer un véhicule", subtitle: record.name || "Nouveau véhicule", body: renderVehicleForm(record) };
+    }
+
+    if (type === "equipment-category") {
+      return { title: record.id ? "Modifier la catégorie" : "Créer une catégorie", subtitle: record.name || "Nouvelle catégorie", body: renderEquipmentCategoryForm(record) };
+    }
+
+    if (type === "equipment-item") {
+      return { title: record.id ? "Modifier le matériel" : "Créer un matériel", subtitle: record.name || "Nouveau matériel", body: renderEquipmentItemForm(record) };
+    }
+
     if (type === "module") {
       return { title: "Modifier le module", subtitle: record.name, body: renderModuleForm(record) };
     }
@@ -1730,6 +2099,9 @@ import hubLogoUrl from "./logo-hub.svg";
       module: state.data?.modules || [],
       page: state.data?.pages || [],
       site: state.data?.sites || [],
+      vehicle: state.data?.vehicles || [],
+      "equipment-category": state.data?.equipmentCategories || [],
+      "equipment-item": state.data?.equipmentItems || [],
       user: state.data?.users || [],
       "menu-group": state.data?.menuGroups || [],
       "menu-item": state.data?.menuItems || [],
@@ -1887,6 +2259,11 @@ import hubLogoUrl from "./logo-hub.svg";
     root.querySelectorAll("[data-module-form]").forEach((form) => form.addEventListener("submit", saveModule));
     root.querySelectorAll("[data-site-form]").forEach((form) => form.addEventListener("submit", saveSite));
     root.querySelectorAll("[data-site-form]").forEach(bindSitePhotoForm);
+    root.querySelectorAll("[data-vehicle-form]").forEach((form) => form.addEventListener("submit", saveVehicle));
+    root.querySelectorAll("[data-vehicle-form]").forEach(bindEntityPhotoForm);
+    root.querySelectorAll("[data-equipment-category-form]").forEach((form) => form.addEventListener("submit", saveEquipmentCategory));
+    root.querySelectorAll("[data-equipment-item-form]").forEach((form) => form.addEventListener("submit", saveEquipmentItem));
+    root.querySelectorAll("[data-equipment-item-form]").forEach(bindEntityPhotoForm);
     root.querySelectorAll("[data-page-form]").forEach((form) => form.addEventListener("submit", savePage));
     root.querySelectorAll("[data-user-form]").forEach((form) => form.addEventListener("submit", saveUser));
     root.querySelectorAll("[data-user-roles-form]").forEach((form) => form.addEventListener("submit", saveUserRoles));
@@ -1922,10 +2299,31 @@ import hubLogoUrl from "./logo-hub.svg";
     });
     bindMenuDrag(root);
     root.querySelectorAll("[data-delete-site]").forEach((button) => button.addEventListener("click", deleteSite));
+    root.querySelectorAll("[data-delete-vehicle]").forEach((button) => button.addEventListener("click", deleteVehicle));
+    root.querySelectorAll("[data-delete-equipment-category]").forEach((button) => button.addEventListener("click", deleteEquipmentCategory));
+    root.querySelectorAll("[data-delete-equipment-item]").forEach((button) => button.addEventListener("click", deleteEquipmentItem));
     root.querySelectorAll("[data-delete-page]").forEach((button) => button.addEventListener("click", deletePage));
     root.querySelector("[data-new-site]")?.addEventListener("click", () => {
-      state.data.sites = [...(state.data?.sites || []), { id: "", name: "", active: true, sortOrder: nextSiteSortOrder(), address: "", phone: "", email: "", color: defaultSiteColor(), photoUrl: "", hours: {} }];
+      state.data.sites = [...(state.data?.sites || []), { id: "", name: "", active: true, sortOrder: nextSiteSortOrder(), address: "", phone: "", email: "", color: defaultSiteColor(), photoUrl: "", showPhotoInHeader: true, hours: {} }];
       state.editing = { type: "site", id: "new" };
+      render();
+    });
+    root.querySelector("[data-new-vehicle]")?.addEventListener("click", () => {
+      const firstSite = (state.data?.sites || [])[0] || {};
+      state.data.vehicles = [{ id: "", siteId: firstSite.id || "", siteName: firstSite.name || "", name: "", description: "", color: defaultSiteColor(), photoUrl: "", dayStartTime: "06:00", dayEndTime: "19:30", hoursLabel: "06:00-19:30", active: true, reservationsCount: 0 }, ...(state.data?.vehicles || [])];
+      state.editing = { type: "vehicle", id: "new" };
+      render();
+    });
+    root.querySelector("[data-new-equipment-category]")?.addEventListener("click", () => {
+      state.data.equipmentCategories = [{ id: "", name: "", slug: "", active: true, sortOrder: 100, itemsCount: 0 }, ...(state.data?.equipmentCategories || [])];
+      state.editing = { type: "equipment-category", id: "new" };
+      render();
+    });
+    root.querySelector("[data-new-equipment-item]")?.addEventListener("click", () => {
+      const firstSite = (state.data?.sites || [])[0] || {};
+      const firstCategory = (state.data?.equipmentCategories || [])[0] || {};
+      state.data.equipmentItems = [{ id: "", siteId: firstSite.id || "", siteName: firstSite.name || "", categoryId: firstCategory.id || "", categoryName: firstCategory.name || "", name: "", inventoryCode: "", description: "", color: defaultSiteColor(), photoUrl: "", halfDayPrice: 0, dayPrice: 0, showHalfDayPrice: true, showDayPrice: true, rentalMode: "half_day_and_day", depositAmount: 0, active: true, sortOrder: 100, rentalsCount: 0 }, ...(state.data?.equipmentItems || [])];
+      state.editing = { type: "equipment-item", id: "new" };
       render();
     });
     root.querySelector("[data-new-page]")?.addEventListener("click", () => {
@@ -2044,6 +2442,18 @@ import hubLogoUrl from "./logo-hub.svg";
   function closeEditor() {
     if (state.editing?.type === "site" && state.editing.id === "new") {
       state.data.sites = (state.data?.sites || []).filter((site) => site.id);
+    }
+
+    if (state.editing?.type === "vehicle" && state.editing.id === "new") {
+      state.data.vehicles = (state.data?.vehicles || []).filter((vehicle) => vehicle.id);
+    }
+
+    if (state.editing?.type === "equipment-category" && state.editing.id === "new") {
+      state.data.equipmentCategories = (state.data?.equipmentCategories || []).filter((category) => category.id);
+    }
+
+    if (state.editing?.type === "equipment-item" && state.editing.id === "new") {
+      state.data.equipmentItems = (state.data?.equipmentItems || []).filter((item) => item.id);
     }
 
     if (state.editing?.type === "page" && state.editing.id === "new") {
@@ -2313,6 +2723,7 @@ import hubLogoUrl from "./logo-hub.svg";
         slug: String(data.get("slug") || ""),
         routePath: String(data.get("routePath") || ""),
         menuBadge: String(data.get("menuBadge") || ""),
+        menuBadgeColor: String(data.get("menuBadgeColor") || ""),
         showMenuBadge: Boolean(data.get("showMenuBadge")),
         active: Boolean(data.get("active")),
         sortOrder: Number(data.get("sortOrder") || 100),
@@ -2340,8 +2751,73 @@ import hubLogoUrl from "./logo-hub.svg";
         afternoonEnd: String(data.get("afternoonEnd") || "17:30"),
         photoDataUrl: String(data.get("photoDataUrl") || ""),
         removePhoto: Boolean(data.get("removePhoto")),
+        showPhotoInHeader: Boolean(data.get("showPhotoInHeader")),
         active: Boolean(data.get("active")),
         sortOrder: Number(data.get("sortOrder") || 0),
+      },
+    }));
+  }
+
+  async function saveVehicle(event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
+    await save("vehicle", () => request("save_vehicle", {
+      method: "POST",
+      body: {
+        id: Number(data.get("id") || 0),
+        siteId: Number(data.get("siteId") || 0),
+        name: String(data.get("name") || ""),
+        description: String(data.get("description") || ""),
+        color: String(data.get("color") || ""),
+        dayStartTime: String(data.get("dayStartTime") || "06:00"),
+        dayEndTime: String(data.get("dayEndTime") || "19:30"),
+        photoDataUrl: String(data.get("photoDataUrl") || ""),
+        removePhoto: Boolean(data.get("removePhoto")),
+        active: Boolean(data.get("active")),
+      },
+    }));
+  }
+
+  async function saveEquipmentCategory(event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
+    await save("equipment-category", () => request("save_equipment_category", {
+      method: "POST",
+      body: {
+        id: Number(data.get("id") || 0),
+        name: String(data.get("name") || ""),
+        active: Boolean(data.get("active")),
+        sortOrder: Number(data.get("sortOrder") || 100),
+      },
+    }));
+  }
+
+  async function saveEquipmentItem(event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
+    await save("equipment-item", () => request("save_equipment_item", {
+      method: "POST",
+      body: {
+        id: Number(data.get("id") || 0),
+        siteId: Number(data.get("siteId") || 0),
+        categoryId: Number(data.get("categoryId") || 0),
+        name: String(data.get("name") || ""),
+        inventoryCode: String(data.get("inventoryCode") || ""),
+        description: String(data.get("description") || ""),
+        color: String(data.get("color") || ""),
+        halfDayPrice: Number(data.get("halfDayPrice") || 0),
+        dayPrice: Number(data.get("dayPrice") || 0),
+        depositAmount: Number(data.get("depositAmount") || 0),
+        rentalMode: String(data.get("rentalMode") || "half_day_and_day"),
+        showHalfDayPrice: Boolean(data.get("showHalfDayPrice")),
+        showDayPrice: Boolean(data.get("showDayPrice")),
+        photoDataUrl: String(data.get("photoDataUrl") || ""),
+        removePhoto: Boolean(data.get("removePhoto")),
+        active: Boolean(data.get("active")),
+        sortOrder: Number(data.get("sortOrder") || 100),
       },
     }));
   }
@@ -2389,6 +2865,55 @@ import hubLogoUrl from "./logo-hub.svg";
       removePhoto.value = "1";
       if (input) input.value = "";
       preview.innerHTML = "<span>Photo du site</span>";
+      remove.setAttribute("hidden", "");
+      if (pick) pick.textContent = "Choisir une photo";
+    });
+  }
+
+  function bindEntityPhotoForm(form) {
+    const input = form.querySelector("[data-entity-photo-input]");
+    const pick = form.querySelector("[data-entity-photo-pick]");
+    const remove = form.querySelector("[data-entity-photo-remove]");
+    const photoData = form.querySelector('[name="photoDataUrl"]');
+    const removePhoto = form.querySelector('[name="removePhoto"]');
+    const preview = form.querySelector("[data-entity-photo-preview]");
+    const emptyLabel = preview?.textContent?.trim() || "Photo";
+
+    pick?.addEventListener("click", () => input?.click());
+
+    input?.addEventListener("change", async () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+
+      if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+        alert("Choisis une image PNG, JPG ou WebP.");
+        input.value = "";
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert("La photo ne doit pas dépasser 5 Mo.");
+        input.value = "";
+        return;
+      }
+
+      try {
+        const dataUrl = await readFileAsDataUrl(file);
+        photoData.value = dataUrl;
+        removePhoto.value = "";
+        preview.innerHTML = `<img src="${esc(dataUrl)}" alt="">`;
+        remove?.removeAttribute("hidden");
+        if (pick) pick.textContent = "Remplacer";
+      } catch (error) {
+        alert(error.message || "Photo illisible.");
+      }
+    });
+
+    remove?.addEventListener("click", () => {
+      photoData.value = "";
+      removePhoto.value = "1";
+      if (input) input.value = "";
+      preview.innerHTML = `<span>${esc(emptyLabel)}</span>`;
       remove.setAttribute("hidden", "");
       if (pick) pick.textContent = "Choisir une photo";
     });
@@ -2709,6 +3234,27 @@ import hubLogoUrl from "./logo-hub.svg";
     if (!id || !confirm("Supprimer ce site ?")) return;
 
     await save("site", () => request("delete_site", { method: "POST", body: { id } }));
+  }
+
+  async function deleteVehicle(event) {
+    const id = Number(event.currentTarget.dataset.deleteVehicle || 0);
+    if (!id || !confirm("Supprimer ce véhicule ? S'il a déjà des réservations, il sera seulement masqué.")) return;
+
+    await save("vehicle", () => request("delete_vehicle", { method: "POST", body: { id } }));
+  }
+
+  async function deleteEquipmentCategory(event) {
+    const id = Number(event.currentTarget.dataset.deleteEquipmentCategory || 0);
+    if (!id || !confirm("Supprimer cette catégorie ? Si elle contient du matériel, elle sera seulement masquée.")) return;
+
+    await save("equipment-category", () => request("delete_equipment_category", { method: "POST", body: { id } }));
+  }
+
+  async function deleteEquipmentItem(event) {
+    const id = Number(event.currentTarget.dataset.deleteEquipmentItem || 0);
+    if (!id || !confirm("Supprimer ce matériel ? S'il a déjà des locations, il sera seulement masqué.")) return;
+
+    await save("equipment-item", () => request("delete_equipment_item", { method: "POST", body: { id } }));
   }
 
   async function deletePage(event) {

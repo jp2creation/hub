@@ -77,7 +77,7 @@ class TeamService
 
     /**
      * @param  array<int, int>  $siteIds
-     * @return array<int, array{id: int, name: string, slug: string, active: bool, membersCount: int, address: string, phone: string, email: string, color: string, photoUrl: string, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
+     * @return array<int, array{id: int, name: string, slug: string, active: bool, membersCount: int, address: string, phone: string, email: string, color: string, photoUrl: string, showPhotoInHeader: bool, hours: array{morningStart: string, morningEnd: string, afternoonStart: string, afternoonEnd: string}}>
      */
     private function siteRows(array $siteIds): array
     {
@@ -106,6 +106,7 @@ class TeamService
                 'email' => $site['email'] ?? '',
                 'color' => $site['color'] ?? CrmTheme::primaryHex(),
                 'photoUrl' => $site['photoUrl'] ?? '',
+                'showPhotoInHeader' => (bool) ($site['showPhotoInHeader'] ?? true),
                 'hours' => $site['hours'] ?? [
                     'morningStart' => '07:30',
                     'morningEnd' => '12:00',
@@ -164,7 +165,7 @@ class TeamService
     }
 
     /**
-     * @param  array{id: int, name: string, firstName: string, lastName: string, email: string, phone: string, role: string, photoUrl: string, siteIds: array<int, int>, siteNames: array<int, string>, defaultSiteId: int|null}  $member
+     * @param  array{id: int, name: string, firstName: string, lastName: string, email: string, phone: string, role: string, photoUrl: string, siteIds: array<int, int>, siteNames: array<int, string>, defaultSiteId: int|null, defaultSiteName?: string}  $member
      * @param  array{isOnline: bool, lastSeenAt: string|null}|null  $presence
      */
     private function memberRow(array $member, ?array $presence = null): array
@@ -182,6 +183,8 @@ class TeamService
             'photoUrl' => $member['photoUrl'],
             'siteIds' => $member['siteIds'],
             'siteNames' => $member['siteNames'],
+            'primarySiteId' => $member['defaultSiteId'],
+            'primarySiteName' => $this->primarySiteName($member),
         ];
 
         if ($presence !== null) {
@@ -193,6 +196,20 @@ class TeamService
         }
 
         return $row;
+    }
+
+    /**
+     * @param  array{siteNames: array<int, string>, defaultSiteName?: string}  $member
+     */
+    private function primarySiteName(array $member): string
+    {
+        $defaultSiteName = trim((string) ($member['defaultSiteName'] ?? ''));
+
+        if ($defaultSiteName !== '') {
+            return $defaultSiteName;
+        }
+
+        return trim((string) ($member['siteNames'][0] ?? ''));
     }
 
     /**

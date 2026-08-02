@@ -225,19 +225,20 @@ body.crm-native-shell-active {
 }
 
 .crm-native-nav-badge {
+  --crm-native-nav-badge-rgb: var(--theme-primary);
   flex: 0 0 auto;
   border-radius: 999px;
-  background: rgb(var(--theme-primary) / 0.1);
+  background: rgb(var(--crm-native-nav-badge-rgb) / 0.1);
   padding: 0.15rem 0.45rem;
-  color: rgb(var(--theme-primary));
+  color: rgb(var(--crm-native-nav-badge-rgb));
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.2;
 }
 
 .crm-native-nav-link.is-active .crm-native-nav-badge {
-  background: rgb(255 255 255 / 0.18);
-  color: #fff;
+  background: #fff;
+  color: rgb(var(--crm-native-nav-badge-rgb));
 }
 
 .crm-native-nav-branch {
