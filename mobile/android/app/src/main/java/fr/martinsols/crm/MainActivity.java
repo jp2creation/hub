@@ -13,15 +13,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.SurfaceTexture;
+import android.graphics.Movie;
 import android.hardware.biometrics.BiometricPrompt;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +28,7 @@ import android.os.CancellationSignal;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
@@ -36,8 +36,6 @@ import android.text.InputType;
 import android.util.Base64;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.Surface;
-import android.view.TextureView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -97,13 +95,13 @@ public class MainActivity extends Activity {
     private static final long UPDATE_PROGRESS_INTERVAL_MS = 450L;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2101;
     private static final int DEVICE_CREDENTIAL_REQUEST_CODE = 2102;
-    private static final int SPLASH_VIDEO_RESOURCE = R.raw.intro;
-    private static final int SPLASH_VIDEO_WIDTH = 1080;
-    private static final int SPLASH_VIDEO_HEIGHT = 1920;
+    private static final int SPLASH_ANIMATION_RESOURCE = R.raw.intro;
+    private static final int SPLASH_ANIMATION_WIDTH = 720;
+    private static final int SPLASH_ANIMATION_HEIGHT = 1280;
     private static final int UPDATE_PROGRESS_MAX = 100;
-    private static final float INTRO_VIDEO_WIDTH_FRACTION = 0.62f;
-    private static final float INTRO_VIDEO_HEIGHT_FRACTION = 0.62f;
-    private static final int INTRO_VIDEO_MAX_WIDTH_DP = 260;
+    private static final float INTRO_ANIMATION_WIDTH_FRACTION = 0.62f;
+    private static final float INTRO_ANIMATION_HEIGHT_FRACTION = 0.62f;
+    private static final int INTRO_ANIMATION_MAX_WIDTH_DP = 260;
     private static final int MARTIN_SOLS_RED = Color.rgb(149, 0, 46);
     private static final int MARTIN_SOLS_BACKGROUND = Color.rgb(245, 247, 251);
     private static final int MARTIN_SOLS_NAVIGATION = Color.rgb(17, 24, 39);
@@ -119,9 +117,7 @@ public class MainActivity extends Activity {
     private FrameLayout rootView;
     private WebView webView;
     private FrameLayout splashLayer;
-    private TextureView splashView;
-    private Surface splashSurface;
-    private MediaPlayer splashPlayer;
+    private IntroGifView splashView;
     private AppUpdate pendingInstallPermissionUpdate;
     private BroadcastReceiver updateDownloadReceiver;
     private AlertDialog updateProgressDialog;
@@ -171,8 +167,8 @@ public class MainActivity extends Activity {
 
         splashLayer = new FrameLayout(this);
         splashLayer.setBackgroundColor(SPLASH_BACKGROUND);
-        splashView = new IntroTextureView(this);
-        configureSplashTextureView(splashView);
+        splashView = new IntroGifView(this);
+        configureSplashGifView(splashView);
         splashLayer.addView(splashView, centeredMatchParentLayoutParams());
         rootView.addView(splashLayer, matchParentLayoutParams());
 
@@ -206,10 +202,6 @@ public class MainActivity extends Activity {
     protected void onPause() {
         if (webView != null) {
             webView.onPause();
-        }
-
-        if (splashPlayer != null && splashPlayer.isPlaying()) {
-            splashPlayer.pause();
         }
 
         super.onPause();
@@ -283,8 +275,6 @@ public class MainActivity extends Activity {
         cancelNativeLocationRequest();
         unregisterUpdateDownloadReceiver();
         dismissUpdateProgressDialog();
-        releaseSplashPlayer();
-        releaseSplashSurface();
         splashView = null;
         splashLayer = null;
         rootView = null;
@@ -336,34 +326,12 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void configureSplashTextureView(TextureView view) {
+    private void configureSplashGifView(IntroGifView view) {
         view.setOverScrollMode(View.OVER_SCROLL_NEVER);
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View touchedView, MotionEvent event) {
                 return true;
-            }
-        });
-        view.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
-                prepareSplashPlayer(surfaceTexture);
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-                releaseSplashPlayer();
-                releaseSplashSurface();
-
-                return true;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
             }
         });
     }
@@ -401,8 +369,6 @@ public class MainActivity extends Activity {
             rootView.removeView(layer);
         }
 
-        releaseSplashPlayer();
-        releaseSplashSurface();
         showCrmWebView();
     }
 
@@ -1918,71 +1884,6 @@ public class MainActivity extends Activity {
         return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
-    private void prepareSplashPlayer(SurfaceTexture surfaceTexture) {
-        releaseSplashPlayer();
-        releaseSplashSurface();
-
-        splashSurface = new Surface(surfaceTexture);
-        splashPlayer = new MediaPlayer();
-
-        try (AssetFileDescriptor descriptor = getResources().openRawResourceFd(SPLASH_VIDEO_RESOURCE)) {
-            if (descriptor == null) {
-                hideSplashView();
-
-                return;
-            }
-
-            splashPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
-            splashPlayer.setSurface(splashSurface);
-            splashPlayer.setVolume(0.0f, 0.0f);
-            splashPlayer.setLooping(false);
-            splashPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    mediaPlayer.start();
-                }
-            });
-            splashPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    hideSplashView();
-                }
-            });
-            splashPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                @Override
-                public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
-                    hideSplashView();
-
-                    return true;
-                }
-            });
-            splashPlayer.prepareAsync();
-        } catch (IOException exception) {
-            hideSplashView();
-        }
-    }
-
-    private void releaseSplashPlayer() {
-        if (splashPlayer == null) {
-            return;
-        }
-
-        splashPlayer.setOnPreparedListener(null);
-        splashPlayer.setOnCompletionListener(null);
-        splashPlayer.setOnErrorListener(null);
-        splashPlayer.release();
-        splashPlayer = null;
-    }
-
-    private void releaseSplashSurface() {
-        if (splashSurface == null) {
-            return;
-        }
-
-        splashSurface.release();
-        splashSurface = null;
-    }
-
     private void destroyWebView(WebView view) {
         if (view == null) {
             return;
@@ -2032,28 +1933,78 @@ public class MainActivity extends Activity {
         }
     }
 
-    private static final class IntroTextureView extends TextureView {
-        public IntroTextureView(Activity context) {
+    @SuppressWarnings("deprecation")
+    private static final class IntroGifView extends View {
+        private final Movie animation;
+        private long animationStartMs;
+
+        public IntroGifView(Activity context) {
             super(context);
+
+            Movie decodedAnimation = null;
+
+            try (InputStream inputStream = context.getResources().openRawResource(SPLASH_ANIMATION_RESOURCE)) {
+                decodedAnimation = Movie.decodeStream(inputStream);
+            } catch (IOException | RuntimeException exception) {
+                decodedAnimation = null;
+            }
+
+            animation = decodedAnimation;
         }
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             int viewWidth = MeasureSpec.getSize(widthMeasureSpec);
             int viewHeight = MeasureSpec.getSize(heightMeasureSpec);
-            float videoAspectRatio = (float) SPLASH_VIDEO_WIDTH / (float) SPLASH_VIDEO_HEIGHT;
+            float animationAspectRatio = (float) SPLASH_ANIMATION_WIDTH / (float) SPLASH_ANIMATION_HEIGHT;
             float density = getResources().getDisplayMetrics().density;
-            int maxWidth = Math.round(INTRO_VIDEO_MAX_WIDTH_DP * density);
-            int desiredWidth = Math.min(Math.round(viewWidth * INTRO_VIDEO_WIDTH_FRACTION), maxWidth);
-            int desiredHeight = Math.round(desiredWidth / videoAspectRatio);
-            int maxHeight = Math.round(viewHeight * INTRO_VIDEO_HEIGHT_FRACTION);
+            int maxWidth = Math.round(INTRO_ANIMATION_MAX_WIDTH_DP * density);
+            int desiredWidth = Math.min(Math.round(viewWidth * INTRO_ANIMATION_WIDTH_FRACTION), maxWidth);
+            int desiredHeight = Math.round(desiredWidth / animationAspectRatio);
+            int maxHeight = Math.round(viewHeight * INTRO_ANIMATION_HEIGHT_FRACTION);
 
             if (desiredHeight > maxHeight) {
                 desiredHeight = maxHeight;
-                desiredWidth = Math.round(desiredHeight * videoAspectRatio);
+                desiredWidth = Math.round(desiredHeight * animationAspectRatio);
             }
 
             setMeasuredDimension(desiredWidth, desiredHeight);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+
+            if (animation == null) {
+                return;
+            }
+
+            long now = SystemClock.uptimeMillis();
+
+            if (animationStartMs == 0L) {
+                animationStartMs = now;
+            }
+
+            int duration = animation.duration();
+
+            if (duration <= 0) {
+                duration = (int) SPLASH_DURATION_MS;
+            }
+
+            animation.setTime((int) ((now - animationStartMs) % duration));
+
+            float animationWidth = Math.max(animation.width(), SPLASH_ANIMATION_WIDTH);
+            float animationHeight = Math.max(animation.height(), SPLASH_ANIMATION_HEIGHT);
+            float scale = Math.min(getWidth() / animationWidth, getHeight() / animationHeight);
+            float left = (getWidth() - animationWidth * scale) / 2f;
+            float top = (getHeight() - animationHeight * scale) / 2f;
+
+            canvas.save();
+            canvas.translate(left, top);
+            canvas.scale(scale, scale);
+            animation.draw(canvas, 0f, 0f);
+            canvas.restore();
+            postInvalidateOnAnimation();
         }
     }
 

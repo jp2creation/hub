@@ -3,8 +3,8 @@
     --brand-jaune: #f7b711;
 
     --loader-size: 78px;
-    --loader-video-width: min(34vw, 176px);
-    --loader-video-height: min(60vh, 313px);
+    --loader-media-width: min(34vw, 176px);
+    --loader-media-height: min(60vh, 313px);
     --loader-cycle: 2.3s;
 
     /* Espaces finaux fidèles au logo */
@@ -40,13 +40,13 @@
 
 .brand-morph-loader__stage {
     position: relative;
-    width: var(--loader-video-width);
-    height: var(--loader-video-height);
+    width: var(--loader-media-width);
+    height: var(--loader-media-height);
     display: grid;
     place-items: center;
 }
 
-.brand-morph-loader__video {
+.brand-morph-loader__image {
     position: relative;
     z-index: 1;
     display: block;

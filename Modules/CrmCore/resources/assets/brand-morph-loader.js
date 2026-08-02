@@ -12,46 +12,9 @@
         return loader.querySelector('[data-brand-loader-error]');
     }
 
-    function videoElement() {
-        return loader.querySelector('[data-brand-loader-video]');
-    }
-
-    function syncVideoPlayback(visible) {
-        const video = videoElement();
-
-        if (!video) return;
-
-        if (visible) {
-            try {
-                video.currentTime = 0;
-            } catch (error) {
-                // Ignore browser-specific media seek restrictions.
-            }
-
-            const playback = typeof video.play === 'function' ? video.play() : null;
-
-            if (playback && typeof playback.catch === 'function') {
-                playback.catch(() => undefined);
-            }
-
-            return;
-        }
-
-        if (typeof video.pause === 'function') {
-            video.pause();
-        }
-
-        try {
-            video.currentTime = 0;
-        } catch (error) {
-            // Ignore browser-specific media seek restrictions.
-        }
-    }
-
     function setVisible(visible) {
         loader.classList.toggle('is-visible', visible);
         loader.setAttribute('aria-hidden', visible ? 'false' : 'true');
-        syncVideoPlayback(visible);
     }
 
     function clearError() {

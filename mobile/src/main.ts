@@ -5,7 +5,7 @@ import { Capacitor } from '@capacitor/core';
 import { Keyboard, KeyboardResize, KeyboardStyle } from '@capacitor/keyboard';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
-const openingAnimationUrl = new URL('./assets/opening-animation.mp4', import.meta.url).href;
+const openingAnimationUrl = new URL('./assets/opening-animation.gif', import.meta.url).href;
 const openingAnimationDurationMs = 12600;
 const defaultCrmUrl = 'https://crm.jp2.fr/?mobile_app=1&source=ios_app';
 const crmUrl = normalizeCrmUrl(import.meta.env.VITE_CRM_URL || import.meta.env.VITE_API_BASE_URL || defaultCrmUrl);
@@ -50,20 +50,18 @@ async function setupNativeRuntime(): Promise<void> {
 function renderStartup(): Promise<void> {
   app.innerHTML = `
     <main class="startup-screen" data-startup-screen aria-label="Ouverture Martin Sols">
-      <video
+      <img
         class="startup-intro-media"
         src="${escapeHtml(openingAnimationUrl)}"
-        autoplay
-        muted
-        playsinline
-        preload="auto"
-      ></video>
+        alt=""
+        decoding="async"
+      >
     </main>
   `;
 
   return new Promise((resolve) => {
     const screen = app.querySelector<HTMLElement>('[data-startup-screen]');
-    const introVideo = app.querySelector<HTMLVideoElement>('.startup-intro-media');
+    const introImage = app.querySelector<HTMLImageElement>('.startup-intro-media');
     let finished = false;
 
     const finish = () => {
@@ -85,15 +83,12 @@ function renderStartup(): Promise<void> {
       finish();
     };
 
-    if (!introVideo) {
+    if (!introImage) {
       complete();
       return;
     }
 
-    introVideo.addEventListener('ended', complete, { once: true });
-    introVideo.addEventListener('error', complete, { once: true });
-
-    void introVideo.play().catch(() => undefined);
+    introImage.addEventListener('error', complete, { once: true });
   });
 }
 

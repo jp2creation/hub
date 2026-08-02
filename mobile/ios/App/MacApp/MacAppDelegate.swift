@@ -1388,7 +1388,7 @@ final class MacAppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegat
               place-items: center;
             }
 
-            video {
+            img {
               display: block;
               width: min(26vw, 340px);
               max-width: 340px;
@@ -1399,7 +1399,7 @@ final class MacAppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegat
           </style>
         </head>
         <body>
-          <video src="opening-animation.mp4" autoplay muted playsinline></video>
+          <img src="opening-animation.gif" alt="">
         </body>
         </html>
         """

@@ -16,7 +16,7 @@ declare global {
     MartinSolsCrmApi?: CrmApiClient;
     MartinSolsCrmAssets?: {
       brandMorphLoaderStylesheet?: string;
-      brandMorphLoaderVideo?: string;
+      brandMorphLoaderImage?: string;
       logoUrl?: string;
     };
     MartinSolsCrmConfig?: CrmShellConfig;
@@ -129,7 +129,7 @@ export type CrmRequestOptions = Omit<RequestInit, 'body'> & {
 export type CrmShellConfig = {
   assets: {
     brandMorphLoaderStylesheet: string;
-    brandMorphLoaderVideo: string;
+    brandMorphLoaderImage: string;
     logoUrl: string;
   };
   csrfToken: string;

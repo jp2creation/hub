@@ -13,7 +13,7 @@
   $crmShellConfig = [
       'assets' => [
           'brandMorphLoaderStylesheet' => \App\Support\CrmAsset::url('modules/crm-core/brand-morph-loader.css'),
-          'brandMorphLoaderVideo' => \App\Support\CrmAsset::url('modules/crm-core/brand-morph-loader.mp4'),
+          'brandMorphLoaderImage' => \App\Support\CrmAsset::url('modules/crm-core/brand-morph-loader.gif'),
           'logoUrl' => asset('assets/logo/martin-sols-logo.png'),
       ],
       'csrfToken' => csrf_token(),

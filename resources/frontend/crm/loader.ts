@@ -15,16 +15,13 @@ function mountBrandLoaderElement(): HTMLElement {
   loader.innerHTML = `
     <div class="brand-morph-loader__backdrop"></div>
     <div class="brand-morph-loader__stage" role="status" aria-live="polite" aria-label="Chargement">
-      <video
-        class="brand-morph-loader__video"
-        src="${escapeHtml(readCrmShellConfig().assets.brandMorphLoaderVideo)}"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-        data-brand-loader-video
-      ></video>
+      <img
+        class="brand-morph-loader__image"
+        src="${escapeHtml(readCrmShellConfig().assets.brandMorphLoaderImage)}"
+        alt=""
+        decoding="async"
+        data-brand-loader-image
+      >
       <p class="brand-morph-loader__message" data-brand-loader-message>Connexion...</p>
       <p class="brand-morph-loader__error" data-brand-loader-error></p>
     </div>

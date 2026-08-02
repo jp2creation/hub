@@ -18,7 +18,7 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		60A100012DCA000000000001 /* MacAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A100062DCA000000000001 /* MacAppDelegate.swift */; };
 		60A100022DCA000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60A100082DCA000000000001 /* Assets.xcassets */; };
-		60A100032DCA000000000001 /* opening-animation.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 60A100092DCA000000000001 /* opening-animation.mp4 */; };
+		60A100032DCA000000000001 /* opening-animation.gif in Resources */ = {isa = PBXBuildFile; fileRef = 60A100092DCA000000000001 /* opening-animation.gif */; };
 		60A100042DCA000000000001 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60A1000A2DCA000000000001 /* WebKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,7 +37,7 @@
 		60A100062DCA000000000001 /* MacAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacAppDelegate.swift; sourceTree = "<group>"; };
 		60A100072DCA000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		60A100082DCA000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		60A100092DCA000000000001 /* opening-animation.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = "opening-animation.mp4"; path = "../../src/assets/opening-animation.mp4"; sourceTree = SOURCE_ROOT; };
+		60A100092DCA000000000001 /* opening-animation.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = "opening-animation.gif"; path = "../../src/assets/opening-animation.gif"; sourceTree = SOURCE_ROOT; };
 		60A1000A2DCA000000000001 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -103,7 +103,7 @@
 			children = (
 				60A100062DCA000000000001 /* MacAppDelegate.swift */,
 				60A100082DCA000000000001 /* Assets.xcassets */,
-				60A100092DCA000000000001 /* opening-animation.mp4 */,
+				60A100092DCA000000000001 /* opening-animation.gif */,
 				60A100072DCA000000000001 /* Info.plist */,
 			);
 			path = MacApp;
@@ -221,7 +221,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				60A100022DCA000000000001 /* Assets.xcassets in Resources */,
-				60A100032DCA000000000001 /* opening-animation.mp4 in Resources */,
+				60A100032DCA000000000001 /* opening-animation.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

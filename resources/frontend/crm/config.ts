@@ -3,7 +3,7 @@ type CrmShellConfigInput = Partial<CrmShellConfig>;
 export type CrmShellConfig = {
   assets: {
     brandMorphLoaderStylesheet: string;
-    brandMorphLoaderVideo: string;
+    brandMorphLoaderImage: string;
     logoUrl: string;
   };
   csrfToken: string;
@@ -30,7 +30,7 @@ export type CrmShellConfig = {
 const defaultConfig: CrmShellConfig = {
   assets: {
     brandMorphLoaderStylesheet: '/modules/crm-core/brand-morph-loader.css',
-    brandMorphLoaderVideo: '/modules/crm-core/brand-morph-loader.mp4',
+    brandMorphLoaderImage: '/modules/crm-core/brand-morph-loader.gif',
     logoUrl: '/assets/logo/martin-sols-logo.png',
   },
   csrfToken: '',
