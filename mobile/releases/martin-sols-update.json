@@ -23,5 +23,14 @@
     "pkgUrl": "https://github.com/jp2creation/hub/releases/download/martin-sols-mac-v1.37/Martin.Sols.pkg",
     "sha256": "30c4cfc7ea368d59b3b7b9d8ea94828ae7ec88da4a4e5a951cc03d8458fa97e6",
     "releaseNotes": "Ajout des Parametres de l app sur Mac avec acces aux mises a jour et aux futurs reglages."
+  },
+  "windows": {
+    "version": "1.0.0",
+    "buildNumber": 1,
+    "required": false,
+    "installerUrl": "",
+    "portableUrl": "",
+    "sha256": "",
+    "releaseNotes": "Premiere version Windows du HUB Martin Sols avec splash, WebView, connexion rapide, localisation et mises a jour."
   }
 }

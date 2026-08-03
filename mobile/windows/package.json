@@ -1,0 +1,70 @@
+{
+  "name": "martin-sols-hub-windows",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application Windows Martin Sols HUB.",
+  "license": "SEE LICENSE IN ../../LICENSE.md",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "npm run prepare:assets && electron .",
+    "prepare:assets": "node scripts/prepare-assets.js",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check scripts/prepare-assets.js",
+    "pack": "npm run prepare:assets && electron-builder --win --x64 --dir",
+    "dist": "npm run prepare:assets && electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
+    "png-to-ico": "^3.0.2"
+  },
+  "build": {
+    "appId": "fr.martinsols.hub.windows",
+    "productName": "Martin Sols HUB",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../src/assets/opening-animation.gif",
+        "to": "assets/opening-animation.gif"
+      },
+      {
+        "from": "build/icon.png",
+        "to": "assets/icon.png"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "artifactName": "${productName}-${version}-${os}-${arch}-setup.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-${os}-${arch}-portable.${ext}"
+    }
+  }
+}

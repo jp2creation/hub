@@ -29,6 +29,9 @@ boost.json
 /mobile/android/app/*.jks
 /mobile/build
 /mobile/node_modules
+/mobile/windows/build
+/mobile/windows/dist
+/mobile/windows/node_modules
 /public/build
 /public/hot
 /public/assets

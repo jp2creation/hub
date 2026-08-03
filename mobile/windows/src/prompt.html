@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Martin Sols HUB</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --red: #95002e;
+        --ink: #141827;
+        --muted: #667085;
+        --line: #e5e7eb;
+        --bg: #fffaf7;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      main {
+        display: grid;
+        min-height: 100vh;
+        gap: 16px;
+        align-content: center;
+        padding: 28px;
+      }
+
+      h1 {
+        margin: 0;
+        color: var(--red);
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 12px 13px;
+        background: #fff;
+        color: var(--ink);
+        font: inherit;
+      }
+
+      input:focus {
+        border-color: var(--red);
+        outline: 3px solid rgba(149, 0, 46, 0.16);
+      }
+
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 6px;
+        padding: 11px 16px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        background: #fff;
+        color: #344054;
+        border: 1px solid var(--line);
+      }
+
+      button.primary {
+        background: var(--red);
+        color: #fff;
+      }
+
+      .error {
+        min-height: 18px;
+        color: #b42318;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div>
+        <h1 id="title">Martin Sols HUB</h1>
+        <p id="message"></p>
+      </div>
+      <label>
+        Code app
+        <input id="code" autocomplete="off" inputmode="numeric" pattern="[0-9]*" type="password">
+      </label>
+      <label id="confirmation-row">
+        Confirmer le code
+        <input id="confirmation" autocomplete="off" inputmode="numeric" pattern="[0-9]*" type="password">
+      </label>
+      <div class="error" id="error"></div>
+      <div class="actions">
+        <button class="secondary" id="cancel" type="button">Annuler</button>
+        <button class="primary" id="submit" type="button">Valider</button>
+      </div>
+    </main>
+    <script>
+      const { ipcRenderer } = require('electron');
+      const params = new URLSearchParams(window.location.search);
+      const channel = params.get('channel');
+      const mode = params.get('mode') || 'code';
+      const title = params.get('title') || 'Martin Sols HUB';
+      const message = params.get('message') || '';
+      const code = document.getElementById('code');
+      const confirmation = document.getElementById('confirmation');
+      const confirmationRow = document.getElementById('confirmation-row');
+      const error = document.getElementById('error');
+
+      document.getElementById('title').textContent = title;
+      document.getElementById('message').textContent = message;
+      confirmationRow.hidden = mode !== 'set-code';
+
+      function send(payload) {
+        ipcRenderer.send(channel, payload);
+      }
+
+      function submit() {
+        const values = {
+          code: code.value,
+          confirmation: confirmation.value,
+        };
+
+        if (!/^\d{4,8}$/.test(values.code)) {
+          error.textContent = 'Le code doit contenir 4 a 8 chiffres.';
+          return;
+        }
+
+        if (mode === 'set-code' && values.code !== values.confirmation) {
+          error.textContent = 'Les deux codes ne correspondent pas.';
+          return;
+        }
+
+        send({ ok: true, values });
+      }
+
+      document.getElementById('submit').addEventListener('click', submit);
+      document.getElementById('cancel').addEventListener('click', () => send({ ok: false, cancelled: true }));
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          send({ ok: false, cancelled: true });
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submit();
+        }
+      });
+
+      code.focus();
+    </script>
+  </body>
+</html>

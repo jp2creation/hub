@@ -68,11 +68,35 @@ Reglages iOS integres :
 - permissions localisation iOS pour les fonctions terrain ;
 - WebView configuree pour les liens, cookies, medias et le clavier.
 
+## Windows
+
+La plateforme Windows est disponible dans `mobile/windows` et reprend le meme
+principe que l'APK Android et l'app macOS : animation d'entree, WebView chargee
+sur le HUB, bridge `MartinSolsNativeApp`, connexion rapide locale, localisation
+et recherche de mise a jour via le manifeste GitHub.
+
+Compilation sur Windows :
+
+```bash
+cd mobile/windows
+npm install
+npm run check
+npm run dist
+```
+
+Artefacts Windows generes :
+
+```text
+mobile/windows/dist/Martin Sols HUB-1.0.0-win-x64-setup.exe
+mobile/windows/dist/Martin Sols HUB-1.0.0-win-x64-portable.exe
+mobile/windows/dist/win-unpacked/Martin Sols HUB.exe
+```
+
 ## Licence
 
 Cette application mobile fait partie de JP2 Hub et suit la licence du
 depot racine. Les sources peuvent etre consultees et testees pour evaluation
 personnelle, mais toute compilation, distribution, installation client,
 exploitation professionnelle, revente ou publication d'un APK, d'un paquet iOS
-ou d'un paquet macOS demande l'accord ecrit prealable de Jean-Philippe DEGERT /
-JP2 Creation.
+ou d'un paquet macOS/Windows demande l'accord ecrit prealable de
+Jean-Philippe DEGERT / JP2 Creation.
