@@ -178,7 +178,7 @@
 
       .app-install__actions {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         align-items: center;
         justify-content: center;
         gap: 10px;
@@ -588,9 +588,6 @@
             </a>
             <a class="app-install__badge is-windows" href="#" data-login-app-kind="windows" aria-label="Disponible sur Windows" rel="noopener">
               <img class="app-install__badge-image" src="{{ asset('login-windows.svg') }}" alt="Disponible sur Windows" />
-            </a>
-            <a class="app-install__badge is-webapk" href="#" data-login-app-kind="webapk" aria-label="Disponible en Web APK" rel="noopener">
-              <img class="app-install__badge-image" src="{{ asset('login-web-apk.svg') }}" alt="Disponible en Web APK" />
             </a>
           </div>
         </div>
@@ -1002,18 +999,11 @@
           onClick: installPwa,
         });
 
-        configureBadge('webapk', {
-          href: '#',
-          onClick: installPwa,
-        });
-
         const currentKind = isAndroid
-          ? androidUrl ? 'android' : 'webapk'
+          ? 'android'
           : isIos || isMacos
             ? 'ios'
-            : isWindows
-              ? 'windows'
-              : 'webapk';
+            : 'windows';
         const currentBadge = badgeByKind.get(currentKind);
 
         card.className = `app-install is-${currentKind}`;
