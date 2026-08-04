@@ -17,12 +17,12 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/login')
             ->assertOk()
+            ->assertSee('App Store')
+            ->assertSee('Google Play')
+            ->assertSee('Windows')
             ->assertSee('Web APK')
-            ->assertSee('Android')
-            ->assertSee('iPhone')
-            ->assertSee('iPad')
-            ->assertSee('Martin.Sols.pkg')
             ->assertSee('Connexion rapide')
+            ->assertDontSee('Martin.Sols.pkg')
             ->assertDontSee('Application Android')
             ->assertDontSee('Application Mac')
             ->assertDontSee('Application web')
@@ -32,6 +32,10 @@ class ExampleTest extends TestCase
 
         $html = (string) $response->getContent();
         $this->assertFileExists(public_path('hub-ms.svg'));
+        $this->assertFileExists(public_path('login-app-store.png'));
+        $this->assertFileExists(public_path('login-google-play.png'));
+        $this->assertFileExists(public_path('login-windows.svg'));
+        $this->assertFileExists(public_path('login-web-apk.svg'));
         $this->assertStringContainsString('brand-hub-signature', $html);
         $this->assertStringContainsString('login-copy', $html);
         $this->assertStringContainsString('Accès sécurisé', $html);
@@ -42,8 +46,10 @@ class ExampleTest extends TestCase
         $this->assertStringContainsString('hub-ms.svg', $html);
         $this->assertStringContainsString('box-shadow: none;', $html);
         $this->assertStringContainsString('@media (max-width: 680px)', $html);
-        $this->assertStringContainsString('max-width: 132px;', $html);
-        $this->assertStringContainsString('width: 18px;', $html);
+        $this->assertStringContainsString('grid-template-columns: repeat(4, minmax(0, 1fr));', $html);
+        $this->assertStringContainsString('grid-template-columns: repeat(2, minmax(0, 1fr));', $html);
+        $this->assertStringContainsString('aspect-ratio: 618 / 211;', $html);
+        $this->assertStringContainsString('app-install__badge-image', $html);
 
         $previousLibxmlState = libxml_use_internal_errors(true);
         $document = new \DOMDocument;
@@ -57,18 +63,23 @@ class ExampleTest extends TestCase
         $this->assertSame('main', strtolower($appInstall->parentNode?->nodeName ?? ''));
         $this->assertStringContainsString('background: transparent;', $html);
         $this->assertStringContainsString('border: 0;', $html);
-        $this->assertStringContainsString('min-width: 158px;', $html);
-        $this->assertStringContainsString('min-height: 48px;', $html);
-        $this->assertStringContainsString('border-radius: 10px;', $html);
         $this->assertStringContainsString('const isIpad', $html);
-        $this->assertStringContainsString('data-login-app-kind="webapk"', $html);
+        $this->assertStringContainsString('data-login-app-kind="ios"', $html);
         $this->assertStringContainsString('data-login-app-kind="android"', $html);
-        $this->assertStringContainsString('data-login-app-kind="iphone"', $html);
-        $this->assertStringContainsString('data-login-app-kind="ipad"', $html);
-        $this->assertStringContainsString('data-login-app-kind="macos"', $html);
+        $this->assertStringContainsString('data-login-app-kind="windows"', $html);
+        $this->assertStringContainsString('data-login-app-kind="webapk"', $html);
+        $this->assertStringNotContainsString('data-login-app-kind="iphone"', $html);
+        $this->assertStringNotContainsString('data-login-app-kind="ipad"', $html);
+        $this->assertStringNotContainsString('data-login-app-kind="macos"', $html);
+        $this->assertStringNotContainsString('data-macos-url', $html);
+        $this->assertStringContainsString('login-app-store.png', $html);
+        $this->assertStringContainsString('login-google-play.png', $html);
+        $this->assertStringContainsString('login-windows.svg', $html);
+        $this->assertStringContainsString('login-web-apk.svg', $html);
         $this->assertStringContainsString('is-current', $html);
         $this->assertStringContainsString('currentKind', $html);
-        $this->assertStringContainsString('Ajouter sur', $html);
+        $this->assertStringContainsString('Disponible sur Windows', $html);
+        $this->assertStringContainsString('Disponible en Web APK', $html);
         $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
     }
 

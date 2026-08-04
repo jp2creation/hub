@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 618 211" role="img" aria-labelledby="title desc">
+  <title id="title">Disponible sur Windows</title>
+  <desc id="desc">Badge de téléchargement Windows pour le HUB Martin Sols.</desc>
+  <rect width="618" height="211" rx="18" fill="#fff"/>
+  <g transform="translate(64 50)">
+    <path fill="#0078d4" d="M0 15 52.5 7.8v50.7H0z"/>
+    <path fill="#0078d4" d="M59 7 129 0v58.5H59z"/>
+    <path fill="#0078d4" d="M0 65.5h52.5v50.7L0 109z"/>
+    <path fill="#0078d4" d="M59 65.5h70V124l-70-7z"/>
+  </g>
+  <g fill="#242124" font-family="Arial, Helvetica, sans-serif">
+    <text x="225" y="75" font-size="34" font-weight="500" letter-spacing="1">DISPONIBLE SUR</text>
+    <text x="225" y="142" font-size="58" font-weight="500">Windows</text>
+  </g>
+</svg>

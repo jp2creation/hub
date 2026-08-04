@@ -84,158 +84,6 @@
     });
   }
 
-  function normalizeProductPhotoFrames(root) {
-    root.querySelectorAll('.rent-product-card.has-no-visible-price .rent-product-image img').forEach((image) => {
-      if (image.dataset.rentPhotoNormalized === '1') return;
-      image.dataset.rentPhotoNormalized = '1';
-
-      const normalize = () => {
-        try {
-          const width = image.naturalWidth;
-          const height = image.naturalHeight;
-          if (!width || !height) return;
-
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-
-          const context = canvas.getContext('2d', { willReadFrequently: true });
-          if (!context) return;
-
-          context.drawImage(image, 0, 0, width, height);
-
-          const pixels = context.getImageData(0, 0, width, height).data;
-          const corner = Math.max(2, Math.floor(Math.min(width, height) * 0.04));
-          const background = averageCornerColor(pixels, width, height, corner);
-          const threshold = 18;
-          let minX = width;
-          let minY = height;
-          let maxX = -1;
-          let maxY = -1;
-
-          for (let y = 0; y < height; y += 1) {
-            for (let x = 0; x < width; x += 1) {
-              const offset = (y * width + x) * 4;
-              const alpha = pixels[offset + 3];
-              if (alpha <= 12) continue;
-
-              const red = pixels[offset];
-              const green = pixels[offset + 1];
-              const blue = pixels[offset + 2];
-              const distance = Math.max(
-                Math.abs(red - background[0]),
-                Math.abs(green - background[1]),
-                Math.abs(blue - background[2]),
-              );
-
-              if (distance <= threshold) continue;
-
-              minX = Math.min(minX, x);
-              minY = Math.min(minY, y);
-              maxX = Math.max(maxX, x);
-              maxY = Math.max(maxY, y);
-            }
-          }
-
-          if (maxX < 0 || maxY < 0) return;
-
-          const boxWidth = maxX - minX + 1;
-          const boxHeight = maxY - minY + 1;
-          const objectPadding = Math.ceil(Math.max(boxWidth, boxHeight) * 0.045);
-          const objectX = Math.max(0, minX - objectPadding);
-          const objectY = Math.max(0, minY - objectPadding);
-          const objectWidth = Math.min(width - objectX, boxWidth + objectPadding * 2);
-          const objectHeight = Math.min(height - objectY, boxHeight + objectPadding * 2);
-          const objectRatio = objectWidth / Math.max(objectHeight, 1);
-          const targetRatio = objectRatio < 0.68 ? 0.78 : objectRatio < 0.96 ? 0.92 : Math.min(1.28, objectRatio);
-          const frame = productPhotoFrame(objectX, objectY, objectWidth, objectHeight, width, height, targetRatio);
-          const card = image.closest('.rent-product-card');
-          const cropRatio = frame.width / Math.max(frame.height, 1);
-
-          card?.classList.toggle('is-rent-photo-portrait', cropRatio < 0.82);
-          card?.classList.toggle('is-rent-photo-wide', cropRatio > 1.4);
-
-          const cropped = document.createElement('canvas');
-          const outputScale = Math.min(1, 980 / Math.max(frame.width, frame.height));
-          cropped.width = Math.max(1, Math.round(frame.width * outputScale));
-          cropped.height = Math.max(1, Math.round(frame.height * outputScale));
-
-          const croppedContext = cropped.getContext('2d');
-          if (!croppedContext) return;
-
-          croppedContext.drawImage(canvas, frame.x, frame.y, frame.width, frame.height, 0, 0, cropped.width, cropped.height);
-          image.src = cropped.toDataURL('image/png');
-          image.dataset.rentPhotoAspect = cropRatio.toFixed(3);
-          image.dataset.rentPhotoFrame = `${frame.width}x${frame.height}`;
-          image.dataset.rentPhotoTrimmed = '1';
-        } catch (error) {
-          image.dataset.rentPhotoTrimmed = '0';
-        }
-      };
-
-      if (image.complete) {
-        normalize();
-        return;
-      }
-
-      image.addEventListener('load', normalize, { once: true });
-    });
-  }
-
-  function productPhotoFrame(objectX, objectY, objectWidth, objectHeight, sourceWidth, sourceHeight, targetRatio) {
-    let frameWidth = objectWidth;
-    let frameHeight = objectHeight;
-
-    if (frameWidth / Math.max(frameHeight, 1) < targetRatio) {
-      frameWidth = Math.min(sourceWidth, Math.ceil(frameHeight * targetRatio));
-    } else {
-      frameHeight = Math.min(sourceHeight, Math.ceil(frameWidth / targetRatio));
-    }
-
-    if (frameWidth < objectWidth) frameWidth = objectWidth;
-    if (frameHeight < objectHeight) frameHeight = objectHeight;
-
-    const centerX = objectX + objectWidth / 2;
-    const centerY = objectY + objectHeight / 2;
-    const x = Math.max(0, Math.min(sourceWidth - frameWidth, Math.round(centerX - frameWidth / 2)));
-    const y = Math.max(0, Math.min(sourceHeight - frameHeight, Math.round(centerY - frameHeight / 2)));
-
-    return {
-      x,
-      y,
-      width: Math.round(frameWidth),
-      height: Math.round(frameHeight),
-    };
-  }
-
-  function averageCornerColor(pixels, width, height, corner) {
-    const points = [
-      [0, 0],
-      [width - corner, 0],
-      [0, height - corner],
-      [width - corner, height - corner],
-    ];
-    const color = [0, 0, 0];
-    let count = 0;
-
-    points.forEach(([startX, startY]) => {
-      for (let y = startY; y < Math.min(height, startY + corner); y += 1) {
-        for (let x = startX; x < Math.min(width, startX + corner); x += 1) {
-          const offset = (y * width + x) * 4;
-          const alpha = pixels[offset + 3];
-          if (alpha <= 12) continue;
-
-          color[0] += pixels[offset];
-          color[1] += pixels[offset + 1];
-          color[2] += pixels[offset + 2];
-          count += 1;
-        }
-      }
-    });
-
-    return count ? color.map((value) => Math.round(value / count)) : [255, 255, 255];
-  }
-
   function activeSiteId() {
     const fromApi = Number(window.CRM_ACTIVE_SITE?.getSiteId?.() || 0);
     if (Number.isFinite(fromApi) && fromApi > 0) return fromApi;
@@ -377,22 +225,19 @@
       #${rootId} .rent-resources{display:grid;gap:.85rem}
       #${rootId} .rent-resources-head{display:flex;align-items:center;justify-content:flex-end;gap:.75rem}
       #${rootId} .rent-items{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}
-      #${rootId} .rent-product-card{position:relative;display:flex;min-width:0;flex-direction:column;overflow:hidden;border:1px solid var(--rent-border);border-radius:.75rem;background:#fff;text-align:left;cursor:pointer;box-shadow:0 14px 34px rgba(15,23,42,.055);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
-      #${rootId} .rent-product-card:hover,#${rootId} .rent-product-card.is-active{border-color:rgb(var(--theme-primary) / .55);transform:translateY(-1px);box-shadow:0 16px 36px rgba(15,23,42,.08)}
-      #${rootId} .rent-product-card:focus-visible{outline:3px solid rgb(var(--theme-primary) / .2);outline-offset:2px}
-      #${rootId} .rent-product-image{position:relative;display:grid;place-items:center;aspect-ratio:4/3;background:var(--color-surface-100,#f1f5f9);color:var(--rent-primary);font-size:1.35rem;font-weight:600;overflow:hidden}
-      #${rootId} .rent-product-image img{width:100%;height:100%;object-fit:cover}
-      #${rootId} .rent-product-initials{position:relative;z-index:1}
-      #${rootId} .rent-product-card.has-no-visible-price{min-height:16rem;border-radius:.95rem;background:#fff}
-      #${rootId} .rent-product-card.has-no-visible-price .rent-product-image{position:relative;aspect-ratio:auto;width:100%;height:12.35rem;border-bottom:1px solid var(--rent-border);background:#fff;padding:0}
-      #${rootId} .rent-product-card.has-no-visible-price .rent-product-image img{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center center;padding:0!important;background:#fff}
-      #${rootId} .rent-product-card.has-no-visible-price.is-rent-photo-portrait .rent-product-image{height:13.2rem}
-      #${rootId} .rent-product-card.has-no-visible-price .rent-product-body{position:relative;z-index:1;justify-content:center;min-height:3.65rem;padding:.58rem .82rem .82rem;background:#fff}
-      #${rootId} .rent-product-card.has-no-visible-price .rent-product-name{color:var(--rent-text);font-size:.95rem;text-shadow:none}
-      #${rootId} .rent-dot{position:absolute;right:.62rem;top:.62rem;width:.72rem;height:.72rem;border-radius:999px;background:var(--rent-green);box-shadow:0 0 0 3px #fff}
-      #${rootId} .rent-dot.is-busy{background:var(--rent-red)}
-      #${rootId} .rent-product-body{display:flex;min-height:3.9rem;flex:1;flex-direction:column;gap:.35rem;padding:.65rem .75rem .7rem}
-      #${rootId} .rent-product-name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;color:var(--rent-text);font-size:.9rem;font-weight:600;line-height:1.2}
+      #${rootId} .rent-product-card{position:relative;display:flex;min-width:0;min-height:16.6rem;flex-direction:column;overflow:hidden;border:1px solid var(--rent-border);border-radius:.9rem;background:#fff;text-align:left;cursor:pointer;box-shadow:0 14px 34px rgba(15,23,42,.055);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+      #${rootId} .rent-product-card:hover,#${rootId} .rent-product-card.is-active{border-color:rgb(var(--theme-primary) / .45);transform:translateY(-1px);box-shadow:0 18px 38px rgba(15,23,42,.09)}
+      #${rootId} .rent-product-card.is-active{box-shadow:0 0 0 1px rgb(var(--theme-primary) / .08),0 18px 38px rgba(15,23,42,.09)}
+      #${rootId} .rent-product-card:focus-visible{outline:3px solid rgb(var(--theme-primary) / .18);outline-offset:2px}
+      #${rootId} .rent-product-image{position:relative;display:grid;place-items:center;aspect-ratio:1/1;width:100%;border-bottom:1px solid var(--rent-border);background:#fff;color:var(--rent-primary);font-size:1.35rem;font-weight:600;overflow:hidden}
+      #${rootId} .rent-product-image::before{content:"";position:absolute;inset:.7rem;border-radius:.75rem;background:#f8fafc}
+      #${rootId} .rent-product-image img{position:relative;z-index:1;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center center;padding:.88rem;background:transparent}
+      #${rootId} .rent-product-initials{position:relative;z-index:1;display:grid;place-items:center;width:4rem;height:4rem;border-radius:1rem;background:#f7e8ee;color:var(--rent-primary)}
+      #${rootId} .rent-product-status{position:absolute;right:.72rem;top:.72rem;z-index:2;display:inline-flex;align-items:center;gap:.32rem;border:1px solid #bbf7d0;border-radius:999px;background:#f0fdf4;padding:.26rem .55rem;color:var(--rent-green);font-size:.66rem;font-weight:600;line-height:1;box-shadow:0 8px 18px rgba(15,23,42,.08)}
+      #${rootId} .rent-product-status::before{content:"";width:.38rem;height:.38rem;border-radius:999px;background:currentColor}
+      #${rootId} .rent-product-status.is-busy{border-color:#fecaca;background:#fff1f2;color:var(--rent-red)}
+      #${rootId} .rent-product-body{display:flex;min-height:4.15rem;flex:1;flex-direction:column;justify-content:center;gap:.35rem;padding:.72rem .82rem .82rem;background:#fff}
+      #${rootId} .rent-product-name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;color:var(--rent-text);font-size:.95rem;font-weight:600;line-height:1.18}
       #${rootId} .rent-toolbar{display:grid;gap:.75rem}
       #${rootId} .rent-legend{display:flex;align-items:center;justify-content:center;gap:.65rem;flex-wrap:wrap}
       #${rootId} .rent-segment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.25rem;border:1px solid var(--rent-border);border-radius:.8rem;background:var(--rent-soft);padding:.22rem}
@@ -445,7 +290,7 @@
       .dark #${rootId} .rent-card,.dark #${rootId} .rent-button,.dark #${rootId} .rent-product-card,.dark #${rootId} .rent-row,.dark #${rootId} .rent-dialog,.dark #${rootId} input,.dark #${rootId} select,.dark #${rootId} textarea{background:var(--color-surface-900,#0f172a);border-color:var(--rent-border)}
       .dark #${rootId} .rent-summary,.dark #${rootId} .rent-month-head{background:var(--color-surface-800,#1e293b)}
       @media (max-width:1100px){#${rootId} .rent-items{grid-template-columns:repeat(3,minmax(0,1fr))}}
-      @media (max-width:760px){#${rootId}{gap:.85rem}#${rootId} .rent-top{display:grid;align-items:start}#${rootId} .rent-title h1{font-size:1.82rem;line-height:1.08}#${rootId} .rent-items{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}#${rootId} .rent-product-image{aspect-ratio:4/3;font-size:1.15rem}#${rootId} .rent-product-body{padding:.65rem .75rem .7rem}#${rootId} .rent-product-card.has-no-visible-price{min-height:15.75rem}#${rootId} .rent-product-card.has-no-visible-price .rent-product-image{height:clamp(10.85rem,50vw,12.2rem);padding:0}#${rootId} .rent-product-card.has-no-visible-price.is-rent-photo-portrait .rent-product-image{height:clamp(11.75rem,55vw,13.15rem)}#${rootId} .rent-product-card.has-no-visible-price .rent-product-body{min-height:3.55rem;padding:.48rem .68rem .76rem}#${rootId} .rent-product-card.has-no-visible-price .rent-product-name{font-size:.88rem;line-height:1.14}#${rootId} .rent-segment{width:100%}#${rootId} .rent-top .rent-button,#${rootId} .rent-actions .rent-button{width:100%}#${rootId} .rent-nav-button{width:2.75rem;min-height:2.75rem}#${rootId} .rent-periods{grid-template-columns:1fr}#${rootId} .rent-month-head,#${rootId} .rent-month-cell{padding:.38rem .18rem;min-height:3.85rem;text-align:center}#${rootId} .rent-month-cell button{align-items:center;text-align:center}#${rootId} .rent-row{grid-template-columns:1fr}#${rootId} .rent-form-grid{grid-template-columns:1fr}#${rootId} .rent-actions{grid-template-columns:1fr 1fr}#${rootId} .rent-dialog{max-height:82vh}}
+      @media (max-width:760px){#${rootId}{gap:.85rem}#${rootId} .rent-top{display:grid;align-items:start}#${rootId} .rent-title h1{font-size:1.82rem;line-height:1.08}#${rootId} .rent-items{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}#${rootId} .rent-product-card{min-height:13.8rem;border-radius:.82rem}#${rootId} .rent-product-image{aspect-ratio:1/1;font-size:1.15rem}#${rootId} .rent-product-image::before{inset:.45rem;border-radius:.62rem}#${rootId} .rent-product-image img{padding:.58rem}#${rootId} .rent-product-status{right:.52rem;top:.52rem;padding:.22rem .42rem;font-size:.58rem}#${rootId} .rent-product-body{min-height:3.5rem;padding:.56rem .62rem .68rem}#${rootId} .rent-product-name{font-size:.87rem;line-height:1.14}#${rootId} .rent-segment{width:100%}#${rootId} .rent-top .rent-button,#${rootId} .rent-actions .rent-button{width:100%}#${rootId} .rent-nav-button{width:2.75rem;min-height:2.75rem}#${rootId} .rent-periods{grid-template-columns:1fr}#${rootId} .rent-month-head,#${rootId} .rent-month-cell{padding:.38rem .18rem;min-height:3.85rem;text-align:center}#${rootId} .rent-month-cell button{align-items:center;text-align:center}#${rootId} .rent-row{grid-template-columns:1fr}#${rootId} .rent-form-grid{grid-template-columns:1fr}#${rootId} .rent-actions{grid-template-columns:1fr 1fr}#${rootId} .rent-dialog{max-height:82vh}}
     `;
     document.head.appendChild(style);
   }
@@ -484,7 +329,6 @@
 
     root.innerHTML = renderContent();
     bind(root);
-    normalizeProductPhotoFrames(root);
   }
 
   function renderContent() {
@@ -542,6 +386,7 @@
 
   function renderItemCard(item) {
     const busy = isItemBusy(item);
+    const active = Number(item.id) === Number(selectedItem()?.id);
     const initials = String(item.name || '?')
       .split(/\s+/)
       .slice(0, 2)
@@ -550,10 +395,10 @@
       .toUpperCase();
 
     return `
-      <button class="rent-product-card has-no-visible-price${Number(item.id) === Number(selectedItem()?.id) ? ' is-active' : ''}" type="button" data-item-id="${esc(item.id)}">
+      <button class="rent-product-card${active ? ' is-active' : ''}" type="button" data-item-id="${esc(item.id)}">
         <span class="rent-product-image">
-          ${item.photoUrl ? `<img src="${esc(item.photoUrl)}" alt="${esc(item.name)}" loading="lazy" crossorigin="anonymous">` : `<span class="rent-product-initials">${esc(initials || 'M')}</span>`}
-          <span class="rent-dot${busy ? ' is-busy' : ''}" aria-label="${busy ? 'Réservé' : 'Disponible'}"></span>
+          ${item.photoUrl ? `<img src="${esc(item.photoUrl)}" alt="${esc(item.name)}" loading="lazy">` : `<span class="rent-product-initials">${esc(initials || 'M')}</span>`}
+          <span class="rent-product-status${busy ? ' is-busy' : ''}">${busy ? 'Réservé' : 'Disponible'}</span>
         </span>
         <span class="rent-product-body">
           <strong class="rent-product-name">${esc(item.name)}</strong>

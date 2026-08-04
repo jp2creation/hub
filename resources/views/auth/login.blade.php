@@ -177,38 +177,14 @@
       }
 
       .app-install__actions {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         align-items: center;
         justify-content: center;
         gap: 10px;
         width: 100%;
+        max-width: 100%;
         min-width: 0;
-      }
-
-      .app-install__badge svg {
-        width: 24px;
-        height: 24px;
-        fill: none;
-        stroke: currentColor;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 2.4;
-      }
-
-      .app-install__brand-logo {
-        fill: currentColor;
-        stroke: none;
-      }
-
-      .app-install__brand-logo path {
-        stroke: none;
-      }
-
-      .app-install__badge span:first-child > span {
-        font-size: 1.44rem;
-        font-weight:600;
-        line-height: 1;
       }
 
       .app-install__help {
@@ -224,23 +200,20 @@
       }
 
       .app-install__badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 10px;
-        min-width: 158px;
-        min-height: 48px;
-        padding: 6px 12px;
-        border: 1px solid var(--install-border, #0b0f14);
-        border-radius: 10px;
-        background: var(--install-bg, #05070a);
-        color: var(--install-color, #fff);
+        display: block;
+        width: 100%;
+        min-width: 0;
+        aspect-ratio: 618 / 211;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: inherit;
         text-decoration: none;
-        box-shadow: 0 12px 24px var(--install-shadow, rgba(0, 0, 0, 0.16));
+        box-shadow: none;
         transition:
           transform 0.16s ease,
-          box-shadow 0.16s ease,
-          border-color 0.16s ease;
+          filter 0.16s ease;
       }
 
       .app-install__badge[hidden] {
@@ -248,52 +221,7 @@
       }
 
       .app-install__badge.is-current {
-        border-color: rgb(var(--theme-primary) / 0.38);
-        box-shadow: 0 16px 30px rgb(var(--theme-primary) / 0.14);
-      }
-
-      .app-install__badge.is-android {
-        --install-bg: #0b0f14;
-        --install-border: #0b0f14;
-        --install-color: #fff;
-        --install-shadow: rgba(11, 15, 20, 0.18);
-      }
-
-      .app-install__badge.is-webapk {
-        --install-bg: #0b0f14;
-        --install-border: #0b0f14;
-        --install-color: #fff;
-        --install-shadow: rgba(11, 15, 20, 0.18);
-      }
-
-      .app-install__badge.is-iphone,
-      .app-install__badge.is-ipad,
-      .app-install__badge.is-macos {
-        --install-bg: #000;
-        --install-border: #000;
-        --install-color: #fff;
-        --install-shadow: rgba(0, 0, 0, 0.14);
-      }
-
-      .app-install__badge.is-web {
-        --install-bg: #0b0f14;
-        --install-border: #0b0f14;
-        --install-color: #fff;
-        --install-shadow: rgba(11, 15, 20, 0.18);
-      }
-
-      .app-install.is-android {
-        background: transparent;
-      }
-
-      .app-install.is-iphone,
-      .app-install.is-ipad,
-      .app-install.is-macos {
-        background: transparent;
-      }
-
-      .app-install.is-web {
-        background: transparent;
+        filter: drop-shadow(0 12px 20px rgb(var(--theme-primary) / 0.16));
       }
 
       .app-install__badge:focus {
@@ -302,43 +230,16 @@
       }
 
       .app-install__badge:hover {
-        border-color: #1d2633;
-        box-shadow: 0 16px 28px var(--install-shadow, rgba(0, 0, 0, 0.18));
         transform: translateY(-1px);
       }
 
-      .app-install__badge span:first-child {
-        display: grid;
-        place-items: center;
-        width: 27px;
-        height: 27px;
-        flex: 0 0 auto;
-      }
-
-      .app-install__badge > span:last-child {
-        display: grid;
-        gap: 2px;
-        justify-items: start;
-        min-width: 0;
-        text-align: left;
-      }
-
-      .app-install__badge small {
-        color: currentColor;
-        font-size: 0.56rem;
-        font-weight: 800;
-        letter-spacing: 0;
-        line-height: 1;
-        opacity: 0.82;
-      }
-
-      .app-install__badge strong {
-        color: currentColor;
-        font-size: 1.02rem;
-        font-weight: 600;
-        line-height: 1;
-        letter-spacing: 0;
-        white-space: nowrap;
+      .app-install__badge-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        border: 0;
       }
 
       .native-login {
@@ -503,41 +404,6 @@
         .app-install__actions {
           gap: 8px;
         }
-
-        .app-install__badge {
-          flex: 0 1 124px;
-          min-width: 0;
-          max-width: 132px;
-          min-height: 38px;
-          padding: 5px 8px;
-          gap: 7px;
-          border-radius: 8px;
-          box-shadow: 0 9px 18px var(--install-shadow, rgba(0, 0, 0, 0.13));
-        }
-
-        .app-install__badge svg {
-          width: 18px;
-          height: 18px;
-          stroke-width: 2.25;
-        }
-
-        .app-install__badge span:first-child {
-          width: 20px;
-          height: 20px;
-        }
-
-        .app-install__badge span:first-child > span {
-          font-size: 1.08rem;
-        }
-
-        .app-install__badge small {
-          font-size: 0.46rem;
-          font-weight: 700;
-        }
-
-        .app-install__badge strong {
-          font-size: 0.78rem;
-        }
       }
 
       @media (max-width: 520px) {
@@ -593,8 +459,9 @@
           padding: 0;
         }
 
-        .app-install__badge {
-          min-width: 0;
+        .app-install__actions {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          max-width: 340px;
         }
 
         button {
@@ -615,8 +482,8 @@
           display: flex;
         }
 
-        .app-install__badge {
-          flex-basis: calc(50% - 4px);
+        .app-install__actions {
+          gap: 7px;
         }
       }
     </style>
@@ -708,46 +575,22 @@
         data-login-app-install
         data-android-url="{{ $loginInstallLinks['androidApkUrl'] ?? '' }}"
         data-ios-url="{{ $loginInstallLinks['iosInstallUrl'] ?? '' }}"
-        data-macos-url="{{ $loginInstallLinks['macosPkgUrl'] ?? '' }}"
         aria-label="Installer l'application Martin Sols"
         hidden
       >
         <div class="app-install__head">
           <div class="app-install__actions">
-            <a class="app-install__badge is-webapk" href="#" data-login-app-kind="webapk" rel="noopener">
-              <span data-login-app-icon="webapk" aria-hidden="true"></span>
-              <span>
-                <small>Installer</small>
-                <strong>Web APK</strong>
-              </span>
+            <a class="app-install__badge is-app-store" href="#" data-login-app-kind="ios" aria-label="Disponible sur l'App Store" rel="noopener">
+              <img class="app-install__badge-image" src="{{ asset('login-app-store.png') }}" alt="Disponible sur l'App Store" />
             </a>
-            <a class="app-install__badge is-android" href="#" data-login-app-kind="android" rel="noopener">
-              <span data-login-app-icon="android" aria-hidden="true"></span>
-              <span>
-                <small>Télécharger</small>
-                <strong>Android</strong>
-              </span>
+            <a class="app-install__badge is-google-play" href="#" data-login-app-kind="android" aria-label="Disponible sur Google Play" rel="noopener">
+              <img class="app-install__badge-image" src="{{ asset('login-google-play.png') }}" alt="Disponible sur Google Play" />
             </a>
-            <a class="app-install__badge is-iphone" href="#" data-login-app-kind="iphone" rel="noopener">
-              <span data-login-app-icon="iphone" aria-hidden="true"></span>
-              <span>
-                <small>Ajouter sur</small>
-                <strong>iPhone</strong>
-              </span>
+            <a class="app-install__badge is-windows" href="#" data-login-app-kind="windows" aria-label="Disponible sur Windows" rel="noopener">
+              <img class="app-install__badge-image" src="{{ asset('login-windows.svg') }}" alt="Disponible sur Windows" />
             </a>
-            <a class="app-install__badge is-ipad" href="#" data-login-app-kind="ipad" rel="noopener">
-              <span data-login-app-icon="ipad" aria-hidden="true"></span>
-              <span>
-                <small>Ajouter sur</small>
-                <strong>iPad</strong>
-              </span>
-            </a>
-            <a class="app-install__badge is-macos" href="#" data-login-app-kind="macos" rel="noopener">
-              <span data-login-app-icon="macos" aria-hidden="true"></span>
-              <span>
-                <small>Télécharger</small>
-                <strong>macOS</strong>
-              </span>
+            <a class="app-install__badge is-webapk" href="#" data-login-app-kind="webapk" aria-label="Disponible en Web APK" rel="noopener">
+              <img class="app-install__badge-image" src="{{ asset('login-web-apk.svg') }}" alt="Disponible en Web APK" />
             </a>
           </div>
         </div>
@@ -1106,15 +949,9 @@
         const isIphone = /iPhone|iPod/i.test(userAgent);
         const isIos = isIphone || isIpad;
         const isMacos = !isIos && !isAndroid && /\b(macintosh|mac os x|macintel|macos|mac)\b/i.test(platformSignature);
+        const isWindows = !isIos && !isAndroid && /\b(windows|win32|win64|wow64)\b/i.test(platformSignature);
         const androidUrl = card.dataset.androidUrl || '';
         const iosUrl = card.dataset.iosUrl || '';
-        const macosUrl = card.dataset.macosUrl || '';
-        const icons = {
-          google: '<svg class="app-install__brand-logo" viewBox="0 0 24 24"><path fill="#4285f4" d="M21.6 12.23c0-.74-.07-1.45-.19-2.14H12v4.05h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.24c1.9-1.75 2.98-4.32 2.98-7.44Z"></path><path fill="#34a853" d="M12 22c2.7 0 4.97-.89 6.62-2.33l-3.24-2.51c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.76-5.6-4.12H3.06v2.59A10 10 0 0 0 12 22Z"></path><path fill="#fbbc05" d="M6.4 14a6 6 0 0 1 0-3.82V7.59H3.06a10 10 0 0 0 0 8.82L6.4 14Z"></path><path fill="#ea4335" d="M12 5.89c1.47 0 2.8.5 3.84 1.5l2.86-2.86A9.6 9.6 0 0 0 12 2a10 10 0 0 0-8.94 5.59l3.34 2.59C7.2 7.82 9.4 5.89 12 5.89Z"></path></svg>',
-          apple: '<span aria-hidden="true"></span>',
-          chrome: '<svg class="app-install__brand-logo" viewBox="0 0 24 24"><path fill="#ea4335" d="M12 12h9.75A9.75 9.75 0 0 0 3.56 7.13L8.4 15.5A4.3 4.3 0 0 1 12 7.7h8.77A9.75 9.75 0 0 0 12 2.25a9.74 9.74 0 0 0-8.44 4.88L8.4 15.5A4.3 4.3 0 0 1 12 12Z"></path><path fill="#fbbc04" d="M3.56 7.13A9.75 9.75 0 0 0 12 21.75l4.84-8.38A4.3 4.3 0 0 1 8.4 15.5L3.56 7.13Z"></path><path fill="#34a853" d="M12 21.75A9.75 9.75 0 0 0 21.75 12H12a4.3 4.3 0 0 1 4.84 1.37L12 21.75Z"></path><circle cx="12" cy="12" r="4.1" fill="#4285f4"></circle><circle cx="12" cy="12" r="2.35" fill="#fff"></circle></svg>',
-          download: '<svg viewBox="0 0 24 24"><path d="M12 3v11"></path><path d="m7.5 9.5 4.5 4.5 4.5-4.5"></path><path d="M5 18.5h14"></path></svg>',
-        };
 
         const installPwa = (event) => {
           event.preventDefault();
@@ -1134,12 +971,6 @@
             return;
           }
 
-          const iconTarget = badge.querySelector(`[data-login-app-icon="${kind}"]`);
-
-          if (iconTarget) {
-            iconTarget.innerHTML = options.icon || '';
-          }
-
           badge.href = options.href || '#';
           badge.toggleAttribute('download', options.download === true);
           badge.onclick = options.onClick || null;
@@ -1150,51 +981,39 @@
           help.textContent = 'Safari > Partager > Ajouter à l’écran d’accueil. Le HUB s’ouvrira ensuite en plein écran.';
         };
 
-        const showMacosHelp = (event) => {
+        const showAndroidHelp = (event) => {
           event.preventDefault();
-          help.textContent = 'Le téléchargement Mac sera proposé ici dès que le paquet sera publié.';
+          help.textContent = 'Le lien Google Play sera disponible ici dès publication.';
         };
-
-        configureBadge('webapk', {
-          href: '#',
-          icon: icons.chrome,
-          onClick: installPwa,
-        });
 
         configureBadge('android', {
           href: androidUrl || '#',
           download: Boolean(androidUrl),
-          icon: icons.google,
+          onClick: androidUrl ? null : showAndroidHelp,
         });
 
-        configureBadge('iphone', {
+        configureBadge('ios', {
           href: iosUrl || '#',
-          icon: icons.apple,
           onClick: iosUrl ? null : showIosHelp,
         });
 
-        configureBadge('ipad', {
-          href: iosUrl || '#',
-          icon: icons.apple,
-          onClick: iosUrl ? null : showIosHelp,
+        configureBadge('windows', {
+          href: '#',
+          onClick: installPwa,
         });
 
-        configureBadge('macos', {
-          href: macosUrl || '#',
-          download: Boolean(macosUrl),
-          icon: icons.apple,
-          onClick: macosUrl ? null : showMacosHelp,
+        configureBadge('webapk', {
+          href: '#',
+          onClick: installPwa,
         });
 
         const currentKind = isAndroid
-          ? 'android'
-          : isIpad
-            ? 'ipad'
-            : isIphone
-              ? 'iphone'
-              : isMacos
-                ? 'macos'
-                : 'webapk';
+          ? androidUrl ? 'android' : 'webapk'
+          : isIos || isMacos
+            ? 'ios'
+            : isWindows
+              ? 'windows'
+              : 'webapk';
         const currentBadge = badgeByKind.get(currentKind);
 
         card.className = `app-install is-${currentKind}`;

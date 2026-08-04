@@ -699,24 +699,19 @@ body.ms-ui-modal-open {
   background: #fff;
 }
 
-.crm-native-content .rent-product-card.has-no-visible-price .rent-product-image {
-  height: 12.35rem !important;
+.crm-native-content .rent-product-card .rent-product-image {
+  aspect-ratio: 1 / 1 !important;
   border-bottom: 1px solid rgb(226 232 240) !important;
   background: #fff !important;
-  padding: 0 !important;
 }
 
-.crm-native-content .rent-product-card.has-no-visible-price .rent-product-image img {
+.crm-native-content .rent-product-card .rent-product-image img {
   width: 100% !important;
   height: 100% !important;
   object-fit: contain !important;
   object-position: center center !important;
-  padding: 0 !important;
-  background: #fff !important;
-}
-
-.crm-native-content .rent-product-card.has-no-visible-price.is-rent-photo-portrait .rent-product-image {
-  height: 13.2rem !important;
+  padding: 0.88rem !important;
+  background: transparent !important;
 }
 
 .resa-vehicle-card .resa-product-image {
@@ -983,22 +978,20 @@ body.ms-ui-modal-open {
     min-height: 5.55rem !important;
   }
 
-  .ms-ui-product-image,
-  .rent-product-image {
+  .ms-ui-product-image {
     aspect-ratio: 1.22 / 1;
   }
 
-  .crm-native-content .rent-product-card.has-no-visible-price {
-    min-height: 15.75rem !important;
+  .crm-native-content .rent-product-card {
+    min-height: 13.8rem !important;
   }
 
-  .crm-native-content .rent-product-card.has-no-visible-price .rent-product-image {
-    height: clamp(10.85rem, 50vw, 12.2rem) !important;
-    padding: 0 !important;
+  .crm-native-content .rent-product-card .rent-product-image {
+    aspect-ratio: 1 / 1 !important;
   }
 
-  .crm-native-content .rent-product-card.has-no-visible-price.is-rent-photo-portrait .rent-product-image {
-    height: clamp(11.75rem, 55vw, 13.15rem) !important;
+  .crm-native-content .rent-product-card .rent-product-image img {
+    padding: 0.58rem !important;
   }
 
   .resa-product-image {
@@ -1012,9 +1005,9 @@ body.ms-ui-modal-open {
     padding: 0.72rem !important;
   }
 
-  .crm-native-content .rent-product-card.has-no-visible-price .rent-product-body {
-    min-height: 3.55rem !important;
-    padding: 0.48rem 0.68rem 0.76rem !important;
+  .crm-native-content .rent-product-card .rent-product-body {
+    min-height: 3.5rem !important;
+    padding: 0.56rem 0.62rem 0.68rem !important;
   }
 
   .resa-product-body {
@@ -1028,8 +1021,8 @@ body.ms-ui-modal-open {
     font-size: 0.91rem !important;
   }
 
-  .crm-native-content .rent-product-card.has-no-visible-price .rent-product-name {
-    font-size: 0.88rem !important;
+  .crm-native-content .rent-product-card .rent-product-name {
+    font-size: 0.87rem !important;
     line-height: 1.14 !important;
   }
 
