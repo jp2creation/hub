@@ -22,8 +22,8 @@ npm run dist
 Artefacts generes :
 
 ```text
-mobile/windows/dist/Martin Sols HUB-1.0.0-win-x64-setup.exe
-mobile/windows/dist/Martin Sols HUB-1.0.0-win-x64-portable.exe
+mobile/windows/dist/Martin Sols HUB-1.0.1-win-x64-setup.exe
+mobile/windows/dist/Martin Sols HUB-1.0.1-win-x64-portable.exe
 ```
 
 La commande `npm run pack` genere une version non-installee dans
@@ -46,7 +46,7 @@ Le preload expose `window.MartinSolsNativeApp`, comme les apps Android/macOS :
 L'app lit le meme manifeste que les apps Android/iOS/macOS :
 
 ```text
-https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json
+https://raw.githubusercontent.com/jp2creation/hub_windows/main/martin-sols-update.json
 ```
 
 Quand un installeur Windows est publie sur GitHub, renseigner `windows.installerUrl`

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Martin Sols HUB</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --red: #95002e;
+        --red-dark: #7f0028;
+        --white-soft: rgba(255, 255, 255, 0.88);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--red);
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      .window-menu {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        width: 100%;
+        height: 34px;
+        padding: 0 150px 0 8px;
+        background: linear-gradient(180deg, var(--red), var(--red-dark));
+        color: #fff;
+        -webkit-app-region: drag;
+        user-select: none;
+      }
+
+      button {
+        min-width: 0;
+        height: 28px;
+        padding: 0 11px;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--white-soft);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 28px;
+        letter-spacing: 0;
+        white-space: nowrap;
+        -webkit-app-region: no-drag;
+      }
+
+      button:hover,
+      button:focus-visible {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        outline: 0;
+      }
+
+      button:active {
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      @media (max-width: 720px) {
+        .window-menu {
+          gap: 0;
+          padding-right: 138px;
+        }
+
+        button {
+          padding: 0 8px;
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="window-menu" aria-label="Menu principal">
+      <button type="button" data-menu-id="app">Martin Sols HUB</button>
+      <button type="button" data-menu-id="navigation">Navigation</button>
+      <button type="button" data-menu-id="edit">Edition</button>
+      <button type="button" data-menu-id="view">Affichage</button>
+    </nav>
+    <script>
+      const chromeBridge = window.MartinSolsWindowChrome;
+
+      function openMenu(button) {
+        const rect = button.getBoundingClientRect();
+        chromeBridge.openMenu(button.dataset.menuId, {
+          x: Math.round(rect.left),
+          y: Math.round(rect.bottom),
+        });
+      }
+
+      document.querySelectorAll('[data-menu-id]').forEach((button) => {
+        button.addEventListener('click', () => openMenu(button));
+      });
+    </script>
+  </body>
+</html>

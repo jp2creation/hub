@@ -1,5 +1,6 @@
 const {
   app,
+  BrowserView,
   BrowserWindow,
   Menu,
   dialog,
@@ -15,20 +16,41 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 
 const HUB_URL = 'https://crm.jp2.fr/?mobile_app=1&source=windows_app';
-const UPDATE_MANIFEST_URL = 'https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json';
-const SPLASH_DURATION_MS = 12600;
+const UPDATE_MANIFEST_URL = 'https://raw.githubusercontent.com/jp2creation/hub_windows/main/martin-sols-update.json';
+const SPLASH_DURATION_MS = 5500;
 const UPDATE_CHECK_DELAY_MS = 1500;
 const APP_CODE_HASH_ITERATIONS = 120000;
 const APP_CODE_HASH_BYTES = 32;
 const APP_CODE_SALT_BYTES = 16;
-const CURRENT_BUILD_NUMBER = 1;
+const CURRENT_BUILD_NUMBER = 2;
+const WINDOW_MENU_BAR_HEIGHT = 34;
+const MARTIN_SOLS_RED = '#95002E';
 const TRUSTED_HOSTS = new Set(['crm.jp2.fr']);
 
 let mainWindow = null;
+let hubView = null;
 let updateCheckStarted = false;
 
 function nativeActionResult(ok, message, extra = {}) {
   return { ok, message, ...extra };
+}
+
+function hubWebContents() {
+  if (!hubView || hubView.webContents.isDestroyed()) {
+    return null;
+  }
+
+  return hubView.webContents;
+}
+
+function withHubWebContents(action) {
+  const webContents = hubWebContents();
+
+  if (!webContents) {
+    return;
+  }
+
+  action(webContents);
 }
 
 function crmUrl() {
@@ -152,15 +174,13 @@ function iconPath() {
 }
 
 function trustedWebContents() {
-  if (!mainWindow || mainWindow.isDestroyed()) {
+  const webContents = hubWebContents();
+
+  if (!webContents || !isTrustedUrl(webContents.getURL())) {
     return null;
   }
 
-  if (!isTrustedUrl(mainWindow.webContents.getURL())) {
-    return null;
-  }
-
-  return mainWindow.webContents;
+  return webContents;
 }
 
 function dispatchAuthStatusChanged(webContents = trustedWebContents()) {
@@ -285,10 +305,10 @@ function openExternalUrl(url) {
   shell.openExternal(url).catch(() => {});
 }
 
-function configureNavigation(window) {
-  window.webContents.setWindowOpenHandler(({ url }) => {
+function configureNavigation(webContents) {
+  webContents.setWindowOpenHandler(({ url }) => {
     if (isTrustedUrl(url)) {
-      window.loadURL(url);
+      webContents.loadURL(url);
     } else {
       openExternalUrl(url);
     }
@@ -296,7 +316,7 @@ function configureNavigation(window) {
     return { action: 'deny' };
   });
 
-  window.webContents.on('will-navigate', (event, url) => {
+  webContents.on('will-navigate', (event, url) => {
     if (isTrustedUrl(url)) {
       return;
     }
@@ -305,29 +325,29 @@ function configureNavigation(window) {
     openExternalUrl(url);
   });
 
-  window.webContents.on('did-finish-load', () => {
-    if (isTrustedUrl(window.webContents.getURL())) {
+  webContents.on('did-finish-load', () => {
+    if (isTrustedUrl(webContents.getURL())) {
       scheduleUpdateCheck();
     }
   });
 
-  window.webContents.on('before-input-event', (event, input) => {
+  webContents.on('before-input-event', (event, input) => {
     if (input.type !== 'keyDown') {
       return;
     }
 
     if ((input.control || input.meta) && input.key.toLowerCase() === 'r') {
-      window.webContents.reload();
+      webContents.reload();
     }
 
-    if (input.alt && input.key === 'ArrowLeft' && window.webContents.canGoBack()) {
+    if (input.alt && input.key === 'ArrowLeft' && webContents.canGoBack()) {
       event.preventDefault();
-      window.webContents.goBack();
+      webContents.goBack();
     }
 
-    if (input.alt && input.key === 'ArrowRight' && window.webContents.canGoForward()) {
+    if (input.alt && input.key === 'ArrowRight' && webContents.canGoForward()) {
       event.preventDefault();
-      window.webContents.goForward();
+      webContents.goForward();
     }
   });
 }
@@ -341,18 +361,32 @@ function configurePermissions() {
   });
 }
 
-function loadSplash(window) {
-  window.loadFile(path.join(__dirname, 'splash.html'), {
+function loadSplash(webContents) {
+  webContents.loadFile(path.join(__dirname, 'splash.html'), {
     query: {
       animation: pathToFileURL(animationPath()).href,
     },
   });
 
   setTimeout(() => {
-    if (!window.isDestroyed()) {
-      window.loadURL(crmUrl());
+    if (!webContents.isDestroyed()) {
+      webContents.loadURL(crmUrl());
     }
   }, SPLASH_DURATION_MS);
+}
+
+function resizeHubView(window) {
+  if (!hubView || !window || window.isDestroyed()) {
+    return;
+  }
+
+  const [width, height] = window.getContentSize();
+  hubView.setBounds({
+    x: 0,
+    y: WINDOW_MENU_BAR_HEIGHT,
+    width,
+    height: Math.max(0, height - WINDOW_MENU_BAR_HEIGHT),
+  });
 }
 
 function createMainWindow() {
@@ -361,9 +395,29 @@ function createMainWindow() {
     height: 780,
     minWidth: 900,
     minHeight: 640,
-    backgroundColor: '#fffaf7',
+    backgroundColor: MARTIN_SOLS_RED,
     title: 'Martin Sols HUB',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: MARTIN_SOLS_RED,
+      symbolColor: '#ffffff',
+      height: WINDOW_MENU_BAR_HEIGHT,
+    },
+    autoHideMenuBar: true,
     icon: iconPath(),
+    webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: false,
+      preload: path.join(__dirname, 'chrome-preload.js'),
+      sandbox: false,
+    },
+  });
+
+  mainWindow = window;
+  window.setMenuBarVisibility(false);
+  window.loadFile(path.join(__dirname, 'chrome.html'));
+
+  const view = new BrowserView({
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -372,13 +426,22 @@ function createMainWindow() {
     },
   });
 
-  mainWindow = window;
-  configureNavigation(window);
-  loadSplash(window);
+  hubView = view;
+  window.addBrowserView(view);
+  resizeHubView(window);
+  window.on('resize', () => resizeHubView(window));
+  view.setBackgroundColor('#fffaf7');
+  configureNavigation(view.webContents);
+  loadSplash(view.webContents);
+  view.webContents.once('dom-ready', () => view.webContents.focus());
 
   window.once('closed', () => {
     if (mainWindow === window) {
       mainWindow = null;
+    }
+
+    if (hubView === view) {
+      hubView = null;
     }
   });
 
@@ -404,6 +467,7 @@ function openAppSettings() {
 function configureMenu() {
   const template = [
     {
+      id: 'app',
       label: 'Martin Sols HUB',
       submenu: [
         {
@@ -429,37 +493,92 @@ function configureMenu() {
       ],
     },
     {
+      id: 'navigation',
       label: 'Navigation',
       submenu: [
         {
           label: 'Retour',
           accelerator: 'Alt+Left',
-          click: () => mainWindow?.webContents.canGoBack() && mainWindow.webContents.goBack(),
+          click: () => withHubWebContents((webContents) => webContents.canGoBack() && webContents.goBack()),
         },
         {
           label: 'Avancer',
           accelerator: 'Alt+Right',
-          click: () => mainWindow?.webContents.canGoForward() && mainWindow.webContents.goForward(),
+          click: () => withHubWebContents((webContents) => webContents.canGoForward() && webContents.goForward()),
         },
         {
           label: 'Actualiser',
           accelerator: 'CmdOrCtrl+R',
-          click: () => mainWindow?.webContents.reload(),
+          click: () => withHubWebContents((webContents) => webContents.reload()),
         },
         {
           label: 'Ouvrir dans le navigateur',
           click: () => {
-            const url = mainWindow?.webContents.getURL() || crmUrl();
+            const url = hubWebContents()?.getURL() || crmUrl();
             openExternalUrl(url);
           },
         },
       ],
     },
-    { role: 'editMenu', label: 'Edition' },
-    { role: 'viewMenu', label: 'Affichage' },
+    {
+      id: 'edit',
+      label: 'Edition',
+      submenu: [
+        { label: 'Annuler', accelerator: 'CmdOrCtrl+Z', click: () => withHubWebContents((webContents) => webContents.undo()) },
+        { label: 'Retablir', accelerator: 'CmdOrCtrl+Y', click: () => withHubWebContents((webContents) => webContents.redo()) },
+        { type: 'separator' },
+        { label: 'Couper', accelerator: 'CmdOrCtrl+X', click: () => withHubWebContents((webContents) => webContents.cut()) },
+        { label: 'Copier', accelerator: 'CmdOrCtrl+C', click: () => withHubWebContents((webContents) => webContents.copy()) },
+        { label: 'Coller', accelerator: 'CmdOrCtrl+V', click: () => withHubWebContents((webContents) => webContents.paste()) },
+        { label: 'Supprimer', click: () => withHubWebContents((webContents) => webContents.delete()) },
+        { type: 'separator' },
+        { label: 'Tout selectionner', accelerator: 'CmdOrCtrl+A', click: () => withHubWebContents((webContents) => webContents.selectAll()) },
+      ],
+    },
+    {
+      id: 'view',
+      label: 'Affichage',
+      submenu: [
+        { label: 'Actualiser', accelerator: 'CmdOrCtrl+R', click: () => withHubWebContents((webContents) => webContents.reload()) },
+        { label: 'Forcer l actualisation', accelerator: 'CmdOrCtrl+Shift+R', click: () => withHubWebContents((webContents) => webContents.reloadIgnoringCache()) },
+        { label: 'Outils de developpement', accelerator: 'F12', click: () => withHubWebContents((webContents) => webContents.toggleDevTools()) },
+        { type: 'separator' },
+        { label: 'Taille reelle', accelerator: 'CmdOrCtrl+0', click: () => withHubWebContents((webContents) => webContents.setZoomLevel(0)) },
+        { label: 'Zoom avant', accelerator: 'CmdOrCtrl+Plus', click: () => withHubWebContents((webContents) => webContents.setZoomLevel(webContents.getZoomLevel() + 1)) },
+        { label: 'Zoom arriere', accelerator: 'CmdOrCtrl+-', click: () => withHubWebContents((webContents) => webContents.setZoomLevel(webContents.getZoomLevel() - 1)) },
+        { type: 'separator' },
+        {
+          label: 'Plein ecran',
+          accelerator: 'F11',
+          click: () => mainWindow && mainWindow.setFullScreen(!mainWindow.isFullScreen()),
+        },
+      ],
+    },
   ];
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
+function showWindowMenu(event, menuId, point = {}) {
+  const ownerWindow = BrowserWindow.fromWebContents(event.sender);
+
+  if (!ownerWindow || ownerWindow !== mainWindow) {
+    return nativeActionResult(false, 'Fenetre Windows non autorisee.');
+  }
+
+  const menuItem = Menu.getApplicationMenu()?.getMenuItemById(String(menuId || ''));
+
+  if (!menuItem?.submenu) {
+    return nativeActionResult(false, 'Menu Windows indisponible.');
+  }
+
+  menuItem.submenu.popup({
+    window: ownerWindow,
+    x: Number.isFinite(point.x) ? Math.round(point.x) : 0,
+    y: Number.isFinite(point.y) ? Math.round(point.y) : WINDOW_MENU_BAR_HEIGHT,
+  });
+
+  return nativeActionResult(true, 'Menu Windows ouvert.');
 }
 
 async function openPrompt({ title, message, mode }) {
@@ -665,6 +784,8 @@ async function clearMobileSession(webContents) {
 }
 
 function registerNativeBridge() {
+  ipcMain.handle('martin-sols:show-window-menu', showWindowMenu);
+
   ipcMain.on('martin-sols:get-mobile-auth-status', (event) => {
     if (!isTrustedSender(event)) {
       event.returnValue = JSON.stringify(nativeActionResult(false, 'Page HUB non autorisee.'));

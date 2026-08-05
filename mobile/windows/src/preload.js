@@ -34,11 +34,11 @@ ipcRenderer.on('martin-sols:native-auth-result', (_event, detail) => {
 
 const bridge = {
   getVersionName() {
-    return '1.0.0';
+    return '1.0.1';
   },
 
   getVersionCode() {
-    return '1';
+    return '2';
   },
 
   getPlatformName() {

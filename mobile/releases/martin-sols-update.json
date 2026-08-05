@@ -25,12 +25,12 @@
     "releaseNotes": "Ajout des Parametres de l app sur Mac avec acces aux mises a jour et aux futurs reglages."
   },
   "windows": {
-    "version": "1.0.0",
-    "buildNumber": 1,
+    "version": "1.0.1",
+    "buildNumber": 2,
     "required": false,
-    "installerUrl": "",
-    "portableUrl": "",
-    "sha256": "",
-    "releaseNotes": "Premiere version Windows du HUB Martin Sols avec splash, WebView, connexion rapide, localisation et mises a jour."
+    "installerUrl": "https://github.com/jp2creation/hub_windows/raw/main/releases/Martin%20Sols%20HUB-1.0.1-win-x64-setup.exe",
+    "portableUrl": "https://github.com/jp2creation/hub_windows/raw/main/releases/Martin%20Sols%20HUB-1.0.1-win-x64-portable.exe",
+    "sha256": "d80340bb2a21d9168f57e360df59a52aef273722d77ab514385e5dd572a77908",
+    "releaseNotes": "Version Windows 1.0.1 : barre de menu rouge et menus en francais, avec splash, WebView, connexion rapide, localisation et mises a jour."
   }
 }

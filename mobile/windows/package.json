@@ -1,6 +1,6 @@
 {
   "name": "martin-sols-hub-windows",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Application Windows Martin Sols HUB.",
   "license": "SEE LICENSE IN ../../LICENSE.md",
@@ -8,7 +8,7 @@
   "scripts": {
     "start": "npm run prepare:assets && electron .",
     "prepare:assets": "node scripts/prepare-assets.js",
-    "check": "node --check src/main.js && node --check src/preload.js && node --check scripts/prepare-assets.js",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/chrome-preload.js && node --check scripts/prepare-assets.js",
     "pack": "npm run prepare:assets && electron-builder --win --x64 --dir",
     "dist": "npm run prepare:assets && electron-builder --win --x64"
   },
