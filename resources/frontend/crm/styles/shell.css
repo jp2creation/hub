@@ -435,6 +435,27 @@ body.crm-native-shell-active {
   color: rgb(29 53 79);
 }
 
+.header-icon-btn:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.crm-native-refresh.is-refreshing svg {
+  animation: crm-native-refresh-spin 0.8s linear infinite;
+}
+
+@keyframes crm-native-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crm-native-refresh.is-refreshing svg {
+    animation: none;
+  }
+}
+
 .crm-native-menu-button svg,
 .header-icon-btn svg {
   width: 1.2rem;
@@ -911,6 +932,7 @@ html.crm-ui-module-ready .crm-native-content > * {
   }
 
   .crm-native-bell,
+  .crm-native-refresh,
   .crm-native-avatar,
   .crm-native-menu-button {
     width: 2.45rem;

@@ -150,6 +150,9 @@ function iconForKey(iconKey?: string): string {
     profile: iconSvg(
       '<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path><path d="M4 21a8 8 0 0 1 16 0"></path>',
     ),
+    refresh: iconSvg(
+      '<path d="M21 12a9 9 0 0 1-15.6 6.1L3 16"></path><path d="M3 21v-5h5"></path><path d="M3 12A9 9 0 0 1 18.6 5.9L21 8"></path><path d="M21 3v5h-5"></path>',
+    ),
     ruler: iconSvg('<path d="M4 17 17 4l3 3L7 20z"></path><path d="m14 7 3 3M11 10l2 2M8 13l3 3"></path>'),
     settings: iconSvg(
       '<path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"></path>',
@@ -557,6 +560,9 @@ function headerHtml(profile?: CrmProfile): string {
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>',
     '<span></span>',
     '</a>',
+    '<button class="header-icon-btn crm-native-refresh" type="button" data-crm-native-refresh aria-label="Forcer le rafraîchissement" title="Forcer le rafraîchissement">',
+    `${iconForKey('refresh')}`,
+    '</button>',
     '<div class="crm-native-user-wrap" data-crm-native-user-wrap>',
     '<button class="crm-native-user" type="button" data-crm-native-user-menu-toggle aria-haspopup="menu" aria-expanded="false" aria-label="Menu du compte">',
     '<span class="crm-native-user-text">',
@@ -832,6 +838,42 @@ function toggleUserMenu(): void {
   setUserMenuOpen(!menu || Boolean(menu.hidden));
 }
 
+function isHubCacheKey(key: string): boolean {
+  return key.startsWith('martin-sols-hub-') || key.startsWith('martin-sols-crm-');
+}
+
+async function clearHubCaches(): Promise<void> {
+  if (!('caches' in window)) {
+    return;
+  }
+
+  try {
+    const keys = await window.caches.keys();
+    await Promise.all(keys.filter(isHubCacheKey).map((key) => window.caches.delete(key)));
+  } catch {
+    // A cache purge is best-effort; the reload still refreshes the active page.
+  }
+}
+
+async function forceHubRefresh(button: HTMLButtonElement | null): Promise<void> {
+  setUserMenuOpen(false);
+
+  if (button) {
+    button.disabled = true;
+    button.classList.add('is-refreshing');
+    button.setAttribute('aria-busy', 'true');
+  }
+
+  try {
+    window.MartinSolsPwa?.checkForUpdates?.();
+  } catch {
+    // The PWA helper is optional and must never block a manual refresh.
+  }
+
+  await clearHubCaches();
+  window.location.reload();
+}
+
 function installShellApi(): void {
   window.MartinSolsCrmShell = {
     closeUserMenu: () => setUserMenuOpen(false),
@@ -873,6 +915,13 @@ function installEvents(): void {
 
       if (target?.closest('[data-crm-mobile-settings-toggle]')) {
         setUserMenuOpen(false);
+        return;
+      }
+
+      const refreshButton = target?.closest<HTMLButtonElement>('[data-crm-native-refresh]');
+      if (refreshButton) {
+        event.preventDefault();
+        void forceHubRefresh(refreshButton);
         return;
       }
 

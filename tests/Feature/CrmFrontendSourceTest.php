@@ -85,6 +85,12 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('layout-header crm-native-header', $nativeShell);
         $this->assertStringContainsString('<img class="crm-native-mobile-brand-mark" src="${esc(logoMarkUrl())}" alt="Martin Sols">', $nativeShell);
         $this->assertStringContainsString('<img class="crm-native-mobile-brand-full" src="${esc(logoUrl())}" alt="Martin Sols">', $nativeShell);
+        $this->assertStringContainsString('data-crm-native-refresh', $nativeShell);
+        $this->assertStringContainsString("iconForKey('refresh')", $nativeShell);
+        $this->assertStringContainsString('function forceHubRefresh(button: HTMLButtonElement | null)', $nativeShell);
+        $this->assertStringContainsString('window.MartinSolsPwa?.checkForUpdates?.()', $nativeShell);
+        $this->assertStringContainsString("key.startsWith('martin-sols-hub-')", $nativeShell);
+        $this->assertStringContainsString('window.location.reload()', $nativeShell);
         $this->assertStringContainsString('martin-sols-hub-sidebar-collapsed', $nativeShell);
         $this->assertStringContainsString('martin-sols-hub-nav-groups-collapsed', $nativeShell);
         $this->assertStringContainsString('crm-native-sidebar-collapsed', $nativeShell);
@@ -232,6 +238,8 @@ class CrmFrontendSourceTest extends TestCase
         $this->assertStringContainsString('body.crm-native-sidebar-collapsed .crm-native-brand-mark', $shellCss);
         $this->assertStringContainsString('width: 2.45rem;', $shellCss);
         $this->assertStringContainsString('height: 2.45rem;', $shellCss);
+        $this->assertStringContainsString('.crm-native-refresh.is-refreshing svg', $shellCss);
+        $this->assertStringContainsString('@keyframes crm-native-refresh-spin', $shellCss);
         $this->assertStringContainsString('position: sticky;', $shellCss);
         $this->assertStringContainsString('padding-top: var(--crm-header-height);', $shellCss);
         $this->assertStringContainsString('height: var(--crm-header-height);', $shellCss);

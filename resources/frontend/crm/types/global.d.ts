@@ -30,6 +30,12 @@ declare global {
       open: () => void;
       toggle: () => void;
     };
+    MartinSolsPwa?: {
+      canInstall?: () => boolean;
+      checkForUpdates?: () => void;
+      install?: () => Promise<unknown>;
+      refreshInstallButton?: () => void;
+    };
     MartinSolsCrmLogout?: () => void;
     MartinSolsUi?: MartinSolsUi;
     MartinSolsMobileApp?: {
