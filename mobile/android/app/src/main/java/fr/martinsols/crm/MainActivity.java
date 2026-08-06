@@ -75,8 +75,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends Activity {
     private static final String HUB_URL = "https://crm.jp2.fr/?mobile_app=1";
-    private static final String UPDATE_MANIFEST_API_URL = "https://api.github.com/repos/jp2creation/hub/contents/mobile/releases/martin-sols-update.json?ref=main";
-    private static final String UPDATE_MANIFEST_URL = "https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json";
+    private static final String UPDATE_MANIFEST_API_URL = "https://api.github.com/repos/jp2creation/hub_android/contents/releases/jp2-hub-android-update.json?ref=main";
+    private static final String UPDATE_MANIFEST_URL = "https://raw.githubusercontent.com/jp2creation/hub_android/main/releases/jp2-hub-android-update.json";
     private static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
     private static final String APP_SETTINGS_OVERRIDE_ASSET = "app-settings-override.js";
     private static final String MOBILE_AUTH_PREFS = "martin_sols_mobile_auth";
@@ -89,15 +89,15 @@ public class MainActivity extends Activity {
     private static final int APP_CODE_HASH_ITERATIONS = 120000;
     private static final int APP_CODE_HASH_BITS = 256;
     private static final int APP_CODE_SALT_BYTES = 16;
-    private static final long SPLASH_DURATION_MS = 12600L;
+    private static final long SPLASH_DURATION_MS = 5500L;
     private static final long NATIVE_LOCATION_TIMEOUT_MS = 15000L;
     private static final long UPDATE_CHECK_DELAY_MS = 1500L;
     private static final long UPDATE_PROGRESS_INTERVAL_MS = 450L;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2101;
     private static final int DEVICE_CREDENTIAL_REQUEST_CODE = 2102;
     private static final int SPLASH_ANIMATION_RESOURCE = R.raw.intro;
-    private static final int SPLASH_ANIMATION_WIDTH = 720;
-    private static final int SPLASH_ANIMATION_HEIGHT = 1280;
+    private static final int SPLASH_ANIMATION_WIDTH = 360;
+    private static final int SPLASH_ANIMATION_HEIGHT = 640;
     private static final int UPDATE_PROGRESS_MAX = 100;
     private static final int MARTIN_SOLS_RED = Color.rgb(149, 0, 46);
     private static final int MARTIN_SOLS_BACKGROUND = Color.rgb(245, 247, 251);

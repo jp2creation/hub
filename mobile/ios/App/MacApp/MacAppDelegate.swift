@@ -21,9 +21,9 @@ enum MartinSolsMacMain {
 
 final class MacAppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandlerWithReply, CLLocationManagerDelegate {
     private static let crmUrl = URL(string: "https://crm.jp2.fr/?mobile_app=1&source=mac_app")!
-    private static let updateManifestUrl = URL(string: "https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json")!
+    private static let updateManifestUrl = URL(string: "https://raw.githubusercontent.com/jp2creation/hub_apple/main/releases/martin-sols-update.json")!
     private static let nativeMessageHandlerName = "martinSolsNativeApp"
-    private static let splashDuration: TimeInterval = 12.6
+    private static let splashDuration: TimeInterval = 5.5
     private static let updateCheckDelay: TimeInterval = 1.5
     private static let nativeLocationTimeout: TimeInterval = 15
     private static let titleBarHeight: CGFloat = 46

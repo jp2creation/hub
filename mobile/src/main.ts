@@ -6,7 +6,7 @@ import { Keyboard, KeyboardResize, KeyboardStyle } from '@capacitor/keyboard';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
 const openingAnimationUrl = new URL('./assets/opening-animation.gif', import.meta.url).href;
-const openingAnimationDurationMs = 12600;
+const openingAnimationDurationMs = 5500;
 const defaultCrmUrl = 'https://crm.jp2.fr/?mobile_app=1&source=ios_app';
 const crmUrl = normalizeCrmUrl(import.meta.env.VITE_CRM_URL || import.meta.env.VITE_API_BASE_URL || defaultCrmUrl);
 const appRoot = document.querySelector<HTMLDivElement>('#app');

@@ -68,6 +68,19 @@ Reglages iOS integres :
 - permissions localisation iOS pour les fonctions terrain ;
 - WebView configuree pour les liens, cookies, medias et le clavier.
 
+## Distribution GitHub et stores
+
+Les builds et releases natives ne sont plus pilotes par le depot `hub`.
+Chaque plateforme a son depot GitHub dedie, avec un second canal possible par
+store officiel :
+
+- Android : `jp2creation/hub_android` ou Google Play ;
+- Windows : `jp2creation/hub_windows` ou Microsoft Store ;
+- Apple iPhone/iPad/Mac : `jp2creation/hub_apple` ou App Store/Mac App Store.
+
+Le detail des manifests et variables Store est documente dans
+`docs/APP_DISTRIBUTION.md`.
+
 ## Windows
 
 La plateforme Windows est disponible dans `mobile/windows` et reprend le meme
@@ -94,9 +107,8 @@ mobile/windows/dist/win-unpacked/Martin Sols HUB.exe
 
 ## Licence
 
-Cette application mobile fait partie de JP2 Hub et suit la licence du
-depot racine. Les sources peuvent etre consultees et testees pour evaluation
-personnelle, mais toute compilation, distribution, installation client,
-exploitation professionnelle, revente ou publication d'un APK, d'un paquet iOS
-ou d'un paquet macOS/Windows demande l'accord ecrit prealable de
-Jean-Philippe DEGERT / JP2 Creation.
+Ces sources locales restent conservees pour compatibilite avec le HUB, mais les
+releases officielles doivent etre gerees dans les depots apps dedies. Toute
+compilation, distribution, installation client, exploitation professionnelle,
+revente ou publication d'un APK, d'un paquet iOS ou d'un paquet macOS/Windows
+demande l'accord ecrit prealable de Jean-Philippe DEGERT / JP2 Creation.

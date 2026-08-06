@@ -199,6 +199,43 @@
         display: none;
       }
 
+      .app-install__repo-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px 13px;
+        min-width: 0;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1.25;
+      }
+
+      .app-install__repo-actions[hidden] {
+        display: none;
+      }
+
+      .app-install__repo-label {
+        color: #7d8796;
+        font-weight: 600;
+      }
+
+      .app-install__repo-link {
+        color: var(--primary);
+        text-decoration: none;
+        text-underline-offset: 3px;
+      }
+
+      .app-install__repo-link:hover,
+      .app-install__repo-link:focus {
+        text-decoration: underline;
+      }
+
+      .app-install__repo-link.is-current {
+        color: var(--primary-dark);
+      }
+
       .app-install__badge {
         display: block;
         width: 100%;
@@ -573,8 +610,17 @@
       <section
         class="app-install"
         data-login-app-install
-        data-android-url="{{ $loginInstallLinks['androidApkUrl'] ?? '' }}"
+        data-android-apk-url="{{ $loginInstallLinks['androidApkUrl'] ?? '' }}"
+        data-android-repo-url="{{ $loginInstallLinks['androidRepoUrl'] ?? '' }}"
+        data-android-store-url="{{ $loginInstallLinks['androidStoreUrl'] ?? '' }}"
+        data-apple-repo-url="{{ $loginInstallLinks['appleRepoUrl'] ?? '' }}"
         data-ios-url="{{ $loginInstallLinks['iosInstallUrl'] ?? '' }}"
+        data-ios-store-url="{{ $loginInstallLinks['iosStoreUrl'] ?? '' }}"
+        data-macos-pkg-url="{{ $loginInstallLinks['macosPkgUrl'] ?? '' }}"
+        data-macos-store-url="{{ $loginInstallLinks['macosStoreUrl'] ?? '' }}"
+        data-windows-download-url="{{ $loginInstallLinks['windowsDownloadUrl'] ?? '' }}"
+        data-windows-repo-url="{{ $loginInstallLinks['windowsRepoUrl'] ?? '' }}"
+        data-windows-store-url="{{ $loginInstallLinks['windowsStoreUrl'] ?? '' }}"
         aria-label="Installer l'application Martin Sols"
         hidden
       >
@@ -590,6 +636,12 @@
               <img class="app-install__badge-image" src="{{ asset('login-windows.svg') }}" alt="Disponible sur Windows" />
             </a>
           </div>
+        </div>
+        <div class="app-install__repo-actions" data-login-app-repo-actions aria-label="Telechargements GitHub">
+          <span class="app-install__repo-label">GitHub</span>
+          <a class="app-install__repo-link" href="#" data-login-app-repo-kind="android" rel="noopener">APK</a>
+          <a class="app-install__repo-link" href="#" data-login-app-repo-kind="windows" rel="noopener">EXE</a>
+          <a class="app-install__repo-link" href="#" data-login-app-repo-kind="apple" rel="noopener">Apple</a>
         </div>
         <p class="app-install__help" data-login-app-help></p>
       </section>
@@ -915,6 +967,9 @@
         const help = card.querySelector('[data-login-app-help]');
         const badges = Array.from(card.querySelectorAll('[data-login-app-kind]'));
         const badgeByKind = new Map(badges.map((badge) => [badge.dataset.loginAppKind || '', badge]));
+        const repoActions = card.querySelector('[data-login-app-repo-actions]');
+        const repoLinks = Array.from(card.querySelectorAll('[data-login-app-repo-kind]'));
+        const repoLinkByKind = new Map(repoLinks.map((link) => [link.dataset.loginAppRepoKind || '', link]));
         const params = new URLSearchParams(window.location.search);
 
         const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches === true
@@ -947,19 +1002,17 @@
         const isIos = isIphone || isIpad;
         const isMacos = !isIos && !isAndroid && /\b(macintosh|mac os x|macintel|macos|mac)\b/i.test(platformSignature);
         const isWindows = !isIos && !isAndroid && /\b(windows|win32|win64|wow64)\b/i.test(platformSignature);
-        const androidUrl = card.dataset.androidUrl || '';
+        const androidApkUrl = card.dataset.androidApkUrl || '';
+        const androidRepoUrl = card.dataset.androidRepoUrl || '';
+        const androidStoreUrl = card.dataset.androidStoreUrl || '';
+        const appleRepoUrl = card.dataset.appleRepoUrl || '';
         const iosUrl = card.dataset.iosUrl || '';
-
-        const installPwa = (event) => {
-          event.preventDefault();
-
-          if (window.MartinSolsPwa?.install) {
-            window.MartinSolsPwa.install();
-            return;
-          }
-
-          help.textContent = 'Dans Chrome ou Edge : menu du navigateur, puis Installer l’application.';
-        };
+        const iosStoreUrl = card.dataset.iosStoreUrl || '';
+        const macosPkgUrl = card.dataset.macosPkgUrl || '';
+        const macosStoreUrl = card.dataset.macosStoreUrl || '';
+        const windowsDownloadUrl = card.dataset.windowsDownloadUrl || '';
+        const windowsRepoUrl = card.dataset.windowsRepoUrl || '';
+        const windowsStoreUrl = card.dataset.windowsStoreUrl || '';
 
         const configureBadge = (kind, options) => {
           const badge = badgeByKind.get(kind);
@@ -973,31 +1026,42 @@
           badge.onclick = options.onClick || null;
         };
 
-        const showIosHelp = (event) => {
-          event.preventDefault();
-          help.textContent = 'Safari > Partager > Ajouter à l’écran d’accueil. Le HUB s’ouvrira ensuite en plein écran.';
+        const configureRepoLink = (kind, href) => {
+          const link = repoLinkByKind.get(kind);
+
+          if (!link) {
+            return;
+          }
+
+          link.href = href || '#';
+          link.hidden = !href;
         };
 
-        const showAndroidHelp = (event) => {
+        const showStoreHelp = (label) => (event) => {
           event.preventDefault();
-          help.textContent = 'Le lien Google Play sera disponible ici dès publication.';
+          help.textContent = `${label} sera disponible ici apres validation du store officiel.`;
         };
 
         configureBadge('android', {
-          href: androidUrl || '#',
-          download: Boolean(androidUrl),
-          onClick: androidUrl ? null : showAndroidHelp,
+          href: androidStoreUrl || '#',
+          onClick: androidStoreUrl ? null : showStoreHelp('Google Play'),
         });
 
         configureBadge('ios', {
-          href: iosUrl || '#',
-          onClick: iosUrl ? null : showIosHelp,
+          href: isMacos ? (macosStoreUrl || '#') : (iosStoreUrl || iosUrl || '#'),
+          onClick: isMacos
+            ? (macosStoreUrl ? null : showStoreHelp('App Store Mac'))
+            : (iosStoreUrl || iosUrl ? null : showStoreHelp('App Store')),
         });
 
         configureBadge('windows', {
-          href: '#',
-          onClick: installPwa,
+          href: windowsStoreUrl || '#',
+          onClick: windowsStoreUrl ? null : showStoreHelp('Windows Store'),
         });
+
+        configureRepoLink('android', androidApkUrl || androidRepoUrl);
+        configureRepoLink('windows', windowsDownloadUrl || windowsRepoUrl);
+        configureRepoLink('apple', isMacos ? (macosPkgUrl || appleRepoUrl) : appleRepoUrl);
 
         const currentKind = isAndroid
           ? 'android'
@@ -1014,6 +1078,31 @@
 
         if (currentBadge?.parentElement) {
           currentBadge.parentElement.prepend(currentBadge);
+        }
+
+        const currentRepoKind = isAndroid
+          ? 'android'
+          : isWindows
+            ? 'windows'
+            : 'apple';
+        const currentRepoLink = repoLinkByKind.get(currentRepoKind);
+
+        repoLinks.forEach((link) => {
+          link.classList.toggle('is-current', link === currentRepoLink);
+        });
+
+        const firstRepoLink = currentRepoLink?.parentElement
+          ?.querySelector('.app-install__repo-link:not([hidden])');
+
+        if (currentRepoLink?.parentElement && firstRepoLink && firstRepoLink !== currentRepoLink) {
+          currentRepoLink.parentElement.insertBefore(
+            currentRepoLink,
+            firstRepoLink,
+          );
+        }
+
+        if (repoActions && repoLinks.every((link) => link.hidden)) {
+          repoActions.hidden = true;
         }
 
         help.textContent = '';

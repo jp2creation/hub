@@ -120,32 +120,44 @@ class AuthController extends Controller
     }
 
     /**
-     * @return array{androidApkUrl: string, iosInstallUrl: string, macosPkgUrl: string}
+     * @return array<string, string>
      */
     private function loginInstallLinks(): array
     {
-        $fallback = [
-            'androidApkUrl' => '',
-            'iosInstallUrl' => '',
-            'macosPkgUrl' => '',
-        ];
+        $manifest = $this->nativeAppManifest();
 
+        return [
+            'androidApkUrl' => (string) data_get($manifest, 'android.apkUrl', ''),
+            'androidRepoUrl' => (string) (data_get($manifest, 'android.repositoryUrl') ?: config('hub_apps.android.release_url', '')),
+            'androidStoreUrl' => (string) (data_get($manifest, 'android.storeUrl') ?: data_get($manifest, 'android.googlePlayUrl') ?: config('hub_apps.android.store_url', '')),
+            'appleRepoUrl' => (string) (data_get($manifest, 'ios.repositoryUrl') ?: data_get($manifest, 'macos.repositoryUrl') ?: config('hub_apps.apple.release_url', '')),
+            'iosInstallUrl' => (string) data_get($manifest, 'ios.installUrl', ''),
+            'iosStoreUrl' => (string) (data_get($manifest, 'ios.appStoreUrl') ?: data_get($manifest, 'ios.testFlightUrl') ?: config('hub_apps.apple.ios_store_url') ?: config('hub_apps.apple.store_url', '')),
+            'macosPkgUrl' => (string) data_get($manifest, 'macos.pkgUrl', ''),
+            'macosStoreUrl' => (string) (data_get($manifest, 'macos.macAppStoreUrl') ?: data_get($manifest, 'macos.appStoreUrl') ?: config('hub_apps.apple.macos_store_url') ?: config('hub_apps.apple.store_url', '')),
+            'windowsDownloadUrl' => (string) (data_get($manifest, 'windows.installerUrl') ?: data_get($manifest, 'windows.portableUrl', '')),
+            'windowsRepoUrl' => (string) (data_get($manifest, 'windows.repositoryUrl') ?: config('hub_apps.windows.release_url', '')),
+            'windowsStoreUrl' => (string) (data_get($manifest, 'windows.storeUrl') ?: data_get($manifest, 'windows.microsoftStoreUrl') ?: config('hub_apps.windows.store_url', '')),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function nativeAppManifest(): array
+    {
         $manifestPath = base_path('mobile/releases/martin-sols-update.json');
 
         if (! is_file($manifestPath)) {
-            return $fallback;
+            return [];
         }
 
         $manifest = json_decode((string) file_get_contents($manifestPath), true);
 
         if (! is_array($manifest)) {
-            return $fallback;
+            return [];
         }
 
-        return [
-            'androidApkUrl' => (string) data_get($manifest, 'android.apkUrl', ''),
-            'iosInstallUrl' => (string) data_get($manifest, 'ios.installUrl', ''),
-            'macosPkgUrl' => (string) data_get($manifest, 'macos.pkgUrl', ''),
-        ];
+        return $manifest;
     }
 }

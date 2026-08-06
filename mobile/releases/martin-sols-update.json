@@ -1,36 +1,56 @@
 {
   "schemaVersion": 1,
   "appName": "Martin Sols",
+  "repositories": {
+    "android": "https://github.com/jp2creation/hub_android",
+    "apple": "https://github.com/jp2creation/hub_apple",
+    "windows": "https://github.com/jp2creation/hub_windows"
+  },
   "android": {
-    "versionCode": 56,
-    "versionName": "1.54",
+    "versionCode": 68,
+    "versionName": "1.66",
     "required": false,
-    "apkUrl": "https://github.com/jp2creation/hub/releases/download/martin-sols-android-v1.54/Martin_Sols_1.54.apk",
-    "sha256": "856a105515ce7e8c4992bdbd48e57fc7b6637b1b917e6da768b65ad22b3f31f1",
-    "releaseNotes": "Version 1.54 stable : correction de la localisation native des Parametres de l app et activation de la connexion rapide depuis le HUB connecte."
+    "repositoryUrl": "https://github.com/jp2creation/hub_android/releases/latest",
+    "manifestUrl": "https://raw.githubusercontent.com/jp2creation/hub_android/main/releases/jp2-hub-android-update.json",
+    "storeUrl": "",
+    "apkUrl": "https://github.com/jp2creation/hub_android/releases/download/hub-android-v1.66/Martin_Sols_1.66.apk",
+    "sha256": "d2e4c02edf95531341119241f3f57acf8f6ea6ec303e8b7af2205c9760d369e6",
+    "releaseNotes": "Nouvelle animation d'ouverture Martin Sols."
   },
   "ios": {
     "version": "1.38",
     "buildNumber": 40,
     "installUrl": "",
+    "appStoreUrl": "",
+    "testFlightUrl": "",
+    "repositoryUrl": "https://github.com/jp2creation/hub_apple/releases/latest",
+    "manifestUrl": "https://raw.githubusercontent.com/jp2creation/hub_apple/main/releases/martin-sols-update.json",
     "distribution": "app-store-or-testflight",
     "releaseNotes": "Parametres iPhone/iPad alignes sur Android avec code app, connexion rapide, localisation native et mises a jour."
   },
   "macos": {
-    "version": "1.37",
-    "buildNumber": 39,
+    "version": "1.38",
+    "buildNumber": 40,
     "required": false,
-    "pkgUrl": "https://github.com/jp2creation/hub/releases/download/martin-sols-mac-v1.37/Martin.Sols.pkg",
-    "sha256": "30c4cfc7ea368d59b3b7b9d8ea94828ae7ec88da4a4e5a951cc03d8458fa97e6",
-    "releaseNotes": "Ajout des Parametres de l app sur Mac avec acces aux mises a jour et aux futurs reglages."
+    "repositoryUrl": "https://github.com/jp2creation/hub_apple/releases/latest",
+    "manifestUrl": "https://raw.githubusercontent.com/jp2creation/hub_apple/main/releases/martin-sols-update.json",
+    "macAppStoreUrl": "",
+    "pkgUrl": "https://github.com/jp2creation/hub_apple/releases/download/martin-sols-mac-v1.38/Martin-Sols-Mac-Installer-1.38.pkg",
+    "sha256": "2d7700d8326c50e0c94d0bc3136186abdb4bc21f7f0c804504ccf544688d781a",
+    "releaseNotes": "Parametres Mac alignes sur Android avec code app, connexion rapide, localisation native, barre Martin Sols et installation dans Applications."
   },
   "windows": {
     "version": "1.0.1",
     "buildNumber": 2,
     "required": false,
+    "repositoryUrl": "https://github.com/jp2creation/hub_windows/tree/main/releases",
+    "manifestUrl": "https://raw.githubusercontent.com/jp2creation/hub_windows/main/martin-sols-update.json",
+    "storeUrl": "",
     "installerUrl": "https://github.com/jp2creation/hub_windows/raw/main/releases/Martin%20Sols%20HUB-1.0.1-win-x64-setup.exe",
     "portableUrl": "https://github.com/jp2creation/hub_windows/raw/main/releases/Martin%20Sols%20HUB-1.0.1-win-x64-portable.exe",
     "sha256": "d80340bb2a21d9168f57e360df59a52aef273722d77ab514385e5dd572a77908",
+    "installerSha256": "d80340bb2a21d9168f57e360df59a52aef273722d77ab514385e5dd572a77908",
+    "portableSha256": "1fbfdf0c0426ffec2aa668f285689a5aed92d3564f688b2515b9179e56ee78d4",
     "releaseNotes": "Version Windows 1.0.1 : barre de menu rouge et menus en francais, avec splash, WebView, connexion rapide, localisation et mises a jour."
   }
 }

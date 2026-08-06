@@ -31,7 +31,7 @@ class CrmWindowsAppSourceTest extends TestCase
         $this->assertStringContainsString('https://crm.jp2.fr/?mobile_app=1&source=windows_app', $main);
         $this->assertStringContainsString('safeStorage', $main);
         $this->assertStringContainsString('setPermissionRequestHandler', $main);
-        $this->assertStringContainsString('raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json', $main);
+        $this->assertStringContainsString('raw.githubusercontent.com/jp2creation/hub_windows/main/martin-sols-update.json', $main);
         $this->assertStringContainsString("contextBridge.exposeInMainWorld('MartinSolsNativeApp'", $preload);
         $this->assertStringContainsString("ipcRenderer.sendSync('martin-sols:get-mobile-auth-status')", $preload);
         $this->assertStringContainsString('martin-sols:native-location-result', $preload);
@@ -43,9 +43,11 @@ class CrmWindowsAppSourceTest extends TestCase
     {
         $manifest = json_decode(File::get(base_path('mobile/releases/martin-sols-update.json')), true);
 
-        $this->assertSame('1.0.0', $manifest['windows']['version']);
-        $this->assertSame(1, $manifest['windows']['buildNumber']);
+        $this->assertSame('1.0.1', $manifest['windows']['version']);
+        $this->assertSame(2, $manifest['windows']['buildNumber']);
         $this->assertFalse($manifest['windows']['required']);
+        $this->assertSame('https://github.com/jp2creation/hub_windows/tree/main/releases', $manifest['windows']['repositoryUrl']);
+        $this->assertSame('https://raw.githubusercontent.com/jp2creation/hub_windows/main/martin-sols-update.json', $manifest['windows']['manifestUrl']);
         $this->assertArrayHasKey('installerUrl', $manifest['windows']);
         $this->assertArrayHasKey('portableUrl', $manifest['windows']);
         $this->assertArrayHasKey('sha256', $manifest['windows']);

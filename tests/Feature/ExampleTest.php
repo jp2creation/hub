@@ -20,6 +20,7 @@ class ExampleTest extends TestCase
             ->assertSee('App Store')
             ->assertSee('Google Play')
             ->assertSee('Windows')
+            ->assertSee('GitHub')
             ->assertSee('Connexion rapide')
             ->assertDontSee('Web APK')
             ->assertDontSee('Martin.Sols.pkg')
@@ -66,11 +67,19 @@ class ExampleTest extends TestCase
         $this->assertStringContainsString('data-login-app-kind="ios"', $html);
         $this->assertStringContainsString('data-login-app-kind="android"', $html);
         $this->assertStringContainsString('data-login-app-kind="windows"', $html);
+        $this->assertStringContainsString('data-login-app-repo-kind="android"', $html);
+        $this->assertStringContainsString('data-login-app-repo-kind="windows"', $html);
+        $this->assertStringContainsString('data-login-app-repo-kind="apple"', $html);
+        $this->assertStringContainsString('data-android-repo-url="https://github.com/jp2creation/hub_android/releases/latest"', $html);
+        $this->assertStringContainsString('data-apple-repo-url="https://github.com/jp2creation/hub_apple/releases/latest"', $html);
+        $this->assertStringContainsString('data-windows-repo-url="https://github.com/jp2creation/hub_windows/tree/main/releases"', $html);
+        $this->assertStringContainsString('data-windows-download-url="https://github.com/jp2creation/hub_windows/raw/main/releases/Martin%20Sols%20HUB-1.0.1-win-x64-setup.exe"', $html);
         $this->assertStringNotContainsString('data-login-app-kind="webapk"', $html);
         $this->assertStringNotContainsString('data-login-app-kind="iphone"', $html);
         $this->assertStringNotContainsString('data-login-app-kind="ipad"', $html);
         $this->assertStringNotContainsString('data-login-app-kind="macos"', $html);
         $this->assertStringNotContainsString('data-macos-url', $html);
+        $this->assertStringNotContainsString('MartinSolsPwa?.install', $html);
         $this->assertStringContainsString('login-app-store.png', $html);
         $this->assertStringContainsString('login-google-play.png', $html);
         $this->assertStringContainsString('login-windows.svg', $html);

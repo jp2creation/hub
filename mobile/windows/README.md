@@ -43,7 +43,7 @@ Le preload expose `window.MartinSolsNativeApp`, comme les apps Android/macOS :
 
 ## Mise a jour
 
-L'app lit le meme manifeste que les apps Android/iOS/macOS :
+L'app Windows lit son propre manifeste dans le depot Windows dedie :
 
 ```text
 https://raw.githubusercontent.com/jp2creation/hub_windows/main/martin-sols-update.json
@@ -51,3 +51,6 @@ https://raw.githubusercontent.com/jp2creation/hub_windows/main/martin-sols-updat
 
 Quand un installeur Windows est publie sur GitHub, renseigner `windows.installerUrl`
 ou `windows.portableUrl` dans ce manifeste.
+
+La distribution officielle peut ensuite etre ajoutee par Microsoft Store via
+`HUB_WINDOWS_STORE_URL` dans le HUB web.

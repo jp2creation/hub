@@ -8,7 +8,7 @@ import WebKit
 
 @objc(MartinSolsBridgeViewController)
 class MartinSolsBridgeViewController: CAPBridgeViewController, WKScriptMessageHandlerWithReply, CLLocationManagerDelegate {
-    private static let updateManifestUrl = URL(string: "https://raw.githubusercontent.com/jp2creation/hub/main/mobile/releases/martin-sols-update.json")!
+    private static let updateManifestUrl = URL(string: "https://raw.githubusercontent.com/jp2creation/hub_apple/main/releases/martin-sols-update.json")!
     private static let nativeMessageHandlerName = "martinSolsNativeApp"
     private static let updateCheckDelay: TimeInterval = 7
     private static let nativeLocationTimeout: TimeInterval = 15
