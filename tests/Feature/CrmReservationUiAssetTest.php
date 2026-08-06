@@ -34,6 +34,10 @@ class CrmReservationUiAssetTest extends TestCase
         $this->assertStringContainsString('reservation-day-board', $reservationAsset);
         $this->assertStringContainsString('reservation-mobile-slot-button', $reservationAsset);
         $this->assertStringContainsString('reservation-day-cell-button', $reservationAsset);
+        $this->assertStringContainsString('resa-slot-owner', $reservationAsset);
+        $this->assertStringContainsString('currentVehicleReservation(vehicle)', $reservationAsset);
+        $this->assertStringContainsString('Réservé par ${reservationUserName(currentReservation)}', $reservationAsset);
+        $this->assertStringContainsString('Réservé par ${esc(reservationUserName(reservation))}', $reservationAsset);
         $this->assertStringContainsString('renderSlotColumn("Matin", morning, "morning")', $reservationAsset);
         $this->assertStringContainsString('renderSlotColumn("Après-midi", afternoon, "afternoon")', $reservationAsset);
         $this->assertStringContainsString('reservation-day-row-track-${esc(period)}', $reservationAsset);

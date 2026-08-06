@@ -9,7 +9,9 @@ use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\CrmVehicle;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Modules\CrmCore\Events\CrmDomainEvent;
@@ -18,6 +20,22 @@ use Tests\TestCase;
 class CrmReservationApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Carbon::setTestNow(Carbon::parse('2026-08-01 08:00:00'));
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-01 08:00:00'));
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+        CarbonImmutable::setTestNow();
+
+        parent::tearDown();
+    }
 
     public function test_health_does_not_require_authentication(): void
     {

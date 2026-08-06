@@ -407,11 +407,12 @@
       #${rootId} .resa-slot-column-heading{display:grid;place-items:center;min-height:3rem;border-radius:.55rem;background:#f8fafc;color:var(--resa-text);text-align:center}
       #${rootId} .resa-slot-column-heading strong{font-size:.78rem;font-weight:600}
       #${rootId} .resa-slot-column-heading span{font-size:.72rem;font-weight:600;color:var(--resa-muted)}
-      #${rootId} .reservation-mobile-slot-button,#${rootId} .reservation-day-cell-button{display:grid;place-items:center;min-height:3.1rem;border:0;border-radius:.55rem;background:var(--resa-green);color:#fff;padding:.35rem .45rem;text-align:center;cursor:pointer;box-shadow:0 9px 18px rgba(22,163,74,.22)}
+      #${rootId} .reservation-mobile-slot-button,#${rootId} .reservation-day-cell-button{display:grid;align-content:center;justify-items:center;gap:.12rem;min-height:3.75rem;border:0;border-radius:.55rem;background:var(--resa-green);color:#fff;padding:.38rem .45rem;text-align:center;cursor:pointer;box-shadow:0 9px 18px rgba(22,163,74,.22)}
       #${rootId} .reservation-mobile-slot-button.is-reserved,#${rootId} .reservation-day-cell-button.is-reserved{background:var(--resa-red);box-shadow:0 9px 18px rgba(220,38,38,.22)}
       #${rootId} .reservation-mobile-slot-button.is-selecting,#${rootId} .reservation-day-cell-button.is-selecting{background:var(--resa-primary);box-shadow:0 9px 18px rgb(var(--theme-primary) / .22)}
       #${rootId} .resa-slot-time{display:block;font-size:1.02rem;font-weight:600;line-height:1}
-      #${rootId} .resa-slot-meta{display:block;margin-top:.18rem;font-size:.68rem;font-weight:850;opacity:.9}
+      #${rootId} .resa-slot-meta{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.68rem;font-weight:850;line-height:1.05;opacity:.9}
+      #${rootId} .resa-slot-owner{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.62rem;font-weight:700;line-height:1.05;opacity:.96}
       #${rootId} .resa-selection-panel{border:1px solid color-mix(in srgb,var(--resa-primary) 22%,white);border-radius:.6rem;background:#fff;padding:.9rem;box-shadow:0 12px 28px rgb(var(--theme-primary) / .08)}
       #${rootId} .resa-selection-panel span{display:block;color:var(--resa-muted);font-size:.72rem;font-weight:600;text-transform:uppercase}
       #${rootId} .resa-selection-panel strong{display:block;margin:.18rem 0;color:var(--resa-text);font-size:1.15rem;font-weight:600}
@@ -568,7 +569,9 @@
   }
 
   function renderVehicleCard(vehicle) {
-    const busy = isVehicleBusy(vehicle);
+    const currentReservation = currentVehicleReservation(vehicle);
+    const busy = Boolean(currentReservation);
+    const statusLabel = busy ? `Réservé par ${reservationUserName(currentReservation)}` : 'Disponible';
     const initials = String(vehicle.name || '?')
       .split(/\s+/)
       .slice(0, 2)
@@ -582,7 +585,7 @@
         <span class="resa-product-body">
           <strong class="resa-product-name">${esc(vehicle.name)}</strong>
           <span class="resa-product-meta">${esc(vehicle.description || 'Véhicule du site')}</span>
-          <span class="resa-product-status${busy ? ' is-busy' : ''}">${busy ? 'Réservé' : 'Disponible'}</span>
+          <span class="resa-product-status${busy ? ' is-busy' : ''}">${esc(statusLabel)}</span>
         </span>
       </button>
     `;
@@ -633,11 +636,15 @@
   function renderSlot(slot) {
     const selected = reservationCellIsSelected(slot);
     const reservation = slot.reservation;
+    const reservedVehicleName = reservation
+      ? reservationVehicle(reservation)?.name || reservation.title || 'Réservé'
+      : '';
 
     return `
       <button class="reservation-mobile-slot-button reservation-day-cell-button${reservation ? ' is-reserved' : ''}${selected ? ' is-selecting' : ''}" type="button" data-slot-start="${esc(slot.startAt)}" data-slot-end="${esc(slot.endAt)}"${reservation ? ` data-reservation-id="${esc(reservation.id)}"` : ''}>
         <span class="resa-slot-time">${esc(slot.start)}</span>
-        <span class="resa-slot-meta">${reservation ? esc(reservationVehicle(reservation)?.name || reservation.title || 'Réservé') : reservationSelectionCellLabel(slot)}</span>
+        <span class="resa-slot-meta">${reservation ? esc(reservedVehicleName) : reservationSelectionCellLabel(slot)}</span>
+        ${reservation ? `<span class="resa-slot-owner">Réservé par ${esc(reservationUserName(reservation))}</span>` : ''}
       </button>
     `;
   }
@@ -1147,12 +1154,14 @@
     return days;
   }
 
-  function isVehicleBusy(vehicle) {
+  function currentVehicleReservation(vehicle) {
     const now = new Date();
     const value = now.toISOString().slice(0, 16);
 
-    return vehicleReservations(vehicle.id).some(
-      (reservation) => reservation.startAt <= value && reservation.endAt >= value,
+    return (
+      vehicleReservations(vehicle.id).find(
+        (reservation) => reservation.startAt <= value && reservation.endAt >= value,
+      ) || null
     );
   }
 
