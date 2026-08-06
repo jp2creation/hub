@@ -134,4 +134,19 @@ class CrmReservationUiAssetTest extends TestCase
         $this->assertStringNotContainsString("loadLegacyAsset('reservations-CSr_CND1.js')", $modules);
         $this->assertFileDoesNotExist(resource_path('frontend/static/assets/reservations-CSr_CND1.js'));
     }
+
+    public function test_vehicle_day_grid_uses_continuous_vehicle_hours_without_site_lunch_gap(): void
+    {
+        $reservationAsset = (string) file_get_contents(base_path('Modules/CrmReservations/resources/assets/crm-reservations.js'));
+
+        $this->assertStringContainsString("dayStart: vehicle?.dayStartTime || '06:00'", $reservationAsset);
+        $this->assertStringContainsString("dayEnd: vehicle?.dayEndTime || '19:30'", $reservationAsset);
+        $this->assertStringContainsString("daySplit: site?.hours?.morningEnd || '12:00'", $reservationAsset);
+        $this->assertStringContainsString('return makeSlots(hours.dayStart, hours.dayEnd, hours.daySplit, vehicle);', $reservationAsset);
+        $this->assertStringContainsString('function makeSlots(start, end, split, vehicle)', $reservationAsset);
+        $this->assertStringContainsString("period: cursor < splitMinute ? 'morning' : 'afternoon'", $reservationAsset);
+        $this->assertStringNotContainsString('...makeSlots(hours.morningStart, hours.morningEnd', $reservationAsset);
+        $this->assertStringNotContainsString('...makeSlots(hours.afternoonStart, hours.afternoonEnd', $reservationAsset);
+        $this->assertStringNotContainsString("afternoonStart: site?.hours?.afternoonStart || '13:30'", $reservationAsset);
+    }
 }

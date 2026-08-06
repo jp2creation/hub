@@ -1062,33 +1062,30 @@
   function vehicleDefaultDayHours(vehicle) {
     const site = selectedSite();
     return {
-      morningStart: vehicle?.dayStartTime || site?.hours?.morningStart || '07:30',
-      morningEnd: site?.hours?.morningEnd || '12:00',
-      afternoonStart: site?.hours?.afternoonStart || '13:30',
-      afternoonEnd: vehicle?.dayEndTime || site?.hours?.afternoonEnd || '17:30',
+      dayStart: vehicle?.dayStartTime || '06:00',
+      dayEnd: vehicle?.dayEndTime || '19:30',
+      daySplit: site?.hours?.morningEnd || '12:00',
     };
   }
 
   function vehicleDaySlots(vehicle) {
     const hours = vehicleDefaultDayHours(vehicle);
 
-    return [
-      ...makeSlots(hours.morningStart, hours.morningEnd, 'morning', vehicle),
-      ...makeSlots(hours.afternoonStart, hours.afternoonEnd, 'afternoon', vehicle),
-    ];
+    return makeSlots(hours.dayStart, hours.dayEnd, hours.daySplit, vehicle);
   }
 
-  function makeSlots(start, end, period, vehicle) {
+  function makeSlots(start, end, split, vehicle) {
     const slots = [];
     let cursor = timeMinutes(start);
     const finish = timeMinutes(end);
+    const splitMinute = timeMinutes(split || '12:00');
 
     while (cursor < finish) {
       const next = Math.min(cursor + 30, finish);
       const startAt = `${state.selectedDate}T${minutesTime(cursor)}`;
       const endAt = `${state.selectedDate}T${minutesTime(next)}`;
       slots.push({
-        period,
+        period: cursor < splitMinute ? 'morning' : 'afternoon',
         start: minutesTime(cursor),
         end: minutesTime(next),
         startAt,
