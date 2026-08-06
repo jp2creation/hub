@@ -10,6 +10,7 @@ use App\Models\CrmPermission;
 use App\Models\CrmSite;
 use App\Models\CrmUser;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -17,6 +18,20 @@ use Tests\TestCase;
 class CrmEquipmentRentalApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Carbon::setTestNow('2026-08-01 10:00:00');
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+
+        parent::tearDown();
+    }
 
     public function test_health_does_not_require_authentication(): void
     {
@@ -397,6 +412,85 @@ class CrmEquipmentRentalApiTest extends TestCase
             ->assertJsonPath('ok', true)
             ->assertJsonPath('equipmentRental.title', 'Modifie')
             ->assertJsonPath('equipmentRental.startAt', '2026-08-06T09:00');
+    }
+
+    public function test_user_can_receive_past_rental_with_status_only_update(): void
+    {
+        Carbon::setTestNow('2026-08-06 10:00:00');
+
+        [$account, $crmUser, , $item] = $this->createCrmUser([
+            'equipment_rentals.view',
+            'equipment_rentals.update_own',
+        ]);
+
+        $rental = CrmEquipmentRental::query()->create([
+            'site_id' => $item->site_id,
+            'equipment_item_id' => $item->id,
+            'user_id' => $crmUser->id,
+            'user_name' => $crmUser->name,
+            'period_type' => 'half_day',
+            'slot' => 'morning',
+            'status' => CrmEquipmentRental::STATUS_PICKED_UP,
+            'title' => 'Retour a receptionner',
+            'start_at' => '2026-08-04 08:00:00',
+            'end_at' => '2026-08-04 10:00:00',
+        ]);
+
+        $this->actingAs($account)
+            ->postJson('/api/equipment-rentals?action=update_rental', [
+                'id' => $rental->id,
+                'status' => CrmEquipmentRental::STATUS_RETURNED,
+                'statusOnly' => true,
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('equipmentRental.status', CrmEquipmentRental::STATUS_RETURNED);
+
+        $this->assertDatabaseHas('crm_equipment_rentals', [
+            'id' => $rental->id,
+            'status' => CrmEquipmentRental::STATUS_RETURNED,
+        ]);
+    }
+
+    public function test_pending_returns_filter_includes_old_rentals_outside_requested_window(): void
+    {
+        Carbon::setTestNow('2026-08-06 10:00:00');
+
+        [$account, $crmUser, , $item] = $this->createCrmUser(['equipment_rentals.view']);
+
+        $pending = CrmEquipmentRental::query()->create([
+            'site_id' => $item->site_id,
+            'equipment_item_id' => $item->id,
+            'user_id' => $crmUser->id,
+            'user_name' => $crmUser->name,
+            'period_type' => 'half_day',
+            'slot' => 'morning',
+            'status' => CrmEquipmentRental::STATUS_RESERVED,
+            'title' => 'Ancien retour',
+            'start_at' => '2026-07-15 08:00:00',
+            'end_at' => '2026-07-15 10:00:00',
+        ]);
+
+        CrmEquipmentRental::query()->create([
+            'site_id' => $item->site_id,
+            'equipment_item_id' => $item->id,
+            'user_id' => $crmUser->id,
+            'user_name' => $crmUser->name,
+            'period_type' => 'half_day',
+            'slot' => 'afternoon',
+            'status' => CrmEquipmentRental::STATUS_RETURNED,
+            'title' => 'Retour deja clos',
+            'start_at' => '2026-07-16 13:30:00',
+            'end_at' => '2026-07-16 15:30:00',
+        ]);
+
+        $rentals = $this->actingAs($account)
+            ->getJson('/api/equipment-rentals?from=2026-08-01&to=2026-08-31&retours=1')
+            ->assertOk()
+            ->json('equipmentRentals');
+
+        $this->assertTrue(collect($rentals)->contains(fn (array $rental): bool => (int) $rental['id'] === (int) $pending->id));
+        $this->assertFalse(collect($rentals)->contains(fn (array $rental): bool => $rental['title'] === 'Retour deja clos'));
     }
 
     public function test_creator_without_delete_own_cannot_delete_rental(): void

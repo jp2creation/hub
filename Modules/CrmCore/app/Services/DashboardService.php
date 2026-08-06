@@ -532,7 +532,7 @@ class DashboardService
                     'label' => 'Retours matériel',
                     'value' => $lateReturns,
                     'detail' => 'Location(s) à clôturer',
-                    'href' => '/locations-materiel',
+                    'href' => '/locations-materiel?retours=1',
                 ];
             }
         }

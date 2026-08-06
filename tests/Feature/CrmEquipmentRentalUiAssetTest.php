@@ -55,6 +55,12 @@ class CrmEquipmentRentalUiAssetTest extends TestCase
         $this->assertStringNotContainsString('Prochaines locations', $equipmentAsset);
         $this->assertStringNotContainsString('Toutes les locations à venir', $equipmentAsset);
         $this->assertStringContainsString('data-delete-rental', $equipmentAsset);
+        $this->assertStringContainsString('data-pending-returns', $equipmentAsset);
+        $this->assertStringContainsString('data-receive-rental', $equipmentAsset);
+        $this->assertStringContainsString('statusOnly: true', $equipmentAsset);
+        $this->assertStringContainsString('status: String(data.get("status") || existing?.status || "reserved")', $equipmentAsset);
+        $this->assertStringContainsString('focusReturnsRequested', $equipmentAsset);
+        $this->assertStringContainsString('retours: focusReturnsRequested() ? 1 : ""', $equipmentAsset);
         $this->assertStringContainsString('rent-summary-image', $equipmentAsset);
         $this->assertStringContainsString('mode !== "day_only"', $equipmentAsset);
         $this->assertStringContainsString('rent-product-card{position:relative;display:flex;min-width:0;min-height:16.6rem', $equipmentAsset);

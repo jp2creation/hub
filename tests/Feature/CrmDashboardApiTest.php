@@ -188,6 +188,64 @@ class CrmDashboardApiTest extends TestCase
             ->assertJsonPath('notifications.failedNotifications', 1);
     }
 
+    public function test_dashboard_late_equipment_returns_open_receive_view(): void
+    {
+        Carbon::setTestNow('2026-08-05 10:00:00');
+        Cache::flush();
+
+        $site = CrmSite::query()->create([
+            'name' => 'Palissy',
+            'slug' => 'palissy',
+            'active' => true,
+        ]);
+
+        CrmModule::query()->updateOrCreate(
+            ['slug' => 'locations-materiel'],
+            [
+                'name' => 'Location materiel',
+                'description' => 'Location materiel',
+                'route_path' => '/locations-materiel',
+                'active' => true,
+                'sort_order' => 15,
+            ],
+        );
+
+        $account = User::factory()->create();
+        $crmUser = CrmUser::query()->create([
+            'user_id' => $account->id,
+            'name' => 'Jean-Philippe',
+            'email' => $account->email,
+            'role' => 'admin',
+            'active' => true,
+        ]);
+        $crmUser->sites()->syncWithoutDetaching([$site->id => ['is_default' => true]]);
+
+        $item = CrmEquipmentItem::query()->create([
+            'site_id' => $site->id,
+            'name' => 'Ponceuse retour',
+            'active' => true,
+        ]);
+
+        CrmEquipmentRental::query()->create([
+            'site_id' => $site->id,
+            'equipment_item_id' => $item->id,
+            'user_id' => $crmUser->id,
+            'user_name' => $crmUser->name,
+            'period_type' => 'half_day',
+            'slot' => 'morning',
+            'status' => CrmEquipmentRental::STATUS_PICKED_UP,
+            'title' => 'Retour en retard',
+            'start_at' => '2026-08-05 08:00:00',
+            'end_at' => '2026-08-05 09:00:00',
+        ]);
+
+        $this->actingAs($account)
+            ->getJson('/api/dashboard?siteId='.$site->id)
+            ->assertOk()
+            ->assertJsonPath('alerts.0.href', '/locations-materiel?retours=1')
+            ->assertJsonPath('alerts.0.value', 1);
+    }
+
     public function test_dashboard_uses_pre_aggregated_metrics_when_available(): void
     {
         Carbon::setTestNow('2026-08-05 10:00:00');

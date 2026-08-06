@@ -16,6 +16,7 @@
     month: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
     view: 'month',
     modal: null,
+    returnFocusApplied: false,
   };
 
   let mountTimer = null;
@@ -160,6 +161,20 @@
     );
   }
 
+  function canUpdateRental(rental) {
+    const user = state.data?.user || {};
+    const access = permissions();
+
+    return (
+      access.has('equipment_rentals.update_any') ||
+      (Number(rental.userId) === Number(user.id) && access.has('equipment_rentals.update_own'))
+    );
+  }
+
+  function canReceiveRental(rental) {
+    return canUpdateRental(rental) && isPendingReturn(rental);
+  }
+
   async function request(action, options = {}) {
     const url = new URL(api, window.location.origin);
     url.searchParams.set('action', action);
@@ -211,6 +226,7 @@
       #${rootId} .rent-title p{margin:.35rem 0 0;color:var(--rent-muted);font-size:.92rem;font-weight:400}
       #${rootId} .rent-button{display:inline-flex;align-items:center;justify-content:center;gap:.42rem;min-height:2.45rem;border:1px solid var(--rent-border);border-radius:.5rem;background:#fff;padding:.58rem .9rem;color:var(--rent-text);font-size:.84rem;font-weight:600;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.04)}
       #${rootId} .rent-button-primary{border-color:transparent;background:var(--rent-primary);color:#fff}
+      #${rootId} .rent-button-success{border-color:#bbf7d0;background:#f0fdf4;color:#15803d}
       #${rootId} .rent-button-danger{color:#b91c1c}
       #${rootId} .rent-card{border:1px solid var(--rent-border);border-radius:1rem;background:#fff;box-shadow:0 16px 42px rgba(15,23,42,.055)}
       #${rootId} .rent-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;border-bottom:1px solid var(--rent-border);padding:.92rem 1rem}
@@ -270,6 +286,8 @@
       #${rootId} .rent-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;align-items:center;border:1px solid var(--rent-border);border-radius:.5rem;padding:.72rem .8rem;background:#fff}
       #${rootId} .rent-row strong{display:block;color:var(--rent-text);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       #${rootId} .rent-row span{display:block;margin-top:.12rem;color:var(--rent-muted);font-size:.74rem;font-weight:750}
+      #${rootId} .rent-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:.45rem;flex-wrap:wrap}
+      #${rootId} .rent-row-actions .rent-button{min-height:2.1rem;padding:.43rem .66rem;box-shadow:none}
       #${rootId} .rent-badge{display:inline-flex;align-items:center;border-radius:999px;background:#f7e8ee;padding:.25rem .6rem;color:var(--rent-primary);font-size:.72rem;font-weight:600}
       #${rootId} .rent-empty,#${rootId} .rent-loading{display:grid;place-items:center;min-height:6rem;border:1px dashed var(--rent-border);border-radius:.55rem;color:var(--rent-muted);font-weight:850;text-align:center;padding:1rem}
       #${rootId} .rent-alert{border:1px solid #fecaca;border-radius:.55rem;background:#fff1f2;padding:.8rem;color:#b91c1c;font-weight:850}
@@ -291,6 +309,7 @@
       .dark #${rootId} .rent-summary,.dark #${rootId} .rent-month-head{background:var(--color-surface-800,#1e293b)}
       @media (max-width:1100px){#${rootId} .rent-items{grid-template-columns:repeat(3,minmax(0,1fr))}}
       @media (max-width:760px){#${rootId}{gap:.85rem}#${rootId} .rent-top{display:grid;align-items:start}#${rootId} .rent-title h1{font-size:1.82rem;line-height:1.08}#${rootId} .rent-items{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}#${rootId} .rent-product-card{min-height:13.8rem;border-radius:.82rem}#${rootId} .rent-product-image{aspect-ratio:1/1;font-size:1.15rem}#${rootId} .rent-product-image::before{inset:.45rem;border-radius:.62rem}#${rootId} .rent-product-image img{padding:.58rem}#${rootId} .rent-product-status{right:.52rem;top:.52rem;padding:.22rem .42rem;font-size:.58rem}#${rootId} .rent-product-body{min-height:3.5rem;padding:.56rem .62rem .68rem}#${rootId} .rent-product-name{font-size:.87rem;line-height:1.14}#${rootId} .rent-segment{width:100%}#${rootId} .rent-top .rent-button,#${rootId} .rent-actions .rent-button{width:100%}#${rootId} .rent-nav-button{width:2.75rem;min-height:2.75rem}#${rootId} .rent-periods{grid-template-columns:1fr}#${rootId} .rent-month-head,#${rootId} .rent-month-cell{padding:.38rem .18rem;min-height:3.85rem;text-align:center}#${rootId} .rent-month-cell button{align-items:center;text-align:center}#${rootId} .rent-row{grid-template-columns:1fr}#${rootId} .rent-form-grid{grid-template-columns:1fr}#${rootId} .rent-actions{grid-template-columns:1fr 1fr}#${rootId} .rent-dialog{max-height:82vh}}
+      @media (max-width:760px){#${rootId} .rent-row-actions{justify-content:stretch}#${rootId} .rent-row-actions .rent-button{flex:1}}
     `;
     document.head.appendChild(style);
   }
@@ -345,6 +364,7 @@
         ${item ? `<button class="rent-button rent-button-primary" type="button" data-rent-new>${icon('plus')}Nouvelle réservation</button>` : ''}
       </div>
       ${renderResources(items)}
+      ${renderPendingReturns()}
       ${item ? renderPlanningSections(item) : ''}
       ${state.modal ? renderModal() : ''}
     `;
@@ -362,6 +382,50 @@
         </select>
         ${items.length ? `<div class="rent-items">${items.map(renderItemCard).join('')}</div>` : `<div class="rent-empty">Aucun matériel sur ce site.</div>`}
       </section>
+    `;
+  }
+
+  function renderPendingReturns() {
+    const pending = pendingReturnRentals();
+
+    if (!pending.length) return '';
+
+    return `
+      <section class="rent-card" data-pending-returns>
+        <header class="rent-card-header">
+          <div>
+            <h2 class="rent-card-title">Retours à réceptionner</h2>
+            <p class="rent-card-subtitle">${pending.length} location(s) à clôturer</p>
+          </div>
+          <span class="rent-badge">${pending.length}</span>
+        </header>
+        <div class="rent-card-body">
+          <div class="rent-list">
+            ${pending.map(renderPendingReturnRow).join('')}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderPendingReturnRow(rental) {
+    const item = rentalItem(rental);
+    const endDate = String(rental.endAt || rental.startAt || state.selectedDate).slice(0, 10);
+    const endTime = timeLabel(rental.endAt);
+    const period = periodName(periodKey(rental), rental.periodType);
+    const canReceive = canReceiveRental(rental);
+
+    return `
+      <article class="rent-row">
+        <span>
+          <strong>${esc(item?.name || rental.title || 'Matériel')}</strong>
+          <span>Fin prévue ${esc(dateLabel(endDate))}${endTime ? ` à ${esc(endTime)}` : ''} · ${esc(period)} · ${esc(rental.userName || 'Utilisateur')}</span>
+        </span>
+        <span class="rent-row-actions">
+          <button class="rent-button" type="button" data-open-rental="${esc(rental.id)}">${icon('calendar')}Détails</button>
+          ${canReceive ? `<button class="rent-button rent-button-success" type="button" data-receive-rental="${esc(rental.id)}">${icon('check')}Réceptionner</button>` : ''}
+        </span>
+      </article>
     `;
   }
 
@@ -443,7 +507,7 @@
       <button class="rent-period rent-period-${esc(period.key)}${rental ? ' is-reserved' : ''}" type="button" data-period="${esc(period.key)}"${rental ? ` data-rental-id="${esc(rental.id)}"` : ''}>
         <strong>${esc(period.label)}</strong>
         <span>${esc(period.time)}</span>
-        <span>${rental ? esc(rentalItem(rental)?.name || rental.title || 'Réservée') : 'Disponible'}</span>
+        <span>${rental ? `${esc(rentalStatusLabel(rental.status))} · ${esc(rentalItem(rental)?.name || rental.title || 'Matériel')}` : 'Disponible'}</span>
       </button>
     `;
   }
@@ -519,14 +583,29 @@
                     .map(
                       (entry) =>
                         `<option value="${esc(entry.key)}"${entry.key === period ? ' selected' : ''}>${esc(entry.label)}</option>`,
+                  )
+                  .join('')}
+                </select>
+              </label>
+              ${
+                isEdit
+                  ? `<label>État
+                <select name="status" required>
+                  ${rentalStatusOptions()
+                    .map(
+                      (entry) =>
+                        `<option value="${esc(entry.value)}"${entry.value === rental.status ? ' selected' : ''}>${esc(entry.label)}</option>`,
                     )
                     .join('')}
                 </select>
-              </label>
+              </label>`
+                  : ''
+              }
             </div>
             <label>Notes <textarea name="notes" placeholder="Client, chantier, précision...">${esc(rental?.notes || '')}</textarea></label>
             <div class="rent-actions">
               <button class="rent-button rent-button-primary" type="submit">${icon('save')}${isEdit ? 'Modifier' : 'Créer'}</button>
+              ${isEdit && canReceiveRental(rental) ? `<button class="rent-button rent-button-success" type="button" data-receive-rental="${esc(rental.id)}">${icon('check')}Réceptionner</button>` : ''}
               ${isEdit && canDeleteRental(rental) ? `<button class="rent-button rent-button-danger" type="button" data-delete-rental="${esc(rental.id)}">${icon('trash')}Supprimer</button>` : `<button class="rent-button" type="button" data-modal-close>Annuler</button>`}
             </div>
           </form>
@@ -600,6 +679,14 @@
       });
     });
 
+    root.querySelectorAll('[data-open-rental]').forEach((button) => {
+      button.addEventListener('click', () => openRental(Number(button.dataset.openRental || 0)));
+    });
+
+    root.querySelectorAll('[data-receive-rental]').forEach((button) => {
+      button.addEventListener('click', receiveRental);
+    });
+
     root.querySelectorAll('[data-modal-close]').forEach((node) => {
       node.addEventListener('click', (event) => {
         if (event.target !== node && !node.matches('button')) return;
@@ -645,6 +732,7 @@
     const form = event.currentTarget;
     const data = new FormData(form);
     const id = Number(data.get('id') || 0);
+    const existing = state.modal?.rental || null;
     const period = String(data.get('period') || 'morning');
     const mapped = periodPayload(period);
     const payload = {
@@ -654,7 +742,7 @@
       periodType: mapped.periodType,
       slot: mapped.slot,
       notes: String(data.get('notes') || ''),
-      status: 'reserved',
+      status: String(data.get('status') || existing?.status || 'reserved'),
     };
 
     try {
@@ -666,6 +754,24 @@
       await load({ force: true });
     } catch (error) {
       alert(error.message || 'Enregistrement impossible');
+    }
+  }
+
+  async function receiveRental(event) {
+    const id = Number(event.currentTarget.dataset.receiveRental || 0);
+    if (!id) return;
+
+    if (!confirm('Confirmer la réception de ce matériel ?')) return;
+
+    try {
+      await request('update_rental', {
+        method: 'POST',
+        body: { id, status: 'returned', statusOnly: true },
+      });
+      state.modal = null;
+      await load({ force: true });
+    } catch (error) {
+      alert(error.message || 'Réception impossible');
     }
   }
 
@@ -698,6 +804,7 @@
           siteId: siteId() || '',
           from: range.from,
           to: range.to,
+          retours: focusReturnsRequested() ? 1 : '',
         },
       });
 
@@ -707,6 +814,7 @@
       if (!siteItems().some((item) => Number(item.id) === Number(state.selectedItemId))) {
         state.selectedItemId = null;
       }
+      applyReturnFocus();
     } catch (error) {
       if (sequence === loadSequence) state.error = error.message || 'Connexion aux données locations indisponible';
     } finally {
@@ -714,6 +822,65 @@
       state.loading = false;
       render();
     }
+  }
+
+  function focusReturnsRequested() {
+    const params = new URLSearchParams(window.location.search);
+
+    return params.has('retours') || params.has('returns') || params.get('focus') === 'returns';
+  }
+
+  function applyReturnFocus() {
+    if (state.returnFocusApplied || !focusReturnsRequested()) return;
+
+    const [rental] = pendingReturnRentals();
+    if (!rental) return;
+
+    const date = String(rental.endAt || rental.startAt || state.selectedDate).slice(0, 10);
+    const parsed = parseDate(date);
+
+    state.returnFocusApplied = true;
+    state.selectedItemId = Number(rental.equipmentItemId);
+    state.selectedDate = date;
+    state.month = new Date(parsed.getFullYear(), parsed.getMonth(), 1);
+    state.view = 'day';
+  }
+
+  function pendingReturnRentals() {
+    const current = currentDateTimeValue();
+    const selectedSiteId = siteId();
+
+    return rentals()
+      .filter((rental) => Number(rental.siteId) === Number(selectedSiteId))
+      .filter((rental) => isPendingReturn(rental, current))
+      .sort((a, b) => String(a.endAt).localeCompare(String(b.endAt)) || Number(a.id) - Number(b.id));
+  }
+
+  function isPendingReturn(rental, current = currentDateTimeValue()) {
+    const endAt = String(rental?.endAt || '');
+
+    return (
+      ['reserved', 'picked_up'].includes(String(rental?.status || 'reserved')) &&
+      endAt !== '' &&
+      endAt < current
+    );
+  }
+
+  function currentDateTimeValue(date = new Date()) {
+    return `${formatDate(date)}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  }
+
+  function rentalStatusOptions() {
+    return [
+      { value: 'reserved', label: 'Réservée' },
+      { value: 'picked_up', label: 'Sortie' },
+      { value: 'returned', label: 'Réceptionnée' },
+      { value: 'cancelled', label: 'Annulée' },
+    ];
+  }
+
+  function rentalStatusLabel(status) {
+    return rentalStatusOptions().find((entry) => entry.value === status)?.label || 'Réservée';
   }
 
   function rentalPeriods(item) {
@@ -791,8 +958,13 @@
   }
 
   function isItemBusy(item) {
-    const now = new Date().toISOString().slice(0, 16);
-    return itemRentals(item.id).some((rental) => rental.startAt <= now && rental.endAt >= now);
+    const now = currentDateTimeValue();
+    return itemRentals(item.id).some(
+      (rental) =>
+        ['reserved', 'picked_up'].includes(String(rental.status || 'reserved')) &&
+        rental.startAt <= now &&
+        rental.endAt >= now,
+    );
   }
 
   function sameDate(value, date) {
@@ -807,6 +979,8 @@
       x: '<path d="M18 6 6 18M6 6l12 12"></path>',
       save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"></path><path d="M17 21v-8H7v8M7 3v5h8"></path>',
       trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"></path>',
+      check: '<path d="M20 6 9 17l-5-5"></path>',
+      calendar: '<path d="M8 2v4M16 2v4M3 10h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect>',
     };
 
     return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.plus}</svg>`;

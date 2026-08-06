@@ -92,13 +92,31 @@ class EquipmentRentalService
         [$from, $to] = $this->dateWindow($filters);
         $siteIds = $this->filteredSiteIds($actor, $filters);
         $equipmentItemId = (int) ($filters['equipmentItemId'] ?? $filters['equipment_item_id'] ?? 0);
+        $includePendingReturns = $this->pendingReturnsRequested($filters);
+        $now = CarbonImmutable::now();
 
         $rentals = CrmEquipmentRental::query()
             ->with(['equipmentItem:id,name', 'site:id,name', 'user:id,name'])
             ->whereIn('site_id', $siteIds)
             ->when($equipmentItemId > 0, fn ($query) => $query->where('equipment_item_id', $equipmentItemId))
-            ->where('end_at', '>=', $from)
-            ->where('start_at', '<=', $to)
+            ->where(function ($query) use ($from, $to, $includePendingReturns, $now): void {
+                $query->where(function ($window) use ($from, $to): void {
+                    $window
+                        ->where('end_at', '>=', $from)
+                        ->where('start_at', '<=', $to);
+                });
+
+                if ($includePendingReturns) {
+                    $query->orWhere(function ($returns) use ($now): void {
+                        $returns
+                            ->whereIn('status', [
+                                CrmEquipmentRental::STATUS_RESERVED,
+                                CrmEquipmentRental::STATUS_PICKED_UP,
+                            ])
+                            ->where('end_at', '<', $now);
+                    });
+                }
+            })
             ->orderBy('start_at')
             ->orderBy('id')
             ->get();
@@ -221,6 +239,18 @@ class EquipmentRentalService
         }
 
         $rental = $this->rentalForPolicy($id);
+
+        if ($this->statusOnlyUpdateRequested($data)) {
+            $status = $this->validatedRentalStatus($data['status'] ?? null);
+
+            Gate::forUser($account)->authorize('update', $rental);
+            Gate::forUser($account)->authorize('updateForSite', [$rental, (int) $rental->site_id]);
+
+            $rental = $this->updateRentalStatus($actor, $id, $status);
+
+            return ['ok' => true, 'equipmentRental' => $this->rentalRow($rental)];
+        }
+
         $payload = $this->rentalPayloadMap($data);
 
         Gate::forUser($account)->authorize('update', $rental);
@@ -583,6 +613,52 @@ class EquipmentRentalService
         }
 
         return $rental;
+    }
+
+    private function pendingReturnsRequested(array $filters): bool
+    {
+        return filter_var(
+            $filters['retours']
+                ?? $filters['returns']
+                ?? $filters['pendingReturns']
+                ?? $filters['pending_returns']
+                ?? false,
+            FILTER_VALIDATE_BOOL,
+        );
+    }
+
+    private function statusOnlyUpdateRequested(array $data): bool
+    {
+        return filter_var($data['statusOnly'] ?? $data['status_only'] ?? false, FILTER_VALIDATE_BOOL);
+    }
+
+    private function validatedRentalStatus(mixed $value): string
+    {
+        $status = trim((string) $value);
+
+        if (! in_array($status, array_keys(CrmEquipmentRental::statusOptions()), true)) {
+            $this->fail('Statut location invalide', 400);
+        }
+
+        return $status;
+    }
+
+    private function updateRentalStatus(CrmUser $actor, int $id, string $status): CrmEquipmentRental
+    {
+        return DB::transaction(function () use ($actor, $id, $status): CrmEquipmentRental {
+            $rental = CrmEquipmentRental::query()
+                ->lockForUpdate()
+                ->find($id);
+
+            if (! $rental) {
+                $this->fail('Location introuvable', 404);
+            }
+
+            $rental->forceFill(['status' => $status])->save();
+            $this->activity->log($actor, 'changement statut location materiel', "Location materiel #{$id} : {$status}");
+
+            return $rental->refresh();
+        });
     }
 
     /**
