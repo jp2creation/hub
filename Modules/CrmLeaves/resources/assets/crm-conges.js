@@ -3531,9 +3531,89 @@
         }
         #crm-leaves-module .leave-settings-board {
           padding:1rem;
+          overflow:visible;
         }
         #crm-leaves-module .leave-settings-head {
           display:grid;
+          gap:.8rem;
+        }
+        #crm-leaves-module .leave-settings-head > div {
+          min-width:0;
+        }
+        #crm-leaves-module .leave-settings-head p {
+          max-width:none;
+          overflow:visible;
+          white-space:normal;
+        }
+        #crm-leaves-module .leave-settings-head .leaves-button {
+          width:100%;
+        }
+        #crm-leaves-module .leave-settings-table-wrap {
+          margin:0 -.15rem;
+          overflow:visible;
+          border-top:0;
+        }
+        #crm-leaves-module .leave-settings-table {
+          display:block;
+          min-width:0;
+          width:100%;
+        }
+        #crm-leaves-module .leave-settings-table thead {
+          display:none;
+        }
+        #crm-leaves-module .leave-settings-table tbody {
+          display:grid;
+          gap:.7rem;
+        }
+        #crm-leaves-module .leave-settings-table tr {
+          display:grid;
+          gap:.62rem;
+          width:100%;
+          border:1px solid rgba(15,23,42,.08);
+          border-radius:.45rem;
+          background:var(--leave-panel);
+          padding:.85rem;
+        }
+        #crm-leaves-module .leave-settings-table td {
+          display:grid;
+          grid-template-columns:minmax(7.5rem,38%) minmax(0,1fr);
+          align-items:center;
+          gap:.65rem;
+          width:100%;
+          border-bottom:0;
+          padding:0;
+          font-size:.84rem;
+        }
+        #crm-leaves-module .leave-settings-table td::before {
+          color:#6b7280;
+          content:'';
+          font-size:.68rem;
+          font-weight:850;
+          text-transform:uppercase;
+        }
+        #crm-leaves-module .leave-settings-table td:nth-child(1)::before { content:'Nom'; }
+        #crm-leaves-module .leave-settings-table td:nth-child(2)::before { content:'Couleur'; }
+        #crm-leaves-module .leave-settings-table td:nth-child(3)::before { content:'Solde'; }
+        #crm-leaves-module .leave-settings-table td:nth-child(4)::before { content:'Validation'; }
+        #crm-leaves-module .leave-settings-table td:nth-child(5)::before { content:'Rappels'; }
+        #crm-leaves-module .leave-settings-table td:nth-child(6)::before { content:'Statut'; }
+        #crm-leaves-module .leave-settings-table td:nth-child(7) {
+          display:block;
+          border-top:1px solid rgba(15,23,42,.08);
+          padding-top:.72rem;
+        }
+        #crm-leaves-module .leave-settings-table td:nth-child(7)::before {
+          display:none;
+        }
+        #crm-leaves-module .leave-settings-actions {
+          display:grid;
+          grid-template-columns:1fr;
+          justify-content:stretch;
+          gap:.45rem;
+        }
+        #crm-leaves-module .leave-settings-actions .leaves-button {
+          width:100%;
+          justify-content:center;
         }
       }
     `;

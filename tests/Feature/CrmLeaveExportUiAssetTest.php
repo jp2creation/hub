@@ -205,4 +205,22 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringContainsString('leave-requests-table', $public);
         $this->assertStringContainsString('leave-reporting-card', $public);
     }
+
+    public function test_leave_settings_table_is_mobile_readable_without_horizontal_scroll(): void
+    {
+        $source = (string) file_get_contents(base_path('Modules/CrmLeaves/resources/assets/crm-conges.js'));
+        $public = (string) file_get_contents(public_path('modules/crm-leaves/crm-conges.js'));
+
+        $this->assertSame($source, $public);
+        $this->assertStringContainsString('@media (max-width:760px)', $public);
+        $this->assertStringContainsString('#crm-leaves-module .leave-settings-table-wrap', $public);
+        $this->assertStringContainsString('overflow:visible;', $public);
+        $this->assertStringContainsString('#crm-leaves-module .leave-settings-table thead', $public);
+        $this->assertStringContainsString('display:none;', $public);
+        $this->assertStringContainsString('#crm-leaves-module .leave-settings-table tbody', $public);
+        $this->assertStringContainsString('#crm-leaves-module .leave-settings-table tr', $public);
+        $this->assertStringContainsString('#crm-leaves-module .leave-settings-table td::before', $public);
+        $this->assertStringContainsString("td:nth-child(4)::before { content:'Validation'; }", $public);
+        $this->assertStringContainsString('#crm-leaves-module .leave-settings-actions .leaves-button', $public);
+    }
 }
