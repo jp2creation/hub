@@ -311,18 +311,21 @@ class LeaveService
                 }
             }
 
+            $type = $this->leaveTypeValue(
+                (string) ($data['type'] ?? CrmLeaveType::PaidLeave->value),
+                $entry->exists ? (string) $entry->type : null,
+            );
+            $requiresApproval = $this->leaveTypeRequiresApproval($type);
             $status = ($canManageSelectedSite && $canManageCurrentSite)
                 ? $requestedStatus
-                : ($entry->exists ? (string) $entry->status : CrmLeaveStatus::Pending->value);
+                : ($entry->exists
+                    ? (string) $entry->status
+                    : ($requiresApproval ? CrmLeaveStatus::Pending->value : CrmLeaveStatus::Approved->value));
 
             if ($status !== CrmLeaveStatus::Refused->value && $this->conflicts->leaveOverlaps($employeeId, $startDate, $endDate, $period, $id > 0 ? $id : null)) {
                 $this->fail('Un conge existe deja sur cette periode', 409, 'leave_overlap');
             }
 
-            $type = $this->leaveTypeValue(
-                (string) ($data['type'] ?? CrmLeaveType::PaidLeave->value),
-                $entry->exists ? (string) $entry->type : null,
-            );
             $year = CarbonImmutable::parse($startDate)->year;
 
             if (
@@ -468,15 +471,17 @@ class LeaveService
                 ? (int) $data['sortOrder']
                 : (array_key_exists('sort_order', $data) ? (int) $data['sort_order'] : null);
 
+            $value = $type->exists
+                ? (string) $type->value
+                : $this->uniqueLeaveTypeValue((string) ($data['value'] ?? $label));
+
             $type->fill([
-                'value' => $type->exists
-                    ? (string) $type->value
-                    : $this->uniqueLeaveTypeValue((string) ($data['value'] ?? $label)),
+                'value' => $value,
                 'label' => $label,
                 'color' => $color,
                 'active' => array_key_exists('active', $data) ? $this->booleanValue($data['active']) : ($type->exists ? (bool) $type->active : true),
                 'requires_balance' => $this->booleanValue($data['requiresBalance'] ?? $data['requires_balance'] ?? false),
-                'requires_approval' => $this->booleanValue($data['requiresApproval'] ?? $data['requires_approval'] ?? true),
+                'requires_approval' => $this->leaveTypeRequiresApproval($value),
                 'send_reminders' => $this->booleanValue($data['sendReminders'] ?? $data['send_reminders'] ?? true),
                 'is_system' => $type->exists ? (bool) $type->is_system : false,
                 'sort_order' => $sortOrder ?: ($type->exists ? (int) $type->sort_order : $this->nextLeaveTypeSortOrder()),
@@ -1061,6 +1066,11 @@ class LeaveService
             ->value('requires_balance');
     }
 
+    private function leaveTypeRequiresApproval(string $value): bool
+    {
+        return $value === CrmLeaveType::PaidLeave->value;
+    }
+
     private function leaveTypeUsageCount(string $value): int
     {
         return CrmLeaveEntry::query()
@@ -1119,14 +1129,14 @@ class LeaveService
 
         $defaults = [
             [CrmLeaveType::PaidLeave->value, CrmLeaveType::PaidLeave->label(), '#facc15', true, true, true, true, 10],
-            [CrmLeaveType::Rtt->value, CrmLeaveType::Rtt->label(), '#38bdf8', true, true, true, true, 20],
-            [CrmLeaveType::Absence->value, CrmLeaveType::Absence->label(), '#fb7185', false, true, true, true, 30],
+            [CrmLeaveType::Rtt->value, CrmLeaveType::Rtt->label(), '#38bdf8', true, false, true, true, 20],
+            [CrmLeaveType::Absence->value, CrmLeaveType::Absence->label(), '#fb7185', false, false, true, true, 30],
             [CrmLeaveType::Training->value, CrmLeaveType::Training->label(), '#a78bfa', false, false, false, true, 40],
-            [CrmLeaveType::SickLeave->value, CrmLeaveType::SickLeave->label(), '#94a3b8', false, true, true, true, 50],
+            [CrmLeaveType::SickLeave->value, CrmLeaveType::SickLeave->label(), '#94a3b8', false, false, true, true, 50],
         ];
 
         foreach ($defaults as [$value, $label, $color, $requiresBalance, $requiresApproval, $sendReminders, $isSystem, $sortOrder]) {
-            CrmLeaveTypeSetting::query()->firstOrCreate(
+            $type = CrmLeaveTypeSetting::query()->firstOrCreate(
                 ['value' => $value],
                 [
                     'label' => $label,
@@ -1139,6 +1149,10 @@ class LeaveService
                     'sort_order' => $sortOrder,
                 ],
             );
+
+            if ((bool) $type->requires_approval !== $requiresApproval) {
+                $type->forceFill(['requires_approval' => $requiresApproval])->save();
+            }
         }
     }
 

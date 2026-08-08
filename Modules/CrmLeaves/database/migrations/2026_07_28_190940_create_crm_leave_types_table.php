@@ -31,10 +31,10 @@ return new class extends Migration
 
         $types = [
             ['conge', 'Congé', '#facc15', true, true, true, true, 10],
-            ['rtt', 'RTT', '#38bdf8', true, true, true, true, 20],
-            ['absence', 'Absence', '#fb7185', false, true, true, true, 30],
+            ['rtt', 'RTT', '#38bdf8', true, false, true, true, 20],
+            ['absence', 'Absence', '#fb7185', false, false, true, true, 30],
             ['formation', 'Formation', '#a78bfa', false, false, false, true, 40],
-            ['maladie', 'Arrêt maladie', '#94a3b8', false, true, true, true, 50],
+            ['maladie', 'Arrêt maladie', '#94a3b8', false, false, true, true, 50],
         ];
 
         foreach ($types as [$value, $label, $color, $requiresBalance, $requiresApproval, $sendReminders, $isSystem, $sortOrder]) {

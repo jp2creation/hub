@@ -20,6 +20,7 @@
       query: '',
     },
     selectedDate: formatDate(new Date()),
+    rangeStartDate: null,
     wallStartDate: formatDate(new Date()),
     wallMode: 'month',
     modal: null,
@@ -440,6 +441,7 @@
     const ownEmployee = currentEmployee();
     const fallbackEmployee = canManage() ? selectedEmployee() || employees()[0] : ownEmployee || employees()[0];
     const existingLeave = Boolean(leave?.id);
+    state.rangeStartDate = null;
 
     state.modal = {
       id: leave?.id || '',
@@ -488,6 +490,32 @@
       error: '',
     };
     render();
+  }
+
+  function sortedDateRange(firstDate, secondDate) {
+    const first = String(firstDate || '');
+    const second = String(secondDate || first);
+
+    return first <= second ? { startDate: first, endDate: second } : { startDate: second, endDate: first };
+  }
+
+  function selectCalendarDate(date) {
+    const nextDate = String(date || state.selectedDate);
+
+    if (!state.rangeStartDate) {
+      state.selectedDate = nextDate;
+      state.rangeStartDate = nextDate;
+      render();
+      return;
+    }
+
+    const range = sortedDateRange(state.rangeStartDate, nextDate);
+    state.selectedDate = range.endDate;
+    openModal({
+      employeeId: selectedEmployee()?.id || currentEmployee()?.id || employees()[0]?.id,
+      startDate: range.startDate,
+      endDate: range.endDate,
+    });
   }
 
   async function loadExportOptions(includeOtherSites) {
@@ -2509,6 +2537,10 @@
         background:rgb(var(--theme-primary));
         color:#fff;
       }
+      #crm-leaves-module .leave-mini-day.is-range-pending:not(.is-selected) {
+        box-shadow:inset 0 0 0 2px rgb(var(--theme-primary));
+        color:rgb(var(--theme-primary));
+      }
       #crm-leaves-module .leave-team-count {
         display:flex;
         align-items:center;
@@ -3533,6 +3565,7 @@
                 day.getMonth() !== monthDate.getMonth() ? 'is-muted' : '',
                 date === today ? 'is-today' : '',
                 date === state.selectedDate ? 'is-selected' : '',
+                date === state.rangeStartDate ? 'is-range-pending' : '',
                 leaves.length ? 'has-leave' : '',
                 primary && continuesBefore && continuesAfter ? 'is-range-middle' : '',
                 primary && !continuesBefore && continuesAfter ? 'is-range-start' : '',
@@ -3577,7 +3610,7 @@
           </div>
           <div class="leave-calendar-actions">
             ${canExport() ? '<button type="button" class="leaves-button" data-export-pdf>Exporter</button>' : ''}
-            ${canCreateRequest() ? '<button type="button" class="leaves-button leaves-button-primary" data-add-request>+ Demander une absence</button>' : ''}
+            ${canCreateRequest() ? '<button type="button" class="leaves-button leaves-button-primary" data-add-request>+ Ajouter une absence</button>' : ''}
           </div>
         </div>
         <div class="leave-calendar-period">
@@ -3728,7 +3761,7 @@
             <h2 class="leave-card-title">Détail du ${esc(dateLabel(state.selectedDate))}</h2>
             <p class="leave-card-subtitle">${items.length ? `${items.length} absence(s) sur cette date` : 'Aucune absence sur cette date'}</p>
           </div>
-          ${canCreateRequest() ? '<button type="button" class="leave-add-day" data-add-day>+ Demande</button>' : ''}
+          ${canCreateRequest() ? '<button type="button" class="leave-add-day" data-add-day>+ Ajouter</button>' : ''}
         </div>
         <div class="leave-day-list">
           ${
@@ -3793,7 +3826,7 @@
             <h2 class="leave-card-title">${esc(title)}</h2>
             <p class="leave-card-subtitle">${esc(subtitle)}</p>
           </div>
-          ${canCreateRequest() ? `<button type="button" class="leave-add-day" data-add-request>${canManage() ? '+ Ajouter' : '+ Poser'}</button>` : ''}
+          ${canCreateRequest() ? '<button type="button" class="leave-add-day" data-add-request>+ Ajouter</button>' : ''}
         </div>
         <div class="leave-request-list">
           ${
@@ -3871,7 +3904,7 @@
           <div class="leave-wall-actions">
             <span class="leave-filter-chip">Statut : ${esc(statusLabel(state.filters.status === 'active' ? 'approved' : state.filters.status))}</span>
             ${canExport() ? '<button type="button" class="leaves-button" data-export-pdf>Exporter</button>' : ''}
-            ${canCreateRequest() ? '<button type="button" class="leaves-button leaves-button-primary" data-add-request>+ Demander une absence</button>' : ''}
+            ${canCreateRequest() ? '<button type="button" class="leaves-button leaves-button-primary" data-add-request>+ Ajouter une absence</button>' : ''}
             <button type="button" class="leaves-button" data-wall-today>Aujourd'hui</button>
           </div>
         </div>
@@ -4140,7 +4173,7 @@
             <h2 class="leave-card-title">Toutes les demandes</h2>
             <p class="leave-card-subtitle">${rows.length} demande(s) avec les filtres actuels.</p>
           </div>
-          ${canCreateRequest() ? '<button type="button" class="leave-add-day" data-add-request>+ Demande</button>' : ''}
+          ${canCreateRequest() ? '<button type="button" class="leave-add-day" data-add-request>+ Ajouter</button>' : ''}
         </div>
         <div class="leave-requests-table-wrap">
           <table class="leave-requests-table">
@@ -4289,7 +4322,7 @@
     const readonly = Boolean(form.readonly);
     const disabled = readonly ? 'disabled' : '';
     const employee = employees().find((item) => Number(item.id) === Number(form.employeeId));
-    const title = form.id ? (readonly ? 'Détail de la demande' : 'Modifier la demande') : 'Poser une demande';
+    const title = form.id ? (readonly ? 'Détail de la demande' : 'Modifier la demande') : 'Ajouter une absence';
     const subtitle = form.id
       ? `${employee?.name || 'Utilisateur'} - ${statusLabel(form.status)}`
       : manager
@@ -4331,7 +4364,7 @@
         : '';
     const saveAction = readonly
       ? ''
-      : `<button type="submit" class="leaves-button leaves-button-primary">${form.id ? 'Enregistrer' : manager ? 'Ajouter' : 'Envoyer la demande'}</button>`;
+      : `<button type="submit" class="leaves-button leaves-button-primary">${form.id ? 'Enregistrer' : manager ? 'Ajouter' : "Ajouter l'absence"}</button>`;
     const deleteAction = form.canDelete
       ? `<button type="button" class="leaves-button" data-delete="${esc(form.id)}">Supprimer</button>`
       : '';
@@ -4670,8 +4703,7 @@
     );
     root.querySelectorAll('[data-day]').forEach((button) =>
       button.addEventListener('click', () => {
-        state.selectedDate = button.dataset.date || state.selectedDate;
-        render();
+        selectCalendarDate(button.dataset.date || state.selectedDate);
       }),
     );
     root.querySelectorAll('[data-edit-leave]').forEach((button) =>

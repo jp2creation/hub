@@ -48,6 +48,9 @@ class CrmLeaveApiTest extends TestCase
             ->assertJsonPath('types.0.label', 'Congé')
             ->assertJsonPath('types.0.active', true)
             ->assertJsonPath('types.0.requiresBalance', true)
+            ->assertJsonPath('types.0.requiresApproval', true)
+            ->assertJsonPath('types.1.requiresApproval', false)
+            ->assertJsonPath('types.2.requiresApproval', false)
             ->assertJsonPath('periods.2.label', 'Après-midi');
     }
 
@@ -139,6 +142,7 @@ class CrmLeaveApiTest extends TestCase
             ->assertJsonPath('type.color', '#123abc')
             ->assertJsonPath('type.active', true)
             ->assertJsonPath('type.requiresBalance', false)
+            ->assertJsonPath('type.requiresApproval', false)
             ->assertJsonPath('type.sendReminders', false);
 
         $typeId = (int) $created->json('type.id');
@@ -364,6 +368,26 @@ class CrmLeaveApiTest extends TestCase
 
         $this->assertSame(0.0, $balance->used_days);
         $this->assertSame(2.0, $balance->pending_days);
+    }
+
+    public function test_user_without_manage_can_create_non_paid_absence_without_approval(): void
+    {
+        [$account, $crmUser, , $employee] = $this->createCrmUser(canManage: false);
+
+        $this->actingAs($account)
+            ->postJson('/api/conges?action=save_leave', [
+                'employeeId' => $employee->id,
+                'startDate' => '2026-08-03',
+                'endDate' => '2026-08-03',
+                'type' => 'absence',
+                'period' => 'full',
+                'status' => 'pending',
+            ])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('leave.type', 'absence')
+            ->assertJsonPath('leave.status', 'approved')
+            ->assertJsonPath('leave.createdBy', $crmUser->id);
     }
 
     public function test_manage_permission_is_required_to_create_leave_for_another_user(): void
