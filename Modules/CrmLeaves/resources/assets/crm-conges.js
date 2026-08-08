@@ -3568,7 +3568,7 @@
         <div class="leave-calendar-toolbar">
           <div class="leave-view-mode">
             <button type="button" class="is-active" aria-label="Calendrier">▣</button>
-            <button type="button" data-focus-selected aria-label="Liste">☷</button>
+            <button type="button" data-focus-selected aria-label="Liste" aria-controls="leave-selected-day">☷</button>
           </div>
           <div class="leave-year-nav">
             <button type="button" data-prev aria-label="Annee precedente">‹</button>
@@ -3717,6 +3717,48 @@
 
   function renderStatusPill(status) {
     return `<span class="leave-status-pill is-${esc(status || 'approved')}">${esc(statusLabel(status))}</span>`;
+  }
+
+  function renderSelectedDay() {
+    const items = selectedDateLeaves();
+    return `
+      <section class="leave-day-card" id="leave-selected-day" tabindex="-1">
+        <div class="leave-card-head">
+          <div>
+            <h2 class="leave-card-title">Détail du ${esc(dateLabel(state.selectedDate))}</h2>
+            <p class="leave-card-subtitle">${items.length ? `${items.length} absence(s) sur cette date` : 'Aucune absence sur cette date'}</p>
+          </div>
+          ${canCreateRequest() ? '<button type="button" class="leave-add-day" data-add-day>+ Demande</button>' : ''}
+        </div>
+        <div class="leave-day-list">
+          ${
+            items.length
+              ? items
+                  .map((leave) => {
+                    const color = normalizeColor(leave.employeeColor || typeMeta(leave.type).color || '#38bdf8');
+                    const range =
+                      leave.startDate === leave.endDate
+                        ? dateLabel(leave.startDate)
+                        : `${dateLabel(leave.startDate)} - ${dateLabel(leave.endDate)}`;
+                    const editable = canEditLeave(leave);
+
+                    return `
+                      <button type="button" class="leave-day-row" data-edit-leave="${esc(leave.id)}" style="--day-color:${esc(color)}">
+                        <span class="leave-day-dot"></span>
+                        <span>
+                          <span class="leave-day-name">${esc(leave.employeeName)}</span>
+                          <span class="leave-day-meta">${esc(typeMeta(leave.type).label)} - ${esc(periodLabel(leave.period))} - ${esc(range)}</span>
+                        </span>
+                        ${editable ? '<span class="leave-day-edit">Modifier</span>' : renderStatusPill(leave.status)}
+                      </button>
+                    `;
+                  })
+                  .join('')
+              : '<div class="leave-day-empty">Choisissez une autre date ou ajoutez une demande sur ce jour.</div>'
+          }
+        </div>
+      </section>
+    `;
   }
 
   function workflowLeaves() {
@@ -4235,6 +4277,7 @@
     return `
       <div class="leave-main-column">
         ${renderCalendar()}
+        ${renderSelectedDay()}
       </div>
     `;
   }
@@ -4275,8 +4318,9 @@
             </div>
           </div>
         `;
+    const selectableStatus = form.status === 'planned' ? 'pending' : form.status;
     const statusField = manager
-      ? `<div class="leaves-field"><label>Statut</label><select name="status" ${disabled}><option value="approved" ${form.status === 'approved' ? 'selected' : ''}>Validé</option><option value="planned" ${form.status === 'planned' ? 'selected' : ''}>Planifié</option><option value="pending" ${form.status === 'pending' ? 'selected' : ''}>À valider</option><option value="refused" ${form.status === 'refused' ? 'selected' : ''}>Refusé</option></select></div>`
+      ? `<div class="leaves-field"><label>Statut</label><select name="status" ${disabled}><option value="approved" ${selectableStatus === 'approved' ? 'selected' : ''}>Validé</option><option value="pending" ${selectableStatus === 'pending' ? 'selected' : ''}>À valider</option><option value="refused" ${selectableStatus === 'refused' ? 'selected' : ''}>Refusé</option></select></div>`
       : `<input type="hidden" name="status" value="${esc(form.status || 'pending')}">`;
     const reviewActions =
       form.canReview && !readonly
@@ -4584,7 +4628,9 @@
       render();
     });
     root.querySelector('[data-focus-selected]')?.addEventListener('click', () => {
-      root.querySelector('.leave-day-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const target = root.querySelector('#leave-selected-day');
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target?.focus({ preventScroll: true });
     });
     root.querySelectorAll('[data-wall-prev]').forEach((button) =>
       button.addEventListener('click', () => {

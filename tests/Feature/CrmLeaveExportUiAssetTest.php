@@ -64,10 +64,13 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringContainsString('function renderTopMetrics()', $public);
         $this->assertStringContainsString('function renderYearCalendar()', $public);
         $this->assertStringContainsString('function renderMiniMonth(monthDate)', $public);
+        $this->assertStringContainsString('function renderSelectedDay()', $public);
         $this->assertStringContainsString('class="leave-app-header"', $public);
         $this->assertStringContainsString('class="leave-stat-strip"', $public);
         $this->assertStringContainsString('class="leave-year-calendar"', $public);
         $this->assertStringContainsString('class="leave-mini-month"', $public);
+        $this->assertStringContainsString('id="leave-selected-day"', $public);
+        $this->assertStringContainsString("root.querySelector('#leave-selected-day')", $public);
         $this->assertStringContainsString('--leave-accent:var(--theme-primary-color)', $public);
         $this->assertStringContainsString('is-range-start', $public);
         $this->assertStringContainsString('is-range-middle', $public);
@@ -119,6 +122,8 @@ class CrmLeaveExportUiAssetTest extends TestCase
         $this->assertStringContainsString("request(approved ? 'approve_leave' : 'refuse_leave'", $public);
         $this->assertStringContainsString('data-approve', $public);
         $this->assertStringContainsString('data-refuse', $public);
+        $this->assertStringContainsString("const selectableStatus = form.status === 'planned' ? 'pending' : form.status;", $public);
+        $this->assertStringNotContainsString('Planifié</option><option value="pending"', $public);
         $this->assertStringContainsString('function renderTeamSheet()', $public);
         $this->assertStringContainsString('function renderTeamFilters()', $public);
         $this->assertStringContainsString('Planning équipe', $public);
