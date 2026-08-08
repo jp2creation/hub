@@ -418,6 +418,7 @@
       #${rootId} .resa-selection-panel strong{display:block;margin:.18rem 0;color:var(--resa-text);font-size:1.15rem;font-weight:600}
       #${rootId} .resa-selection-actions{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.7rem}
       #${rootId} .reservation-fast-actions{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.85rem}
+      #${rootId} .resa-month-board{display:grid;gap:.65rem}
       #${rootId} .resa-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));scroll-margin-top:5.75rem;border:1px solid var(--resa-border);border-radius:.6rem;overflow:hidden}
       #${rootId} .resa-month-head,#${rootId} .resa-month-cell{min-height:4.2rem;border-right:1px solid var(--resa-border);border-bottom:1px solid var(--resa-border);padding:.52rem}
       #${rootId} .resa-month-head{min-height:auto;background:#f8fafc;color:var(--resa-muted);font-size:.72rem;font-weight:600;text-align:center;text-transform:uppercase}
@@ -426,9 +427,9 @@
       #${rootId} .resa-month-cell.is-muted{background:#fafafa;color:#94a3b8}
       #${rootId} .resa-month-dots{display:flex;align-items:center;justify-content:center;gap:.24rem;margin-top:auto}
       #${rootId} .resa-month-dot{width:.42rem;height:.42rem;border-radius:999px;background:var(--resa-primary)}
-      #${rootId} .resa-month-dot-morning{background:#14b8a6}
-      #${rootId} .resa-month-dot-afternoon{background:#ff5c57}
-      #${rootId} .resa-month-dot-day{background:#4f6df5}
+      #${rootId} .resa-month-dot-morning{background:#f7b711}
+      #${rootId} .resa-month-dot-afternoon{background:#95002e}
+      #${rootId} .resa-month-dot-day{background:#95002e}
       #${rootId} .resa-list{display:grid;gap:.55rem}
       #${rootId} .resa-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;align-items:center;border:1px solid var(--resa-border);border-radius:.5rem;padding:.72rem .8rem;background:#fff}
       #${rootId} .resa-row strong{display:block;color:var(--resa-text);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -672,11 +673,29 @@
     const heads = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
       .map((day) => `<div class="resa-month-head">${day}</div>`)
       .join('');
+    const hasReservations = days.some((day) => {
+      const date = formatDate(day);
+
+      return vehicleReservations(vehicle.id).some((reservation) => sameDate(reservation.startAt, date));
+    });
 
     return `
-      <div class="resa-month-grid" data-resa-calendar>
-        ${heads}
-        ${days.map((day) => renderMonthDay(day, vehicle)).join('')}
+      <div class="resa-month-board">
+        <div class="resa-month-grid" data-resa-calendar>
+          ${heads}
+          ${days.map((day) => renderMonthDay(day, vehicle)).join('')}
+        </div>
+        ${hasReservations ? renderMonthLegend() : ''}
+      </div>
+    `;
+  }
+
+  function renderMonthLegend() {
+    return `
+      <div class="resa-legend" aria-label="Légende planning mois">
+        <span class="resa-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#f7b711;margin-right:.35rem"></span>Matin</span>
+        <span class="resa-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#95002e;margin-right:.35rem"></span>Après-midi</span>
+        <span class="resa-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#95002e;margin-right:.35rem"></span>Journée complète</span>
       </div>
     `;
   }

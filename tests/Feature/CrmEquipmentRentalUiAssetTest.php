@@ -47,6 +47,15 @@ class CrmEquipmentRentalUiAssetTest extends TestCase
         $this->assertStringContainsString('view: "month"', $equipmentAsset);
         $this->assertStringContainsString('rent-planning-header', $equipmentAsset);
         $this->assertStringContainsString('rent-month-dots', $equipmentAsset);
+        $this->assertStringContainsString('rent-month-board', $equipmentAsset);
+        $this->assertStringContainsString('rent-month-dot-morning{background:#f7b711}', $equipmentAsset);
+        $this->assertStringContainsString('rent-month-dot-afternoon{background:#95002e}', $equipmentAsset);
+        $this->assertStringContainsString('rent-month-dot-day{background:#95002e}', $equipmentAsset);
+        $this->assertStringContainsString('background:#f7b711;margin-right:.35rem"></span>Matin', $equipmentAsset);
+        $this->assertSame(2, substr_count($equipmentAsset, 'background:#95002e;margin-right:.35rem"></span>'));
+        $this->assertStringNotContainsString('rent-month-dot-morning{background:#14b8a6}', $equipmentAsset);
+        $this->assertStringNotContainsString('rent-month-dot-afternoon{background:#ff5c57}', $equipmentAsset);
+        $this->assertStringNotContainsString('rent-month-dot-day{background:#4f6df5}', $equipmentAsset);
         $this->assertStringContainsString('data-view="today"', $equipmentAsset);
         $this->assertStringContainsString('data-view="today" class=""', $equipmentAsset);
         $this->assertStringContainsString('state.month = new Date(today.getFullYear(), today.getMonth(), 1)', $equipmentAsset);

@@ -268,6 +268,7 @@
       #${rootId} .rent-period strong{font-size:.95rem;font-weight:600}
       #${rootId} .rent-period span{font-size:.72rem;font-weight:850;opacity:.95}
       #${rootId} .rent-period.is-reserved{background:var(--rent-red);box-shadow:0 9px 18px rgba(220,38,38,.22)}
+      #${rootId} .rent-month-board{display:grid;gap:.65rem}
       #${rootId} .rent-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));scroll-margin-top:5.75rem;border:1px solid var(--rent-border);border-radius:0 0 1rem 1rem;overflow:hidden}
       #${rootId} .rent-month-head,#${rootId} .rent-month-cell{min-height:4.2rem;border-right:1px solid var(--rent-border);border-bottom:1px solid var(--rent-border);padding:.52rem}
       #${rootId} .rent-month-head{min-height:auto;background:#f8fafc;color:var(--rent-muted);font-size:.72rem;font-weight:600;text-align:center;text-transform:uppercase}
@@ -276,9 +277,9 @@
       #${rootId} .rent-month-cell.is-muted{background:#fafafa;color:#94a3b8}
       #${rootId} .rent-month-dots{display:flex;align-items:center;justify-content:center;gap:.24rem;margin-top:auto}
       #${rootId} .rent-month-dot{width:.42rem;height:.42rem;border-radius:999px;background:var(--rent-primary)}
-      #${rootId} .rent-month-dot-morning{background:#14b8a6}
-      #${rootId} .rent-month-dot-afternoon{background:#ff5c57}
-      #${rootId} .rent-month-dot-day{background:#4f6df5}
+      #${rootId} .rent-month-dot-morning{background:#f7b711}
+      #${rootId} .rent-month-dot-afternoon{background:#95002e}
+      #${rootId} .rent-month-dot-day{background:#95002e}
       #${rootId} .rent-list{display:grid;gap:.55rem}
       #${rootId} .rent-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;align-items:center;border:1px solid var(--rent-border);border-radius:.5rem;padding:.72rem .8rem;background:#fff}
       #${rootId} .rent-row strong{display:block;color:var(--rent-text);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -513,11 +514,29 @@
     const heads = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
       .map((day) => `<div class="rent-month-head">${day}</div>`)
       .join('');
+    const hasRentals = days.some((day) => {
+      const date = formatDate(day);
+
+      return itemRentals(item.id).some((rental) => sameDate(rental.startAt, date));
+    });
 
     return `
-      <div class="rent-month-grid" data-rent-calendar>
-        ${heads}
-        ${days.map((day) => renderMonthDay(day, item)).join('')}
+      <div class="rent-month-board">
+        <div class="rent-month-grid" data-rent-calendar>
+          ${heads}
+          ${days.map((day) => renderMonthDay(day, item)).join('')}
+        </div>
+        ${hasRentals ? renderMonthLegend() : ''}
+      </div>
+    `;
+  }
+
+  function renderMonthLegend() {
+    return `
+      <div class="rent-legend" aria-label="Légende planning mois">
+        <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#f7b711;margin-right:.35rem"></span>Matin</span>
+        <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#95002e;margin-right:.35rem"></span>Après-midi</span>
+        <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#95002e;margin-right:.35rem"></span>Journée complète</span>
       </div>
     `;
   }
