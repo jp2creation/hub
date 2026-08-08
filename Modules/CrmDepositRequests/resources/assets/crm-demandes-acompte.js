@@ -28,6 +28,10 @@
     return Number.isFinite(number) && number > 0 ? number : null;
   }
 
+  function csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
+  }
+
   function isRoute() {
     return window.location.pathname.replace(/\/$/, "") === routePath;
   }
@@ -57,11 +61,15 @@
     const response = await fetch(api + "?" + params.toString(), {
       method: body ? "POST" : "GET",
       credentials: "same-origin",
-      headers: body ? { "Content-Type": "application/json", Accept: "application/json" } : { Accept: "application/json" },
+      headers: body
+        ? { "Content-Type": "application/json", Accept: "application/json", "X-CSRF-TOKEN": csrfToken() }
+        : { Accept: "application/json" },
       body: body ? JSON.stringify(body) : undefined,
     });
-    const payload = await response.json();
-    if (!response.ok || payload.ok === false) throw new Error(payload.error || "Action impossible");
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || payload.ok === false) {
+      throw new Error(response.status === 419 ? "Session expiree, rechargez la page puis recommencez." : payload.error || "Action impossible");
+    }
     return payload;
   }
 
