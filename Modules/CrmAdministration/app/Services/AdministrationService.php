@@ -841,7 +841,7 @@ class AdministrationService
                 $vehicle->fill([
                     'site_id' => $siteId,
                     'name' => $name,
-                    'description' => $description !== '' ? $description : null,
+                    'description' => $description,
                     'color' => $this->siteColor((string) ($data['color'] ?? $vehicle?->color ?? '')),
                     'photo_url' => $photoUrl !== '' ? $photoUrl : null,
                     'day_start_time' => $dayStartTime,
@@ -1025,7 +1025,7 @@ class AdministrationService
                 'category_id' => $categoryId > 0 ? $categoryId : null,
                 'name' => $name,
                 'inventory_code' => $inventoryCode !== '' ? $inventoryCode : null,
-                'description' => $description !== '' ? $description : null,
+                'description' => $description,
                 'color' => $this->siteColor((string) ($data['color'] ?? $item?->color ?? '')),
                 'photo_url' => $photoUrl !== '' ? $photoUrl : null,
                 'half_day_price' => $this->decimal($data['halfDayPrice'] ?? $data['half_day_price'] ?? 0),

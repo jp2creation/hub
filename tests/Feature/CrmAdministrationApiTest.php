@@ -916,7 +916,7 @@ class CrmAdministrationApiTest extends TestCase
                 'id' => $vehicleId,
                 'siteId' => $siteId,
                 'name' => 'Camion atelier',
-                'description' => 'Vehicule principal du site',
+                'description' => '',
                 'color' => '#2563eb',
                 'dayStartTime' => '07:00',
                 'dayEndTime' => '18:30',
@@ -929,6 +929,7 @@ class CrmAdministrationApiTest extends TestCase
         $this->assertDatabaseHas('crm_vehicles', [
             'id' => $vehicleId,
             'active' => false,
+            'description' => '',
             'photo_url' => null,
         ]);
         Storage::disk('public')->assertMissing($photoPath);
@@ -1043,7 +1044,7 @@ class CrmAdministrationApiTest extends TestCase
                 'categoryId' => $categoryId,
                 'name' => 'Ponceuse test HUB',
                 'inventoryCode' => 'PONCEUSE-HUB-01',
-                'description' => 'Materiel administrable depuis le HUB',
+                'description' => '',
                 'color' => '#95002e',
                 'halfDayPrice' => 42.5,
                 'dayPrice' => 80,
@@ -1061,6 +1062,7 @@ class CrmAdministrationApiTest extends TestCase
         $this->assertDatabaseHas('crm_equipment_items', [
             'id' => $itemId,
             'active' => false,
+            'description' => '',
             'photo_url' => null,
         ]);
         Storage::disk('public')->assertMissing($photoPath);
