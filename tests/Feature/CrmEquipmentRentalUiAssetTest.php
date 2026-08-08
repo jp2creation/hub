@@ -35,9 +35,13 @@ class CrmEquipmentRentalUiAssetTest extends TestCase
         $this->assertStringContainsString('state.selectedItemId = null;', $equipmentAsset);
         $this->assertStringContainsString('state.view = "month";', $equipmentAsset);
         $this->assertStringNotContainsString('|| items[0] || null', $equipmentAsset);
-        $this->assertStringContainsString('rent-period-morning', $equipmentAsset);
-        $this->assertStringContainsString('rent-period-afternoon', $equipmentAsset);
-        $this->assertStringContainsString('rent-period-day', $equipmentAsset);
+        $this->assertStringContainsString('background:var(--rent-green);color:#fff', $equipmentAsset);
+        $this->assertStringContainsString('rent-period.is-reserved{background:var(--rent-red)', $equipmentAsset);
+        $this->assertStringContainsString('background:#16a34a;margin-right:.35rem"></span>Disponible', $equipmentAsset);
+        $this->assertStringContainsString('background:#dc2626;margin-right:.35rem"></span>Réservé / loué', $equipmentAsset);
+        $this->assertStringNotContainsString('rent-period-morning{background:#14b8a6}', $equipmentAsset);
+        $this->assertStringNotContainsString('rent-period-afternoon{background:#ff5c57}', $equipmentAsset);
+        $this->assertStringNotContainsString('rent-period-day{background:#4f6df5}', $equipmentAsset);
         $this->assertStringNotContainsString('window.MartinSolsUi.renderProductGrid', $equipmentAsset);
         $this->assertStringNotContainsString('window.MartinSolsUi.renderSegmentControl', $equipmentAsset);
         $this->assertStringContainsString('view: "month"', $equipmentAsset);

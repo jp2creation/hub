@@ -249,9 +249,9 @@
       #${rootId} .rent-product-image::before{content:"";position:absolute;inset:.7rem;border-radius:.75rem;background:#f8fafc}
       #${rootId} .rent-product-image img{position:relative;z-index:1;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center center;padding:.88rem;background:transparent}
       #${rootId} .rent-product-initials{position:relative;z-index:1;display:grid;place-items:center;width:4rem;height:4rem;border-radius:1rem;background:#f7e8ee;color:var(--rent-primary)}
-      #${rootId} .rent-product-status{position:absolute;right:.72rem;top:.72rem;z-index:2;display:inline-flex;align-items:center;gap:.32rem;border:1px solid #bbf7d0;border-radius:999px;background:#f0fdf4;padding:.26rem .55rem;color:var(--rent-green);font-size:.66rem;font-weight:600;line-height:1;box-shadow:0 8px 18px rgba(15,23,42,.08)}
+      #${rootId} .rent-product-status{position:absolute;right:.72rem;top:.72rem;z-index:2;display:inline-flex;align-items:center;gap:.32rem;border-radius:999px;background:#ecfdf3;padding:.26rem .55rem;color:var(--rent-green);font-size:.66rem;font-weight:600;line-height:1;box-shadow:0 8px 18px rgba(15,23,42,.08)}
       #${rootId} .rent-product-status::before{content:"";width:.38rem;height:.38rem;border-radius:999px;background:currentColor}
-      #${rootId} .rent-product-status.is-busy{border-color:#fecaca;background:#fff1f2;color:var(--rent-red)}
+      #${rootId} .rent-product-status.is-busy{background:#fef2f2;color:var(--rent-red)}
       #${rootId} .rent-product-body{display:flex;min-height:4.15rem;flex:1;flex-direction:column;justify-content:center;gap:.35rem;padding:.72rem .82rem .82rem;background:#fff}
       #${rootId} .rent-product-name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;color:var(--rent-text);font-size:.95rem;font-weight:600;line-height:1.18}
       #${rootId} .rent-toolbar{display:grid;gap:.75rem}
@@ -264,13 +264,10 @@
       #${rootId} label{display:grid;gap:.28rem;color:var(--rent-muted);font-size:.72rem;font-weight:600;text-transform:uppercase}
       #${rootId} .rent-day-board{display:grid;gap:.75rem}
       #${rootId} .rent-periods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem}
-      #${rootId} .rent-period{display:grid;gap:.18rem;min-height:4.4rem;border:0;border-radius:.6rem;color:#fff;padding:.75rem;text-align:left;cursor:pointer;box-shadow:0 12px 24px rgba(15,23,42,.12)}
+      #${rootId} .rent-period{display:grid;gap:.18rem;min-height:4.4rem;border:0;border-radius:.6rem;background:var(--rent-green);color:#fff;padding:.75rem;text-align:left;cursor:pointer;box-shadow:0 9px 18px rgba(22,163,74,.22)}
       #${rootId} .rent-period strong{font-size:.95rem;font-weight:600}
       #${rootId} .rent-period span{font-size:.72rem;font-weight:850;opacity:.95}
-      #${rootId} .rent-period-morning{background:#14b8a6}
-      #${rootId} .rent-period-afternoon{background:#ff5c57}
-      #${rootId} .rent-period-day{background:#4f6df5}
-      #${rootId} .rent-period.is-reserved{background:var(--rent-red)}
+      #${rootId} .rent-period.is-reserved{background:var(--rent-red);box-shadow:0 9px 18px rgba(220,38,38,.22)}
       #${rootId} .rent-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));scroll-margin-top:5.75rem;border:1px solid var(--rent-border);border-radius:0 0 1rem 1rem;overflow:hidden}
       #${rootId} .rent-month-head,#${rootId} .rent-month-cell{min-height:4.2rem;border-right:1px solid var(--rent-border);border-bottom:1px solid var(--rent-border);padding:.52rem}
       #${rootId} .rent-month-head{min-height:auto;background:#f8fafc;color:var(--rent-muted);font-size:.72rem;font-weight:600;text-align:center;text-transform:uppercase}
@@ -492,9 +489,8 @@
           ${periods.map((period) => renderPeriod(item, period)).join('')}
         </div>
         <div class="rent-legend" aria-label="Légende">
-          <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#14b8a6;margin-right:.35rem"></span>Matin</span>
-          <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#ff5c57;margin-right:.35rem"></span>Après-midi</span>
-          <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#4f6df5;margin-right:.35rem"></span>Journée complète</span>
+          <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#16a34a;margin-right:.35rem"></span>Disponible</span>
+          <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#dc2626;margin-right:.35rem"></span>Réservé / loué</span>
         </div>
       </div>
     `;
