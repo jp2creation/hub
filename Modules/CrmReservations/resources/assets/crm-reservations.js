@@ -429,7 +429,7 @@
       #${rootId} .resa-month-dot{width:.42rem;height:.42rem;border-radius:999px;background:var(--resa-primary)}
       #${rootId} .resa-month-dot-morning{background:#f7b711}
       #${rootId} .resa-month-dot-afternoon{background:#95002e}
-      #${rootId} .resa-month-dot-day{background:#95002e}
+      #${rootId} .resa-month-dot-day{background:#000000}
       #${rootId} .resa-list{display:grid;gap:.55rem}
       #${rootId} .resa-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;align-items:center;border:1px solid var(--resa-border);border-radius:.5rem;padding:.72rem .8rem;background:#fff}
       #${rootId} .resa-row strong{display:block;color:var(--resa-text);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -695,7 +695,7 @@
       <div class="resa-legend" aria-label="Légende planning mois">
         <span class="resa-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#f7b711;margin-right:.35rem"></span>Matin</span>
         <span class="resa-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#95002e;margin-right:.35rem"></span>Après-midi</span>
-        <span class="resa-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#95002e;margin-right:.35rem"></span>Journée complète</span>
+        <span class="resa-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#000000;margin-right:.35rem"></span>Journée complète</span>
       </div>
     `;
   }

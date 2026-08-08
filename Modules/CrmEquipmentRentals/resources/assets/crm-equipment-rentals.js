@@ -279,7 +279,7 @@
       #${rootId} .rent-month-dot{width:.42rem;height:.42rem;border-radius:999px;background:var(--rent-primary)}
       #${rootId} .rent-month-dot-morning{background:#f7b711}
       #${rootId} .rent-month-dot-afternoon{background:#95002e}
-      #${rootId} .rent-month-dot-day{background:#95002e}
+      #${rootId} .rent-month-dot-day{background:#000000}
       #${rootId} .rent-list{display:grid;gap:.55rem}
       #${rootId} .rent-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;align-items:center;border:1px solid var(--rent-border);border-radius:.5rem;padding:.72rem .8rem;background:#fff}
       #${rootId} .rent-row strong{display:block;color:var(--rent-text);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -536,7 +536,7 @@
       <div class="rent-legend" aria-label="Légende planning mois">
         <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#f7b711;margin-right:.35rem"></span>Matin</span>
         <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#95002e;margin-right:.35rem"></span>Après-midi</span>
-        <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#95002e;margin-right:.35rem"></span>Journée complète</span>
+        <span class="rent-badge"><span style="width:.55rem;height:.55rem;border-radius:999px;background:#000000;margin-right:.35rem"></span>Journée complète</span>
       </div>
     `;
   }

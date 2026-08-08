@@ -87,9 +87,10 @@ class CrmReservationUiAssetTest extends TestCase
         $this->assertStringContainsString('resa-month-board', $reservationAsset);
         $this->assertStringContainsString('resa-month-dot-morning{background:#f7b711}', $reservationAsset);
         $this->assertStringContainsString('resa-month-dot-afternoon{background:#95002e}', $reservationAsset);
-        $this->assertStringContainsString('resa-month-dot-day{background:#95002e}', $reservationAsset);
+        $this->assertStringContainsString('resa-month-dot-day{background:#000000}', $reservationAsset);
         $this->assertStringContainsString('background:#f7b711;margin-right:.35rem"></span>Matin', $reservationAsset);
-        $this->assertSame(2, substr_count($reservationAsset, 'background:#95002e;margin-right:.35rem"></span>'));
+        $this->assertSame(1, substr_count($reservationAsset, 'background:#95002e;margin-right:.35rem"></span>'));
+        $this->assertSame(1, substr_count($reservationAsset, 'background:#000000;margin-right:.35rem"></span>'));
         $this->assertStringNotContainsString('resa-month-dot-morning{background:#14b8a6}', $reservationAsset);
         $this->assertStringNotContainsString('resa-month-dot-afternoon{background:#ff5c57}', $reservationAsset);
         $this->assertStringNotContainsString('resa-month-dot-day{background:#4f6df5}', $reservationAsset);
